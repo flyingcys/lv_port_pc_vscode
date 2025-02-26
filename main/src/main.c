@@ -63,6 +63,20 @@ extern void freertos_main(void);
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
+void lv_text_demo(void)
+{
+  lv_obj_t * label = lv_label_create(lv_screen_active());
+  lv_label_set_text(label, "Hello animations!");
+  lv_obj_set_style_text_font(label, &lv_font_montserrat_24, 0);
+  lv_obj_set_pos(label, 100, 10);
+
+}
+void lv_font_test(void)
+{
+    lv_obj_t* label = lv_label_create(lv_scr_act());
+    lv_obj_set_style_text_font(label, & aka_font, LV_STATE_DEFAULT);
+    lv_label_set_text(label,"风扇监控!!!!");
+}
 
 int main(int argc, char **argv)
 {
@@ -77,7 +91,11 @@ int main(int argc, char **argv)
 
   #if LV_USE_OS == LV_OS_NONE
  
-  lv_demo_widgets();
+  // lv_demo_widgets();
+  // lv_font_test();
+  // lv_text_demo();
+  lv_app_clock();
+  // lv_demo_benchmark();
 
   while(1) {
     /* Periodically call the lv_task handler.

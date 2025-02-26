@@ -400,13 +400,13 @@
  *https://fonts.google.com/specimen/Montserrat*/
 #define LV_FONT_MONTSERRAT_8  0
 #define LV_FONT_MONTSERRAT_10 0
-#define LV_FONT_MONTSERRAT_12 0
+#define LV_FONT_MONTSERRAT_12 1
 #define LV_FONT_MONTSERRAT_14 1
 #define LV_FONT_MONTSERRAT_16 0
 #define LV_FONT_MONTSERRAT_18 0
 #define LV_FONT_MONTSERRAT_20 0
 #define LV_FONT_MONTSERRAT_22 0
-#define LV_FONT_MONTSERRAT_24 0
+#define LV_FONT_MONTSERRAT_24 1
 #define LV_FONT_MONTSERRAT_26 0
 #define LV_FONT_MONTSERRAT_28 0
 #define LV_FONT_MONTSERRAT_30 0
@@ -432,7 +432,7 @@
 /*Optionally declare custom fonts here.
  *You can use these fonts as default font too and they will be available globally.
  *E.g. #define LV_FONT_CUSTOM_DECLARE   LV_FONT_DECLARE(my_font_1) LV_FONT_DECLARE(my_font_2)*/
-#define LV_FONT_CUSTOM_DECLARE
+#define LV_FONT_CUSTOM_DECLARE  LV_FONT_DECLARE(aka_font)
 
 /*Always set a default font*/
 #define LV_FONT_DEFAULT &lv_font_montserrat_14
@@ -706,7 +706,7 @@
 #define LV_USE_BARCODE 0
 
 /*FreeType library*/
-#define LV_USE_FREETYPE 0
+#define LV_USE_FREETYPE 1
 #if LV_USE_FREETYPE
     /*Let FreeType to use LVGL memory and file porting*/
     #define LV_FREETYPE_USE_LVGL_PORT 0
@@ -757,14 +757,14 @@
 #define LV_USE_SNAPSHOT 0
 
 /*1: Enable system monitor component*/
-#define LV_USE_SYSMON   0
+#define LV_USE_SYSMON   1
 #if LV_USE_SYSMON
     /*Get the idle percentage. E.g. uint32_t my_get_idle(void);*/
     #define LV_SYSMON_GET_IDLE lv_timer_get_idle
 
     /*1: Show CPU usage and FPS count
      * Requires `LV_USE_SYSMON = 1`*/
-    #define LV_USE_PERF_MONITOR 0
+    #define LV_USE_PERF_MONITOR 1
     #if LV_USE_PERF_MONITOR
         #define LV_USE_PERF_MONITOR_POS LV_ALIGN_BOTTOM_RIGHT
 
@@ -960,7 +960,7 @@
 #define LV_USE_DEMO_KEYPAD_AND_ENCODER 0
 
 /*Benchmark your system*/
-#define LV_USE_DEMO_BENCHMARK 0
+#define LV_USE_DEMO_BENCHMARK 1
 
 /*Render test for each primitives. Requires at least 480x272 display*/
 #define LV_USE_DEMO_RENDER 0

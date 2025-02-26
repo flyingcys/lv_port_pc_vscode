@@ -43,7 +43,7 @@ option(LV_USE_DRAW_SDL "Use SDL draw unit" OFF)
 option(LV_USE_LIBPNG "Use libpng to decode PNG" OFF)
 option(LV_USE_LIBJPEG_TURBO "Use libjpeg turbo to decode JPEG" OFF)
 option(LV_USE_FFMPEG "Use libffmpeg to display video using lv_ffmpeg" OFF)
-option(LV_USE_FREETYPE "Use freetype library" OFF)
+option(LV_USE_FREETYPE "Use freetype library" ON)
 
 # Set C and C++ standards
 set(CMAKE_C_STANDARD 99)
@@ -85,7 +85,9 @@ if(USE_FREERTOS)
 else()
     add_executable(main
         ${PROJECT_SOURCE_DIR}/main/src/main.c
+        ${PROJECT_SOURCE_DIR}/main/src/aka_font.c
         ${PROJECT_SOURCE_DIR}/main/src/mouse_cursor_icon.c
+        ${PROJECT_SOURCE_DIR}/main/src/clock.c
     )
 endif()
 
@@ -130,7 +132,9 @@ endif()
 
 # Conditionally include and link FreeType if LV_USE_FREETYPE is enabled
 if(LV_USE_FREETYPE)
-    find_package(Freetype REQUIRED)
+    # find_package(Freetype REQUIRED)
+    set(FREETYPE_INCLUDE_DIRS "/usr/local/freetype/include/freetype2")
+    set(FREETYPE_LIBRARIES "/usr/local/freetype/lib/libfreetype.so")
     target_include_directories(lvgl PUBLIC ${FREETYPE_INCLUDE_DIRS})
     target_link_libraries(main ${FREETYPE_LIBRARIES})
 endif()
