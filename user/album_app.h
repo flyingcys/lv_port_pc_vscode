@@ -1,0 +1,13 @@
+#pragma once
+
+
+#define PRTSCR_MAX_SIZE 5
+#define PRTSCR_PERCRNT_SMALL 4
+#define PRTSCR_WIDTH_SMALL (280 / PRTSCR_PERCRNT_SMALL)
+#define PRTSCR_HEIGHT_SMALL (240 / PRTSCR_PERCRNT_SMALL)
+#define ALBUM_APP_SIMULATOR_EN 0
+#define ALBUM_APP_IMG_PATH "/spiffs/"
+
+void album_app_install();
+
+

@@ -1,0 +1,6 @@
+
+
+"take_prtscr" 截屏  给参数：uint16_t  延时多久后
+"del_prtscr" 删除指定截屏 给参数：uint8_t 要删除的图片ID
+"prtscr_num" 获得照片ID数量  返回参数：uint8_t  如返回为5张则ID为0-4
+"prtscr_get" 获得照片本身图像数据 给参数:存图像数据的缓存（缓存第一个字节必须存放需要获取的图片的id）
