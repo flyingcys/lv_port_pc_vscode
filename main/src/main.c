@@ -63,7 +63,49 @@ extern void freertos_main(void);
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
+// 返回主界面的事件回调
+static void back_event_handler(lv_event_t * e) {
+  // lv_obj_t * main_scr = (lv_obj_t *)e->user_data;
+  // lv_scr_load(main_scr);
+}
 
+// 图标点击事件回调
+static void icon_event_handler(lv_event_t * e) {
+  lv_obj_t * sub_scr = lv_obj_create(NULL); // 创建子屏幕
+  create_sub_screen(sub_scr);
+  lv_scr_load(sub_scr); // 切换到子屏幕
+}
+
+// 创建子屏幕的函数
+void create_sub_screen(lv_obj_t * parent_screen) {
+  lv_obj_t * sub_scr = lv_obj_create(parent_screen);
+  lv_obj_t * label = lv_label_create(sub_scr);
+  lv_label_set_text(label, "这是子界面");
+  lv_obj_center(label);
+  
+  // 添加返回按钮（可选）
+  lv_obj_t * btn_back = lv_btn_create(sub_scr);
+  lv_obj_align(btn_back, LV_ALIGN_BOTTOM_MID, 0, -20);
+  lv_obj_t * lbl_back = lv_label_create(btn_back);
+  lv_label_set_text(lbl_back, "返回");
+  lv_obj_add_event_cb(btn_back, back_event_handler, LV_EVENT_CLICKED, parent_screen);
+}
+
+
+void icon_test(void)
+{
+      // 创建主屏幕
+      lv_obj_t * main_scr = lv_scr_act();
+    
+      // 创建图标按钮
+      lv_obj_t * icon = lv_imgbtn_create(main_scr);
+      // 设置图标图片（需先载入图像）
+      lv_img_set_src(icon, "/home/share/samba/lv_port_pc_vscode/icon.png"); // 或使用 LV_SYMBOL_* 符号
+      lv_obj_align(icon, LV_ALIGN_CENTER, 0, 0);
+      
+      // 添加点击事件
+      lv_obj_add_event_cb(icon, icon_event_handler, LV_EVENT_CLICKED, NULL);
+}
 int main(int argc, char **argv)
 {
   (void)argc; /*Unused*/
@@ -77,7 +119,8 @@ int main(int argc, char **argv)
 
   #if LV_USE_OS == LV_OS_NONE
  
-  create_gui();
+  // create_gui();
+  icon_test();
 
   while(1) {
     /* Periodically call the lv_task handler.
