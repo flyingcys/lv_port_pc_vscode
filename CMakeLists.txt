@@ -7,6 +7,7 @@ set(FREERTOS_PORT GCC_POSIX CACHE STRING "Port for FreeRTOS on Posix environment
 unset(USE_FREERTOS CACHE)
 
 option(USE_FREERTOS "Enable FreeRTOS" OFF) # Turn this on to enable FreeRTOS
+option(ASAN "Enable ASAN" ON) # Turn this on to enable FreeRTOS
 
 if(USE_FREERTOS)
     message(STATUS "FreeRTOS is enabled")
@@ -87,6 +88,7 @@ else()
         ${PROJECT_SOURCE_DIR}/main/src/main.c
         ${PROJECT_SOURCE_DIR}/main/src/mouse_cursor_icon.c
         ${PROJECT_SOURCE_DIR}/main/src/desktop.c
+        ${PROJECT_SOURCE_DIR}/main/src/icon.c
     )
 endif()
 
