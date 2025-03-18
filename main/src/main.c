@@ -137,10 +137,12 @@ void switch_to_screen2(lv_event_t * e) {
 
     if(code == LV_EVENT_CLICKED) {
         LV_LOG_USER("Clicked");
+        lv_scr_load(screen2);
+
     }
-    else if(code == LV_EVENT_VALUE_CHANGED) {
-        LV_LOG_USER("Toggled");
-    }
+    // else if(code == LV_EVENT_VALUE_CHANGED) {
+    //     LV_LOG_USER("Toggled");
+    // }
 }
 void icon_test(void)
 {
@@ -156,6 +158,7 @@ void icon_test(void)
     img = lv_img_create(screen1);
     lv_img_set_src(img, &IMG_icon);
     lv_obj_center(img);
+    lv_obj_add_flag(img, LV_OBJ_FLAG_CLICKABLE);
 
     // 为图片添加点击事件
     lv_obj_add_event_cb(img, switch_to_screen2, LV_EVENT_ALL, NULL);
