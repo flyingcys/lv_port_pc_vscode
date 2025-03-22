@@ -28,6 +28,7 @@
 			"glob.h": "c",
 			"lvgl.h": "c"
 		},
+		"C_Cpp.workspaceParsingPriority": "low",
 	},
 	// tasks.json section
 	"tasks": {

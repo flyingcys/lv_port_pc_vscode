@@ -34,7 +34,7 @@ static lv_display_t * hal_init(int32_t w, int32_t h);
  *  STATIC VARIABLES
  **********************/
 
-/********************** 
+/**********************
  *      MACROS
  **********************/
 
@@ -82,7 +82,7 @@ void create_sub_screen(lv_obj_t * parent_screen) {
   lv_obj_t * label = lv_label_create(sub_scr);
   lv_label_set_text(label, "这是子界面");
   lv_obj_center(label);
-  
+
   // 添加返回按钮（可选）
   lv_obj_t * btn_back = lv_btn_create(sub_scr);
   lv_obj_align(btn_back, LV_ALIGN_BOTTOM_MID, 0, -20);
@@ -109,15 +109,15 @@ void icon_test(void)
 
       // 创建设置界面
       scr_settings = lv_obj_create(NULL);
-  
+
       // 在主界面上添加一个图标按钮
       lv_obj_t *icon_btn = lv_img_create(scr_home);
       lv_img_set_src(icon_btn, LV_SYMBOL_SETTINGS); // 使用LVGL内置的设置图标
       lv_obj_align(icon_btn, LV_ALIGN_CENTER, 0, 0); // 将按钮居中对齐
-  
+
       // 设置按钮的点击事件回调函数
       lv_obj_add_event_cb(icon_btn, btn_click_cb, LV_EVENT_CLICKED, NULL);
-  
+
 }
 #endif
 // 创建两个屏幕
@@ -144,8 +144,12 @@ void switch_to_screen2(lv_event_t * e) {
     //     LV_LOG_USER("Toggled");
     // }
 }
+
+static lv_obj_t * tv;
+
 void icon_test(void)
 {
+  #if 0
     // 创建屏幕1
     screen1 = lv_scr_act();
     lv_obj_clean(screen1);
@@ -162,6 +166,14 @@ void icon_test(void)
 
     // 为图片添加点击事件
     lv_obj_add_event_cb(img, switch_to_screen2, LV_EVENT_ALL, NULL);
+  #endif
+
+    tv = lv_tabview_create(lv_screen_active());
+
+    lv_obj_t * t1 = lv_tabview_add_tab(tv, "Profile");
+    lv_obj_t * t2 = lv_tabview_add_tab(tv, "Analytics");
+    lv_obj_t * t3 = lv_tabview_add_tab(tv, "Shop");
+
 }
 
 #if 0
@@ -170,14 +182,14 @@ void icon_test(void)
     // LV_IMAGE_DECLARE(IMG_icon);
     //   // 创建主屏幕
     //   lv_obj_t * main_scr = lv_scr_act();
-    
+
     //   // 创建图标按钮
     //   lv_obj_t * icon = lv_imgbtn_create(main_scr);
     //   // 设置图标图片（需先载入图像）
     //   // lv_img_set_src(icon, "/home/share/samba/lv_port_pc_vscode/icon.png"); // 或使用 LV_SYMBOL_* 符号
     //   lv_image_set_src(icon, &IMG_icon);
     //   lv_obj_align(icon, LV_ALIGN_CENTER, 0, 0);
-      
+
     //   // 添加点击事件
     //   lv_obj_add_event_cb(icon, icon_event_handler, LV_EVENT_CLICKED, NULL);
 
@@ -297,13 +309,13 @@ static lv_style_t obj_layout_style;   // 容器的样式
 
 
 static lv_style_t cont_style, style_tabview_desktop;
-lv_style_init(&cont_style);                           
+lv_style_init(&cont_style);
 
-lv_style_set_bg_opa(&cont_style, 0);                
+lv_style_set_bg_opa(&cont_style, 0);
 
-//lv_style_set_border_width(&cont_style,15);            
+//lv_style_set_border_width(&cont_style,15);
 
-lv_style_set_border_opa(&cont_style, 60);                
+lv_style_set_border_opa(&cont_style, 60);
 
 lv_style_set_pad_column(&cont_style, 15);   //列 间距
 
@@ -317,9 +329,9 @@ lv_style_set_base_dir(&cont_style, LV_BASE_DIR_LTR);//方向 right to left方向
 
 lv_style_set_flex_flow(&cont_style, LV_FLEX_FLOW_ROW_WRAP);//设置
 
-lv_style_init(&style_tabview_desktop);                          
+lv_style_init(&style_tabview_desktop);
 
-lv_style_set_bg_opa(&style_tabview_desktop, 0);     
+lv_style_set_bg_opa(&style_tabview_desktop, 0);
 
 /*选项卡视图*/
 
@@ -331,32 +343,32 @@ lv_tabview_set_act(tabview_desktop,1,LV_ANIM_OFF);
 
 /*选项卡视图 添加一个选项卡容器*/
 
-lv_obj_t * tab_main  = lv_tabview_add_tab(tabview_desktop, "hello");       
+lv_obj_t * tab_main  = lv_tabview_add_tab(tabview_desktop, "hello");
 
-lv_obj_set_scrollbar_mode(tab_main,LV_SCROLLBAR_MODE_OFF);             
+lv_obj_set_scrollbar_mode(tab_main,LV_SCROLLBAR_MODE_OFF);
 
 lv_obj_clear_flag(tab_main, LV_OBJ_FLAG_SCROLLABLE  );              //禁用点击
 
-lv_obj_t * icon_cont_main = lv_obj_create(tab_main);   
+lv_obj_t * icon_cont_main = lv_obj_create(tab_main);
 
 lv_obj_set_size(icon_cont_main, 400, 200);                        //设置显示区域大小
 
-lv_obj_add_style(icon_cont_main, &cont_style, 0);                   
+lv_obj_add_style(icon_cont_main, &cont_style, 0);
 
-lv_obj_center(icon_cont_main); 
+lv_obj_center(icon_cont_main);
 
 
-// LV_IMG_DECLARE(PenWu_APP_icon);              
+// LV_IMG_DECLARE(PenWu_APP_icon);
 
-// LV_IMG_DECLARE(FYF5_icon);                 
+// LV_IMG_DECLARE(FYF5_icon);
 
-// LV_IMG_DECLARE(DBUG_Assist_icon);               
+// LV_IMG_DECLARE(DBUG_Assist_icon);
 
-// LV_IMG_DECLARE(Radio_Beacon_icon);           
+// LV_IMG_DECLARE(Radio_Beacon_icon);
 
-// LV_IMG_DECLARE(Wired_Network_icon);            
+// LV_IMG_DECLARE(Wired_Network_icon);
 
-// LV_IMG_DECLARE(sys_set_icon);                   
+// LV_IMG_DECLARE(sys_set_icon);
 LV_IMG_DECLARE(IMG_icon);
 
 // static const lv_img_dsc_t *APP_icon[] = {
@@ -381,7 +393,7 @@ LV_IMG_DECLARE(IMG_icon);
           lv_img_set_src(img_icon, &IMG_icon);
   }
 
-  lv_obj_t * label_icon_name = lv_label_create(tab_main);                
+  lv_obj_t * label_icon_name = lv_label_create(tab_main);
   lv_obj_set_style_text_font(label_icon_name, &lv_font_montserrat_26, 0);
 
    lv_obj_set_style_text_color(label_icon_name, lv_color_hex(0xffffff), 0);
@@ -416,7 +428,8 @@ int main(int argc, char **argv)
   hal_init(800, 480);
 
   #if LV_USE_OS == LV_OS_NONE
- 
+
+  // lv_demo_widgets();
   // create_gui();
   icon_test();
   // lv_example_win_1();
@@ -436,7 +449,7 @@ int main(int argc, char **argv)
   #elif LV_USE_OS == LV_OS_FREERTOS
 
   /* Run FreeRTOS and create lvgl task */
-  freertos_main();  
+  freertos_main();
 
   #endif
 
