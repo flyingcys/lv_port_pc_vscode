@@ -84,7 +84,11 @@ if(USE_FREERTOS)
     # Link FreeRTOS libraries
     target_link_libraries(main freertos_config FreeRTOS)
 else()
-    add_executable(main
+
+    file(GLOB_RECURSE ICON_REPLACE_2_FILES
+        ${PROJECT_SOURCE_DIR}/main/src/icon_replace_2/*.c)
+
+    add_executable(main ${ICON_REPLACE_2_FILES}
         ${PROJECT_SOURCE_DIR}/main/src/main.c
         ${PROJECT_SOURCE_DIR}/main/src/mouse_cursor_icon.c
         ${PROJECT_SOURCE_DIR}/main/src/desktop.c

@@ -146,6 +146,13 @@ void switch_to_screen2(lv_event_t * e) {
 }
 
 static lv_obj_t * tv;
+static const lv_font_t * font_large;
+static const lv_font_t * font_normal;
+
+static lv_style_t style_text_muted;
+static lv_style_t style_title;
+static lv_style_t style_icon;
+static lv_style_t style_bullet;
 
 void icon_test(void)
 {
@@ -168,12 +175,55 @@ void icon_test(void)
     lv_obj_add_event_cb(img, switch_to_screen2, LV_EVENT_ALL, NULL);
   #endif
 
+    int32_t tab_h = 270;
+    font_large = &lv_font_montserrat_24;
+    font_normal = &lv_font_montserrat_48;
+
+    lv_style_init(&style_text_muted);
+    lv_style_set_text_opa(&style_text_muted, LV_OPA_50);
+
+    lv_style_init(&style_title);
+    lv_style_set_text_font(&style_title, font_large);
+
+    lv_style_init(&style_icon);
+    lv_style_set_text_color(&style_icon, lv_theme_get_color_primary(NULL));
+    lv_style_set_text_font(&style_icon, font_large);
+
+    lv_style_init(&style_bullet);
+    lv_style_set_border_width(&style_bullet, 0);
+    lv_style_set_radius(&style_bullet, LV_RADIUS_CIRCLE);
+
     tv = lv_tabview_create(lv_screen_active());
+    lv_tabview_set_tab_bar_size(tv, tab_h);
+
+    lv_obj_set_style_text_font(lv_screen_active(), font_normal, 0);
 
     lv_obj_t * t1 = lv_tabview_add_tab(tv, "Profile");
     lv_obj_t * t2 = lv_tabview_add_tab(tv, "Analytics");
     lv_obj_t * t3 = lv_tabview_add_tab(tv, "Shop");
 
+
+    lv_obj_t *  tab_bar = lv_tabview_get_tab_bar(tv);
+    lv_obj_set_style_pad_left(tab_bar, LV_HOR_RES / 2, 0);
+
+    lv_obj_t * logo = lv_img_create(tab_bar);
+    lv_obj_add_flag(logo, LV_OBJ_FLAG_IGNORE_LAYOUT);
+    LV_IMAGE_DECLARE(img_lvgl_logo);
+    lv_image_set_src(logo, &img_lvgl_logo);
+    lv_obj_align(logo, LV_ALIGN_LEFT_MID, -LV_HOR_RES / 2 + 25, 0);
+
+
+    lv_obj_t * label = lv_label_create(tab_bar);
+    lv_obj_add_style(label, &style_title, 0);
+    lv_obj_add_flag(label, LV_OBJ_FLAG_IGNORE_LAYOUT);
+    lv_label_set_text_fmt(label, "LVGL v%d.%d.%d", lv_version_major(), lv_version_minor(), lv_version_patch());
+    lv_obj_align_to(label, logo, LV_ALIGN_OUT_RIGHT_TOP, 10, 0);
+
+    label = lv_label_create(tab_bar);
+    lv_label_set_text_static(label, "Widgets demo");
+    lv_obj_add_flag(label, LV_OBJ_FLAG_IGNORE_LAYOUT);
+    lv_obj_add_style(label, &style_text_muted, 0);
+    lv_obj_align_to(label, logo, LV_ALIGN_OUT_RIGHT_BOTTOM, 10, 0);
 }
 
 #if 0
@@ -430,8 +480,11 @@ int main(int argc, char **argv)
   #if LV_USE_OS == LV_OS_NONE
 
   // lv_demo_widgets();
+  // icon_test();
+  // lv_demo_music();
+  lv_demo_smartwatch();
+
   // create_gui();
-  icon_test();
   // lv_example_win_1();
   // lv_example_button_1();
 

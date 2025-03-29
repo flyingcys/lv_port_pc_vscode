@@ -125,7 +125,7 @@
 
     /* Enable native helium assembly to be compiled */
     #define LV_USE_NATIVE_HELIUM_ASM    0
-    
+
     /* 0: use a simple renderer capable of drawing only simple rectangles with gradient, images, texts, and straight lines only
      * 1: use a complex renderer capable of drawing rounded corners, shadow, skew lines, and arcs too */
     #define LV_DRAW_SW_COMPLEX          1
@@ -478,7 +478,7 @@
 /*Support bidirectional texts. Allows mixing Left-to-Right and Right-to-Left texts.
  *The direction will be processed according to the Unicode Bidirectional Algorithm:
  *https://www.w3.org/International/articles/inline-bidi-markup/uba-basics*/
-#define LV_USE_BIDI 0
+#define LV_USE_BIDI 1
 #if LV_USE_BIDI
     /*Set the default direction. Supported values:
     *`LV_BASE_DIR_LTR` Left-to-Right
@@ -489,7 +489,7 @@
 
 /*Enable Arabic/Persian processing
  *In these languages characters should be replaced with an other form based on their position in the text*/
-#define LV_USE_ARABIC_PERSIAN_CHARS 0
+#define LV_USE_ARABIC_PERSIAN_CHARS 1
 
 /*==================
  * WIDGETS
@@ -818,7 +818,7 @@
 #define LV_USE_FRAGMENT 0
 
 /*1: Support using images as font in label or span widgets */
-#define LV_USE_IMGFONT 0
+#define LV_USE_IMGFONT 1
 
 /*1: Enable an observer pattern implementation*/
 #define LV_USE_OBSERVER 1
@@ -996,6 +996,12 @@
 
 /* Smart watch demo */
 #define LV_USE_DEMO_SMARTWATCH      1
+
+/*E-bike demo with Lottie animations (if LV_USE_LOTTIE is enabled)*/
+#define LV_USE_DEMO_EBIKE			1
+#if LV_USE_DEMO_EBIKE
+	#define LV_DEMO_EBIKE_PORTRAIT  1    /*0: for 480x270..480x320, 1: for 480x800..720x1280*/
+#endif
 
 #endif /*LV_CONF_H*/
 
