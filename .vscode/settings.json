@@ -1,0 +1,8 @@
+{
+    "cmake.sourceDirectory": "/home/share/samba/lv_port_pc_vscode-v8/lv_drivers",
+    "files.associations": {
+        "lv_100ask_example_nes.h": "c",
+        "lv_lib_100ask.h": "c",
+        "pthread.h": "c"
+    }
+}
