@@ -30,7 +30,7 @@ void update_clock(lv_timer_t *timer)
 void lv_app_clock(void)
 {
    /*Create a font*/
-    lv_font_t * font = lv_freetype_font_create(PATH_PREFIX "lvgl/demos/multilang/assets/fonts/BebasNeue-Regular.ttf",
+    lv_font_t * font = lv_freetype_font_create(PATH_PREFIX "lvgl/demos/multilang/assets/fonts/NotoSerifHebrew-SemiBold.ttf",
                                                LV_FREETYPE_FONT_RENDER_MODE_BITMAP,
                                                100,
                                                LV_FREETYPE_FONT_STYLE_NORMAL);

@@ -7,6 +7,8 @@ set(FREERTOS_PORT GCC_POSIX CACHE STRING "Port for FreeRTOS on Posix environment
 unset(USE_FREERTOS CACHE)
 
 option(USE_FREERTOS "Enable FreeRTOS" OFF) # Turn this on to enable FreeRTOS
+option(ASAN "Enable Address Sanitizer" OFF) # Turn this on to enable Address Sanitizer
+option(CMAKE_BUILD_TYPE "Build type" Debug) # Set the build type to Debug by default
 
 if(USE_FREERTOS)
     message(STATUS "FreeRTOS is enabled")
@@ -83,11 +85,20 @@ if(USE_FREERTOS)
     # Link FreeRTOS libraries
     target_link_libraries(main freertos_config FreeRTOS)
 else()
+
+    file(GLOB GAME_FRUIT_NINJA ${PROJECT_SOURCE_DIR}/lvgl_game/fruit_ninja/*.c)
+    file(GLOB clock_num ${PROJECT_SOURCE_DIR}/main/src/clock_num/*.c)
+
     add_executable(main
         ${PROJECT_SOURCE_DIR}/main/src/main.c
         ${PROJECT_SOURCE_DIR}/main/src/aka_font.c
         ${PROJECT_SOURCE_DIR}/main/src/mouse_cursor_icon.c
         ${PROJECT_SOURCE_DIR}/main/src/clock.c
+        ${PROJECT_SOURCE_DIR}/main/src/2048.c
+        ${PROJECT_SOURCE_DIR}/main/src/game_2048.c
+        ${PROJECT_SOURCE_DIR}/main/src/clock_new.c
+        ${clock_num}
+        # ${GAME_FRUIT_NINJA}
     )
 endif()
 

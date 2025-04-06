@@ -63,6 +63,24 @@ extern void freertos_main(void);
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
+static void gesture_event_cb(lv_event_t * e)
+{
+  lv_event_code_t code = lv_event_get_code(e);
+
+  if(code == LV_EVENT_GESTURE) {
+      lv_indev_t * indev = lv_indev_active();
+      if(indev) {
+          switch(lv_indev_get_gesture_dir(indev)) {
+              case LV_DIR_LEFT:  printf("左滑\n"); break;
+              case LV_DIR_RIGHT: printf("右滑\n"); break;
+              case LV_DIR_TOP:   printf("上滑\n"); break;
+              case LV_DIR_BOTTOM:printf("下滑\n"); break;
+              default: break;
+          }
+      }
+  }
+}
+
 void lv_text_demo(void)
 {
   lv_obj_t * label = lv_label_create(lv_screen_active());
@@ -76,6 +94,9 @@ void lv_font_test(void)
     lv_obj_t* label = lv_label_create(lv_scr_act());
     lv_obj_set_style_text_font(label, & aka_font, LV_STATE_DEFAULT);
     lv_label_set_text(label,"风扇监控!!!!");
+
+    lv_obj_t * screen = lv_screen_active();
+    lv_obj_add_event_cb(screen, gesture_event_cb, LV_EVENT_ALL, NULL);
 }
 
 int main(int argc, char **argv)
@@ -87,14 +108,21 @@ int main(int argc, char **argv)
   lv_init();
 
   /*Initialize the HAL (display, input devices, tick) for LVGL*/
-  hal_init(320, 480);
+  hal_init(640, 480);
 
   #if LV_USE_OS == LV_OS_NONE
  
   // lv_demo_widgets();
   // lv_font_test();
   // lv_text_demo();
-  lv_app_clock();
+  // lv_app_clock();
+  
+  // game_2048_create(lv_screen_active());
+  
+  // game_2048(lv_screen_active());
+  create_clock(lv_screen_active());
+
+  // lv_example_grid_4();
   // lv_demo_benchmark();
 
   while(1) {

@@ -78,7 +78,8 @@ static void add_new_tile() {
 }
 
 // 主界面创建
-void game_create(lv_obj_t *parent) {
+void game_2048_create(lv_obj_t *parent)
+{
     create_score_label(parent);
     create_grid_ui(parent);
     game_init();
@@ -106,6 +107,18 @@ static void create_grid_ui(lv_obj_t *parent) {
                     CELL_SIZE * SIZE + PADDING * (SIZE + 1),
                     CELL_SIZE * SIZE + PADDING * (SIZE + 1));
     lv_obj_center(grid_container);
+
+    // 设置网格行列描述符
+    static lv_coord_t col_dsc[SIZE + 1];
+    static lv_coord_t row_dsc[SIZE + 1];
+    for (int i = 0; i < SIZE; i++) {
+        col_dsc[i] = CELL_SIZE;  // 每列宽度
+        row_dsc[i] = CELL_SIZE;  // 每行高度
+    }
+    col_dsc[SIZE] = LV_GRID_TEMPLATE_LAST; // 结束标记
+    row_dsc[SIZE] = LV_GRID_TEMPLATE_LAST;
+    lv_obj_set_grid_dsc_array(grid_container, col_dsc, row_dsc);
+
     lv_obj_set_layout(grid_container, LV_LAYOUT_GRID);
     lv_obj_set_style_pad_all(grid_container, PADDING, 0);
     lv_obj_set_style_bg_color(grid_container, lv_color_hex(0xBBADA0), 0);
