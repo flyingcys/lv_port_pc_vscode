@@ -88,6 +88,7 @@ else()
 
     file(GLOB GAME_FRUIT_NINJA ${PROJECT_SOURCE_DIR}/lvgl_game/fruit_ninja/*.c)
     file(GLOB clock_num ${PROJECT_SOURCE_DIR}/main/src/clock_num/*.c)
+    file(GLOB 100ASK ${PROJECT_SOURCE_DIR}/100ask/*.c ${PROJECT_SOURCE_DIR}/100ask/mapper/*.c)
 
     add_executable(main
         ${PROJECT_SOURCE_DIR}/main/src/main.c
@@ -97,7 +98,7 @@ else()
         ${PROJECT_SOURCE_DIR}/main/src/2048.c
         ${PROJECT_SOURCE_DIR}/main/src/game_2048.c
         ${PROJECT_SOURCE_DIR}/main/src/clock_new.c
-        ${clock_num}
+        ${clock_num} ${100ASK}
         # ${GAME_FRUIT_NINJA}
     )
 endif()
