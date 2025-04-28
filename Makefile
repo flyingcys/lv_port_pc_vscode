@@ -41,7 +41,7 @@ endif
 DEFINES				:= -D SIMULATOR=1 -D LV_BUILD_TEST=0 -D $(LV_DRIVER_USE)
 
 # Include simulator inc folder first so lv_conf.h from custom UI can be used instead
-INC 				:= -I./ui/simulator/inc/ -I./ -I./lvgl/ #-I/usr/include/freetype2 -L/usr/local/lib
+INC 				:= -I./ui/simulator/inc/ -I./ -I./lvgl/ -I./main/src/eleven2/eleven2 -I./main/src/lv_100ask_2048 #-I/usr/include/freetype2 -L/usr/local/lib
 LDLIBS	 			:= -l$(LV_DRIVER) -lpthread -lm #-lfreetype -lavformat -lavcodec -lavutil -lswscale -lm -lz
 BIN 				:= $(BIN_DIR)/demo
 

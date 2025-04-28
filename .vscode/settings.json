@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "lv_100ask_nes.h": "c",
+        "stdio.h": "c",
+        "infones_mapper_004.h": "c",
+        "infones_mapper_006.h": "c",
+        "infones_mapper_007.h": "c",
+        "infones.h": "c",
+        "fruit_ninja.h": "c"
+    }
+}
