@@ -111,7 +111,7 @@ static void create_grid_ui(lv_obj_t *parent) {
     // 设置网格行列描述符
     static lv_coord_t col_dsc[SIZE + 1];
     static lv_coord_t row_dsc[SIZE + 1];
-    for (int i = 0; i < SIZE; i++) {
+    for (int i = 0; i < SIZE; i ++) {
         col_dsc[i] = CELL_SIZE;  // 每列宽度
         row_dsc[i] = CELL_SIZE;  // 每行高度
     }

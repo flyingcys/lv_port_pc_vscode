@@ -189,19 +189,19 @@ int main(int argc, char **argv)
   lv_init();
 
   /*Initialize the HAL (display, input devices, tick) for LVGL*/
-  hal_init(640, 480);
+  hal_init(800, 680);
 
   #if LV_USE_OS == LV_OS_NONE
  
-//   lv_demo_widgets();
+  // lv_demo_widgets();
   // lv_font_test();
   // lv_text_demo();
-  lv_100ask_nes_simple_test();
+  // lv_100ask_nes_simple_test();
   // lv_app_clock();
   
   // game_2048_create(lv_screen_active());
-  
-  // game_2048(lv_screen_active());
+  // lv_100ask_nes_simple_test();
+  game_2048(lv_screen_active());
   // create_clock(lv_screen_active());
 
 //   create_key_display_ui();
