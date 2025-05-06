@@ -195,47 +195,47 @@ void lv_example_xiaozhi(void)
   lv_obj_set_style_border_color(container_, current_theme.border, 0);       // 设置边框的颜色属性
 
   /* Status bar */
-  // status_bar_ = lv_obj_create(container_);
-  // lv_obj_set_size(status_bar_, LV_HOR_RES, fonts_.text_font->line_height);
-  // lv_obj_set_style_radius(status_bar_, 0, 0);
-  // lv_obj_set_style_bg_color(status_bar_, current_theme.background, 0);
-  // lv_obj_set_style_text_color(status_bar_, current_theme.text, 0);
+  status_bar_ = lv_obj_create(container_);
+  lv_obj_set_size(status_bar_, LV_HOR_RES, fonts_.text_font->line_height);
+  lv_obj_set_style_radius(status_bar_, 0, 0);
+  lv_obj_set_style_bg_color(status_bar_, current_theme.background, 0);
+  lv_obj_set_style_text_color(status_bar_, current_theme.text, 0);
   
-  // lv_obj_set_flex_flow(status_bar_, LV_FLEX_FLOW_ROW);
-  // lv_obj_set_style_pad_all(status_bar_, 0, 0);
-  // lv_obj_set_style_border_width(status_bar_, 0, 0);
-  // lv_obj_set_style_pad_column(status_bar_, 0, 0);
-  // lv_obj_set_style_pad_left(status_bar_, 2, 0);
-  // lv_obj_set_style_pad_right(status_bar_, 2, 0);
+  lv_obj_set_flex_flow(status_bar_, LV_FLEX_FLOW_ROW);
+  lv_obj_set_style_pad_all(status_bar_, 0, 0);
+  lv_obj_set_style_border_width(status_bar_, 0, 0);
+  lv_obj_set_style_pad_column(status_bar_, 0, 0);
+  lv_obj_set_style_pad_left(status_bar_, 2, 0);
+  lv_obj_set_style_pad_right(status_bar_, 2, 0);
 
-  // network_label_ = lv_label_create(status_bar_);
-  // lv_label_set_text(network_label_, LV_SYMBOL_WIFI);
-  // lv_obj_set_style_text_font(network_label_, fonts_.icon_font, 0);
-  // lv_obj_set_style_text_color(network_label_, current_theme.text, 0);
+  network_label_ = lv_label_create(status_bar_);
+  lv_label_set_text(network_label_, LV_SYMBOL_WIFI);
+  lv_obj_set_style_text_font(network_label_, fonts_.icon_font, 0);
+  lv_obj_set_style_text_color(network_label_, current_theme.text, 0);
 
-  // notification_label_ = lv_label_create(status_bar_);
-  // lv_obj_set_flex_grow(notification_label_, 1);
-  // lv_obj_set_style_text_align(notification_label_, LV_TEXT_ALIGN_CENTER, 0);
-  // lv_obj_set_style_text_color(notification_label_, current_theme.text, 0);
-  // lv_label_set_text(notification_label_, "");
-  // lv_obj_add_flag(notification_label_, LV_OBJ_FLAG_HIDDEN);
+  notification_label_ = lv_label_create(status_bar_);
+  lv_obj_set_flex_grow(notification_label_, 1);
+  lv_obj_set_style_text_align(notification_label_, LV_TEXT_ALIGN_CENTER, 0);
+  lv_obj_set_style_text_color(notification_label_, current_theme.text, 0);
+  lv_label_set_text(notification_label_, "");
+  lv_obj_add_flag(notification_label_, LV_OBJ_FLAG_HIDDEN);
 
-  // status_label_ = lv_label_create(status_bar_);
-  // lv_obj_set_flex_grow(status_label_, 1);
-  // lv_label_set_long_mode(status_label_, LV_LABEL_LONG_SCROLL_CIRCULAR);
-  // lv_obj_set_style_text_align(status_label_, LV_TEXT_ALIGN_CENTER, 0);
-  // lv_obj_set_style_text_color(status_label_, current_theme.text, 0);
-  // lv_label_set_text(status_label_, INITIALIZING);
+  status_label_ = lv_label_create(status_bar_);
+  lv_obj_set_flex_grow(status_label_, 1);
+  lv_label_set_long_mode(status_label_, LV_LABEL_LONG_SCROLL_CIRCULAR);
+  lv_obj_set_style_text_align(status_label_, LV_TEXT_ALIGN_CENTER, 0);
+  lv_obj_set_style_text_color(status_label_, current_theme.text, 0);
+  lv_label_set_text(status_label_, INITIALIZING);
 
-  // mute_label_ = lv_label_create(status_bar_);
-  // lv_label_set_text(mute_label_, "");
-  // lv_obj_set_style_text_font(mute_label_, fonts_.icon_font, 0);
-  // lv_obj_set_style_text_color(mute_label_, current_theme.text, 0);
+  mute_label_ = lv_label_create(status_bar_);
+  lv_label_set_text(mute_label_, "");
+  lv_obj_set_style_text_font(mute_label_, fonts_.icon_font, 0);
+  lv_obj_set_style_text_color(mute_label_, current_theme.text, 0);
 
-  // battery_label_ = lv_label_create(status_bar_);
-  // lv_label_set_text(battery_label_, LV_SYMBOL_BATTERY_FULL);
-  // lv_obj_set_style_text_font(battery_label_, fonts_.icon_font, 0);
-  // lv_obj_set_style_text_color(battery_label_, current_theme.text, 0);
+  battery_label_ = lv_label_create(status_bar_);
+  lv_label_set_text(battery_label_, LV_SYMBOL_BATTERY_FULL);
+  lv_obj_set_style_text_font(battery_label_, fonts_.icon_font, 0);
+  lv_obj_set_style_text_color(battery_label_, current_theme.text, 0);
 
   low_battery_popup_ = lv_obj_create(screen);
   lv_obj_set_scrollbar_mode(low_battery_popup_, LV_SCROLLBAR_MODE_OFF);
