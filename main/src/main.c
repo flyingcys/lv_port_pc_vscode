@@ -184,6 +184,14 @@ void lv_example_xiaozhi(void)
   lv_obj_set_style_text_color(screen, current_theme.text, 0);
   lv_obj_set_style_bg_color(screen, current_theme.background, 0);
 
+
+  // lv_obj_t * bg = lv_image_create(screen);
+  // LV_IMAGE_DECLARE(img_ebike_bg);
+  // lv_image_set_src(bg, &img_ebike_bg);
+
+  // lv_obj_align(bg, LV_ALIGN_CENTER, 0, 0);
+  // lv_obj_add_flag(bg, LV_OBJ_FLAG_IGNORE_LAYOUT);
+
   /* Container */
   container_ = lv_obj_create(screen);
   lv_obj_set_size(container_, LV_HOR_RES, LV_VER_RES);
@@ -213,12 +221,12 @@ void lv_example_xiaozhi(void)
   lv_obj_set_style_text_font(network_label_, fonts_.icon_font, 0);
   lv_obj_set_style_text_color(network_label_, current_theme.text, 0);
 
-  notification_label_ = lv_label_create(status_bar_);
-  lv_obj_set_flex_grow(notification_label_, 1);
-  lv_obj_set_style_text_align(notification_label_, LV_TEXT_ALIGN_CENTER, 0);
-  lv_obj_set_style_text_color(notification_label_, current_theme.text, 0);
-  lv_label_set_text(notification_label_, "");
-  lv_obj_add_flag(notification_label_, LV_OBJ_FLAG_HIDDEN);
+  // notification_label_ = lv_label_create(status_bar_);
+  // lv_obj_set_flex_grow(notification_label_, 1);
+  // lv_obj_set_style_text_align(notification_label_, LV_TEXT_ALIGN_CENTER, 0);
+  // lv_obj_set_style_text_color(notification_label_, current_theme.text, 0);
+  // lv_label_set_text(notification_label_, "");
+  // lv_obj_add_flag(notification_label_, LV_OBJ_FLAG_HIDDEN);
 
   status_label_ = lv_label_create(status_bar_);
   lv_obj_set_flex_grow(status_label_, 1);
@@ -227,10 +235,10 @@ void lv_example_xiaozhi(void)
   lv_obj_set_style_text_color(status_label_, current_theme.text, 0);
   lv_label_set_text(status_label_, INITIALIZING);
 
-  mute_label_ = lv_label_create(status_bar_);
-  lv_label_set_text(mute_label_, "");
-  lv_obj_set_style_text_font(mute_label_, fonts_.icon_font, 0);
-  lv_obj_set_style_text_color(mute_label_, current_theme.text, 0);
+  // mute_label_ = lv_label_create(status_bar_);
+  // lv_label_set_text(mute_label_, "");
+  // lv_obj_set_style_text_font(mute_label_, fonts_.icon_font, 0);
+  // lv_obj_set_style_text_color(mute_label_, current_theme.text, 0);
 
   battery_label_ = lv_label_create(status_bar_);
   lv_label_set_text(battery_label_, LV_SYMBOL_BATTERY_FULL);
@@ -249,7 +257,8 @@ void lv_example_xiaozhi(void)
   lv_obj_set_style_text_color(low_battery_label_, lv_color_white(), 0);
   lv_obj_center(low_battery_label_);
   // lv_obj_add_flag(low_battery_popup_, LV_OBJ_FLAG_HIDDEN);                 // 设置为隐藏
-    
+  
+  return;
   /* Content */
   content_ = lv_obj_create(container_);
   lv_obj_set_scrollbar_mode(content_, LV_SCROLLBAR_MODE_OFF);
@@ -275,6 +284,63 @@ void lv_example_xiaozhi(void)
   lv_obj_set_style_text_align(chat_message_label_, LV_TEXT_ALIGN_CENTER, 0); // 设置文本居中对齐
   lv_obj_set_style_text_color(chat_message_label_, current_theme.text, 0);
 }
+
+void lv_desktop_ui(void)
+{
+  lv_obj_t * screen = lv_screen_active();
+
+  lv_obj_t * container = lv_obj_create(screen);
+  lv_obj_set_size(container, LV_HOR_RES, LV_VER_RES);
+  lv_obj_set_flex_flow(container, LV_FLEX_FLOW_COLUMN);        // 垂直布局
+  lv_obj_set_style_pad_all(container, 0, 0);                   // 无内边距
+  // lv_obj_set_style_bg_color(container, lv_color_black(), 0);
+
+  // lv_obj_t * bg = lv_image_create(container);
+  // LV_IMAGE_DECLARE(img_ebike_bg);
+  // lv_image_set_src(bg, &img_ebike_bg);
+  // lv_obj_align(bg, LV_ALIGN_CENTER, 0, 0);
+  // lv_obj_add_flag(bg, LV_OBJ_FLAG_IGNORE_LAYOUT);
+  
+  lv_obj_t * status_bar = lv_obj_create(container);
+  lv_obj_set_size(status_bar, LV_HOR_RES, 100);
+  lv_obj_set_style_radius(status_bar, 0, 0);
+  lv_obj_set_style_bg_color(status_bar, lv_color_white(), 0);  // 背景色
+  lv_obj_set_style_border_width(status_bar, 0, 0);            // 无边框
+  lv_obj_set_style_text_font(status_bar, &lv_font_montserrat_26, 0);  // 字体
+
+  lv_obj_set_flex_flow(status_bar, LV_FLEX_FLOW_ROW);       // 水平布局
+  lv_obj_set_flex_align(status_bar, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_SPACE_BETWEEN);
+
+
+  printf("Status bar size: %dx%d\n", lv_obj_get_width(status_bar), lv_obj_get_height(status_bar));
+  printf("Screen width: %d, Status bar width: %d\n", 
+        lv_disp_get_hor_res(NULL), lv_obj_get_width(status_bar));
+
+  // WiFi 标签（靠左）
+  lv_obj_t * network_label = lv_label_create(status_bar);
+  lv_label_set_text(network_label, LV_SYMBOL_WIFI);
+  lv_obj_set_style_pad_right(network_label, 10, 0);  // 右边距10px
+
+  // 添加一个占位空白对象
+  // lv_obj_t *spacer = lv_obj_create(status_bar);
+  // lv_obj_set_size(spacer, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+  // lv_obj_set_flex_grow(spacer, 1);  // 占据所有剩余空间
+  
+  lv_obj_t * notification_label = lv_label_create(status_bar);
+  lv_label_set_text(notification_label, "");
+  lv_obj_set_flex_grow(notification_label, 1);  // 占据剩余空间
+
+  // 右侧标签（靠右）
+  // lv_obj_t * battery_label = lv_label_create(status_bar);
+  // lv_label_set_text(battery_label, LV_SYMBOL_BATTERY_FULL);
+  // lv_obj_set_style_pad_left(battery_label, 10, 0);  // 左边距10px
+
+  lv_obj_t * time_label = lv_label_create(status_bar);
+  lv_label_set_text(time_label, "12:34");
+  lv_obj_set_style_pad_left(time_label, 10, 0);  // 左边距10px
+
+}
+
 int main(int argc, char **argv)
 {
   (void)argc; /*Unused*/
@@ -290,7 +356,8 @@ int main(int argc, char **argv)
  
   // lv_demo_widgets();
   // lv_example_flex_2();
-  lv_example_xiaozhi();
+  // lv_example_xiaozhi();
+  lv_desktop_ui();
   // lv_ui_test();
   // lv_example_anim_1();
 

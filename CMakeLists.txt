@@ -132,11 +132,11 @@ if(LV_USE_FFMPEG)
 endif()
 
 # Conditionally include and link FreeType if LV_USE_FREETYPE is enabled
-if(LV_USE_FREETYPE)
-    find_package(Freetype REQUIRED)
-    target_include_directories(lvgl PUBLIC ${FREETYPE_INCLUDE_DIRS})
-    target_link_libraries(main ${FREETYPE_LIBRARIES})
-endif()
+# if(LV_USE_FREETYPE)
+#     find_package(Freetype REQUIRED)
+#     target_include_directories(lvgl PUBLIC ${FREETYPE_INCLUDE_DIRS})
+#     target_link_libraries(main ${FREETYPE_LIBRARIES})
+# endif()
 
 # Apply additional compile options if the build type is Debug
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
