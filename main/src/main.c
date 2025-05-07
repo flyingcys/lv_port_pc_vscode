@@ -322,13 +322,19 @@ void lv_desktop_ui(void)
   lv_obj_set_style_pad_right(network_label, 10, 0);  // 右边距10px
 
   // 添加一个占位空白对象
-  // lv_obj_t *spacer = lv_obj_create(status_bar);
-  // lv_obj_set_size(spacer, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
-  // lv_obj_set_flex_grow(spacer, 1);  // 占据所有剩余空间
+  // lv_obj_t * text_label = lv_obj_create(status_bar);
+  // lv_obj_set_size(text_label, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+  // // lv_label_set_text(text_label, "12025/5/7");
+  // lv_obj_set_flex_grow(text_label, 1);  // 占据所有剩余空间
   
-  lv_obj_t * notification_label = lv_label_create(status_bar);
-  lv_label_set_text(notification_label, "");
-  lv_obj_set_flex_grow(notification_label, 1);  // 占据剩余空间
+  lv_obj_t * text_label = lv_label_create(status_bar);
+  lv_label_set_text(text_label, "2025/5/7");
+  lv_obj_set_flex_grow(text_label, 1);  // 占据剩余空间
+  lv_obj_set_width(text_label, LV_PCT(100));               // 宽度填满父容器
+  lv_obj_set_style_base_dir(text_label, LV_BASE_DIR_LTR, 0); // 文本方向
+  lv_obj_set_style_text_align(text_label, LV_TEXT_ALIGN_CENTER, 0);   // 文本居中
+  // lv_obj_align(text_label, LV_ALIGN_CENTER, 0, 0);     // 弹性布局中不要使用 lv_obj_align()
+  // lv_obj_set_align(text_label, LV_ALIGN_CENTER);       // 文本居中
 
   // 右侧标签（靠右）
   // lv_obj_t * battery_label = lv_label_create(status_bar);
