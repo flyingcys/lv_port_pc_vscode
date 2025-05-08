@@ -291,6 +291,86 @@ void lv_example_xiaozhi(void)
   lv_obj_set_style_text_color(chat_message_label_, current_theme.text, 0);
 }
 
+// 3. 定义返回按钮回调
+static void back_event_cb(lv_event_t * e)
+{
+  lv_obj_t * btn = lv_event_get_target(e);
+  lv_obj_t * page = lv_event_get_user_data(e);
+  
+  // 删除页面
+  lv_obj_del(page);
+  
+  // 可选：显示原页面
+  // lv_obj_clear_flag(original_page, LV_OBJ_FLAG_HIDDEN);
+}
+
+// 1. 定义页面创建函数
+static void create_new_page(lv_obj_t * parent)
+{
+  // 创建新页面（全屏）
+  lv_obj_t * new_page = lv_obj_create(parent);
+  lv_obj_set_size(new_page, LV_PCT(100), LV_PCT(100));
+  
+  // 添加返回按钮
+  lv_obj_t * btn_back = lv_btn_create(new_page);
+  lv_obj_align(btn_back, LV_ALIGN_TOP_LEFT, 10, 10);
+  lv_obj_t * label_back = lv_label_create(btn_back);
+  lv_label_set_text(label_back, "Back");
+  
+  // 返回按钮事件
+  lv_obj_add_event_cb(btn_back, back_event_cb, LV_EVENT_CLICKED, new_page);
+  
+  // 添加页面内容（示例）
+  lv_obj_t * label = lv_label_create(new_page);
+  lv_label_set_text(label, "This is a new page");
+  lv_obj_center(label);
+
+}
+
+#if 0
+static void create_new_page(lv_obj_t * parent)
+{
+
+    // 创建新页面（全屏）
+    lv_obj_t * new_page = lv_obj_create(parent);
+    lv_obj_remove_style_all(new_page); // 清除默认样式
+    lv_obj_set_size(new_page, LV_PCT(100), LV_PCT(100));
+    lv_obj_set_style_bg_color(new_page, lv_color_white(), 0);
+   
+    // 加载为新屏幕
+    lv_scr_load_anim(new_page, LV_SCR_LOAD_ANIM_OVER_LEFT, 300, 0, false);
+    
+    // 初始位置设置在屏幕右侧外
+    lv_obj_set_pos(new_page, lv_disp_get_hor_res(NULL), 0);
+    
+    // 添加返回按钮
+    lv_obj_t * btn_back = lv_btn_create(new_page);
+    lv_obj_align(btn_back, LV_ALIGN_TOP_LEFT, 10, 10);
+    lv_obj_t * label_back = lv_label_create(btn_back);
+    lv_label_set_text(label_back, "Back");
+    
+    // 返回按钮事件
+    lv_obj_add_event_cb(btn_back, back_event_cb, LV_EVENT_CLICKED, new_page);
+    
+    // 添加页面内容
+    lv_obj_t * label = lv_label_create(new_page);
+    lv_label_set_text(label, "This is a new page");
+    lv_obj_center(label);
+
+    // 动画设置
+    lv_anim_t a;
+    lv_anim_init(&a);
+    lv_anim_set_var(&a, new_page);
+    lv_anim_set_values(&a, lv_disp_get_hor_res(NULL), 0); // 从右到左
+    lv_anim_set_exec_cb(&a, (lv_anim_exec_xcb_t)lv_obj_set_x);
+    lv_anim_set_time(&a, 500);
+    lv_anim_set_path_cb(&a, lv_anim_path_ease_out); // 添加缓动曲线
+    lv_anim_start(&a);
+    
+    // 确保在最前
+    lv_obj_move_foreground(new_page);
+}
+    #endif
 void icon_event_cb(lv_event_t * e)
 {
   lv_obj_t * obj = lv_event_get_target(e);
@@ -299,6 +379,8 @@ void icon_event_cb(lv_event_t * e)
 
   if (event_code == LV_EVENT_CLICKED) {
     printf("LV_EVENT_CLICKED\n");
+    // 创建新页面
+    create_new_page(lv_scr_act());  // 在根屏幕创建
   } else if (event_code == LV_EVENT_LONG_PRESSED) {
     printf("LV_EVENT_LONG_PRESSED\n");
   } else if (event_code == LV_EVENT_LONG_PRESSED_REPEAT) {
