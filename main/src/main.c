@@ -261,7 +261,13 @@ void lv_example_xiaozhi(void)
   return;
   /* Content */
   content_ = lv_obj_create(container_);
+  // 完全禁用 content_ 对象的滚动条 
+  // LV_SCROLLBAR_MODE_OFF：表示完全隐藏滚动条
+  // LV_SCROLLBAR_MODE_ON：始终显示
+  // LV_SCROLLBAR_MODE_AUTO：仅在需要时显示
+  // LV_SCROLLBAR_MODE_ACTIVE：显示并可交互
   lv_obj_set_scrollbar_mode(content_, LV_SCROLLBAR_MODE_OFF);
+
   lv_obj_set_style_radius(content_, 0, 0);
   lv_obj_set_width(content_, LV_HOR_RES);
   lv_obj_set_flex_grow(content_, 1);                                         // 设置为填充剩余空间
@@ -285,6 +291,20 @@ void lv_example_xiaozhi(void)
   lv_obj_set_style_text_color(chat_message_label_, current_theme.text, 0);
 }
 
+void icon_event_cb(lv_event_t * e)
+{
+  lv_obj_t * obj = lv_event_get_target(e);
+
+  lv_event_code_t event_code = lv_event_get_code(e);
+
+  if (event_code == LV_EVENT_CLICKED) {
+    printf("LV_EVENT_CLICKED\n");
+  } else if (event_code == LV_EVENT_LONG_PRESSED) {
+    printf("LV_EVENT_LONG_PRESSED\n");
+  } else if (event_code == LV_EVENT_LONG_PRESSED_REPEAT) {
+    printf("LV_EVENT_LONG_PRESSED_REPEAT\n");
+  }
+}
 void lv_desktop_ui(void)
 {
   lv_obj_t * screen = lv_screen_active();
@@ -345,6 +365,21 @@ void lv_desktop_ui(void)
   lv_label_set_text(time_label, "12:34");
   lv_obj_set_style_pad_left(time_label, 10, 0);  // 左边距10px
 
+
+  lv_obj_t * desktop = lv_obj_create(container);
+  lv_obj_set_width(desktop, LV_HOR_RES);
+  lv_obj_set_flex_flow(desktop, LV_FLEX_FLOW_COLUMN);        // 垂直布局
+  lv_obj_set_flex_grow(desktop, 1);                         // 填充剩余空间
+  lv_obj_set_style_pad_all(desktop, 0, 0);                   // 无内边距
+  lv_obj_set_style_bg_color(desktop, lv_color_white(), 0);  // 背景色
+  lv_obj_set_style_border_width(desktop, 0, 0);             // 无边框
+
+  lv_obj_t * icon = lv_image_create(desktop);
+  LV_IMAGE_DECLARE(FruitNinja_128x128);
+  lv_image_set_src(icon, &FruitNinja_128x128);
+  lv_obj_add_flag(icon, LV_OBJ_FLAG_CLICKABLE);
+
+  lv_obj_add_event_cb(icon, icon_event_cb, LV_EVENT_CLICKED, NULL);
 }
 
 int main(int argc, char **argv)
