@@ -464,6 +464,38 @@ void lv_desktop_ui(void)
   lv_obj_add_event_cb(icon, icon_event_cb, LV_EVENT_CLICKED, NULL);
 }
 
+void lvgl_image_test(void)
+{
+    LV_IMAGE_DECLARE(FruitNinja_128x128);
+    lv_obj_t * img = lv_image_create(lv_screen_active());
+    lv_image_set_src(img, &FruitNinja_128x128);
+    lv_obj_align(img, LV_ALIGN_CENTER, 0, 0);
+    lv_obj_set_size(img, 128, 128);
+
+    lv_anim_t anim;
+
+    lv_anim_init(&anim);
+    lv_anim_set_var(&anim, img);
+    lv_anim_set_exec_cb(&anim, (lv_anim_exec_xcb_t)lv_image_set_rotation);
+    lv_anim_set_values(&anim, 0, 360 * 10);                           // 360 度，单位：0.1度
+    lv_anim_set_time(&anim, 2000);
+    lv_anim_set_repeat_count(&anim, LV_ANIM_REPEAT_INFINITE);         // 无限循环
+    lv_anim_start(&anim);
+
+    lv_anim_t zoom_anim;
+    lv_anim_init(&zoom_anim);
+    lv_anim_set_var(&zoom_anim, img);
+    lv_anim_set_exec_cb(&zoom_anim, (lv_anim_exec_xcb_t)lv_image_set_scale);
+    lv_anim_set_values(&zoom_anim, 128, 256);
+    lv_anim_set_time(&zoom_anim, 2000);
+    lv_anim_set_repeat_count(&zoom_anim, LV_ANIM_REPEAT_INFINITE);   // 无限循环
+    lv_anim_set_playback_delay(&zoom_anim, 1000);                     // 延迟1秒播放
+    lv_anim_start(&zoom_anim);
+
+
+
+}
+
 int main(int argc, char **argv)
 {
   (void)argc; /*Unused*/
@@ -480,7 +512,10 @@ int main(int argc, char **argv)
   // lv_demo_widgets();
   // lv_example_flex_2();
   // lv_example_xiaozhi();
-  lv_desktop_ui();
+  // lv_desktop_ui();
+  lvgl_image_test();
+  // lv_example_image_3();
+
   // lv_ui_test();
   // lv_example_anim_1();
 
