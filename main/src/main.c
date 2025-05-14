@@ -505,7 +505,7 @@ int main(int argc, char **argv)
   lv_init();
 
   /*Initialize the HAL (display, input devices, tick) for LVGL*/
-  hal_init(320, 480);
+  hal_init(800, 600);
 
   #if LV_USE_OS == LV_OS_NONE
  
@@ -513,7 +513,8 @@ int main(int argc, char **argv)
   // lv_example_flex_2();
   // lv_example_xiaozhi();
   // lv_desktop_ui();
-  lvgl_image_test();
+  // lvgl_image_test();
+  game_2048(lv_screen_active());
   // lv_example_image_3();
 
   // lv_ui_test();

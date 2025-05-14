@@ -89,7 +89,8 @@ else()
         ${PROJECT_SOURCE_DIR}/main/src/font_puhui_20_4.c
         ${PROJECT_SOURCE_DIR}/main/src/font_awesome_20_4.c
         ${PROJECT_SOURCE_DIR}/main/src/font_awesome_30_4.c
-        ${PROJECT_SOURCE_DIR}/main/src/FruitNinja_128x128.c
+        ${PROJECT_SOURCE_DIR}/main/src/desktop/FruitNinja_128x128.c
+        ${PROJECT_SOURCE_DIR}/main/src/2048/game_2048.c
     )
 endif()
 
