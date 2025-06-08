@@ -8,18 +8,19 @@
 // #define CELL_SIZE 80
 // #define PADDING 10
 
-static lv_obj_t * game_parent;
-static lv_obj_t * score_label;
-static lv_obj_t * grid_container;
-static lv_obj_t * home, *new_game, *undo;
+static lv_obj_t * game_parent;                   // 游戏主窗口
+static lv_obj_t * score_label;                   // 当前分数
+static lv_obj_t * best_label;                    // 最高分
+static lv_obj_t * grid_container;                // 网格容器
+static lv_obj_t * home, *new_game, *undo;        // 按钮
 
-static lv_obj_t * grid_obj[SIZE][SIZE];
-static lv_obj_t * grid_label[SIZE][SIZE];
+static lv_obj_t * grid_obj[SIZE][SIZE];          // 网格对象
+static lv_obj_t * grid_label[SIZE][SIZE];        // 网格标签
 
-static uint32_t grid_value[SIZE][SIZE] = {0};
-static uint32_t score = 0, best = 0;
+static uint32_t grid_value[SIZE][SIZE] = {0};    // 网格值
+static uint32_t score = 0, best = 0;             // 分数和最高分
 
-static lv_style_t title_style;
+static lv_style_t title_style;                   // 标题样式
 
 /*
 todo list:
@@ -256,34 +257,34 @@ static void grid_event_cb(lv_event_t * e)
 
             switch (lv_indev_get_gesture_dir(indev)) {
                 case LV_DIR_LEFT:
-                    printf("左滑\n");
+                    printf("Swipe LEFT\n");
                     break;
 
                 case LV_DIR_RIGHT:
-                    printf("右滑\n");
+                    printf("Swipe RIGHT\n");
                     break;
 
                 case LV_DIR_TOP:
-                    printf("上滑\n");
+                    printf("Swipe UP\n");
                     break;
 
                 case LV_DIR_BOTTOM:
-                    printf("下滑\n");
+                    printf("Swipe DOWN\n");
                     break;
 
                 default:
                     break;
             }
 
+            // 执行移动
+            grid_value_calc(dir);
+
+            // 移动后检查游戏是否结束
             if (_is_game_over()) {
-                printf("游戏结束\n");
+                printf("Game Over\n");
                 _show_game_over_msg(); 
                 return;
             }
-
-            grid_value_calc(dir);
-
-
         }
 
     }
