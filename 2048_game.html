@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2048游戏</title>
+    <!-- 引入瘦长型Google字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800;900&family=Roboto+Condensed:wght@400;500;600;700;900&family=Source+Sans+Pro:wght@400;600;700;900&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter Tight', 'Roboto Condensed', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            background-color: #FAF8EF;
+            padding: 20px;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            font-weight: 500;
+            letter-spacing: -0.02em;
+            font-stretch: condensed;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            height: 120px;
+        }
+
+        .title {
+            font-family: 'Inter Tight', 'Roboto Condensed', 'Oswald', sans-serif;
+            font-size: 65px;
+            font-weight: 700;
+            color: #776E65;
+            line-height: 0.9;
+            letter-spacing: -0.03em;
+            font-stretch: condensed;
+            transform: scaleX(0.92);
+            transform-origin: left center;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .right-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 15px;
+        }
+
+        .score-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .score-box {
+            background-color: #BBADA0;
+            border-radius: 3px;
+            padding: 10px 15px;
+            text-align: center;
+            color: white;
+            min-width: 80px;
+        }
+
+        .score-label {
+            font-family: 'Inter Tight', 'Roboto Condensed', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 3px;
+            letter-spacing: 0.01em;
+            text-transform: uppercase;
+            font-stretch: condensed;
+        }
+
+        .score-value {
+            font-family: 'Inter Tight', 'Roboto Condensed', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            font-stretch: condensed;
+            transform: scaleX(0.94);
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            background-color: #BBADA0;
+            border: none;
+            border-radius: 3px;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.1s;
+        }
+
+        .control-btn:hover {
+            background-color: #9C8A7A;
+        }
+
+        .control-btn:active {
+            background-color: #8A7B6E;
+        }
+
+        .game-container {
+            background-color: #BBADA0;
+            border-radius: 6px;
+            padding: 5px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            cursor: grab;
+        }
+        
+        .game-container:active {
+            cursor: grabbing;
+        }
+
+        .grid-cell {
+            aspect-ratio: 1;
+            background-color: #CDC1B4;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter Tight', 'Roboto Condensed', 'Source Sans Pro', sans-serif;
+            font-size: 40px;
+            font-weight: 600;
+            color: #776E65;
+            transition: all 0.15s ease-in-out;
+            min-height: 80px;
+            letter-spacing: -0.03em;
+            font-stretch: condensed;
+            transform: scaleX(0.95);
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* 数字颜色 */
+        .cell-2 { background-color: #EEE4DA; color: #776E65; font-weight: 600; font-stretch: condensed; letter-spacing: -0.03em; }
+        .cell-4 { background-color: #EDE0C8; color: #776E65; font-weight: 600; font-stretch: condensed; letter-spacing: -0.03em; }
+        .cell-8 { background-color: #F2B179; color: white; font-weight: 600; font-stretch: condensed; letter-spacing: -0.03em; }
+        .cell-16 { background-color: #F59563; color: white; font-weight: 600; font-stretch: condensed; letter-spacing: -0.03em; }
+        .cell-32 { background-color: #F67C5F; color: white; font-weight: 600; font-stretch: condensed; letter-spacing: -0.03em; }
+        .cell-64 { background-color: #F65E3B; color: white; font-weight: 600; font-stretch: condensed; letter-spacing: -0.03em; }
+        .cell-128 { background-color: #EDCF72; color: white; font-weight: 700; font-stretch: condensed; letter-spacing: -0.04em; }
+        .cell-256 { background-color: #EDCC61; color: white; font-weight: 700; font-stretch: condensed; letter-spacing: -0.04em; }
+        .cell-512 { background-color: #EDC850; color: white; font-weight: 700; font-stretch: condensed; letter-spacing: -0.04em; }
+        .cell-1024 { background-color: #EDC53F; color: white; font-weight: 700; font-stretch: condensed; letter-spacing: -0.05em; }
+        .cell-2048 { background-color: #EDC22E; color: white; font-weight: 700; font-stretch: condensed; letter-spacing: -0.05em; }
+
+        .cell-new {
+            animation: cell-appear 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .cell-merged {
+            animation: cell-merge 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .cell-flash {
+            animation: cell-flash 0.3s ease-in-out;
+        }
+
+        .cell-bounce {
+            animation: cell-bounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .cell-pulse {
+            animation: cell-pulse 0.3s ease-in-out;
+        }
+
+        @keyframes cell-appear {
+            0% {
+                transform: scale(0) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2) rotate(5deg);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        @keyframes cell-merge {
+            0% {
+                transform: scale(1) rotate(0deg);
+            }
+            25% {
+                transform: scale(1.15) rotate(2deg);
+            }
+            50% {
+                transform: scale(1.3) rotate(-2deg);
+                box-shadow: 0 0 20px rgba(237, 194, 46, 0.5);
+            }
+            75% {
+                transform: scale(1.1) rotate(1deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                box-shadow: none;
+            }
+        }
+
+        @keyframes cell-flash {
+            0%, 100% {
+                background-color: inherit;
+            }
+            50% {
+                background-color: #FFD700;
+                box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes cell-bounce {
+            0% {
+                transform: scale(1) translateY(0);
+            }
+            30% {
+                transform: scale(1.2) translateY(-10px);
+            }
+            60% {
+                transform: scale(1.1) translateY(-5px);
+            }
+            80% {
+                transform: scale(1.05) translateY(-2px);
+            }
+            100% {
+                transform: scale(1) translateY(0);
+            }
+        }
+
+                 @keyframes cell-pulse {
+             0%, 100% {
+                 transform: scale(1);
+                 box-shadow: 0 0 0 rgba(237, 194, 46, 0.7);
+             }
+             50% {
+                 transform: scale(1.08);
+                 box-shadow: 0 0 0 10px rgba(237, 194, 46, 0);
+             }
+         }
+
+         /* 特殊成就动画 */
+         .cell-achievement {
+             animation: cell-achievement 1s ease-in-out;
+         }
+
+         @keyframes cell-achievement {
+             0% {
+                 transform: scale(1) rotate(0deg);
+             }
+             15% {
+                 transform: scale(1.3) rotate(5deg);
+                 box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+             }
+             30% {
+                 transform: scale(1.2) rotate(-5deg);
+                 box-shadow: 0 0 25px rgba(255, 165, 0, 0.8);
+             }
+             45% {
+                 transform: scale(1.25) rotate(3deg);
+                 box-shadow: 0 0 35px rgba(255, 215, 0, 0.9);
+             }
+             60% {
+                 transform: scale(1.15) rotate(-3deg);
+                 box-shadow: 0 0 20px rgba(255, 140, 0, 0.7);
+             }
+             75% {
+                 transform: scale(1.1) rotate(2deg);
+                 box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+             }
+             90% {
+                 transform: scale(1.05) rotate(-1deg);
+                 box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+             }
+             100% {
+                 transform: scale(1) rotate(0deg);
+                 box-shadow: none;
+             }
+         }
+
+        .game-over {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            font-size: 24px;
+            color: #776E65;
+            z-index: 1000;
+        }
+
+        .restart-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #8F7A66;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .restart-btn:hover {
+            background-color: #776E65;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .title {
+                font-size: 50px;
+                font-stretch: condensed;
+                letter-spacing: -0.03em;
+                transform: scaleX(0.92);
+            }
+            
+            .grid-cell {
+                font-size: 32px;
+                min-height: 60px;
+                font-weight: 600;
+                font-stretch: condensed;
+                letter-spacing: -0.03em;
+                transform: scaleX(0.95);
+            }
+             
+            .cell-128, .cell-256, .cell-512, .cell-1024, .cell-2048 {
+                font-weight: 700;
+                font-stretch: condensed;
+                letter-spacing: -0.04em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title">2048</div>
+            <div class="right-section">
+                <div class="score-container">
+                    <div class="score-box">
+                        <div class="score-label">得分</div>
+                        <div class="score-value" id="score">5888</div>
+                    </div>
+                    <div class="score-box">
+                        <div class="score-label">高分</div>
+                        <div class="score-value" id="best-score">37784</div>
+                    </div>
+                </div>
+                <div class="button-container">
+                    <button class="control-btn" id="refresh-btn">↻</button>
+                    <button class="control-btn" id="home-btn">⌂</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-container" id="game-board">
+            <!-- 4x4网格将由JavaScript动态生成 -->
+        </div>
+    </div>
+
+    <div class="game-over" id="game-over" style="display: none;">
+        <div>游戏结束!</div>
+        <button class="restart-btn" onclick="newGame()">重新开始</button>
+    </div>
+
+    <script>
+        class Game2048 {
+            constructor() {
+                this.grid = [];
+                this.score = 5888;
+                this.bestScore = parseInt(localStorage.getItem('bestScore') || '37784');
+                this.size = 4;
+                this.gameBoard = document.getElementById('game-board');
+                this.scoreElement = document.getElementById('score');
+                this.bestScoreElement = document.getElementById('best-score');
+                this.gameOverElement = document.getElementById('game-over');
+                
+                this.initGrid();
+                this.setupControls();
+                this.setupTouch();
+                this.loadInitialState();
+                this.updateDisplay();
+                
+                // 设置初始鼠标样式
+                this.gameBoard.style.cursor = 'grab';
+            }
+
+            initGrid() {
+                this.grid = Array(this.size).fill().map(() => Array(this.size).fill(0));
+                this.gameBoard.innerHTML = '';
+                
+                for (let i = 0; i < this.size; i++) {
+                    for (let j = 0; j < this.size; j++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'grid-cell';
+                        cell.id = `cell-${i}-${j}`;
+                        this.gameBoard.appendChild(cell);
+                    }
+                }
+            }
+
+            loadInitialState() {
+                // 设置与图片一致的初始状态
+                this.grid = [
+                    [512, 2, 4, 2],
+                    [256, 16, 8, 2],
+                    [16, 8, 0, 0],
+                    [2, 0, 0, 0]
+                ];
+            }
+
+            setupControls() {
+                document.getElementById('refresh-btn').addEventListener('click', () => this.newGame());
+                document.getElementById('home-btn').addEventListener('click', () => {
+                    alert('返回主页功能');
+                });
+                
+                document.addEventListener('keydown', (e) => {
+                    switch(e.key) {
+                        case 'ArrowUp':
+                            e.preventDefault();
+                            this.move('up');
+                            break;
+                        case 'ArrowDown':
+                            e.preventDefault();
+                            this.move('down');
+                            break;
+                        case 'ArrowLeft':
+                            e.preventDefault();
+                            this.move('left');
+                            break;
+                        case 'ArrowRight':
+                            e.preventDefault();
+                            this.move('right');
+                            break;
+                    }
+                });
+            }
+
+            setupTouch() {
+                let startX = 0;
+                let startY = 0;
+                let startTime = 0;
+                
+                this.gameBoard.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    startX = touch.clientX;
+                    startY = touch.clientY;
+                    startTime = Date.now();
+                }, { passive: false });
+                
+                this.gameBoard.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    const touch = e.changedTouches[0];
+                    const endX = touch.clientX;
+                    const endY = touch.clientY;
+                    const deltaX = endX - startX;
+                    const deltaY = endY - startY;
+                    const deltaTime = Date.now() - startTime;
+                    
+                    // 忽略太短的滑动或时间太长的滑动
+                    if (Math.abs(deltaX) < 30 && Math.abs(deltaY) < 30) return;
+                    if (deltaTime > 300) return;
+                    
+                    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                        // 水平滑动
+                        if (deltaX > 0) {
+                            this.move('right');
+                        } else {
+                            this.move('left');
+                        }
+                    } else {
+                        // 垂直滑动
+                        if (deltaY > 0) {
+                            this.move('down');
+                        } else {
+                            this.move('up');
+                        }
+                    }
+                }, { passive: false });
+
+                // 鼠标支持
+                let mouseDown = false;
+                let mouseStartX = 0;
+                let mouseStartY = 0;
+                let mouseStartTime = 0;
+                
+                this.gameBoard.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    mouseDown = true;
+                    mouseStartX = e.clientX;
+                    mouseStartY = e.clientY;
+                    mouseStartTime = Date.now();
+                    this.gameBoard.style.cursor = 'grabbing';
+                });
+                
+                this.gameBoard.addEventListener('mousemove', (e) => {
+                    if (!mouseDown) return;
+                    e.preventDefault();
+                });
+                
+                this.gameBoard.addEventListener('mouseup', (e) => {
+                    if (!mouseDown) return;
+                    e.preventDefault();
+                    mouseDown = false;
+                    this.gameBoard.style.cursor = 'grab';
+                    
+                    const deltaX = e.clientX - mouseStartX;
+                    const deltaY = e.clientY - mouseStartY;
+                    const deltaTime = Date.now() - mouseStartTime;
+                    
+                    // 最小滑动距离调整为20px，更容易触发
+                    if (Math.abs(deltaX) < 20 && Math.abs(deltaY) < 20) return;
+                    if (deltaTime > 500) return;
+                    
+                    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                        // 水平滑动
+                        if (deltaX > 0) {
+                            this.move('right');
+                        } else {
+                            this.move('left');
+                        }
+                    } else {
+                        // 垂直滑动
+                        if (deltaY > 0) {
+                            this.move('down');
+                        } else {
+                            this.move('up');
+                        }
+                    }
+                });
+                
+                // 处理鼠标离开游戏区域的情况
+                this.gameBoard.addEventListener('mouseleave', (e) => {
+                    if (!mouseDown) return;
+                    
+                    const deltaX = e.clientX - mouseStartX;
+                    const deltaY = e.clientY - mouseStartY;
+                    const deltaTime = Date.now() - mouseStartTime;
+                    
+                    if (Math.abs(deltaX) < 20 && Math.abs(deltaY) < 20) {
+                        mouseDown = false;
+                        this.gameBoard.style.cursor = 'grab';
+                        return;
+                    }
+                    
+                    if (deltaTime > 500) {
+                        mouseDown = false;
+                        this.gameBoard.style.cursor = 'grab';
+                        return;
+                    }
+                    
+                    mouseDown = false;
+                    this.gameBoard.style.cursor = 'grab';
+                    
+                    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                        if (deltaX > 0) {
+                            this.move('right');
+                        } else {
+                            this.move('left');
+                        }
+                    } else {
+                        if (deltaY > 0) {
+                            this.move('down');
+                        } else {
+                            this.move('up');
+                        }
+                    }
+                });
+            }
+
+            move(direction) {
+                const oldGrid = this.grid.map(row => [...row]);
+                let moved = false;
+
+                switch(direction) {
+                    case 'left':
+                        moved = this.moveLeft();
+                        break;
+                    case 'right':
+                        moved = this.moveRight();
+                        break;
+                    case 'up':
+                        moved = this.moveUp();
+                        break;
+                    case 'down':
+                        moved = this.moveDown();
+                        break;
+                }
+
+                if (moved) {
+                    this.addRandomTile();
+                    this.updateDisplay();
+                    
+                    if (this.isGameOver()) {
+                        setTimeout(() => {
+                            this.gameOverElement.style.display = 'flex';
+                        }, 300);
+                    }
+                }
+            }
+
+            moveLeft() {
+                let moved = false;
+                const mergedCells = []; // 记录合并的位置
+                
+                for (let i = 0; i < this.size; i++) {
+                    const row = this.grid[i].filter(val => val !== 0);
+                    let mergedInRow = [];
+                    
+                    for (let j = 0; j < row.length - 1; j++) {
+                        if (row[j] === row[j + 1]) {
+                            row[j] *= 2;
+                            this.score += row[j];
+                            row.splice(j + 1, 1);
+                            mergedInRow.push(j); // 记录合并位置
+                        }
+                    }
+                    
+                    while (row.length < this.size) {
+                        row.push(0);
+                    }
+                    
+                    for (let j = 0; j < this.size; j++) {
+                        if (this.grid[i][j] !== row[j]) {
+                            moved = true;
+                        }
+                        this.grid[i][j] = row[j];
+                        
+                        // 如果这个位置发生了合并，添加到合并列表
+                        if (mergedInRow.includes(j) && row[j] > 0) {
+                            mergedCells.push({row: i, col: j, value: row[j]});
+                        }
+                    }
+                }
+                
+                // 为合并的格子添加动画
+                this.addMergeAnimation(mergedCells);
+                
+                return moved;
+            }
+
+            moveRight() {
+                let moved = false;
+                const mergedCells = [];
+                
+                for (let i = 0; i < this.size; i++) {
+                    const row = this.grid[i].filter(val => val !== 0);
+                    let mergedInRow = [];
+                    
+                    for (let j = row.length - 1; j > 0; j--) {
+                        if (row[j] === row[j - 1]) {
+                            row[j] *= 2;
+                            this.score += row[j];
+                            row.splice(j - 1, 1);
+                            mergedInRow.push(j - 1);
+                            j--;
+                        }
+                    }
+                    while (row.length < this.size) {
+                        row.unshift(0);
+                    }
+                    
+                    for (let j = 0; j < this.size; j++) {
+                        if (this.grid[i][j] !== row[j]) {
+                            moved = true;
+                        }
+                        this.grid[i][j] = row[j];
+                        
+                        if (row[j] > 0) {
+                            const originalIndex = j - (this.size - row.filter(v => v !== 0).length);
+                            if (mergedInRow.includes(originalIndex)) {
+                                mergedCells.push({row: i, col: j, value: row[j]});
+                            }
+                        }
+                    }
+                }
+                
+                this.addMergeAnimation(mergedCells);
+                return moved;
+            }
+
+            moveUp() {
+                let moved = false;
+                for (let j = 0; j < this.size; j++) {
+                    const column = [];
+                    for (let i = 0; i < this.size; i++) {
+                        if (this.grid[i][j] !== 0) {
+                            column.push(this.grid[i][j]);
+                        }
+                    }
+                    
+                    for (let i = 0; i < column.length - 1; i++) {
+                        if (column[i] === column[i + 1]) {
+                            column[i] *= 2;
+                            this.score += column[i];
+                            column.splice(i + 1, 1);
+                        }
+                    }
+                    
+                    while (column.length < this.size) {
+                        column.push(0);
+                    }
+                    
+                    for (let i = 0; i < this.size; i++) {
+                        if (this.grid[i][j] !== column[i]) {
+                            moved = true;
+                        }
+                        this.grid[i][j] = column[i];
+                    }
+                }
+                return moved;
+            }
+
+            moveDown() {
+                let moved = false;
+                for (let j = 0; j < this.size; j++) {
+                    const column = [];
+                    for (let i = 0; i < this.size; i++) {
+                        if (this.grid[i][j] !== 0) {
+                            column.push(this.grid[i][j]);
+                        }
+                    }
+                    
+                    for (let i = column.length - 1; i > 0; i--) {
+                        if (column[i] === column[i - 1]) {
+                            column[i] *= 2;
+                            this.score += column[i];
+                            column.splice(i - 1, 1);
+                            i--;
+                        }
+                    }
+                    
+                    while (column.length < this.size) {
+                        column.unshift(0);
+                    }
+                    
+                    for (let i = 0; i < this.size; i++) {
+                        if (this.grid[i][j] !== column[i]) {
+                            moved = true;
+                        }
+                        this.grid[i][j] = column[i];
+                    }
+                }
+                return moved;
+            }
+
+            addRandomTile() {
+                const emptyCells = [];
+                for (let i = 0; i < this.size; i++) {
+                    for (let j = 0; j < this.size; j++) {
+                        if (this.grid[i][j] === 0) {
+                            emptyCells.push([i, j]);
+                        }
+                    }
+                }
+                
+                if (emptyCells.length > 0) {
+                    const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+                    this.grid[randomCell[0]][randomCell[1]] = Math.random() < 0.9 ? 2 : 4;
+                    
+                    // 添加动画效果
+                    setTimeout(() => {
+                        const cell = document.getElementById(`cell-${randomCell[0]}-${randomCell[1]}`);
+                        cell.classList.add('cell-new');
+                        setTimeout(() => {
+                            cell.classList.remove('cell-new');
+                        }, 300);
+                    }, 50);
+                }
+            }
+
+            // 为合并的格子添加动画效果
+            addMergeAnimation(mergedCells) {
+                mergedCells.forEach((cellInfo, index) => {
+                    setTimeout(() => {
+                        const cell = document.getElementById(`cell-${cellInfo.row}-${cellInfo.col}`);
+                        if (cell) {
+                            // 根据合并的数值大小选择不同的动画
+                            let animationClass = 'cell-merged';
+                            let animationDuration = 400;
+                            
+                            if (cellInfo.value === 2048) {
+                                animationClass = 'cell-achievement'; // 达到2048特殊庆祝
+                                animationDuration = 1000;
+                                // 可以在这里添加音效或其他特效
+                                this.showAchievement('恭喜达到2048！');
+                            } else if (cellInfo.value >= 1024) {
+                                animationClass = 'cell-bounce'; // 大数值用弹跳动画
+                                animationDuration = 500;
+                            } else if (cellInfo.value >= 512) {
+                                animationClass = 'cell-achievement'; // 512也值得庆祝
+                                animationDuration = 800;
+                            } else if (cellInfo.value >= 256) {
+                                animationClass = 'cell-pulse';  // 中等数值用脉动动画
+                                animationDuration = 300;
+                            } else if (cellInfo.value >= 64) {
+                                animationClass = 'cell-flash';  // 较小数值用闪烁动画
+                                animationDuration = 300;
+                            }
+                            
+                            cell.classList.add(animationClass);
+                            
+                            // 清除动画类
+                            setTimeout(() => {
+                                cell.classList.remove(animationClass);
+                            }, animationDuration);
+                        }
+                    }, index * 50); // 多个合并有轻微延迟，创造连锁效果
+                });
+            }
+
+            // 显示成就提示
+            showAchievement(message) {
+                const achievement = document.createElement('div');
+                achievement.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: linear-gradient(45deg, #FFD700, #FFA500);
+                    color: white;
+                    padding: 15px 30px;
+                    border-radius: 10px;
+                    font-size: 20px;
+                    font-weight: bold;
+                    z-index: 1001;
+                    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.5);
+                    animation: achievement-popup 2s ease-in-out;
+                `;
+                achievement.textContent = message;
+                document.body.appendChild(achievement);
+
+                // 添加弹出动画样式
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes achievement-popup {
+                        0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+                        20% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+                        80% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+                        100% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(style);
+
+                setTimeout(() => {
+                    document.body.removeChild(achievement);
+                    document.head.removeChild(style);
+                }, 2000);
+            }
+
+            updateDisplay() {
+                for (let i = 0; i < this.size; i++) {
+                    for (let j = 0; j < this.size; j++) {
+                        const cell = document.getElementById(`cell-${i}-${j}`);
+                        const value = this.grid[i][j];
+                        
+                        cell.textContent = value === 0 ? '' : value;
+                        cell.className = 'grid-cell';
+                        
+                        if (value > 0) {
+                            cell.classList.add(`cell-${value}`);
+                        }
+                    }
+                }
+                
+                this.scoreElement.textContent = this.score;
+                
+                if (this.score > this.bestScore) {
+                    this.bestScore = this.score;
+                    localStorage.setItem('bestScore', this.bestScore.toString());
+                }
+                this.bestScoreElement.textContent = this.bestScore;
+            }
+
+            isGameOver() {
+                // 检查是否有空格
+                for (let i = 0; i < this.size; i++) {
+                    for (let j = 0; j < this.size; j++) {
+                        if (this.grid[i][j] === 0) {
+                            return false;
+                        }
+                    }
+                }
+                
+                // 检查是否能合并
+                for (let i = 0; i < this.size; i++) {
+                    for (let j = 0; j < this.size; j++) {
+                        const current = this.grid[i][j];
+                        if (
+                            (j < this.size - 1 && current === this.grid[i][j + 1]) ||
+                            (i < this.size - 1 && current === this.grid[i + 1][j])
+                        ) {
+                            return false;
+                        }
+                    }
+                }
+                
+                return true;
+            }
+
+            newGame() {
+                this.score = 0;
+                this.gameOverElement.style.display = 'none';
+                this.initGrid();
+                this.addRandomTile();
+                this.addRandomTile();
+                this.updateDisplay();
+            }
+        }
+
+        // 全局函数
+        function newGame() {
+            if (window.game) {
+                window.game.newGame();
+            }
+        }
+
+        // 启动游戏
+        window.addEventListener('DOMContentLoaded', () => {
+            window.game = new Game2048();
+        });
+    </script>
+</body>
+</html>
