@@ -19,6 +19,7 @@ static lv_obj_t * grid_label[SIZE][SIZE];
 static uint32_t grid_value[SIZE][SIZE] = {0};
 static uint32_t score = 0, best = 0;
 
+static lv_style_t title_style;
 
 /*
 todo list:
@@ -318,7 +319,6 @@ static void _new_game_cb(lv_event_t * e)
     }
 }
 
-static lv_style_t title_style;
 
 static void game_2048_create_grid(lv_obj_t *parent)
 {
@@ -415,7 +415,7 @@ static void game_2048_create_grid(lv_obj_t *parent)
     // lv_label_set_text(btn_label, LV_SYMBOL_REFRESH);
     // lv_obj_set_style_text_font(btn_label, &lv_font_montserrat_24, 0);
 
-    // return;
+    return;
 
     // 计算最佳单元格大小
     int32_t max_cell_size = LV_MIN(screen_w, screen_h) * 0.9;           // 保留 10% 边距
@@ -479,7 +479,7 @@ void game_2048(lv_obj_t *parent)
     
     game_2048_create_grid(parent);
  
-    _game_update();
+//     _game_update();
 
-    lv_obj_add_event_cb(parent, grid_event_cb, LV_EVENT_ALL, NULL);                // 添加事件回调
+//     lv_obj_add_event_cb(parent, grid_event_cb, LV_EVENT_ALL, NULL);                // 添加事件回调
 }

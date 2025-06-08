@@ -514,8 +514,10 @@ int main(int argc, char **argv)
   // lv_example_xiaozhi();
   // lv_desktop_ui();
   // lvgl_image_test();
-  game_2048(lv_screen_active());
+  // game_2048(lv_screen_active());
+  new_2048_game(lv_screen_active());
   // lv_example_image_3();
+  // lv_demo_music();
 
   // lv_ui_test();
   // lv_example_anim_1();
