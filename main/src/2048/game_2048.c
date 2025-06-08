@@ -401,21 +401,19 @@ static void game_2048_create_grid(lv_obj_t *parent)
     lv_obj_set_align(score_label, LV_ALIGN_CENTER);                         // 标签在按钮内居中
     lv_obj_set_style_text_align(score_label, LV_TEXT_ALIGN_CENTER, 0);      // 文本水平居中
 
-    // // new 按钮：新游戏
-    // new_game = lv_button_create(main_windows);
-    // lv_obj_set_size(new_game, LV_SIZE_CONTENT, LV_SIZE_CONTENT);                // 大小自适应
-    // lv_obj_set_style_pad_all(new_game, 10, 0);                                  // 添加内边距
-    // lv_obj_align_to(new_game, best_score, LV_ALIGN_OUT_RIGHT_MID, 0, 0);           // 与 best_score 对象对齐
+    // new 按钮：新游戏
+    new_game = lv_button_create(main_windows);
+    lv_obj_set_size(new_game, LV_SIZE_CONTENT, LV_SIZE_CONTENT);                // 大小自适应
+    lv_obj_set_style_pad_all(new_game, 10, 0);                                  // 添加内边距
+    lv_obj_align_to(new_game, best_score, LV_ALIGN_OUT_RIGHT_MID, 0, 0);           // 与 best_score 对象对齐
 
-    // lv_obj_add_event_cb(new_game, _new_game_cb, LV_EVENT_CLICKED, NULL);
-    // lv_obj_add_style(new_game, &style, 0);
+    lv_obj_add_event_cb(new_game, _new_game_cb, LV_EVENT_CLICKED, NULL);
+    lv_obj_add_style(new_game, &style, 0);
 
    
-    // lv_obj_t * btn_label = lv_label_create(new_game);
-    // lv_label_set_text(btn_label, LV_SYMBOL_REFRESH);
-    // lv_obj_set_style_text_font(btn_label, &lv_font_montserrat_24, 0);
-
-    return;
+    lv_obj_t * btn_label = lv_label_create(new_game);
+    lv_label_set_text(btn_label, LV_SYMBOL_REFRESH);
+    lv_obj_set_style_text_font(btn_label, &lv_font_montserrat_24, 0);
 
     // 计算最佳单元格大小
     int32_t max_cell_size = LV_MIN(screen_w, screen_h) * 0.9;           // 保留 10% 边距
@@ -479,7 +477,7 @@ void game_2048(lv_obj_t *parent)
     
     game_2048_create_grid(parent);
  
-//     _game_update();
+    _game_update();
 
-//     lv_obj_add_event_cb(parent, grid_event_cb, LV_EVENT_ALL, NULL);                // 添加事件回调
+    lv_obj_add_event_cb(parent, grid_event_cb, LV_EVENT_ALL, NULL);                // 添加事件回调
 }

@@ -16,6 +16,7 @@
 #include "lvgl/examples/lv_examples.h"
 #include "lvgl/demos/lv_demos.h"
 #include "glob.h"
+#include "2048/game_2048_improved.h"
 
 /*********************
  *      DEFINES
@@ -43,6 +44,8 @@ static lv_display_t * hal_init(int32_t w, int32_t h);
  **********************/
 
 extern void freertos_main(void);
+extern void game_2048(lv_obj_t *parent);
+extern void new_2048_game(lv_obj_t *parent);
 
 /*********************
  *      DEFINES
@@ -638,8 +641,9 @@ int main(int argc, char **argv)
   // lv_example_xiaozhi();
   // lv_desktop_ui();
   // lvgl_image_test();
-  // game_2048(lv_screen_active());
-  new_2048_game(lv_screen_active());
+  game_2048(lv_screen_active());     // 原版游戏 - 有BUG
+  // new_2048_game(lv_screen_active()); // 新版游戏
+  // game_2048_improved(lv_screen_active()); // 改进版游戏 - 修复所有问题
   // lv_example_image_3();
   // lv_demo_music();
 
