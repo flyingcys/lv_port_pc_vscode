@@ -496,6 +496,130 @@ void lvgl_image_test(void)
 
 }
 
+static void set_value(void * var, int32_t v)
+{
+    lv_label_set_text_fmt(var, "%d", v);
+}
+
+void lv_100ask_demo_course_2_1_1(void)
+{
+    lv_obj_t * obj = lv_obj_create(lv_screen_active());
+    lv_obj_set_size(obj, LV_PCT(20), LV_PCT(20));
+    lv_obj_align(obj, LV_ALIGN_CENTER, 0, 0);
+
+    lv_obj_t * label = lv_label_create(obj);
+    lv_label_set_text(label, "Hello, LVGL!");
+    lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
+
+    lv_anim_t a;
+    lv_anim_init(&a);
+    lv_anim_set_exec_cb(&a, set_value);
+    lv_anim_set_var(&a, label);
+    lv_anim_set_values(&a, 0, 100);                    //设置开始和结束值
+    lv_anim_set_time(&a, 2000);                        
+    lv_anim_set_repeat_delay(&a, 100);
+    lv_anim_set_playback_time(&a, 500);
+    lv_anim_set_playback_delay(&a, 100);
+    lv_anim_set_repeat_count(&a, LV_ANIM_REPEAT_INFINITE);
+    lv_anim_start(&a);
+}
+
+/*************************************************
+ *  函数名称 :  anim_x_cb
+ *  参    数 ： 无
+ *  函数功能 ： 动画x轴位置显示回调
+ *************************************************/
+static void anim_x_cb(void *var,int32_t v)
+{
+   lv_obj_set_x(var,v);
+}
+/*************************************************
+ *  函数名称 :  anim_size_cb
+ *  参    数 ： 无
+ *  函数功能 ： 动画尺寸显示回调函数
+ *************************************************/
+static void anim_size_cb(void *var,int32_t v)
+{
+   lv_obj_set_size(var,v,v);
+}
+/*************************************************
+ *  函数名称 :  anim_show_2
+ *  参    数 ： 无
+ *  函数功能 ： 按键联动，实现Label动画显示
+ *************************************************/
+void anim_show_2()
+{
+   lv_obj_t * obj = lv_obj_create(lv_scr_act());      //创建一个对象
+   lv_obj_set_style_bg_color(obj,lv_palette_main(LV_PALETTE_RED),0); //设置背景颜色
+   lv_obj_set_style_radius(obj,LV_RADIUS_CIRCLE,0);   //设置样式圆角
+
+   lv_obj_align(obj,LV_ALIGN_LEFT_MID,10,0);          //居中样式
+
+   lv_anim_t a;                                       //创建动画样式
+   lv_anim_init(&a);                                  //初始化动画
+   lv_anim_set_var(&a,obj);                           //给动画设置一个变量
+   lv_anim_set_values(&a,10,50);                      //设置一个动画值
+   lv_anim_set_time(&a,1000);                         //设置动画时间
+   lv_anim_set_playback_delay(&a,100);                //回放延时 使动画回放时，正向方向准备好了
+   lv_anim_set_playback_time(&a,300);                 //回放时间
+   lv_anim_set_repeat_delay(&a,500);                  //重复延时
+   lv_anim_set_repeat_count(&a,LV_ANIM_REPEAT_INFINITE); //重复计数次数
+   lv_anim_set_path_cb(&a,lv_anim_path_ease_in_out);  //设置动画播放路径
+
+   lv_anim_set_exec_cb(&a,anim_size_cb);              //给动画设置一个功能 回调函数为尺寸
+   lv_anim_start(&a);                                 //开始动画
+   lv_anim_set_exec_cb(&a,anim_x_cb);                 //给动画设置一个功能 回调函数为x轴值
+   lv_anim_set_values(&a,10,240);                     //给动画设置一个值
+   lv_anim_start(&a);                                 //开始动画
+}
+
+/*************************************************
+ *  函数名称 :  sw_event_cb
+ *  参    数 ： 无
+ *  函数功能 ： 按键回调联动显示动画
+ *************************************************/
+static void sw_event_cb(lv_event_t * e)
+{
+   lv_obj_t * sw = lv_event_get_target(e);               //获取事件最初瞄准的对象。即使事件是冒泡的，也是一样的。
+   lv_obj_t * label = lv_event_get_user_data(e);         //获取在对象上注册事件时传递的user_data
+   if(lv_obj_has_state(sw,LV_STATE_CHECKED)){
+      lv_anim_t a;
+      lv_anim_init(&a);                                  //初始化动画对象
+      lv_anim_set_var(&a, label);                        //为对象设置一个动画
+      lv_anim_set_values(&a, lv_obj_get_x(label), 100);  //设置一个动画的开始和结束值
+      lv_anim_set_time(&a, 500);                         //设置一个动画时间
+      lv_anim_set_exec_cb(&a, anim_x_cb);                //设置一个动画回调
+      lv_anim_set_path_cb(&a, lv_anim_path_overshoot);   //设置一个动画的路径
+      lv_anim_start(&a);                                 //开始动画
+   }
+   else{
+      lv_anim_t a;                                        
+      lv_anim_init(&a);                                  //初始化动画对象
+      lv_anim_set_var(&a, label);                        //为对象设置一个动画
+      lv_anim_set_values(&a, lv_obj_get_x(label), -lv_obj_get_width(label));//设置一个动画的开始和结束值
+      lv_anim_set_time(&a, 500);                         //设置一个动画时间
+      lv_anim_set_exec_cb(&a, anim_x_cb);                //设置一个动画回调
+      lv_anim_set_path_cb(&a, lv_anim_path_ease_in);     //设置一个动画的路径
+      lv_anim_start(&a);                                 //开始动画
+   }
+}
+/*************************************************
+ *  函数名称 :  anim_show_1
+ *  参    数 ： 无
+ *  函数功能 ： 按键联动，实现Label动画显示
+ *************************************************/
+void anim_show_1()
+{
+   lv_obj_t * label = lv_label_create(lv_scr_act());       //创建一个Label
+   lv_label_set_text(label,"Hello animations!");         //为label设置显示内容
+   lv_obj_set_pos(label,100,10);                         //设置对象位置
+
+   lv_obj_t * sw = lv_switch_create(lv_scr_act());       //创建一个开关对象
+   lv_obj_center(sw);                                    //居中显示
+   lv_obj_add_state(sw,LV_STATE_CHECKED);                //添加状态
+   lv_obj_add_event_cb(sw,sw_event_cb,LV_EVENT_VALUE_CHANGED,label); //添加回调函数
+}
+
 int main(int argc, char **argv)
 {
   (void)argc; /*Unused*/
