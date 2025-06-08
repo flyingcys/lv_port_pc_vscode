@@ -332,6 +332,15 @@ static void game_2048_create_grid(lv_obj_t *parent)
 
     printf("screen_w:%d, screen_h:%d\n", screen_w, screen_h);
 
+    // 样式设置
+    static lv_style_t style;
+    lv_style_init(&style);
+    lv_style_set_bg_color(&style, lv_color_hex(0xCDC1B4));                  // 设置背景色
+    // lv_style_set_radius(&style, LV_RADIUS_CIRCLE);                       // 设置圆角半径为完全圆形（radius = LV_RADIUS_CIRCLE）          
+    lv_style_set_border_width(&style, 0);                                   // 设置样式对象的边框宽度为 0（无边框）
+    lv_style_set_pad_all(&style, 10);                                       // 添加内边距
+    lv_style_set_radius(&style, 5);                                        // 设置圆角半径为 5px
+
     // 创建主窗口
     lv_obj_t * main_windows = lv_obj_create(parent);
     lv_obj_set_size(main_windows, screen_w, screen_h);
@@ -340,7 +349,7 @@ static void game_2048_create_grid(lv_obj_t *parent)
     lv_obj_set_scrollbar_mode(main_windows, LV_SCROLLBAR_MODE_OFF);             // 完全禁用滚动条
     lv_obj_remove_flag(main_windows, LV_OBJ_FLAG_SCROLLABLE);                   // 完全禁止滚动/拖动
 
-    // 2048 Logo 创建
+    // 2048 Logo 与 grid 左边沿对齐
     lv_style_init(&title_style);
     lv_style_set_text_color(&title_style, lv_color_hex(0x5F5A51));              // 稍深一点的灰褐色
     lv_style_set_text_font(&title_style, &lv_font_montserrat_48);
@@ -352,16 +361,8 @@ static void game_2048_create_grid(lv_obj_t *parent)
 
     lv_obj_set_align(title, LV_ALIGN_TOP_LEFT);
 
-    // 样式设置
-    static lv_style_t style;
-    lv_style_init(&style);
-    lv_style_set_bg_color(&style, lv_color_hex(0xCDC1B4));                  // 设置背景色
-    // lv_style_set_radius(&style, LV_RADIUS_CIRCLE);                       // 设置圆角半径为完全圆形（radius = LV_RADIUS_CIRCLE）          
-    lv_style_set_border_width(&style, 0);                                   // 设置样式对象的边框宽度为 0（无边框）
-    lv_style_set_pad_all(&style, 10);                                       // 添加内边距
-    lv_style_set_radius(&style, 5);                                        // 设置圆角半径为 5px
 
-    // home 键：返回主窗口
+    // home 键 设置在 logo 下方
     home = lv_button_create(main_windows);
     lv_obj_add_flag(home, LV_OBJ_FLAG_IGNORE_LAYOUT);
     lv_obj_set_size(home, LV_SIZE_CONTENT, LV_SIZE_CONTENT);                // 大小自适应
@@ -428,13 +429,17 @@ static void game_2048_create_grid(lv_obj_t *parent)
     col_dsc[SIZE] = LV_GRID_TEMPLATE_LAST;      // 结束标记
     row_dsc[SIZE] = LV_GRID_TEMPLATE_LAST;
 
-    // 创建容器
+    // 创建grid容器
     grid_container = lv_obj_create(main_windows);
+
     lv_obj_set_style_grid_column_dsc_array(grid_container, col_dsc, 0);
     lv_obj_set_style_grid_row_dsc_array(grid_container, row_dsc, 0);
 
-    lv_obj_set_size(grid_container, cell_size * SIZE + padding * (SIZE + 1), cell_size * SIZE + padding * (SIZE + 1));          // 设置主窗口尺寸
+    // 设置主窗口尺寸
+    lv_obj_set_size(grid_container, cell_size * SIZE + padding * (SIZE + 1), cell_size * SIZE + padding * (SIZE + 1));    
 
+    // 设置grid容器位置
+    // lv_obj_set_pos(grid_container, 0, 0);
     if (screen_h > screen_w) {
         // 竖屏
         lv_obj_set_y(grid_container, screen_h * 0.15);
@@ -445,16 +450,27 @@ static void game_2048_create_grid(lv_obj_t *parent)
 
     lv_obj_set_layout(grid_container, LV_LAYOUT_GRID);                          // 将布局模式设为LV_LAYOUT_GRID以支持网格排列。
     lv_obj_set_style_pad_all(grid_container, padding, 0);                       // 统一内边距
+    lv_obj_set_style_pad_gap(grid_container, padding, 0);  // 单元格间距
     lv_obj_set_style_bg_color(grid_container, lv_color_hex(0xBBADA0), 0);
-    lv_obj_set_style_radius(grid_container, 1, LV_PART_MAIN);                    // 设置圆角半径为 1px  
+    lv_obj_set_style_radius(grid_container, 6, LV_PART_MAIN);                    // 设置圆角半径为 6px  
 
-    // lv_obj_set_scrollbar_mode(grid_container, LV_SCROLLBAR_MODE_OFF);           // 完全禁用滚动条
-    // lv_obj_remove_flag(grid_container, LV_OBJ_FLAG_SCROLLABLE);                 // 完全禁止滚动/拖动
+    // 禁用所有可能影响布局的标志
+    lv_obj_add_flag(grid_container, LV_OBJ_FLAG_IGNORE_LAYOUT);
+    lv_obj_clear_flag(grid_container, LV_OBJ_FLAG_SCROLL_ELASTIC);
+    lv_obj_set_scrollbar_mode(grid_container, LV_SCROLLBAR_MODE_OFF);           // 完全禁用滚动条
+    lv_obj_remove_flag(grid_container, LV_OBJ_FLAG_SCROLLABLE);                 // 完全禁止滚动/拖动
+    
+    // 网格样式
+    static lv_style_t cell_style;
+    lv_style_init(&cell_style);
+    lv_style_set_radius(&cell_style, 3);
+    lv_style_set_border_width(&cell_style, 0);
 
     for (uint32_t col = 0; col < SIZE; col ++) {
         for (uint32_t row = 0; row < SIZE; row ++) {
             grid_obj[col][row] = lv_button_create(grid_container);
             lv_obj_remove_flag(grid_obj[col][row], LV_OBJ_FLAG_CLICKABLE);                          // 禁用点击
+            lv_obj_add_style(grid_obj[col][row], &cell_style, 0);                                   // 应用样式
 
             lv_obj_set_style_bg_color(grid_obj[col][row], lv_color_hex(0xCDC1B4), 0);               // 设置按钮背景色
             /*Stretch the cell horizontally and vertically too
@@ -466,6 +482,7 @@ static void game_2048_create_grid(lv_obj_t *parent)
             lv_label_set_text(grid_label[col][row], "");                                            // 默认为空
 
             lv_obj_center(grid_label[col][row]);
+
             lv_obj_set_style_text_font(grid_label[col][row], (cell_size <= 80) ? &lv_font_montserrat_32 : &lv_font_montserrat_48, 0);           // 根据单元格大小设置字体大小
         }
     }

@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>竖屏2048</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#faf8ef',
+                        secondary: '#bbada0',
+                        cellEmpty: '#cdc1b4',
+                        cell2: '#eee4da',
+                        cell4: '#ede0c8',
+                        cell8: '#f2b179',
+                        cell16: '#f59563',
+                        cell32: '#f67c5f',
+                        cell64: '#f65e3b',
+                        cell128: '#edcf72',
+                        cell256: '#edcc61',
+                        cell512: '#edc850',
+                        cell1024: '#edc53f',
+                        cell2048: '#edc22e',
+                    },
+                    fontFamily: {
+                        game: ['"Clear Sans"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .game-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 10px;
+            }
+            .cell {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 6px;
+                font-weight: bold;
+                transition: all 0.2s ease-in-out;
+            }
+            .key-button {
+                @apply bg-secondary text-white rounded-md p-3 shadow-md transition-all duration-200 hover:bg-opacity-80 active:scale-95;
+            }
+        }
+    </style>
+</head>
+<body class="bg-primary font-game min-h-screen flex flex-col items-center justify-center p-4">
+    <div class="max-w-md w-full">
+        <header class="flex flex-col md:flex-row justify-between items-center mb-4">
+            <div>
+                <h1 class="text-[clamp(1.8rem,5vw,2.5rem)] font-bold text-secondary mb-1">2048</h1>
+                <p class="text-gray-600 text-sm">合并方块，创建<span class="font-bold">2048</span>!</p>
+            </div>
+            <div class="flex gap-2 mt-3 md:mt-0">
+                <div class="bg-secondary rounded-md p-1.5 text-center">
+                    <div class="text-xs text-white/80">得分</div>
+                    <div id="score" class="text-lg font-bold text-white">0</div>
+                </div>
+                <div class="bg-secondary rounded-md p-1.5 text-center">
+                    <div class="text-xs text-white/80">最高分</div>
+                    <div id="highScore" class="text-lg font-bold text-white">0</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="relative bg-secondary p-3 rounded-lg mb-4">
+            <div id="game-message" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-10">
+                <div class="bg-white p-6 rounded-lg text-center">
+                    <p id="game-message-text" class="text-xl font-bold mb-3"></p>
+                    <button id="game-message-button" class="bg-secondary text-white px-5 py-2 rounded-md hover:bg-opacity-80 transition-all">
+                        再玩一次
+                    </button>
+                </div>
+            </div>
+            
+            <div class="game-grid aspect-square">
+                <div id="grid-container" class="absolute inset-0 game-grid">
+                    <!-- 动态生成单元格 -->
+                </div>
+                <div id="tile-container" class="absolute inset-0 game-grid">
+                    <!-- 动态生成方块 -->
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-center mb-4">
+            <button id="new-game" class="bg-secondary text-white px-4 py-2 rounded-md hover:bg-opacity-80 transition-all text-sm">
+                <i class="fa fa-refresh mr-1"></i>新游戏
+            </button>
+            <div class="text-gray-600 text-sm">
+                <p>使用<span class="font-bold">方向键</span>或<span class="font-bold">滑动屏幕</span>移动方块。</p>
+                <p>相同数字的方块相撞时会<span class="font-bold">合并</span>!</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-4 gap-2 mt-auto">
+            <div></div>
+            <button id="up" class="key-button p-2">
+                <i class="fa fa-arrow-up"></i>
+            </button>
+            <div></div>
+            <button id="left" class="key-button p-2">
+                <i class="fa fa-arrow-left"></i>
+            </button>
+            <button id="down" class="key-button p-2">
+                <i class="fa fa-arrow-down"></i>
+            </button>
+            <button id="right" class="key-button p-2">
+                <i class="fa fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 游戏配置
+            const gridSize = 4;
+            const startTiles = 2;
+            let grid = [];
+            let score = 0;
+            let highScore = localStorage.getItem('2048HighScore') || 0;
+            let gameOver = false;
+            let won = false;
+            let canMove = true;
+            
+            // DOM 元素
+            const gridContainer = document.getElementById('grid-container');
+            const tileContainer = document.getElementById('tile-container');
+            const scoreDisplay = document.getElementById('score');
+            const highScoreDisplay = document.getElementById('highScore');
+            const newGameButton = document.getElementById('new-game');
+            const gameMessage = document.getElementById('game-message');
+            const gameMessageText = document.getElementById('game-message-text');
+            const gameMessageButton = document.getElementById('game-message-button');
+            
+            // 方向键按钮
+            const upButton = document.getElementById('up');
+            const downButton = document.getElementById('down');
+            const leftButton = document.getElementById('left');
+            const rightButton = document.getElementById('right');
+            
+            // 初始化高分显示
+            highScoreDisplay.textContent = highScore;
+            
+            // 创建网格背景
+            function createGrid() {
+                gridContainer.innerHTML = '';
+                for (let y = 0; y < gridSize; y++) {
+                    for (let x = 0; x < gridSize; x++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'cell bg-cellEmpty';
+                        gridContainer.appendChild(cell);
+                    }
+                }
+            }
+            
+            // 初始化游戏
+            function initGame() {
+                // 重置游戏状态
+                grid = [];
+                score = 0;
+                gameOver = false;
+                won = false;
+                canMove = true;
+                
+                // 更新分数显示
+                scoreDisplay.textContent = score;
+                
+                // 清空方块容器
+                tileContainer.innerHTML = '';
+                
+                // 初始化网格数据
+                for (let y = 0; y < gridSize; y++) {
+                    grid[y] = [];
+                    for (let x = 0; x < gridSize; x++) {
+                        grid[y][x] = null;
+                    }
+                }
+                
+                // 生成初始方块
+                for (let i = 0; i < startTiles; i++) {
+                    generateRandomTile();
+                }
+                
+                // 隐藏游戏消息
+                gameMessage.classList.add('hidden');
+                
+                // 渲染网格
+                renderGrid();
+            }
+            
+            // 生成随机方块
+            function generateRandomTile() {
+                if (!hasEmptyCell()) return false;
+                
+                // 寻找空单元格
+                const emptyCells = [];
+                for (let y = 0; y < gridSize; y++) {
+                    for (let x = 0; x < gridSize; x++) {
+                        if (grid[y][x] === null) {
+                            emptyCells.push({ x, y });
+                        }
+                    }
+                }
+                
+                // 随机选择一个空单元格
+                const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+                
+                // 90%概率生成2，10%概率生成4
+                const value = Math.random() < 0.9 ? 2 : 4;
+                
+                // 创建新方块
+                grid[randomCell.y][randomCell.x] = {
+                    value,
+                    merged: false,
+                    isNew: true
+                };
+                
+                return true;
+            }
+            
+            // 检查是否有空单元格
+            function hasEmptyCell() {
+                for (let y = 0; y < gridSize; y++) {
+                    for (let x = 0; x < gridSize; x++) {
+                        if (grid[y][x] === null) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+            
+            // 获取单元格的颜色类
+            function getTileColorClass(value) {
+                switch (value) {
+                    case 2: return 'bg-cell2 text-gray-800';
+                    case 4: return 'bg-cell4 text-gray-800';
+                    case 8: return 'bg-cell8 text-white';
+                    case 16: return 'bg-cell16 text-white';
+                    case 32: return 'bg-cell32 text-white';
+                    case 64: return 'bg-cell64 text-white';
+                    case 128: return 'bg-cell128 text-white';
+                    case 256: return 'bg-cell256 text-white';
+                    case 512: return 'bg-cell512 text-white';
+                    case 1024: return 'bg-cell1024 text-white';
+                    case 2048: return 'bg-cell2048 text-white';
+                    default: return 'bg-cellEmpty text-white';
+                }
+            }
+            
+            // 获取单元格的字体大小
+            function getTileFontSize(value) {
+                if (value < 100) return 'text-xl';
+                if (value < 1000) return 'text-lg';
+                return 'text-base';
+            }
+            
+            // 渲染网格
+            function renderGrid() {
+                // 清空方块容器
+                tileContainer.innerHTML = '';
+                
+                // 渲染所有方块
+                for (let y = 0; y < gridSize; y++) {
+                    for (let x = 0; x < gridSize; x++) {
+                        const tile = grid[y][x];
+                        if (tile) {
+                            const tileElement = document.createElement('div');
+                            tileElement.className = `cell ${getTileColorClass(tile.value)} ${getTileFontSize(tile.value)}`;
+                            tileElement.textContent = tile.value;
+                            
+                            // 添加动画类
+                            if (tile.isNew) {
+                                tileElement.classList.add('scale-90', 'opacity-0');
+                                setTimeout(() => {
+                                    tileElement.classList.remove('scale-90', 'opacity-0');
+                                    tileElement.classList.add('scale-100', 'opacity-100', 'transition-all', 'duration-200');
+                                }, 10);
+                                tile.isNew = false;
+                            }
+                            
+                            // 计算位置
+                            const gridCell = gridContainer.children[y * gridSize + x];
+                            const rect = gridCell.getBoundingClientRect();
+                            
+                            // 设置方块位置
+                            tileElement.style.position = 'absolute';
+                            tileElement.style.width = `${rect.width}px`;
+                            tileElement.style.height = `${rect.height}px`;
+                            tileElement.style.left = `${rect.left - gridContainer.getBoundingClientRect().left}px`;
+                            tileElement.style.top = `${rect.top - gridContainer.getBoundingClientRect().top}px`;
+                            
+                            tileContainer.appendChild(tileElement);
+                        }
+                    }
+                }
+            }
+            
+            // 移动方块
+            function move(direction) {
+                if (!canMove || gameOver) return false;
+                
+                let moved = false;
+                canMove = false;
+                
+                // 重置所有方块的合并状态
+                for (let y = 0; y < gridSize; y++) {
+                    for (let x = 0; x < gridSize; x++) {
+                        if (grid[y][x]) {
+                            grid[y][x].merged = false;
+                        }
+                    }
+                }
+                
+                // 根据方向移动方块
+                switch (direction) {
+                    case 'up':
+                        for (let x = 0; x < gridSize; x++) {
+                            for (let y = 1; y < gridSize; y++) {
+                                if (grid[y][x]) {
+                                    let newY = y;
+                                    // 移动到最上面或遇到非空单元格
+                                    while (newY > 0 && grid[newY - 1][x] === null) {
+                                        newY--;
+                                    }
+                                    
+                                    // 检查是否可以合并
+                                    if (newY > 0 && grid[newY - 1][x] && 
+                                        grid[newY - 1][x].value === grid[y][x].value && 
+                                        !grid[newY - 1][x].merged) {
+                                        // 合并方块
+                                        grid[newY - 1][x].value *= 2;
+                                        grid[newY - 1][x].merged = true;
+                                        score += grid[newY - 1][x].value;
+                                        grid[y][x] = null;
+                                        moved = true;
+                                        
+                                        // 检查是否达到2048
+                                        if (grid[newY - 1][x].value === 2048 && !won) {
+                                            won = true;
+                                            showGameMessage('你赢了!');
+                                        }
+                                    } else if (newY !== y) {
+                                        // 移动方块
+                                        grid[newY][x] = grid[y][x];
+                                        grid[y][x] = null;
+                                        moved = true;
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                        
+                    case 'down':
+                        for (let x = 0; x < gridSize; x++) {
+                            for (let y = gridSize - 2; y >= 0; y--) {
+                                if (grid[y][x]) {
+                                    let newY = y;
+                                    // 移动到最下面或遇到非空单元格
+                                    while (newY < gridSize - 1 && grid[newY + 1][x] === null) {
+                                        newY++;
+                                    }
+                                    
+                                    // 检查是否可以合并
+                                    if (newY < gridSize - 1 && grid[newY + 1][x] && 
+                                        grid[newY + 1][x].value === grid[y][x].value && 
+                                        !grid[newY + 1][x].merged) {
+                                        // 合并方块
+                                        grid[newY + 1][x].value *= 2;
+                                        grid[newY + 1][x].merged = true;
+                                        score += grid[newY + 1][x].value;
+                                        grid[y][x] = null;
+                                        moved = true;
+                                        
+                                        // 检查是否达到2048
+                                        if (grid[newY + 1][x].value === 2048 && !won) {
+                                            won = true;
+                                            showGameMessage('你赢了!');
+                                        }
+                                    } else if (newY !== y) {
+                                        // 移动方块
+                                        grid[newY][x] = grid[y][x];
+                                        grid[y][x] = null;
+                                        moved = true;
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                        
+                    case 'left':
+                        for (let y = 0; y < gridSize; y++) {
+                            for (let x = 1; x < gridSize; x++) {
+                                if (grid[y][x]) {
+                                    let newX = x;
+                                    // 移动到最左边或遇到非空单元格
+                                    while (newX > 0 && grid[y][newX - 1] === null) {
+                                        newX--;
+                                    }
+                                    
+                                    // 检查是否可以合并
+                                    if (newX > 0 && grid[y][newX - 1] && 
+                                        grid[y][newX - 1].value === grid[y][x].value && 
+                                        !grid[y][newX - 1].merged) {
+                                        // 合并方块
+                                        grid[y][newX - 1].value *= 2;
+                                        grid[y][newX - 1].merged = true;
+                                        score += grid[y][newX - 1].value;
+                                        grid[y][x] = null;
+                                        moved = true;
+                                        
+                                        // 检查是否达到2048
+                                        if (grid[y][newX - 1].value === 2048 && !won) {
+                                            won = true;
+                                            showGameMessage('你赢了!');
+                                        }
+                                    } else if (newX !== x) {
+                                        // 移动方块
+                                        grid[y][newX] = grid[y][x];
+                                        grid[y][x] = null;
+                                        moved = true;
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                        
+                    case 'right':
+                        for (let y = 0; y < gridSize; y++) {
+                            for (let x = gridSize - 2; x >= 0; x--) {
+                                if (grid[y][x]) {
+                                    let newX = x;
+                                    // 移动到最右边或遇到非空单元格
+                                    while (newX < gridSize - 1 && grid[y][newX + 1] === null) {
+                                        newX++;
+                                    }
+                                    
+                                    // 检查是否可以合并
+                                    if (newX < gridSize - 1 && grid[y][newX + 1] && 
+                                        grid[y][newX + 1].value === grid[y][x].value && 
+                                        !grid[y][newX + 1].merged) {
+                                        // 合并方块
+                                        grid[y][newX + 1].value *= 2;
+                                        grid[y][newX + 1].merged = true;
+                                        score += grid[y][newX + 1].value;
+                                        grid[y][x] = null;
+                                        moved = true;
+                                        
+                                        // 检查是否达到2048
+                                        if (grid[y][newX + 1].value === 2048 && !won) {
+                                            won = true;
+                                            showGameMessage('你赢了!');
+                                        }
+                                    } else if (newX !== x) {
+                                        // 移动方块
+                                        grid[y][newX] = grid[y][x];
+                                        grid[y][x] = null;
+                                        moved = true;
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                }
+                
+                // 更新分数显示
+                scoreDisplay.textContent = score;
+                
+                // 检查是否更新最高分
+                if (score > highScore) {
+                    highScore = score;
+                    highScoreDisplay.textContent = highScore;
+                    localStorage.setItem('2048HighScore', highScore);
+                }
+                
+                // 如果有移动，生成新方块并渲染网格
+                if (moved) {
+                    generateRandomTile();
+                    renderGrid();
+                    
+                    // 检查游戏是否结束
+                    if (!canMoveAny() && !gameOver) {
+                        gameOver = true;
+                        showGameMessage('游戏结束!');
+                    }
+                }
+                
+                // 允许下一次移动
+                setTimeout(() => {
+                    canMove = true;
+                }, 150);
+                
+                return moved;
+            }
+            
+            // 检查是否可以向任何方向移动
+            function canMoveAny() {
+                // 检查是否有空单元格
+                if (hasEmptyCell()) return true;
+                
+                // 检查相邻单元格是否可以合并
+                for (let y = 0; y < gridSize; y++) {
+                    for (let x = 0; x < gridSize; x++) {
+                        const value = grid[y][x].value;
+                        
+                        // 检查右侧单元格
+                        if (x < gridSize - 1 && grid[y][x + 1] && grid[y][x + 1].value === value) {
+                            return true;
+                        }
+                        
+                        // 检查下方单元格
+                        if (y < gridSize - 1 && grid[y + 1][x] && grid[y + 1][x].value === value) {
+                            return true;
+                        }
+                    }
+                }
+                
+                return false;
+            }
+            
+            // 显示游戏消息
+            function showGameMessage(text) {
+                gameMessageText.textContent = text;
+                gameMessage.classList.remove('hidden');
+            }
+            
+            // 键盘控制
+            document.addEventListener('keydown', (event) => {
+                if (gameMessage.classList.contains('hidden') === false) return;
+                
+                switch (event.key) {
+                    case 'ArrowUp':
+                        move('up');
+                        event.preventDefault();
+                        break;
+                    case 'ArrowDown':
+                        move('down');
+                        event.preventDefault();
+                        break;
+                    case 'ArrowLeft':
+                        move('left');
+                        event.preventDefault();
+                        break;
+                    case 'ArrowRight':
+                        move('right');
+                        event.preventDefault();
+                        break;
+                }
+            });
+            
+            // 触摸控制
+            let touchStartX = 0;
+            let touchStartY = 0;
+            let touchEndX = 0;
+            let touchEndY = 0;
+            
+            document.addEventListener('touchstart', (event) => {
+                touchStartX = event.touches[0].clientX;
+                touchStartY = event.touches[0].clientY;
+            }, { passive: true });
+            
+            document.addEventListener('touchend', (event) => {
+                if (gameMessage.classList.contains('hidden') === false) return;
+                
+                touchEndX = event.changedTouches[0].clientX;
+                touchEndY = event.changedTouches[0].clientY;
+                
+                const diffX = touchEndX - touchStartX;
+                const diffY = touchEndY - touchStartY;
+                
+                // 判断滑动方向
+                if (Math.abs(diffX) > Math.abs(diffY)) {
+                    // 水平滑动
+                    if (diffX > 20) {
+                        move('right');
+                    } else if (diffX < -20) {
+                        move('left');
+                    }
+                } else {
+                    // 垂直滑动
+                    if (diffY > 20) {
+                        move('down');
+                    } else if (diffY < -20) {
+                        move('up');
+                    }
+                }
+            }, { passive: true });
+            
+            // 按钮控制
+            upButton.addEventListener('click', () => move('up'));
+            downButton.addEventListener('click', () => move('down'));
+            leftButton.addEventListener('click', () => move('left'));
+            rightButton.addEventListener('click', () => move('right'));
+            
+            // 新游戏按钮
+            newGameButton.addEventListener('click', initGame);
+            gameMessageButton.addEventListener('click', initGame);
+            
+            // 窗口大小变化时重新渲染
+            window.addEventListener('resize', renderGrid);
+            
+            // 初始化游戏
+            createGrid();
+            initGame();
+        });
+    </script>
+</body>
+</html>
+    
