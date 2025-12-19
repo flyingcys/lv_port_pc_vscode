@@ -1,6 +1,6 @@
 /**
  * @file lv_drv_conf.h
- * Configuration file for v9.0.0-dev
+ * Configuration file for v8.1.0
  */
 
 /*
@@ -95,11 +95,8 @@
 #endif
 
 #if USE_SDL || USE_SDL_GPU
-#  define SDL_HOR_RES     1024
-#  define SDL_VER_RES     1080
-
-#define MONITOR_HOR_RES SDL_HOR_RES
-#define MONITOR_VER_RES SDL_VER_RES
+#  define SDL_HOR_RES     480
+#  define SDL_VER_RES     320
 
 /* Scale window by this factor (useful when simulating small screens) */
 #  define SDL_ZOOM        1
@@ -113,9 +110,6 @@
 
 /*Open two windows to test multi display support*/
 #  define SDL_DUAL_DISPLAY            0
-
-/* Window Title  */
-#  define SDL_WINDOW_TITLE "TFT Simulator"
 #endif
 
 /*-------------------
@@ -197,23 +191,6 @@
 #    define LV_WAYLAND_XDG_SHELL 0
 #  endif
 #endif
-
-/*----------------------------------------
- *  X11 drivers (monitor, mouse, keyboard)
- *---------------------------------------*/
-#ifndef USE_X11
-#  define USE_X11       0
-#endif
-
-#if USE_X11
-  /* Simulated screen resolution  */
-  #ifndef DISP_HOR_RES
-    #define DISP_HOR_RES   640
-  #endif
-  #ifndef DISP_VER_RES
-    #define DISP_VER_RES   480
-  #endif
-#endif // USE_X11
 
 /*----------------
  *    SSD1963
@@ -358,6 +335,17 @@
 #endif
 
 /*-----------------------------------------
+ *  Sunxi frame buffer device (/dev/fbx)
+ *.........................................*/
+#ifndef USE_SUNXIFB
+#  define USE_SUNXIFB           1
+#endif
+
+#if USE_SUNXIFB
+#  define SUNXIFB_PATH          "/dev/fb0"
+#endif
+
+/*-----------------------------------------
  *  DRM/KMS device (/dev/dri/cardX)
  *-----------------------------------------*/
 #ifndef USE_DRM
@@ -462,7 +450,7 @@
  * Mouse or touchpad as evdev interface (for Linux based systems)
  *------------------------------------------------*/
 #ifndef USE_EVDEV
-#  define USE_EVDEV           0
+#  define USE_EVDEV           1
 #endif
 
 #ifndef USE_BSD_EVDEV
