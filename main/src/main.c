@@ -162,6 +162,138 @@ static void user_image_demo()
 }
 #endif
 
+static void button_event_handler(lv_event_t * e)
+{
+  lv_event_code_t code = lv_event_get_code(e);
+  lv_obj_t * obj = lv_event_get_target(e);
+
+  if(code == LV_EVENT_CLICKED) {
+    LV_LOG_USER("Clicked");
+  }
+}
+static float screen_ratio;
+static lv_obj_t *screen1, *start_btn, *bgmap, *score_lable;
+static lv_timer_t *timer_create_fruit, *timer_create_boom;
+
+LV_IMG_DECLARE(fruit_bg_img)
+LV_IMG_DECLARE(start_img)
+
+static void clike_screen_cb(lv_event_t * e)
+{
+  lv_event_code_t code = lv_event_get_code(e);
+  lv_obj_t * obj = lv_event_get_target(e);
+
+  if (code == LV_EVENT_PRESSED) {
+    LV_LOG_USER("Pressed");
+  } else if (code == LV_EVENT_RELEASED) {
+    LV_LOG_USER("Released");
+  }
+
+}
+
+static void release_screen_cb(lv_event_t * e)
+{
+  lv_event_code_t code = lv_event_get_code(e);
+  lv_obj_t * obj = lv_event_get_target(e);
+
+  if (code == LV_EVENT_PRESSED) {
+    LV_LOG_USER("Pressed");
+  } else if (code == LV_EVENT_RELEASED) {
+    LV_LOG_USER("Released");
+  }
+
+}
+
+static void start_game_cb(lv_event_t * e)
+{
+  lv_event_code_t code = lv_event_get_code(e);
+  lv_obj_t * obj = lv_event_get_target(e);
+
+  if (code == LV_EVENT_CLICKED) {
+    LV_LOG_USER("Clicked");
+    lv_timer_resume(timer_create_fruit);
+    lv_timer_resume(timer_create_boom);
+
+    lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(screen1, LV_OBJ_FLAG_CLICKABLE);
+  }
+
+}
+void creat_fruit_cb(struct _lv_timer_t *)
+{
+  printf("creat_fruit_cb\n");
+}
+
+void creat_boom_cb(struct _lv_timer_t *)
+{
+  printf("creat_boom_cb\n");
+}
+
+static void lvgl_demo_ui(void)
+{
+  lv_obj_clear_flag(lv_scr_act(), LV_OBJ_FLAG_SCROLLABLE);                    // 禁止屏幕滚动
+  screen_ratio = (float)lv_disp_get_hor_res(lv_disp_get_default()) / 800;
+
+  screen1 = lv_tileview_create(lv_scr_act());
+  lv_obj_set_style_bg_color(screen1, lv_color_hex(0x000000), LV_PART_MAIN);
+  lv_obj_clear_flag(screen1, LV_OBJ_FLAG_SCROLLABLE);
+
+  lv_obj_add_event_cb(screen1, clike_screen_cb, LV_EVENT_PRESSING, 0);
+  lv_obj_add_event_cb(screen1, release_screen_cb, LV_EVENT_RELEASED, 0);
+
+  bgmap = lv_img_create(screen1);
+  lv_img_set_src(bgmap, &fruit_bg_img);
+  lv_obj_set_size(bgmap, lv_disp_get_hor_res(lv_disp_get_default()), lv_disp_get_ver_res(lv_disp_get_default()) + 50);
+
+  score_lable = lv_label_create(screen1);
+  lv_label_set_text_fmt(score_lable, "SCORE:%d", 0);
+  lv_obj_set_style_text_font(score_lable, &lv_font_montserrat_22, 0);
+  lv_obj_set_style_text_color(score_lable, lv_color_hex(0x00aaff), LV_PART_MAIN);
+
+  start_btn = lv_img_create(screen1);
+  lv_img_set_src(start_btn, &start_img);
+  lv_obj_center(start_btn);
+  lv_obj_add_flag(start_btn, LV_OBJ_FLAG_CLICKABLE);
+  lv_obj_add_event_cb(start_btn, start_game_cb, LV_EVENT_CLICKED, 0);
+
+  timer_create_fruit = lv_timer_create(creat_fruit_cb, 3000, 0);
+  timer_create_boom = lv_timer_create(creat_boom_cb, 10000, 0);
+
+  lv_timer_pause(timer_create_fruit);
+  lv_timer_pause(timer_create_boom);
+}
+#if 0
+{
+  lv_obj_t * button = lv_btn_create(lv_scr_act());
+  
+  // lv_obj_set_size(button, 100, 50);
+  lv_obj_center(button);
+  lv_obj_set_size(button, 200, 200);
+  lv_obj_add_event_cb(button, button_event_handler, LV_EVENT_ALL, NULL);
+
+  lv_obj_t * label = lv_label_create(button);
+  lv_label_set_text(label, LV_SYMBOL_WIFI"Hello World");
+  // lv_label_set_text_static(label, LV_SYMBOL_WIFI);
+  lv_obj_center(label);
+
+  static lv_style_t label_style;
+  lv_style_init(&label_style);
+  lv_style_set_text_font(&label_style, &lv_font_montserrat_16);
+  lv_obj_add_style(label, &label_style, 0);
+
+  lv_obj_t * text = lv_label_create(lv_scr_act());
+  lv_label_set_text(text, LV_SYMBOL_HOME LV_SYMBOL_REFRESH LV_SYMBOL_WIFI LV_SYMBOL_CHARGE);
+  lv_obj_center(text);
+
+  static lv_style_t text_style;
+  lv_style_init(&text_style);
+  lv_style_set_text_font(&text_style, &lv_font_montserrat_48);
+  lv_style_set_text_color(&text_style, lv_color_hex(0xFF0000));
+  lv_obj_add_style(text, &text_style, 0);
+
+}
+#endif
+
 int main(int argc, char **argv)
 {
   (void)argc; /*Unused*/
@@ -185,13 +317,15 @@ int main(int argc, char **argv)
 //  lv_example_msgbox_1();
 //  lv_example_dropdown_2();
 //  lv_example_btn_1();
+lvgl_demo_ui();
+
 //  lv_example_scroll_1();
 //  lv_example_tabview_1();
 //  lv_example_tabview_1();
 //  lv_example_flex_3();
 //  lv_example_label_1();
 
-  lv_demo_widgets();
+  // lv_demo_widgets();
 //  lv_demo_keypad_encoder();
 //  lv_demo_benchmark();
 //  lv_demo_stress();
