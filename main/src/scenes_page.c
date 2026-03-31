@@ -25,11 +25,17 @@
 #define SCENES_TOP_TEMP_UNIT_Y     7
 #define SCENES_TOP_RIGHT_X         315
 #define SCENES_TOP_RIGHT_Y         2
+#define SCENES_TOP_RIGHT_W         133
+#define SCENES_TOP_RIGHT_H         28
 #define SCENES_TOP_WIFI_W          28
 #define SCENES_TOP_WIFI_H          28
 #define SCENES_TOP_META_X          39
 #define SCENES_TOP_META_W          22
 #define SCENES_TOP_META_H          24
+#define SCENES_TOP_META_AM_X       6
+#define SCENES_TOP_META_AM_Y       0
+#define SCENES_TOP_META_DATE_X     0
+#define SCENES_TOP_META_DATE_Y     12
 #define SCENES_TOP_TIME_X          66
 #define SCENES_TOP_TIME_W          67
 #define SCENES_TOP_TIME_H          28
@@ -235,7 +241,7 @@ static void __scenes_page_add_top_bar(lv_obj_t * parent)
     }
     __scenes_page_style_base(right_group);
     lv_obj_set_pos(right_group, SCENES_TOP_RIGHT_X, SCENES_TOP_RIGHT_Y);
-    lv_obj_set_size(right_group, 133, 28);
+    lv_obj_set_size(right_group, SCENES_TOP_RIGHT_W, SCENES_TOP_RIGHT_H);
 
     wifi_icon = lv_image_create(right_group);
     if (wifi_icon != NULL) {
@@ -255,7 +261,7 @@ static void __scenes_page_add_top_bar(lv_obj_t * parent)
         am_label = lv_label_create(meta_group);
         if (am_label != NULL) {
             lv_label_set_text(am_label, "AM");
-            lv_obj_set_pos(am_label, 6, 0);
+            lv_obj_set_pos(am_label, SCENES_TOP_META_AM_X, SCENES_TOP_META_AM_Y);
             lv_obj_set_style_text_font(am_label, scenes_assets_font_cached_meta(), 0);
             lv_obj_set_style_text_color(am_label, lv_color_hex(SCENES_COLOR_TEXT), 0);
         }
@@ -263,7 +269,7 @@ static void __scenes_page_add_top_bar(lv_obj_t * parent)
         date_label = lv_label_create(meta_group);
         if (date_label != NULL) {
             lv_label_set_text(date_label, "2/24");
-            lv_obj_set_pos(date_label, 0, 12);
+            lv_obj_set_pos(date_label, SCENES_TOP_META_DATE_X, SCENES_TOP_META_DATE_Y);
             lv_obj_set_style_text_font(date_label, scenes_assets_font_cached_meta(), 0);
             lv_obj_set_style_text_color(date_label, lv_color_hex(SCENES_COLOR_TEXT), 0);
         }

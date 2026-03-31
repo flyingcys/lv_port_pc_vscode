@@ -30,6 +30,15 @@ typedef int OPERATE_RET;
  */
 typedef struct {
     lv_obj_t * screen;
+    lv_obj_t * weather_container;
+    lv_obj_t * weather_icon;
+    lv_obj_t * weather_temp_label;
+    lv_obj_t * weather_date_label;
+    lv_obj_t * weather_weekday_label;
+    lv_obj_t * clock_container;
+    lv_obj_t * clock_hour_label;
+    lv_obj_t * clock_colon_image;
+    lv_obj_t * clock_minute_label;
     lv_obj_t * switch_one_bg;
     lv_obj_t * switch_two_bg;
     lv_obj_t * switch_one_btn;

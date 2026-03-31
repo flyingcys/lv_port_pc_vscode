@@ -78,6 +78,8 @@ if(USE_FREERTOS)
         ${PROJECT_SOURCE_DIR}/main/src/freertos_main.cpp
         ${PROJECT_SOURCE_DIR}/main/src/mouse_cursor_icon.c
         ${PROJECT_SOURCE_DIR}/main/src/FreeRTOS_Posix_Port.c
+        ${PROJECT_SOURCE_DIR}/main/src/home_assets.c
+        ${PROJECT_SOURCE_DIR}/main/src/home_page.c
         ${PROJECT_SOURCE_DIR}/main/src/scenes_assets.c
         ${PROJECT_SOURCE_DIR}/main/src/scenes_page.c
         ${PROJECT_SOURCE_DIR}/main/src/scenes_state.c
@@ -89,6 +91,8 @@ else()
     add_executable(main
         ${PROJECT_SOURCE_DIR}/main/src/main.c
         ${PROJECT_SOURCE_DIR}/main/src/mouse_cursor_icon.c
+        ${PROJECT_SOURCE_DIR}/main/src/home_assets.c
+        ${PROJECT_SOURCE_DIR}/main/src/home_page.c
         ${PROJECT_SOURCE_DIR}/main/src/scenes_assets.c
         ${PROJECT_SOURCE_DIR}/main/src/scenes_page.c
         ${PROJECT_SOURCE_DIR}/main/src/scenes_state.c
@@ -113,6 +117,15 @@ add_executable(scenes_state_test
 )
 target_compile_definitions(scenes_state_test PRIVATE LV_CONF_INCLUDE_SIMPLE)
 target_include_directories(scenes_state_test PRIVATE ${PROJECT_SOURCE_DIR}/main/inc ${PROJECT_SOURCE_DIR} ${SDL2_INCLUDE_DIRS})
+
+add_executable(home_page_test
+    ${PROJECT_SOURCE_DIR}/tests/home_page_test.c
+    ${PROJECT_SOURCE_DIR}/main/src/home_assets.c
+    ${PROJECT_SOURCE_DIR}/main/src/home_page.c
+)
+target_compile_definitions(home_page_test PRIVATE LV_CONF_INCLUDE_SIMPLE)
+target_include_directories(home_page_test PRIVATE ${PROJECT_SOURCE_DIR}/main/inc ${PROJECT_SOURCE_DIR})
+target_link_libraries(home_page_test lvgl m pthread)
 
 # Conditionally include and link SDL2_image if LV_USE_DRAW_SDL is enabled
 if(LV_USE_DRAW_SDL)

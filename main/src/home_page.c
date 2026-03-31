@@ -20,6 +20,38 @@
 #define HOME_LAY_CLOCK_T        113
 #define HOME_LAY_CLOCK_W        278
 #define HOME_LAY_CLOCK_H        132
+#define HOME_LAY_WEATHER_ICON_X 0
+#define HOME_LAY_WEATHER_ICON_Y 0
+#define HOME_LAY_WEATHER_ICON_W 40
+#define HOME_LAY_WEATHER_ICON_H 35
+#define HOME_LAY_WEATHER_TEMP_X 46
+#define HOME_LAY_WEATHER_TEMP_Y 0
+#define HOME_LAY_WEATHER_TEMP_W 60
+#define HOME_LAY_WEATHER_TEMP_H 39
+#define HOME_LAY_WEATHER_UNIT_X 101
+#define HOME_LAY_WEATHER_UNIT_Y 6
+#define HOME_LAY_WEATHER_UNIT_W 18
+#define HOME_LAY_WEATHER_UNIT_H 22
+#define HOME_LAY_WEATHER_DATE_X 1
+#define HOME_LAY_WEATHER_DATE_Y 53
+#define HOME_LAY_WEATHER_DATE_W 42
+#define HOME_LAY_WEATHER_DATE_H 25
+#define HOME_LAY_WEATHER_WEEKDAY_X 54
+#define HOME_LAY_WEATHER_WEEKDAY_Y 53
+#define HOME_LAY_WEATHER_WEEKDAY_W 42
+#define HOME_LAY_WEATHER_WEEKDAY_H 25
+#define HOME_LAY_CLOCK_HOUR_X   0
+#define HOME_LAY_CLOCK_HOUR_Y   0
+#define HOME_LAY_CLOCK_HOUR_W   114
+#define HOME_LAY_CLOCK_HOUR_H   132
+#define HOME_LAY_CLOCK_COLON_X  113
+#define HOME_LAY_CLOCK_COLON_Y  40
+#define HOME_LAY_CLOCK_COLON_W  10
+#define HOME_LAY_CLOCK_COLON_H  28
+#define HOME_LAY_CLOCK_MIN_X    128
+#define HOME_LAY_CLOCK_MIN_Y    0
+#define HOME_LAY_CLOCK_MIN_W    120
+#define HOME_LAY_CLOCK_MIN_H    132
 
 #define HOME_LAY_WIFI_SIZE      28
 #define HOME_LAY_WIFI_X         432
@@ -68,9 +100,12 @@
 
 /** Text label opacity: rgba(*,*,*,0.9) → 0.9*255 = 230 */
 #define HOME_CARD_LBL_OPA       230
+#define HOME_TEXT_PRIMARY_OPA   230
+#define HOME_TEXT_SECONDARY_OPA 204
 
 /** Background image opacity (~0.72 vs design ambient layer) */
 #define HOME_BG_IMAGE_OPA       255
+#define HOME_BG_OVERLAY_OPA     148
 
 /* ---------------------------------------------------------------------------
  * File scope variables
@@ -144,7 +179,7 @@ static void __home_page_add_background(lv_obj_t * parent)
     lv_obj_set_pos(overlay, 0, 0);
     lv_image_set_src(overlay, home_assets_get_path_background_overlay());
     lv_image_set_inner_align(overlay, LV_IMAGE_ALIGN_COVER);
-    lv_obj_set_style_image_opa(overlay, 148, 0);
+    lv_obj_set_style_image_opa(overlay, HOME_BG_OVERLAY_OPA, 0);
 }
 
 /**
@@ -186,17 +221,84 @@ static void __home_page_add_overlays(lv_obj_t * parent)
  */
 static void __home_page_add_weather(lv_obj_t * parent)
 {
-    lv_obj_t * block;
+    lv_obj_t * container;
+    lv_obj_t * icon;
+    lv_obj_t * temp;
+    lv_obj_t * unit;
+    lv_obj_t * date;
+    lv_obj_t * weekday;
+    lv_font_t * temp_font;
+    lv_font_t * meta_font;
 
-    block = lv_image_create(parent);
-    if (block == NULL) {
+    container = lv_obj_create(parent);
+    if (container == NULL) {
         return;
     }
-    __home_page_style_base(block);
-    lv_obj_set_pos(block, HOME_LAY_WEATHER_L, HOME_LAY_WEATHER_T);
-    lv_obj_set_size(block, HOME_LAY_WEATHER_W, HOME_LAY_WEATHER_H);
-    lv_image_set_src(block, home_assets_get_path_weather_block_png());
-    lv_image_set_inner_align(block, LV_IMAGE_ALIGN_CONTAIN);
+    __home_page_style_base(container);
+    lv_obj_set_pos(container, HOME_LAY_WEATHER_L, HOME_LAY_WEATHER_T);
+    lv_obj_set_size(container, HOME_LAY_WEATHER_W, HOME_LAY_WEATHER_H);
+    s_home_ctx.weather_container = container;
+
+    icon = lv_image_create(container);
+    if (icon != NULL) {
+        __home_page_style_base(icon);
+        lv_obj_set_pos(icon, HOME_LAY_WEATHER_ICON_X, HOME_LAY_WEATHER_ICON_Y);
+        lv_obj_set_size(icon, HOME_LAY_WEATHER_ICON_W, HOME_LAY_WEATHER_ICON_H);
+        lv_image_set_src(icon, home_assets_get_path_weather_png());
+        lv_image_set_inner_align(icon, LV_IMAGE_ALIGN_CONTAIN);
+        s_home_ctx.weather_icon = icon;
+    }
+
+    temp_font = home_assets_font_cached_temp();
+    temp = lv_label_create(container);
+    if (temp != NULL) {
+        __home_page_style_base(temp);
+        lv_label_set_text(temp, "26");
+        lv_obj_set_pos(temp, HOME_LAY_WEATHER_TEMP_X, HOME_LAY_WEATHER_TEMP_Y);
+        lv_obj_set_size(temp, HOME_LAY_WEATHER_TEMP_W, HOME_LAY_WEATHER_TEMP_H);
+        lv_obj_set_style_text_font(temp, temp_font, 0);
+        lv_obj_set_style_text_color(temp, lv_color_hex(HOME_COLOR_WHITE), 0);
+        lv_obj_set_style_text_opa(temp, HOME_TEXT_PRIMARY_OPA, 0);
+        lv_obj_set_style_text_align(temp, LV_TEXT_ALIGN_LEFT, 0);
+        s_home_ctx.weather_temp_label = temp;
+    }
+
+    unit = lv_label_create(container);
+    if (unit != NULL) {
+        __home_page_style_base(unit);
+        lv_label_set_text(unit, "\xC2\xB0""C");
+        lv_obj_set_pos(unit, HOME_LAY_WEATHER_UNIT_X, HOME_LAY_WEATHER_UNIT_Y);
+        lv_obj_set_size(unit, HOME_LAY_WEATHER_UNIT_W, HOME_LAY_WEATHER_UNIT_H);
+        lv_obj_set_style_text_font(unit, home_assets_font_cached_meta_cn(), 0);
+        lv_obj_set_style_text_color(unit, lv_color_hex(HOME_COLOR_WHITE), 0);
+        lv_obj_set_style_text_opa(unit, HOME_TEXT_SECONDARY_OPA, 0);
+    }
+
+    meta_font = home_assets_font_cached_meta_cn();
+
+    date = lv_label_create(container);
+    if (date != NULL) {
+        __home_page_style_base(date);
+        lv_label_set_text(date, "6/24");
+        lv_obj_set_pos(date, HOME_LAY_WEATHER_DATE_X, HOME_LAY_WEATHER_DATE_Y);
+        lv_obj_set_size(date, HOME_LAY_WEATHER_DATE_W, HOME_LAY_WEATHER_DATE_H);
+        lv_obj_set_style_text_font(date, meta_font, 0);
+        lv_obj_set_style_text_color(date, lv_color_hex(HOME_COLOR_WHITE), 0);
+        lv_obj_set_style_text_opa(date, HOME_TEXT_SECONDARY_OPA, 0);
+        s_home_ctx.weather_date_label = date;
+    }
+
+    weekday = lv_label_create(container);
+    if (weekday != NULL) {
+        __home_page_style_base(weekday);
+        lv_label_set_text(weekday, "\xE5\x91\xA8\xE4\xB8\x80");
+        lv_obj_set_pos(weekday, HOME_LAY_WEATHER_WEEKDAY_X, HOME_LAY_WEATHER_WEEKDAY_Y);
+        lv_obj_set_size(weekday, HOME_LAY_WEATHER_WEEKDAY_W, HOME_LAY_WEATHER_WEEKDAY_H);
+        lv_obj_set_style_text_font(weekday, meta_font, 0);
+        lv_obj_set_style_text_color(weekday, lv_color_hex(HOME_COLOR_WHITE), 0);
+        lv_obj_set_style_text_opa(weekday, HOME_TEXT_SECONDARY_OPA, 0);
+        s_home_ctx.weather_weekday_label = weekday;
+    }
 }
 
 /**
@@ -206,17 +308,58 @@ static void __home_page_add_weather(lv_obj_t * parent)
  */
 static void __home_page_add_clock(lv_obj_t * parent)
 {
-    lv_obj_t * panel;
+    lv_obj_t * container;
+    lv_obj_t * hours;
+    lv_obj_t * colon;
+    lv_obj_t * minutes;
+    lv_font_t * clock_font;
 
-    panel = lv_image_create(parent);
-    if (panel == NULL) {
+    container = lv_obj_create(parent);
+    if (container == NULL) {
         return;
     }
-    __home_page_style_base(panel);
-    lv_obj_set_pos(panel, HOME_LAY_CLOCK_L, HOME_LAY_CLOCK_T);
-    lv_obj_set_size(panel, HOME_LAY_CLOCK_W, HOME_LAY_CLOCK_H);
-    lv_image_set_src(panel, home_assets_get_path_clock_group_png());
-    lv_image_set_inner_align(panel, LV_IMAGE_ALIGN_CONTAIN);
+    __home_page_style_base(container);
+    lv_obj_set_pos(container, HOME_LAY_CLOCK_L, HOME_LAY_CLOCK_T);
+    lv_obj_set_size(container, HOME_LAY_CLOCK_W, HOME_LAY_CLOCK_H);
+    s_home_ctx.clock_container = container;
+
+    clock_font = home_assets_font_cached_clock();
+
+    hours = lv_label_create(container);
+    if (hours != NULL) {
+        __home_page_style_base(hours);
+        lv_label_set_text(hours, "09");
+        lv_obj_set_pos(hours, HOME_LAY_CLOCK_HOUR_X, HOME_LAY_CLOCK_HOUR_Y);
+        lv_obj_set_size(hours, HOME_LAY_CLOCK_HOUR_W, HOME_LAY_CLOCK_HOUR_H);
+        lv_obj_set_style_text_font(hours, clock_font, 0);
+        lv_obj_set_style_text_color(hours, lv_color_hex(HOME_COLOR_WHITE), 0);
+        lv_obj_set_style_text_opa(hours, HOME_TEXT_PRIMARY_OPA, 0);
+        lv_obj_set_style_text_align(hours, LV_TEXT_ALIGN_LEFT, 0);
+        s_home_ctx.clock_hour_label = hours;
+    }
+
+    colon = lv_image_create(container);
+    if (colon != NULL) {
+        __home_page_style_base(colon);
+        lv_obj_set_pos(colon, HOME_LAY_CLOCK_COLON_X, HOME_LAY_CLOCK_COLON_Y);
+        lv_obj_set_size(colon, HOME_LAY_CLOCK_COLON_W, HOME_LAY_CLOCK_COLON_H);
+        lv_image_set_src(colon, home_assets_get_path_clock_colon_png());
+        lv_image_set_inner_align(colon, LV_IMAGE_ALIGN_CONTAIN);
+        s_home_ctx.clock_colon_image = colon;
+    }
+
+    minutes = lv_label_create(container);
+    if (minutes != NULL) {
+        __home_page_style_base(minutes);
+        lv_label_set_text(minutes, "26");
+        lv_obj_set_pos(minutes, HOME_LAY_CLOCK_MIN_X, HOME_LAY_CLOCK_MIN_Y);
+        lv_obj_set_size(minutes, HOME_LAY_CLOCK_MIN_W, HOME_LAY_CLOCK_MIN_H);
+        lv_obj_set_style_text_font(minutes, clock_font, 0);
+        lv_obj_set_style_text_color(minutes, lv_color_hex(HOME_COLOR_WHITE), 0);
+        lv_obj_set_style_text_opa(minutes, HOME_TEXT_PRIMARY_OPA, 0);
+        lv_obj_set_style_text_align(minutes, LV_TEXT_ALIGN_LEFT, 0);
+        s_home_ctx.clock_minute_label = minutes;
+    }
 }
 
 /**
@@ -422,6 +565,15 @@ OPERATE_RET home_page_create(VOID_T)
 
     s_home_ctx.switch_one_bg = NULL;
     s_home_ctx.switch_two_bg = NULL;
+    s_home_ctx.weather_container = NULL;
+    s_home_ctx.weather_icon = NULL;
+    s_home_ctx.weather_temp_label = NULL;
+    s_home_ctx.weather_date_label = NULL;
+    s_home_ctx.weather_weekday_label = NULL;
+    s_home_ctx.clock_container = NULL;
+    s_home_ctx.clock_hour_label = NULL;
+    s_home_ctx.clock_colon_image = NULL;
+    s_home_ctx.clock_minute_label = NULL;
     s_home_ctx.switch_one_btn = NULL;
     s_home_ctx.switch_two_btn = NULL;
     s_home_ctx.switch_one_label = NULL;
