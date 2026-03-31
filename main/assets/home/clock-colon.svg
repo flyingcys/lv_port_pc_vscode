@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="10" height="28" viewBox="0 0 10 28" fill="none">
+  <defs>
+    <filter id="shadow" x="-4" y="-4" width="18" height="18" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="1" stdDeviation="1.2" flood-color="#000000" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+  <path d="M5 10Q2.98945 10 1.49421 8.64052Q0 7.28001 0 5.026Q0 2.72103 1.49421 1.36052Q2.98945 0 5 0Q7.01056 0 8.50476 1.36052Q10 2.72103 10 5.026Q10 7.28001 8.50476 8.64052Q7.01056 10 5 10Z" fill="#FF0000" filter="url(#shadow)"/>
+  <path d="M5 10Q2.98945 10 1.49421 8.64052Q0 7.28001 0 5.026Q0 2.72103 1.49421 1.36052Q2.98945 0 5 0Q7.01056 0 8.50476 1.36052Q10 2.72103 10 5.026Q10 7.28001 8.50476 8.64052Q7.01056 10 5 10Z" transform="translate(0 18)" fill="#FF0000" filter="url(#shadow)"/>
+</svg>

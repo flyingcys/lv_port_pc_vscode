@@ -7,6 +7,10 @@ ui/
 
 # Ignore all dot folders, with below exceptions
 .*/
+!.cursor/
+!.cursor/skills/
+!.cursor/skills/design-to-lvgl/
+!.cursor/skills/design-to-lvgl/**
 
 # VSCode
 .vscode

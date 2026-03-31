@@ -78,6 +78,9 @@ if(USE_FREERTOS)
         ${PROJECT_SOURCE_DIR}/main/src/freertos_main.cpp
         ${PROJECT_SOURCE_DIR}/main/src/mouse_cursor_icon.c
         ${PROJECT_SOURCE_DIR}/main/src/FreeRTOS_Posix_Port.c
+        ${PROJECT_SOURCE_DIR}/main/src/scenes_assets.c
+        ${PROJECT_SOURCE_DIR}/main/src/scenes_page.c
+        ${PROJECT_SOURCE_DIR}/main/src/scenes_state.c
         ${FREERTOS_SOURCES}  # Add only if USE_FREERTOS is enabled
     )
     # Link FreeRTOS libraries
@@ -86,6 +89,9 @@ else()
     add_executable(main
         ${PROJECT_SOURCE_DIR}/main/src/main.c
         ${PROJECT_SOURCE_DIR}/main/src/mouse_cursor_icon.c
+        ${PROJECT_SOURCE_DIR}/main/src/scenes_assets.c
+        ${PROJECT_SOURCE_DIR}/main/src/scenes_page.c
+        ${PROJECT_SOURCE_DIR}/main/src/scenes_state.c
     )
 endif()
 
@@ -100,6 +106,13 @@ endif()
 
 # Custom target to run the executable
 add_custom_target(run COMMAND ${EXECUTABLE_OUTPUT_PATH}/main DEPENDS main)
+
+add_executable(scenes_state_test
+    ${PROJECT_SOURCE_DIR}/tests/scenes_state_test.c
+    ${PROJECT_SOURCE_DIR}/main/src/scenes_state.c
+)
+target_compile_definitions(scenes_state_test PRIVATE LV_CONF_INCLUDE_SIMPLE)
+target_include_directories(scenes_state_test PRIVATE ${PROJECT_SOURCE_DIR}/main/inc ${PROJECT_SOURCE_DIR} ${SDL2_INCLUDE_DIRS})
 
 # Conditionally include and link SDL2_image if LV_USE_DRAW_SDL is enabled
 if(LV_USE_DRAW_SDL)
