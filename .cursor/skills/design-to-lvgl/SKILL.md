@@ -73,7 +73,7 @@ description: Use when converting MasterGo or Figma designs into LVGL pages in th
 
 1. 锁定设计源、目标页面、节点和尺寸
 2. 读取对应 MCP schema，并提取真实设计数据
-3. 输出实现前摘要和关键设计值对照表
+3. 输出实现前摘要和关键设计值对照表，其中必须显式说明布局策略
 4. 确定 `LVGL` 实现策略、资源方案、字体方案
 5. 落地页面、资源和字体
 6. 构建、运行并汇报剩余偏差
