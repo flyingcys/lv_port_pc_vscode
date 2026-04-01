@@ -16,6 +16,7 @@
 #include "lvgl/examples/lv_examples.h"
 #include "lvgl/demos/lv_demos.h"
 #include "glob.h"
+#include "smart_home_page.h"
 
 /*********************
  *      DEFINES
@@ -73,11 +74,11 @@ int main(int argc, char **argv)
   lv_init();
 
   /*Initialize the HAL (display, input devices, tick) for LVGL*/
-  hal_init(320, 480);
+  hal_init(480, 480);
 
   #if LV_USE_OS == LV_OS_NONE
  
-  lv_demo_widgets();
+  smart_home_page_create();
 
   while(1) {
     /* Periodically call the lv_task handler.

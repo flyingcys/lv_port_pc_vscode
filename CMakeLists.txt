@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 project(lvgl C CXX)
+enable_testing()
 
 # Set the correct FreeRTOS port for your system (e.g., Posix for WSL)
 set(FREERTOS_PORT GCC_POSIX CACHE STRING "Port for FreeRTOS on Posix environment")
@@ -71,10 +72,16 @@ add_compile_definitions($<$<BOOL:${LV_USE_FFMPEG}>:LV_USE_FFMPEG=1>)
 add_subdirectory(lvgl)
 target_include_directories(lvgl PUBLIC ${PROJECT_SOURCE_DIR} ${SDL2_INCLUDE_DIRS})
 
+set(SMART_HOME_SOURCES
+    ${PROJECT_SOURCE_DIR}/main/src/smart_home_assets.c
+    ${PROJECT_SOURCE_DIR}/main/src/smart_home_page.c
+)
+
 # Create the main executable, depending on the FreeRTOS option
 if(USE_FREERTOS)
     add_executable(main
         ${PROJECT_SOURCE_DIR}/main/src/main.c
+        ${SMART_HOME_SOURCES}
         ${PROJECT_SOURCE_DIR}/main/src/freertos_main.cpp
         ${PROJECT_SOURCE_DIR}/main/src/mouse_cursor_icon.c
         ${PROJECT_SOURCE_DIR}/main/src/FreeRTOS_Posix_Port.c
@@ -85,9 +92,23 @@ if(USE_FREERTOS)
 else()
     add_executable(main
         ${PROJECT_SOURCE_DIR}/main/src/main.c
+        ${SMART_HOME_SOURCES}
         ${PROJECT_SOURCE_DIR}/main/src/mouse_cursor_icon.c
     )
 endif()
+
+add_executable(smart_home_page_test
+    ${SMART_HOME_SOURCES}
+    ${PROJECT_SOURCE_DIR}/main/tests/smart_home_page_test.cpp
+)
+target_compile_definitions(smart_home_page_test PRIVATE LV_CONF_INCLUDE_SIMPLE)
+target_include_directories(smart_home_page_test PRIVATE ${PROJECT_SOURCE_DIR} ${SDL2_INCLUDE_DIRS})
+target_link_libraries(smart_home_page_test lvgl ${SDL2_LIBRARIES} m pthread)
+add_test(
+    NAME smart_home_page_test
+    COMMAND smart_home_page_test
+)
+set_tests_properties(smart_home_page_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 # Define LVGL configuration as a simple include
 target_compile_definitions(main PRIVATE LV_CONF_INCLUDE_SIMPLE)
