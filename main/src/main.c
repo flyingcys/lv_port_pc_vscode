@@ -13,9 +13,9 @@
 #include <unistd.h>
 #include <pthread.h>
 #include "lvgl/lvgl.h"
-#include "lvgl/examples/lv_examples.h"
-#include "lvgl/demos/lv_demos.h"
-#include "glob.h"
+#include "model/device_state.h"
+#include "ui/home_page.h"
+#include "ui/ui_fonts.h"
 
 /*********************
  *      DEFINES
@@ -29,6 +29,7 @@
  *  STATIC PROTOTYPES
  **********************/
 static lv_display_t * hal_init(int32_t w, int32_t h);
+static int app_home_start(void);
 
 /**********************
  *  STATIC VARIABLES
@@ -73,11 +74,13 @@ int main(int argc, char **argv)
   lv_init();
 
   /*Initialize the HAL (display, input devices, tick) for LVGL*/
-  hal_init(320, 480);
+  hal_init(480, 480);
 
   #if LV_USE_OS == LV_OS_NONE
  
-  lv_demo_widgets();
+  if(app_home_start() != 0) {
+    return 1;
+  }
 
   while(1) {
     /* Periodically call the lv_task handler.
@@ -131,4 +134,24 @@ static lv_display_t * hal_init(int32_t w, int32_t h)
   lv_indev_set_group(kb, lv_group_get_default());
 
   return disp;
+}
+
+static int app_home_start(void)
+{
+  static device_state_t state;
+  static home_page_t page;
+
+  device_state_init_defaults(&state);
+  if(!ui_fonts_init()) {
+    fprintf(stderr, "failed to initialize UI fonts\n");
+    return -1;
+  }
+
+  if(!home_page_create(&page, lv_screen_active(), &state)) {
+    fprintf(stderr, "failed to create home page\n");
+    ui_fonts_deinit();
+    return -1;
+  }
+
+  return 0;
 }

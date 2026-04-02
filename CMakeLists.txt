@@ -37,6 +37,7 @@ endif()
 
 # Main include files of the project
 include_directories(${PROJECT_SOURCE_DIR}/main/inc)
+enable_testing()
 
 # Define options for LVGL with default values (OFF)
 option(LV_USE_DRAW_SDL "Use SDL draw unit" OFF)
@@ -67,6 +68,9 @@ add_compile_definitions($<$<BOOL:${LV_USE_LIBPNG}>:LV_USE_LIBPNG=1>)
 add_compile_definitions($<$<BOOL:${LV_USE_LIBJPEG_TURBO}>:LV_USE_LIBJPEG_TURBO=1>)
 add_compile_definitions($<$<BOOL:${LV_USE_FFMPEG}>:LV_USE_FFMPEG=1>)
 
+set(LV_BUILD_DEMOS OFF CACHE BOOL "Disable LVGL demos for app builds" FORCE)
+set(LV_BUILD_EXAMPLES OFF CACHE BOOL "Disable LVGL examples for app builds" FORCE)
+
 # Add LVGL subdirectory
 add_subdirectory(lvgl)
 target_include_directories(lvgl PUBLIC ${PROJECT_SOURCE_DIR} ${SDL2_INCLUDE_DIRS})
@@ -86,12 +90,16 @@ else()
     add_executable(main
         ${PROJECT_SOURCE_DIR}/main/src/main.c
         ${PROJECT_SOURCE_DIR}/main/src/mouse_cursor_icon.c
+        ${PROJECT_SOURCE_DIR}/main/src/model/device_state.c
+        ${PROJECT_SOURCE_DIR}/main/src/ui/home_page.c
+        ${PROJECT_SOURCE_DIR}/main/src/ui/ui_assets.c
+        ${PROJECT_SOURCE_DIR}/main/src/ui/ui_fonts.c
     )
 endif()
 
 # Define LVGL configuration as a simple include
-target_compile_definitions(main PRIVATE LV_CONF_INCLUDE_SIMPLE)
-target_link_libraries(main lvgl lvgl::examples lvgl::demos lvgl::thorvg ${SDL2_LIBRARIES} m pthread)
+target_compile_definitions(main PRIVATE LV_CONF_INCLUDE_SIMPLE UI_PROJECT_ROOT_PATH=\"${PROJECT_SOURCE_DIR}\")
+target_link_libraries(main lvgl ${SDL2_LIBRARIES} m pthread)
 
 # Only link freertos_config if the FreeRTOS directory exists
 if(USE_FREERTOS)
@@ -112,8 +120,7 @@ endif()
 # Conditionally include and link libpng if LV_USE_LIBPNG is enabled
 if(LV_USE_LIBPNG)
     find_package(PNG REQUIRED)
-    target_include_directories(lvgl PUBLIC ${PNG_INCLUDE_DIRS})
-    target_link_libraries(main ${PNG_LIBRARIES})
+    target_link_libraries(lvgl PUBLIC PNG::PNG)
 endif()
 
 # Conditionally include and link libjpeg-turbo if LV_USE_LIBJPEG_TURBO is enabled
@@ -134,6 +141,17 @@ if(LV_USE_FREETYPE)
     target_include_directories(lvgl PUBLIC ${FREETYPE_INCLUDE_DIRS})
     target_link_libraries(main ${FREETYPE_LIBRARIES})
 endif()
+
+add_executable(home_page_smoke_test
+    ${PROJECT_SOURCE_DIR}/main/tests/home_page_smoke_test.c
+    ${PROJECT_SOURCE_DIR}/main/src/model/device_state.c
+    ${PROJECT_SOURCE_DIR}/main/src/ui/home_page.c
+    ${PROJECT_SOURCE_DIR}/main/src/ui/ui_assets.c
+    ${PROJECT_SOURCE_DIR}/main/src/ui/ui_fonts.c
+)
+target_compile_definitions(home_page_smoke_test PRIVATE LV_CONF_INCLUDE_SIMPLE UI_PROJECT_ROOT_PATH=\"${PROJECT_SOURCE_DIR}\")
+target_link_libraries(home_page_smoke_test lvgl ${SDL2_LIBRARIES} m pthread)
+add_test(NAME home_page_smoke_test COMMAND home_page_smoke_test)
 
 # Apply additional compile options if the build type is Debug
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")

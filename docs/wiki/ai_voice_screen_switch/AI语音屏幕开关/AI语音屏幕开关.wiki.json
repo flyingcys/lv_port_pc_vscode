@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "parent_url": "https://wiki.tuya-inc.com:7799/page/2005821155843244083",
+  "lib_code": "1821802560634224721",
+  "clone_mode": "single",
+  "base_version": "V55",
+  "converter_version": "1.2.1",
+  "base_content_hash": "817b902f28ff14e7e84e0db272daa184480961394b17da30caf3a14d250cc5c6",
+  "base_md_hash": "faef938fa547eaeb99194f5e19f693ddf9c8e288fed8cdfd12eef8f9f5e58da7",
+  "frontmatter_snapshot": {
+    "title": "AI语音屏幕开关",
+    "content_type": "TEXT",
+    "origin_url": "https://wiki.tuya-inc.com:7799/page/2037048491108204608",
+    "version": "V55"
+  },
+  "attachments": {
+    "./1757387377f484547fd50-gzlc.png": {
+      "local_hash": "3e5af78a3150261bb4df7ecba80e60ec688c12b11ba45c4b796dc0a4ca8e66b8",
+      "remote_key": "smart/pontos/1757387377f484547fd50.png",
+      "origin_file_name": "1757387377f484547fd50.png"
+    },
+    "./17574117531218548ce2c-w9gq.png": {
+      "local_hash": "bdc4697b31ed07ea705e8062559f6550c530511f6c6a45540dac61581b83c846",
+      "remote_key": "smart/pontos/17574117531218548ce2c.png",
+      "origin_file_name": "17574117531218548ce2c.png"
+    },
+    "./image_8795501556934749-sdyq.png": {
+      "local_hash": "4a2ead11c0591842c32855b3badac8d16514c7025643635b85e5db7d63c3e82a",
+      "remote_key": "smart/pontos/177450965805fb7127ff9.png",
+      "origin_file_name": "image_8795501556934749.png"
+    },
+    "./image_9975774264529359-u04s.png": {
+      "local_hash": "deab40a874ec7dec5c9c5244ea8873859d45a48f7c4c80da79982628a25c61d6",
+      "remote_key": "smart/pontos/1774505413602a5ac0a01.png",
+      "origin_file_name": "image_9975774264529359.png"
+    }
+  },
+  "_locked": "5Pb0dqHY/+1qVA4qYXX9cgxuwLiAZXmgR3faudmH2zh+sh1ptxcwxkTQeuFAH42IeM8dHYW3qg//S/MNrgeoG9c/BqyLDLCB2x9PfJOmLl5Q8jF0K1W+0eeVAPN02dFzf8q2k4tLPtxNa2NY8wTqZbItXm9dhqNzwsmICkIguDASflE8OHHfy4VdFBVgWKOE9Uy0KeuIRyQjCuHEukecqngANZfvUBYE2aCzFHYdnOvkOi8eOPKLmUBDDFN9SIT94Y4B8cbq0FXrgIwjz1CBfLc0ZQsjeu5J3Yfc829tbOD1ntorcMnn2O0cpikhcq8cnRWLvo0YicBdKZsyw7jzv2N7rNMwIia/uEzwpMUbSrQrVSl8tmiRED32y+sD4OKDQHeLHyczs+v6YrWAbxkEDTssSjojh/2uwyTsmYA3OmOo3F4Av7XoyAMCRZYQCKPMiZVZzIR7pvUcL292Ou8iMma83MEjhJRL2LKH0hzZq4EorToCNBkTkKYhA5I2sNk5kHRMhiEhoura4JUQNWu3pYOAscbQfAX9bMXW2VCr+b16Eewpg4s9xElbsRDBrx4UUbr+IlGNehupXDuabYaHcC5oUkEPxBPoHS+CLBoh6YMU07fcKfe2X1ZI3YVrF5fGmNh4syQ7YF4/RGOk6cTmZ6iPWcgV2jBBS1U75dkUKdcu4DAMeaZcYOvIitqbc9OEK7MVHr/gHWYfiDRSpZf6CUZnbCDtuDpk+canr/AoAdkOQw952l6VGWk7rc/el+AEk5RR/pBnXJRZFNbbgEUbY7aqJrJoVUjndbRgEIUH50AgrHGn5bDVxhhUeUfI97aoaxoVMZMdcO3bLXeOWCgknzmEWzXaJmyaJqmouM45aiDnv6P1KKsfu+rc6RQbzsCST7BmjoGyKTcUdNJHixVtdxPqMgYlip6M9k7wr6foDWJMrOZ64X4jCbWWFhyQVlR8nTCuNdl2Q9sVePu3q9VjQUZnXUnBOy8+RSANkNRHWBYvlNuOfVL6qC+KjJxN7/bnmeNEMOalcEudjlf8YJMIqSaqkO9VCHplKHav9QxkzjSiEv5yjOh9C6OTRP/+yjzT+jf9Pg6ECwqazG90tYLMrXBcj1KWYmzx2WXllFGj9EA0BtXZONzK4uWmpBKl2sCjJexxX6G3QjRwUZGsjlsEJg3fUTf6BotDffpK49fALq5k+4YB3zYEbOwCxZmZFhzbIUBzwhl32dYZWLeSeR+VgLvFKzfK2n48WSccRpf0Cwx1CYq+5jRijkzEHgIKanS6W370KvECeVC7SwKOb+B658deIRy0pV0zoUDilBzNl3GQTJMxx8SZ2IRlAIvXGGublqjXI3C6q+jjepk45U0n3V/HiK0jp3KSQ/lauaKxXIDOpkvwi3VO/zcYQgM1qlNIK55VdstUDs3vWh5t4mNUT5QFFSJuscmcafSFDErr+e9ai7vqP+IsfuyASLW4raslRzDebgLf7Dl12SSqf3NSBT5rhmqjKYMuM3Jon/smL4SKqNrhQR69QPHrPUlAJMOAMln6Of7+dMeOZIIcjvpobmxNA/8r9QLiCsuRtXskOgH+xR0vk9oQZza1YcPZNOZx+4z7Oir1XCpSFGxfUXIasC4quny1Z7gbNT0kVZdOrf2xNHhbAo6nco0VD7rSXfpGdQHGvygWPhSmo5t96nVolbmvfe0nGneU/WC6V/ifibKp4GggAUKCdJ7hbRtb94sqqZPNZy5QOVy+iG7XUaByFO8B+N+BoDVLpg7Jp5biAa0ta5ubeSLmcbl7N+jlf07nXG33BwTJJ5eniwdzH+aqWdJy8tlgNwe8T3DRkZyZbe8w0c/8+BvBs9wyv1WOBCD0NRVBMRXmLh7ZeGF0y8+JqvAQGcOWpOjdXxk7SYh1ZOTOd58y2qC5UfXga88shjsAo6ugcuEn0xIe"
+}
