@@ -92,8 +92,12 @@ else()
         ${PROJECT_SOURCE_DIR}/main/src/mouse_cursor_icon.c
         ${PROJECT_SOURCE_DIR}/main/src/model/device_state.c
         ${PROJECT_SOURCE_DIR}/main/src/ui/home_page.c
+        ${PROJECT_SOURCE_DIR}/main/src/ui/scenes_page.c
+        ${PROJECT_SOURCE_DIR}/main/src/ui/settings_panel.c
+        ${PROJECT_SOURCE_DIR}/main/src/ui/top_status_bar.c
         ${PROJECT_SOURCE_DIR}/main/src/ui/ui_assets.c
         ${PROJECT_SOURCE_DIR}/main/src/ui/ui_fonts.c
+        ${PROJECT_SOURCE_DIR}/main/src/ui/voice_popup.c
     )
 endif()
 

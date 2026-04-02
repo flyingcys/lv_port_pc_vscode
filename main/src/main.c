@@ -15,6 +15,7 @@
 #include "lvgl/lvgl.h"
 #include "model/device_state.h"
 #include "ui/home_page.h"
+#include "ui/settings_panel.h"
 #include "ui/ui_fonts.h"
 
 /*********************
@@ -30,6 +31,7 @@
  **********************/
 static lv_display_t * hal_init(int32_t w, int32_t h);
 static int app_home_start(void);
+static int app_settings_start(void);
 
 /**********************
  *  STATIC VARIABLES
@@ -74,11 +76,11 @@ int main(int argc, char **argv)
   lv_init();
 
   /*Initialize the HAL (display, input devices, tick) for LVGL*/
-  hal_init(480, 480);
+  hal_init(480, 656);
 
   #if LV_USE_OS == LV_OS_NONE
- 
-  if(app_home_start() != 0) {
+
+  if(app_settings_start() != 0) {
     return 1;
   }
 
@@ -134,6 +136,26 @@ static lv_display_t * hal_init(int32_t w, int32_t h)
   lv_indev_set_group(kb, lv_group_get_default());
 
   return disp;
+}
+
+static int app_settings_start(void)
+{
+  static device_state_t state;
+  static settings_panel_t panel;
+
+  device_state_init_defaults(&state);
+  if(!ui_fonts_init()) {
+    fprintf(stderr, "failed to initialize UI fonts\n");
+    return -1;
+  }
+
+  if(!settings_panel_create(&panel, lv_screen_active(), &state)) {
+    fprintf(stderr, "failed to create settings panel\n");
+    ui_fonts_deinit();
+    return -1;
+  }
+
+  return 0;
 }
 
 static int app_home_start(void)
