@@ -12,6 +12,9 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <pthread.h>
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 #include "lvgl/lvgl.h"
 #include "lvgl/examples/lv_examples.h"
 #include "lvgl/demos/lv_demos.h"
@@ -29,6 +32,9 @@
  *  STATIC PROTOTYPES
  **********************/
 static lv_display_t * hal_init(int32_t w, int32_t h);
+#ifdef __EMSCRIPTEN__
+static void emscripten_loop(void * arg);
+#endif
 
 /**********************
  *  STATIC VARIABLES
@@ -79,12 +85,16 @@ int main(int argc, char **argv)
  
   lv_demo_widgets();
 
+  #ifdef __EMSCRIPTEN__
+  emscripten_set_main_loop_arg(emscripten_loop, NULL, 0, true);
+  #else
   while(1) {
     /* Periodically call the lv_task handler.
      * It could be done in a timer interrupt or an OS task too.*/
     lv_timer_handler();
     usleep(5 * 1000);
   }
+  #endif
 
   #elif LV_USE_OS == LV_OS_FREERTOS
 
@@ -132,3 +142,11 @@ static lv_display_t * hal_init(int32_t w, int32_t h)
 
   return disp;
 }
+
+#ifdef __EMSCRIPTEN__
+static void emscripten_loop(void * arg)
+{
+  (void)arg;
+  lv_timer_handler();
+}
+#endif

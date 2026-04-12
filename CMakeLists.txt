@@ -54,12 +54,28 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
-# Find and include SDL2 library
-find_package(SDL2 REQUIRED)
+set(PLATFORM_LINK_LIBS m pthread)
+set(PLATFORM_INCLUDE_DIRS "")
+
+# Emscripten uses its own SDL2 port instead of a host SDL2 package.
+if(EMSCRIPTEN)
+    set(EMSCRIPTEN_SDL_FLAGS "-s USE_SDL=2")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EMSCRIPTEN_SDL_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EMSCRIPTEN_SDL_FLAGS}")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${EMSCRIPTEN_SDL_FLAGS}")
+    set(PLATFORM_LINK_LIBS ${PLATFORM_LINK_LIBS})
+else()
+    # Find and include SDL2 library
+    find_package(SDL2 REQUIRED)
+    set(PLATFORM_INCLUDE_DIRS ${SDL2_INCLUDE_DIRS})
+    list(APPEND PLATFORM_LINK_LIBS ${SDL2_LIBRARIES})
+endif()
 
 # Remove ARM-specific compile and linker options
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=native")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+if(NOT EMSCRIPTEN)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=native")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+endif()
 
 # Add compile definitions based on the selected options
 add_compile_definitions($<$<BOOL:${LV_USE_DRAW_SDL}>:LV_USE_DRAW_SDL=1>)
@@ -69,7 +85,7 @@ add_compile_definitions($<$<BOOL:${LV_USE_FFMPEG}>:LV_USE_FFMPEG=1>)
 
 # Add LVGL subdirectory
 add_subdirectory(lvgl)
-target_include_directories(lvgl PUBLIC ${PROJECT_SOURCE_DIR} ${SDL2_INCLUDE_DIRS})
+target_include_directories(lvgl PUBLIC ${PROJECT_SOURCE_DIR} ${PLATFORM_INCLUDE_DIRS})
 
 # Create the main executable, depending on the FreeRTOS option
 if(USE_FREERTOS)
@@ -89,9 +105,16 @@ else()
     )
 endif()
 
+if(EMSCRIPTEN)
+    set_target_properties(main PROPERTIES
+        SUFFIX ".html"
+        LINK_FLAGS "--shell-file ${PROJECT_SOURCE_DIR}/main/web_shell.html -s INITIAL_MEMORY=83886080 -s SINGLE_FILE=1"
+    )
+endif()
+
 # Define LVGL configuration as a simple include
 target_compile_definitions(main PRIVATE LV_CONF_INCLUDE_SIMPLE)
-target_link_libraries(main lvgl lvgl::examples lvgl::demos lvgl::thorvg ${SDL2_LIBRARIES} m pthread)
+target_link_libraries(main lvgl lvgl::examples lvgl::demos lvgl::thorvg ${PLATFORM_LINK_LIBS})
 
 # Only link freertos_config if the FreeRTOS directory exists
 if(USE_FREERTOS)
