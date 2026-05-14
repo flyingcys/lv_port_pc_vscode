@@ -1,0 +1,409 @@
+:root {
+    --bg-color: #0f172a;
+    --text-primary: #ffffff;
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --hover-overlay: rgba(255, 255, 255, 0.15);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #1a1a1a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    user-select: none; /* 禁用文本选择以提升原生应用手感 */
+}
+
+.device-container {
+    width: 800px;
+    height: 480px;
+    /* 使用一张精美的高清壁纸作为背景 */
+    background: url('https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2070&auto=format&fit=crop') no-repeat center center;
+    background-size: cover;
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 
+                0 0 0 12px #333, /* 模拟设备外边框 */
+                0 0 0 14px #555; 
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+}
+
+/* 顶部和底部的渐变遮罩，使文字和图标在任何壁纸下都清晰可见 */
+.device-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 25%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.3) 100%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* 状态栏 */
+.status-bar {
+    position: relative;
+    z-index: 10;
+    height: 38px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+    font-size: 14px;
+    font-weight: 500;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+    letter-spacing: 0.5px;
+}
+
+.status-left {
+    display: flex;
+    align-items: center;
+}
+
+.status-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.battery-container {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-right i {
+    font-size: 18px;
+}
+
+/* 桌面主区域 */
+.home-screen {
+    position: relative;
+    z-index: 10;
+    flex: 1;
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scroll-behavior: smooth;
+    /* 隐藏滚动条但保留功能 */
+}
+
+.home-screen::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+}
+
+.app-page {
+    min-width: 100%;
+    height: 100%;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    padding: 20px 48px;
+    gap: 24px 16px;
+    align-content: center;
+}
+
+/* 应用图标容器 */
+.app-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    outline: none;
+}
+
+.app-item:hover, .app-item:focus {
+    transform: scale(1.08);
+}
+
+.app-item:active {
+    transform: scale(0.92);
+}
+
+.app-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 36px;
+    color: white;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 
+                inset 0 1px 2px rgba(255, 255, 255, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+/* 添加iOS风格的玻璃高光效果 */
+.app-icon::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.02) 100%);
+    pointer-events: none;
+}
+
+.app-name {
+    font-size: 13px;
+    font-weight: 500;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+    letter-spacing: 0.5px;
+}
+
+/* 分页指示器 */
+.pagination {
+    position: relative;
+    z-index: 10;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.35);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.dot.active {
+    background-color: rgba(255, 255, 255, 1);
+    width: 24px;
+    border-radius: 4px;
+}
+
+/* ---------- 上下滑动面板样式 ---------- */
+.panel {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 85%;
+    background: rgba(20, 25, 40, 0.75);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.4s cubic-bezier(0.32, 1.1, 0.53, 1);
+    box-shadow: 0 0 30px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* 顶部控制中心 */
+.top-panel {
+    top: 0;
+    transform: translateY(-100%);
+    border-radius: 0 0 30px 30px;
+    padding-bottom: 10px;
+}
+
+.top-panel.open {
+    transform: translateY(0);
+}
+
+/* 底部通知中心 */
+.bottom-panel {
+    bottom: 0;
+    transform: translateY(100%);
+    border-radius: 30px 30px 0 0;
+    padding-top: 10px;
+}
+
+.bottom-panel.open {
+    transform: translateY(0);
+}
+
+.panel-handle-container {
+    width: 100%;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: grab;
+    flex-shrink: 0;
+}
+
+.top-handle {
+    margin-bottom: auto;
+}
+
+.panel-handle {
+    width: 60px;
+    height: 6px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 3px;
+    transition: background 0.3s;
+}
+
+.panel-handle-container:hover .panel-handle {
+    background: rgba(255,255,255,0.7);
+}
+
+.panel-content {
+    flex: 1;
+    padding: 20px 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto;
+}
+
+.panel-header {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    color: rgba(255,255,255,0.9);
+}
+
+/* 控制中心网格 */
+.control-grid {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 10px;
+}
+
+.control-btn {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 26px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.control-btn:hover {
+    background: rgba(255,255,255,0.2);
+    transform: scale(1.05);
+}
+
+.control-btn.active {
+    background: #007AFF;
+    box-shadow: 0 4px 15px rgba(0, 122, 255, 0.5);
+    border-color: transparent;
+}
+
+/* 进度条 */
+.slider-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(255,255,255,0.08);
+    padding: 16px 24px;
+    border-radius: 20px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.slider-container i {
+    font-size: 22px;
+    color: rgba(255,255,255,0.8);
+}
+
+.slider-track {
+    flex: 1;
+    height: 8px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.slider-fill {
+    height: 100%;
+    background: white;
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+
+/* 通知列表 */
+.notification-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.notification-item {
+    background: rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: transform 0.2s;
+    cursor: pointer;
+}
+
+.notification-item:hover {
+    transform: scale(1.02);
+    background: rgba(255,255,255,0.15);
+}
+
+.notif-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.notif-text {
+    flex: 1;
+}
+
+.notif-text h4 {
+    font-size: 16px;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.notif-text p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.5;
+}
+
+.notif-time {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
