@@ -13,9 +13,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include "lvgl/lvgl.h"
-#include "lvgl/examples/lv_examples.h"
-#include "lvgl/demos/lv_demos.h"
-#include "glob.h"
+#include "icon_replace_2.h"
 
 /*********************
  *      DEFINES
@@ -73,11 +71,11 @@ int main(int argc, char **argv)
   lv_init();
 
   /*Initialize the HAL (display, input devices, tick) for LVGL*/
-  hal_init(320, 480);
+  hal_init(800, 480);
 
   #if LV_USE_OS == LV_OS_NONE
  
-  lv_demo_widgets();
+  icon_replace_demo_2();
 
   while(1) {
     /* Periodically call the lv_task handler.

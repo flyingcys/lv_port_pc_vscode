@@ -71,6 +71,11 @@ add_compile_definitions($<$<BOOL:${LV_USE_FFMPEG}>:LV_USE_FFMPEG=1>)
 add_subdirectory(lvgl)
 target_include_directories(lvgl PUBLIC ${PROJECT_SOURCE_DIR} ${SDL2_INCLUDE_DIRS})
 
+set(ICON_REPLACE_2_SOURCES
+    ${PROJECT_SOURCE_DIR}/main/icon_replace_2/icon_replace_2.c
+    ${PROJECT_SOURCE_DIR}/main/icon_replace_2/icon_replace_2_assets_bundle.c
+)
+
 # Create the main executable, depending on the FreeRTOS option
 if(USE_FREERTOS)
     add_executable(main
@@ -78,6 +83,7 @@ if(USE_FREERTOS)
         ${PROJECT_SOURCE_DIR}/main/src/freertos_main.cpp
         ${PROJECT_SOURCE_DIR}/main/src/mouse_cursor_icon.c
         ${PROJECT_SOURCE_DIR}/main/src/FreeRTOS_Posix_Port.c
+        ${ICON_REPLACE_2_SOURCES}
         ${FREERTOS_SOURCES}  # Add only if USE_FREERTOS is enabled
     )
     # Link FreeRTOS libraries
@@ -86,12 +92,14 @@ else()
     add_executable(main
         ${PROJECT_SOURCE_DIR}/main/src/main.c
         ${PROJECT_SOURCE_DIR}/main/src/mouse_cursor_icon.c
+        ${ICON_REPLACE_2_SOURCES}
     )
 endif()
 
 # Define LVGL configuration as a simple include
 target_compile_definitions(main PRIVATE LV_CONF_INCLUDE_SIMPLE)
-target_link_libraries(main lvgl lvgl::examples lvgl::demos lvgl::thorvg ${SDL2_LIBRARIES} m pthread)
+target_include_directories(main PRIVATE ${PROJECT_SOURCE_DIR}/main/icon_replace_2)
+target_link_libraries(main lvgl lvgl::thorvg ${SDL2_LIBRARIES} m pthread)
 
 # Only link freertos_config if the FreeRTOS directory exists
 if(USE_FREERTOS)
