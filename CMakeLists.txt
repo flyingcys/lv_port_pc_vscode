@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 project(lvgl C CXX)
 
+enable_testing()
+
 # Set the correct FreeRTOS port for your system (e.g., Posix for WSL)
 set(FREERTOS_PORT GCC_POSIX CACHE STRING "Port for FreeRTOS on Posix environment")
 
@@ -74,7 +76,19 @@ target_include_directories(lvgl PUBLIC ${PROJECT_SOURCE_DIR} ${SDL2_INCLUDE_DIRS
 set(ICON_REPLACE_2_SOURCES
     ${PROJECT_SOURCE_DIR}/main/icon_replace_2/icon_replace_2.c
     ${PROJECT_SOURCE_DIR}/main/icon_replace_2/icon_replace_2_assets_bundle.c
+    ${PROJECT_SOURCE_DIR}/main/icon_replace_2/icon_replace_2_desktop.c
+    ${PROJECT_SOURCE_DIR}/main/icon_replace_2/icon_replace_2_page_config.c
+    ${PROJECT_SOURCE_DIR}/main/icon_replace_2/icon_replace_2_top_bar.c
 )
+
+add_executable(test_page_config
+    ${PROJECT_SOURCE_DIR}/tests/icon_replace_2/test_page_config.c
+    ${PROJECT_SOURCE_DIR}/main/icon_replace_2/icon_replace_2_page_config.c
+)
+target_include_directories(test_page_config PRIVATE
+    ${PROJECT_SOURCE_DIR}/main/icon_replace_2
+)
+add_test(NAME test_page_config COMMAND $<TARGET_FILE:test_page_config>)
 
 # Create the main executable, depending on the FreeRTOS option
 if(USE_FREERTOS)

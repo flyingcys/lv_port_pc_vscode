@@ -1,25 +1,18 @@
 #include "lvgl.h"
 #include "icon_replace_2.h"
 #include "icon_replace_2_assets.h"
+#include "icon_replace_2_desktop.h"
+#include "icon_replace_2_layout.h"
+#include "icon_replace_2_page_config.h"
+#include "icon_replace_2_top_bar.h"
 
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define ICON_START_X 90
-#define ICON_START_Y 50
 #define PAGE0_ICON_COUNT 13
 #define PAGE1_ICON_COUNT 14
 #define PAGE2_ICON_COUNT 15
-#define ICON_MAX_ROW 3
-#define ICON_MAX_COL 5
-#define ICON_X_DISTANCE 140
-#define ICON_Y_DISTANCE 140
-#define ICON_SIZE 60
-#define PAGE_COUNT 3
-#define PAGE_WIDTH 800
-#define PAGE_HEIGHT 480
-#define ICON_SLOT_COUNT (ICON_MAX_ROW * ICON_MAX_COL)
 
 typedef struct {
     lv_obj_t * icon;
@@ -46,9 +39,14 @@ static int border_lefttest_count;
 static int border_righttest_count;
 static lv_obj_t * page[PAGE_COUNT];
 static lv_obj_t * screen;
+static icon_replace_2_desktop_t * desktop;
+static icon_replace_2_top_bar_t * top_bar;
 static int drag_page;
 
 static int clamp_index(int index);
+static void clear_runtime_object_refs(void);
+static void desktop_page_changed_cb(uint32_t page_index, void * user_data);
+static void top_bar_deleted_cb(lv_event_t * e);
 static icon_type * icon_get_meta(lv_obj_t * obj);
 static void icon_set_meta(lv_obj_t * obj, icon_type * meta);
 static int index_by_xy(const lv_point_t * click_point);
@@ -79,16 +77,28 @@ void icon_replace_demo_2(void)
     border_righttest_count = 0;
     drag_page = 0;
 
+    if(top_bar != NULL) {
+        icon_replace_2_top_bar_destroy(top_bar);
+        top_bar = NULL;
+    }
+
+    if(desktop != NULL) {
+        icon_replace_2_desktop_destroy(desktop);
+        desktop = NULL;
+    }
+
+    clear_runtime_object_refs();
     lv_obj_clean(lv_screen_active());
 
-    screen = lv_tileview_create(lv_screen_active());
-    lv_obj_set_size(screen, PAGE_WIDTH, PAGE_HEIGHT);
-    lv_obj_set_style_bg_color(screen, lv_color_hex(0x000000), LV_PART_MAIN);
+    desktop = icon_replace_2_desktop_create(lv_screen_active(), desktop_page_changed_cb, NULL);
+    if(desktop == NULL) {
+        return;
+    }
+
+    screen = icon_replace_2_desktop_get_tileview(desktop);
 
     for(j = 0; j < PAGE_COUNT; j++) {
-        page[j] = lv_tileview_add_tile(screen, j, 0, LV_DIR_ALL);
-        lv_obj_set_size(page[j], PAGE_WIDTH, PAGE_HEIGHT);
-        lv_obj_clear_flag(page[j], LV_OBJ_FLAG_SCROLLABLE);
+        page[j] = icon_replace_2_desktop_get_page(desktop, j);
 
         for(i = 0; i < ICON_SLOT_COUNT; i++) {
             icons[j][i].icon = NULL;
@@ -113,6 +123,44 @@ void icon_replace_demo_2(void)
             icon_set_meta(icon_obj, &icons[j][i]);
         }
     }
+
+    top_bar = icon_replace_2_top_bar_create(lv_screen_active());
+    if(top_bar == NULL) {
+        return;
+    }
+
+    lv_obj_add_event_cb(icon_replace_2_top_bar_get_root(top_bar), top_bar_deleted_cb, LV_EVENT_DELETE, NULL);
+    icon_replace_2_top_bar_apply(top_bar, icon_replace_2_get_page_config(0));
+    icon_replace_2_top_bar_set_wifi_state(top_bar, WIFI_STATE_NORMAL);
+    icon_replace_2_top_bar_start_minute_timer(top_bar);
+}
+
+static void clear_runtime_object_refs(void)
+{
+    uint32_t page_index;
+
+    screen = NULL;
+
+    for(page_index = 0; page_index < PAGE_COUNT; page_index++) {
+        page[page_index] = NULL;
+    }
+}
+
+static void desktop_page_changed_cb(uint32_t page_index, void * user_data)
+{
+    LV_UNUSED(user_data);
+
+    if(top_bar == NULL) {
+        return;
+    }
+
+    icon_replace_2_top_bar_apply(top_bar, icon_replace_2_get_page_config(page_index));
+}
+
+static void top_bar_deleted_cb(lv_event_t * e)
+{
+    LV_UNUSED(e);
+    top_bar = NULL;
 }
 
 static int x_by_index(int index)
@@ -160,7 +208,8 @@ static void touching_cb(lv_event_t * e)
 {
     int i;
     int j;
-    lv_point_t click_point;
+    lv_point_t screen_point;
+    lv_point_t local_point;
     lv_obj_t * target = lv_event_get_target(e);
     icon_type * meta = icon_get_meta(target);
 
@@ -171,22 +220,30 @@ static void touching_cb(lv_event_t * e)
     lv_obj_move_foreground(target);
 
     if(touching == 0) {
-        lv_indev_get_point(lv_indev_get_act(), &click_point);
-        offsetx = click_point.x - lv_obj_get_x(target);
-        offsety = click_point.y - lv_obj_get_y(target);
+        lv_indev_get_point(lv_indev_get_act(), &screen_point);
+        if(!icon_replace_2_desktop_screen_to_local(desktop, &screen_point, &local_point)) {
+            return;
+        }
+
+        offsetx = local_point.x - lv_obj_get_x(target);
+        offsety = local_point.y - lv_obj_get_y(target);
         touching = 1;
         drag_page = meta->page;
         return;
     }
 
     if(icon_shake) {
-        lv_indev_get_point(lv_indev_get_act(), &click_point);
-        lv_obj_set_pos(target, click_point.x - offsetx, click_point.y - offsety);
+        lv_indev_get_point(lv_indev_get_act(), &screen_point);
+        if(!icon_replace_2_desktop_screen_to_local(desktop, &screen_point, &local_point)) {
+            return;
+        }
 
-        if(click_point.x < ICON_SIZE / 2) {
+        lv_obj_set_pos(target, local_point.x - offsetx, local_point.y - offsety);
+
+        if(local_point.x < ICON_SIZE / 2) {
             border_lefttest_count++;
         }
-        else if(click_point.x > PAGE_WIDTH - ICON_SIZE / 2) {
+        else if(local_point.x > PAGE_WIDTH - ICON_SIZE / 2) {
             border_righttest_count++;
         }
         else {
@@ -268,13 +325,18 @@ static void released_cb(lv_event_t * e)
     }
 
     if(icon_shake && drag_page == meta->page) {
-        lv_point_t click_point;
+        lv_point_t screen_point;
+        lv_point_t local_point;
 
-        lv_indev_get_point(lv_indev_get_act(), &click_point);
+        lv_indev_get_point(lv_indev_get_act(), &screen_point);
+        if(!icon_replace_2_desktop_screen_to_local(desktop, &screen_point, &local_point)) {
+            return;
+        }
+
         icon_shake = 0;
 
         meta->icon = NULL;
-        new_index = index_by_xy(&click_point);
+        new_index = index_by_xy(&local_point);
         if(new_index > page_icon_count[drag_page] - 1) {
             new_index = page_icon_count[drag_page] - 1;
         }
@@ -338,11 +400,16 @@ static void released_cb(lv_event_t * e)
     }
 
     if(icon_shake && drag_page != meta->page) {
-        lv_point_t click_point;
+        lv_point_t screen_point;
+        lv_point_t local_point;
 
-        lv_indev_get_point(lv_indev_get_act(), &click_point);
+        lv_indev_get_point(lv_indev_get_act(), &screen_point);
+        if(!icon_replace_2_desktop_screen_to_local(desktop, &screen_point, &local_point)) {
+            return;
+        }
+
         icon_shake = 0;
-        new_index = index_by_xy(&click_point);
+        new_index = index_by_xy(&local_point);
 
         if(icons[drag_page][ICON_SLOT_COUNT - 1].icon == NULL) {
             j = drag_page;
