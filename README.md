@@ -129,3 +129,10 @@ It requires a working version of GCC, GDB and make in your path.
 To allow debugging inside VSCode you will also require a GDB [extension](https://marketplace.visualstudio.com/items?itemName=webfreak.debug) or other suitable debugger. All the requirements, build and debug settings have been pre-configured in the [.workspace](simulator.code-workspace) file.
 
 The project can use **SDL** but it can be easily relaced by any other built-in LVGL dirvers.
+
+## Fruit Ninja v9
+
+- 启动 `bin/main` 后会直接进入 Fruit Ninja 首页，不再显示 `lv_demo_widgets()`。
+- 游戏资源已内置到 `main/assets/fruit_ninja`，图片走文件系统，音频通过 `SDL2_mixer` 直接播放项目内文件。
+- 鼠标按住并拖拽即可切水果；切中炸弹会结束当前对局，漏掉 3 个普通水果也会进入 Game Over。
+- 自动化验证可执行 `rtk cmake --build build --target fruit_ninja_tests`。

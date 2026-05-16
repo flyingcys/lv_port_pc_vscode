@@ -1,0 +1,144 @@
+#ifndef FRUIT_NINJA_MODEL_H
+#define FRUIT_NINJA_MODEL_H
+
+#include <stdbool.h>
+#include <stdint.h>
+
+#include "lvgl/lvgl.h"
+
+#define FRUIT_NINJA_MAX_FRUITS 16
+#define FRUIT_NINJA_MAX_FRAGMENTS 32
+#define FRUIT_NINJA_MAX_TRAIL_POINTS 24
+#define FRUIT_NINJA_SEGMENT_MIN_DIST 12.0f
+#define FRUIT_NINJA_SCREEN_WIDTH 640
+#define FRUIT_NINJA_SCREEN_HEIGHT 480
+
+typedef enum {
+    FRUIT_NINJA_STATE_HOME = 0,
+    FRUIT_NINJA_STATE_RUNNING,
+    FRUIT_NINJA_STATE_EXPLODING,
+    FRUIT_NINJA_STATE_GAME_OVER,
+} fruit_ninja_state_t;
+
+typedef struct {
+    const char * type_name;
+    const char * whole_rel_path;
+    const char * split_left_rel_path;
+    const char * split_right_rel_path;
+    uint16_t width;
+    uint16_t height;
+    float radius;
+    int16_t base_rotation_deg;
+    bool reverse_spin;
+    bool is_bomb;
+} fruit_ninja_fruit_def_t;
+
+typedef struct {
+    bool active;
+    bool sliced;
+    bool counted_as_miss;
+    const fruit_ninja_fruit_def_t * def;
+    float x;
+    float y;
+    float vx;
+    float vy;
+    float gravity;
+    float angle;
+    float angular_velocity;
+    float radius;
+    lv_obj_t * whole_image;
+    lv_obj_t * shadow_image;
+    lv_obj_t * slice_flash;
+} fruit_ninja_fruit_t;
+
+typedef struct {
+    bool active;
+    float x;
+    float y;
+    float vx;
+    float vy;
+    float gravity;
+    float angle;
+    float angular_velocity;
+    uint32_t life_ms;
+    lv_obj_t * image;
+} fruit_ninja_fragment_t;
+
+typedef struct {
+    bool active;
+    bool pressing;
+    bool has_last_point;
+    uint16_t count;
+    uint32_t fade_ms;
+    float last_x;
+    float last_y;
+    lv_point_precise_t points[FRUIT_NINJA_MAX_TRAIL_POINTS];
+    lv_obj_t * line;
+} fruit_ninja_trail_t;
+
+typedef struct {
+    bool valid;
+    float x1;
+    float y1;
+    float x2;
+    float y2;
+} fruit_ninja_segment_t;
+
+typedef struct fruit_ninja_game {
+    fruit_ninja_state_t state;
+    bool resources_ready;
+    bool audio_ready;
+    uint32_t screen_width;
+    uint32_t screen_height;
+    uint32_t tick_count;
+    uint32_t state_elapsed_ms;
+    uint32_t spawn_interval_ms;
+    uint32_t spawn_elapsed_ms;
+    uint32_t flash_age_ms;
+    uint32_t score_pulse_ms;
+    uint32_t score;
+    uint32_t misses;
+    uint32_t spawn_index;
+
+    lv_obj_t * screen;
+    lv_obj_t * background;
+    lv_obj_t * home_layer;
+    lv_obj_t * fruit_layer;
+    lv_obj_t * effect_layer;
+    lv_obj_t * hud_layer;
+    lv_obj_t * overlay_layer;
+    lv_obj_t * input_layer;
+
+    lv_obj_t * logo_image;
+    lv_obj_t * home_mask_image;
+    lv_obj_t * home_desc_image;
+    lv_obj_t * ninja_image;
+    lv_obj_t * dojo_image;
+    lv_obj_t * new_game_image;
+    lv_obj_t * new_sign_image;
+    lv_obj_t * score_image;
+    lv_obj_t * score_label;
+    lv_obj_t * miss_icons[3];
+    lv_obj_t * game_over_image;
+    lv_obj_t * restart_label;
+    lv_obj_t * hint_label;
+    lv_obj_t * flash_overlay;
+    lv_obj_t * smoke_overlay;
+    lv_obj_t * white_flash_overlay;
+
+    lv_timer_t * update_timer;
+
+    fruit_ninja_trail_t trail;
+    fruit_ninja_fruit_t home_menu_fruits[3];
+    fruit_ninja_fruit_t fruits[FRUIT_NINJA_MAX_FRUITS];
+    fruit_ninja_fragment_t fragments[FRUIT_NINJA_MAX_FRAGMENTS];
+} fruit_ninja_game_t;
+
+void fruit_ninja_input_init(fruit_ninja_game_t * game);
+void fruit_ninja_input_reset(fruit_ninja_game_t * game);
+fruit_ninja_segment_t fruit_ninja_input_begin(fruit_ninja_game_t * game, float x, float y);
+fruit_ninja_segment_t fruit_ninja_input_push_point(fruit_ninja_game_t * game, float x, float y);
+void fruit_ninja_input_end(fruit_ninja_game_t * game);
+void fruit_ninja_input_tick(fruit_ninja_game_t * game, uint32_t delta_ms);
+
+#endif

@@ -13,8 +13,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include "lvgl/lvgl.h"
-#include "lvgl/examples/lv_examples.h"
-#include "lvgl/demos/lv_demos.h"
+#include "v9-fruit_ninja/fruit_ninja.h"
 #include "glob.h"
 
 /*********************
@@ -73,11 +72,11 @@ int main(int argc, char **argv)
   lv_init();
 
   /*Initialize the HAL (display, input devices, tick) for LVGL*/
-  hal_init(320, 480);
+  hal_init(640, 480);
 
   #if LV_USE_OS == LV_OS_NONE
  
-  lv_demo_widgets();
+  fruit_ninja_start();
 
   while(1) {
     /* Periodically call the lv_task handler.

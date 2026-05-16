@@ -579,7 +579,7 @@
 * - lv_obj_stringify_id:    Return string-ified identifier, e.g. "button3".
 * - lv_obj_free_id:         Does nothing, as there is no memory allocation for the ID.
 * When disabled these functions needs to be implemented by the user.*/
-#define LV_USE_OBJ_ID_BUILTIN   1
+#define LV_USE_OBJ_ID_BUILTIN   0
 
 /** Use obj property set/get API. */
 #define LV_USE_OBJ_PROPERTY 0
@@ -910,7 +910,7 @@
 /** API for fopen, fread, etc. */
 #define LV_USE_FS_STDIO 1
 #if LV_USE_FS_STDIO
-    #define LV_FS_STDIO_LETTER 'A'
+    #define LV_FS_STDIO_LETTER 'S'
     #define LV_FS_STDIO_PATH ""         /**< Set the working directory. File/directory paths will be appended to it. */
     #define LV_FS_STDIO_CACHE_SIZE 0    /**< >0 to cache this number of bytes in lv_fs_read() */
 #endif
@@ -978,10 +978,10 @@
 #endif
 
 /** LODEPNG decoder library */
-#define LV_USE_LODEPNG 1
+#define LV_USE_LODEPNG 0
 
 /** PNG decoder(libpng) library */
-#define LV_USE_LIBPNG 0
+#define LV_USE_LIBPNG 1
 
 /** BMP decoder library */
 #define LV_USE_BMP 1
