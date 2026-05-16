@@ -195,6 +195,11 @@ add_executable(fruit_ninja_collision_test
 target_include_directories(fruit_ninja_collision_test PRIVATE ${PROJECT_SOURCE_DIR})
 target_link_libraries(fruit_ninja_collision_test m)
 
+add_executable(fruit_ninja_model_test
+    ${PROJECT_SOURCE_DIR}/main/tests/fruit_ninja_model_test.c
+)
+target_include_directories(fruit_ninja_model_test PRIVATE ${PROJECT_SOURCE_DIR})
+
 add_test(
     NAME fruit_ninja_assets_test
     COMMAND $<TARGET_FILE:fruit_ninja_assets_test>
@@ -207,10 +212,17 @@ add_test(
 )
 set_tests_properties(fruit_ninja_collision_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
+add_test(
+    NAME fruit_ninja_model_test
+    COMMAND $<TARGET_FILE:fruit_ninja_model_test>
+)
+set_tests_properties(fruit_ninja_model_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
 add_custom_target(fruit_ninja_tests
     COMMAND $<TARGET_FILE:fruit_ninja_assets_test>
     COMMAND $<TARGET_FILE:fruit_ninja_collision_test>
-    DEPENDS fruit_ninja_assets_test fruit_ninja_collision_test
+    COMMAND $<TARGET_FILE:fruit_ninja_model_test>
+    DEPENDS fruit_ninja_assets_test fruit_ninja_collision_test fruit_ninja_model_test
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
 )
 

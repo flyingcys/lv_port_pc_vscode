@@ -37,6 +37,8 @@ typedef struct {
     bool active;
     bool sliced;
     bool counted_as_miss;
+    bool has_been_visible;
+    bool falling;
     const fruit_ninja_fruit_def_t * def;
     float x;
     float y;
@@ -46,10 +48,51 @@ typedef struct {
     float angle;
     float angular_velocity;
     float radius;
+    float shot_out_start_x;
+    float shot_out_start_y;
+    float shot_out_end_x;
+    float shot_out_end_y;
+    float fall_target_x;
+    float fall_target_y;
+    uint32_t phase_elapsed_ms;
     lv_obj_t * whole_image;
     lv_obj_t * shadow_image;
     lv_obj_t * slice_flash;
 } fruit_ninja_fruit_t;
+
+static inline bool fruit_ninja_fruit_is_visible_on_screen(const fruit_ninja_fruit_t * fruit, uint32_t screen_height)
+{
+    float half_height;
+    float top;
+    float bottom;
+
+    if(fruit == NULL || fruit->def == NULL) return false;
+
+    half_height = (float)fruit->def->height * 0.5f;
+    top = fruit->y - half_height;
+    bottom = fruit->y + half_height;
+    return bottom >= 0.0f && top <= (float)screen_height;
+}
+
+static inline bool fruit_ninja_fruit_has_left_bottom(const fruit_ninja_fruit_t * fruit, uint32_t screen_height)
+{
+    float half_height;
+    float top;
+
+    if(fruit == NULL || fruit->def == NULL) return false;
+
+    half_height = (float)fruit->def->height * 0.5f;
+    top = fruit->y - half_height;
+    return top > (float)screen_height;
+}
+
+static inline bool fruit_ninja_fruit_should_count_miss(const fruit_ninja_fruit_t * fruit, uint32_t screen_height)
+{
+    if(fruit == NULL || fruit->def == NULL) return false;
+    if(fruit->sliced || fruit->def->is_bomb || fruit->counted_as_miss) return false;
+    if(!fruit->has_been_visible) return false;
+    return fruit_ninja_fruit_has_left_bottom(fruit, screen_height);
+}
 
 typedef struct {
     bool active;
@@ -61,6 +104,13 @@ typedef struct {
     float angle;
     float angular_velocity;
     uint32_t life_ms;
+    float start_x;
+    float start_y;
+    float target_x;
+    float target_y;
+    float start_angle;
+    float target_angle;
+    uint32_t phase_elapsed_ms;
     lv_obj_t * image;
 } fruit_ninja_fragment_t;
 
@@ -99,6 +149,8 @@ typedef struct fruit_ninja_game {
     uint32_t score;
     uint32_t misses;
     uint32_t spawn_index;
+    uint32_t volley_num;
+    uint32_t volley_multiple;
 
     lv_obj_t * screen;
     lv_obj_t * background;
