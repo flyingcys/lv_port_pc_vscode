@@ -4,8 +4,6 @@ project(lvgl C CXX)
 # Set the correct FreeRTOS port for your system (e.g., Posix for WSL)
 set(FREERTOS_PORT GCC_POSIX CACHE STRING "Port for FreeRTOS on Posix environment")
 
-unset(USE_FREERTOS CACHE)
-
 option(USE_FREERTOS "Enable FreeRTOS" OFF) # Turn this on to enable FreeRTOS
 
 if(USE_FREERTOS)
@@ -54,6 +52,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
+set(TESTCAM_IMAGE_SOURCES
+    ${PROJECT_SOURCE_DIR}/main/src/ui/testcam_img/device_card_background.c
+    ${PROJECT_SOURCE_DIR}/main/src/ui/testcam_img/nav_alerts_icon.c
+    ${PROJECT_SOURCE_DIR}/main/src/ui/testcam_img/nav_assist_icon.c
+    ${PROJECT_SOURCE_DIR}/main/src/ui/testcam_img/nav_health_icon.c
+    ${PROJECT_SOURCE_DIR}/main/src/ui/testcam_img/nav_home_icon.c
+    ${PROJECT_SOURCE_DIR}/main/src/ui/testcam_img/reminder_icon.c
+    ${PROJECT_SOURCE_DIR}/main/src/ui/testcam_img/safe_shield_icon.c
+    ${PROJECT_SOURCE_DIR}/main/src/ui/testcam_img/weather_today_icon.c
+    ${PROJECT_SOURCE_DIR}/main/src/ui/testcam_img/weather_tue_icon.c
+    ${PROJECT_SOURCE_DIR}/main/src/ui/testcam_img/weather_wed_icon.c
+)
+
 # Find and include SDL2 library
 find_package(SDL2 REQUIRED)
 
@@ -66,6 +77,7 @@ add_compile_definitions($<$<BOOL:${LV_USE_DRAW_SDL}>:LV_USE_DRAW_SDL=1>)
 add_compile_definitions($<$<BOOL:${LV_USE_LIBPNG}>:LV_USE_LIBPNG=1>)
 add_compile_definitions($<$<BOOL:${LV_USE_LIBJPEG_TURBO}>:LV_USE_LIBJPEG_TURBO=1>)
 add_compile_definitions($<$<BOOL:${LV_USE_FFMPEG}>:LV_USE_FFMPEG=1>)
+add_compile_definitions($<$<BOOL:${USE_FREERTOS}>:LV_USE_OS=LV_OS_FREERTOS>)
 
 # Add LVGL subdirectory
 add_subdirectory(lvgl)
@@ -77,6 +89,10 @@ if(USE_FREERTOS)
         ${PROJECT_SOURCE_DIR}/main/src/main.c
         ${PROJECT_SOURCE_DIR}/main/src/freertos_main.cpp
         ${PROJECT_SOURCE_DIR}/main/src/mouse_cursor_icon.c
+        ${PROJECT_SOURCE_DIR}/main/src/ui/testcam_assets.c
+        ${PROJECT_SOURCE_DIR}/main/src/ui/testcam_fonts.c
+        ${PROJECT_SOURCE_DIR}/main/src/ui/testcam_page.c
+        ${TESTCAM_IMAGE_SOURCES}
         ${PROJECT_SOURCE_DIR}/main/src/FreeRTOS_Posix_Port.c
         ${FREERTOS_SOURCES}  # Add only if USE_FREERTOS is enabled
     )
@@ -86,12 +102,26 @@ else()
     add_executable(main
         ${PROJECT_SOURCE_DIR}/main/src/main.c
         ${PROJECT_SOURCE_DIR}/main/src/mouse_cursor_icon.c
+        ${PROJECT_SOURCE_DIR}/main/src/ui/testcam_assets.c
+        ${PROJECT_SOURCE_DIR}/main/src/ui/testcam_fonts.c
+        ${PROJECT_SOURCE_DIR}/main/src/ui/testcam_page.c
+        ${TESTCAM_IMAGE_SOURCES}
     )
 endif()
+
+add_executable(testcam_page_test
+    ${PROJECT_SOURCE_DIR}/main/tests/testcam_page_test.c
+    ${PROJECT_SOURCE_DIR}/main/src/ui/testcam_assets.c
+    ${PROJECT_SOURCE_DIR}/main/src/ui/testcam_fonts.c
+    ${PROJECT_SOURCE_DIR}/main/src/ui/testcam_page.c
+    ${TESTCAM_IMAGE_SOURCES}
+)
 
 # Define LVGL configuration as a simple include
 target_compile_definitions(main PRIVATE LV_CONF_INCLUDE_SIMPLE)
 target_link_libraries(main lvgl lvgl::examples lvgl::demos lvgl::thorvg ${SDL2_LIBRARIES} m pthread)
+target_compile_definitions(testcam_page_test PRIVATE LV_CONF_INCLUDE_SIMPLE)
+target_link_libraries(testcam_page_test lvgl m pthread)
 
 # Only link freertos_config if the FreeRTOS directory exists
 if(USE_FREERTOS)
@@ -114,6 +144,7 @@ if(LV_USE_LIBPNG)
     find_package(PNG REQUIRED)
     target_include_directories(lvgl PUBLIC ${PNG_INCLUDE_DIRS})
     target_link_libraries(main ${PNG_LIBRARIES})
+    target_link_libraries(testcam_page_test ${PNG_LIBRARIES})
 endif()
 
 # Conditionally include and link libjpeg-turbo if LV_USE_LIBJPEG_TURBO is enabled

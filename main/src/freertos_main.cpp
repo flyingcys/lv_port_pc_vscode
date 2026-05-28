@@ -11,6 +11,7 @@
 #if LV_USE_OS == LV_OS_FREERTOS
 
 #include "lvgl.h"
+#include "ui/testcam_page.h"
 #include <cstdio>  // For printf in C++
 
 // ........................................................................................................
@@ -70,42 +71,7 @@ extern "C" void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskNa
  */
 extern "C" void vApplicationTickHook(void) {}
 
-// ........................................................................................................
-/**
- * @brief   Create Hello World screen
- *
- * This function creates a simple LVGL screen with a "Hello, World!" label centered on the screen.
- *
- * @param   None
- * @return  None
- */
-void create_hello_world_screen()
-{
-    /* Create a new screen object */
-    lv_obj_t *screen = lv_obj_create(NULL);
-    if (screen == NULL){
-        printf("Error: Failed to create screen object\n");
-        /* Return if screen creation fails */
-        return;
-    }
-
-    /* Create a new label object on the screen */
-    lv_obj_t *label = lv_label_create(screen);
-    if (label == NULL){
-        printf("Error: Failed to create label object\n");
-        /* Return if label creation fails */
-        return;
-    }
-
-    /* Set the text of the label to "Hello, World!" */
-    lv_label_set_text(label, "Hello, World!");
-
-    /* Align the label to the center of the screen */
-    lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
-
-    /* Load the created screen and make it visible */
-    lv_scr_load(screen);
-}
+static testcam_page_t s_testcam_page;
 
 // ........................................................................................................
 /**
@@ -119,31 +85,15 @@ void create_hello_world_screen()
  */
 void lvgl_task(void *pvParameters)
 {
-    /* Show simple hello world screen */
-    create_hello_world_screen();
+    LV_UNUSED(pvParameters);
+
+    if(!testcam_page_create(&s_testcam_page, lv_screen_active())) {
+        printf("Error: Failed to create TestCAM page\n");
+    }
 
     while (true){
         lv_timer_handler(); /* Handle LVGL tasks */
         vTaskDelay(pdMS_TO_TICKS(5)); /* Short delay for the RTOS scheduler */
-    }
-}
-
-// ........................................................................................................
-/**
- * @brief   Another task
- *
- * This task simulates some background work by periodically printing a message.
- *
- * @param   pvParameters   Task parameters (not used in this example)
- * @return  None
- */
-void another_task(void *pvParameters)
-{
-    /* Create some load in an infinite loop */
-    while (true){
-        printf("Second Task is running :)\n");
-        /* Delay the task for 500 milliseconds */
-        vTaskDelay(pdMS_TO_TICKS(500));
     }
 }
 
@@ -163,12 +113,6 @@ extern "C" void freertos_main()
     /* Create the LVGL task */
     if (xTaskCreate(lvgl_task, "LVGL Task", 4096, nullptr, 1, nullptr) != pdPASS) {
         printf("Error creating LVGL task\n");
-        /* Error handling */
-    }
-
-    /* Create another task */
-    if (xTaskCreate(another_task, "Another Task", 1024, nullptr, 1, nullptr) != pdPASS) {
-        printf("Error creating another task\n");
         /* Error handling */
     }
 

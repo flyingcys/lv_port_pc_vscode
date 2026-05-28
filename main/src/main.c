@@ -15,6 +15,7 @@
 #include "lvgl/lvgl.h"
 #include "lvgl/examples/lv_examples.h"
 #include "lvgl/demos/lv_demos.h"
+#include "ui/testcam_page.h"
 #include "glob.h"
 
 /*********************
@@ -66,6 +67,8 @@ extern void freertos_main(void);
 
 int main(int argc, char **argv)
 {
+  static testcam_page_t testcam_page;
+
   (void)argc; /*Unused*/
   (void)argv; /*Unused*/
 
@@ -73,11 +76,11 @@ int main(int argc, char **argv)
   lv_init();
 
   /*Initialize the HAL (display, input devices, tick) for LVGL*/
-  hal_init(320, 480);
+  hal_init(TESTCAM_PAGE_WIDTH, TESTCAM_PAGE_HEIGHT);
 
   #if LV_USE_OS == LV_OS_NONE
  
-  lv_demo_widgets();
+  testcam_page_create(&testcam_page, lv_screen_active());
 
   while(1) {
     /* Periodically call the lv_task handler.
