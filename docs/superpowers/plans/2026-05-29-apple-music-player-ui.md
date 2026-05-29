@@ -62,7 +62,7 @@
   <title>Apple Music Player Mockup</title>
   <link rel="stylesheet" href="./styles.css">
 </head>
-<body data-theme="pink" data-page="home">
+<body data-theme="cyan" data-page="home">
   <div class="app-shell">
     <aside class="sidebar"></aside>
     <main class="content-shell"></main>
@@ -104,7 +104,7 @@ body {
 - [ ] **Step 3: 用静态模板先填出主页和设置页占位**
 
 ```js
-const state = { page: "home", theme: "pink" };
+const state = { page: "home", theme: "cyan" };
 
 function render() {
   renderSidebar();
@@ -138,7 +138,7 @@ rtk git commit -m "feat: add apple music html mockup shell"
 
 ```js
 const pages = ["home", "radio", "local", "playlist", "settings"];
-const themes = ["pink", "blue", "mint", "orange"];
+const themes = ["cyan", "blue", "mint", "auto-1"];
 
 function setPage(page) {
   state.page = page;
@@ -169,27 +169,34 @@ function renderContent() {
 <section class="settings-card">
   <h3>主题颜色</h3>
   <div class="theme-swatches">
-    <button data-theme="pink">Pink</button>
+    <button data-theme="cyan">Cyan</button>
     <button data-theme="blue">Blue</button>
     <button data-theme="mint">Mint</button>
-    <button data-theme="orange">Orange</button>
+    <button data-theme="auto-1">自动一</button>
   </div>
 </section>
 ```
 
-- [ ] **Step 4: 写出四套主题变量联动**
+- [ ] **Step 4: 写出三套内置主题变量和一套 `自动一` 自定义色槽联动**
 
 ```css
-body[data-theme="pink"] { --accent: #ff2d55; --hero-a: #ff5c87; --hero-b: #b9325a; }
+body[data-theme="cyan"] { --accent: #4bbcae; --hero-a: #a8ebe0; --hero-b: #59c7ba; }
 body[data-theme="blue"] { --accent: #4c7dff; --hero-a: #7ba2ff; --hero-b: #405fdb; }
 body[data-theme="mint"] { --accent: #27b29b; --hero-a: #79dec9; --hero-b: #2e9985; }
-body[data-theme="orange"] { --accent: #f08c3a; --hero-a: #ffc16b; --hero-b: #e36a43; }
+body[data-theme="auto-1"] { --accent: var(--user-accent); --hero-a: var(--user-hero-a); --hero-b: var(--user-hero-b); }
 ```
+
+补充要求：
+
+- 默认主题颜色为 `Cyan`（淡青色）
+- `Cyan / Blue / Mint` 是软件内置的三套默认颜色
+- `自动一` 是用户自定义颜色槽
+- HTML 样机阶段至少体现 `自动一` 的独立入口、预览色和选中态；真实可编辑逻辑可在后续继续补
 
 - [ ] **Step 5: 手工验证 HTML 样机**
 
 Run: `open http://localhost:8029`
-Expected: 左栏五项可切换；`设置` 页中的四个色卡可切换；主页 hero、选中菜单、底部进度高亮跟着变化。
+Expected: 左栏五项可切换；`设置` 页中的四个色卡可切换；默认色为 `Cyan`；前三个色卡是软件预置色；`自动一` 为用户可自定义色槽；主页 hero、选中菜单、底部进度高亮跟着变化。
 
 - [ ] **Step 6: 停在用户确认 gate，不进入 LVGL**
 
@@ -224,7 +231,7 @@ int main(void)
 {
     music_player_theme_state_t state = music_player_theme_default_state();
     assert(state.mode == MUSIC_PLAYER_THEME_LIGHT);
-    assert(state.accent == MUSIC_PLAYER_ACCENT_PINK);
+    assert(state.accent == MUSIC_PLAYER_ACCENT_CYAN);
 
     music_player_theme_set_accent(&state, MUSIC_PLAYER_ACCENT_MINT);
     assert(music_player_theme_accent_hex(&state) == 0x27B29B);
@@ -246,17 +253,17 @@ typedef enum {
 } music_player_theme_mode_t;
 
 typedef enum {
-    MUSIC_PLAYER_ACCENT_PINK,
+    MUSIC_PLAYER_ACCENT_CYAN,
     MUSIC_PLAYER_ACCENT_BLUE,
     MUSIC_PLAYER_ACCENT_MINT,
-    MUSIC_PLAYER_ACCENT_ORANGE,
+    MUSIC_PLAYER_ACCENT_AUTO_1,
 } music_player_theme_accent_t;
 ```
 
 ```c
 music_player_theme_state_t music_player_theme_default_state(void)
 {
-    music_player_theme_state_t state = { MUSIC_PLAYER_THEME_LIGHT, MUSIC_PLAYER_ACCENT_PINK };
+    music_player_theme_state_t state = { MUSIC_PLAYER_THEME_LIGHT, MUSIC_PLAYER_ACCENT_CYAN };
     return state;
 }
 ```
@@ -500,7 +507,7 @@ Expected: `fruit_ninja_*` 原有测试继续 PASS，新增 `music_player_theme_t
 - [ ] **Step 2: 跑 SDL 手工 smoke**
 
 Run: `rtk ./bin/main`
-Expected: 默认进入 `主页`；左栏五项可切换；`设置` 页颜色切换生效；底部播放条常驻；窗口尺寸为 `800x480`。
+Expected: 默认进入 `主页`；默认主题颜色为 `Cyan`（淡青色）；左栏五项可切换；`设置` 页提供 `Cyan / Blue / Mint / 自动一` 四个颜色入口，其中 `自动一` 为用户可自定义色槽；底部播放条常驻；窗口尺寸为 `800x480`。
 
 - [ ] **Step 3: 提交前跑 GitNexus 变更检测**
 

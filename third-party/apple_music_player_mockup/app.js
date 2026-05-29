@@ -1,256 +1,189 @@
-const navigationItems = [
-  { id: "home", label: "主页", icon: "⌂", badge: "" },
-  { id: "radio", label: "广播", icon: "◉", badge: "Live" },
-  { id: "local", label: "本地", icon: "♫", badge: "24" },
-  { id: "playlist", label: "歌单", icon: "≋", badge: "7" },
-  { id: "settings", label: "设置", icon: "⚙", badge: "" }
-];
-
-const themeOptions = [
-  {
-    id: "pink",
-    name: "Pink",
-    description: "偏 Apple Music 经典高亮，柔和却不寡淡。",
-    swatches: ["#ffd0db", "#ff7d98", "#ff3f67"]
-  },
-  {
-    id: "blue",
-    name: "Blue",
-    description: "更冷一点的广播氛围，适合通勤和夜航节目。",
-    swatches: ["#d5e5ff", "#80a8ff", "#3f76ff"]
-  },
-  {
-    id: "mint",
-    name: "Mint",
-    description: "轻盈的新鲜感，更像清晨电台和舒缓播客。",
-    swatches: ["#d7f5ea", "#76d8bf", "#26a58d"]
-  },
-  {
-    id: "orange",
-    name: "Orange",
-    description: "更温暖的日落频道感，适合精选歌单与现场。",
-    swatches: ["#ffe1b7", "#f8b167", "#ef8730"]
-  }
+const navItems = [
+  { id: "home", label: "主页", icon: "⌂" },
+  { id: "radio", label: "广播", icon: "◉" },
+  { id: "local", label: "本地", icon: "♫" },
+  { id: "playlist", label: "歌单", icon: "≣" },
+  { id: "settings", label: "设置", icon: "⚙" },
 ];
 
 const settingsTabs = [
-  { id: "appearance", label: "外观", hint: "主题" },
-  { id: "playback", label: "播放", hint: "占位" },
-  { id: "about", label: "关于", hint: "信息" }
+  { id: "appearance", title: "外观", desc: "主题、颜色与氛围" },
+  { id: "playback", title: "播放", desc: "默认队列与过渡策略" },
+  { id: "about", title: "关于", desc: "设备信息与版本说明" },
 ];
 
-const data = {
-  hero: {
-    tag: "广播优先",
-    title: "Apple Music Radio",
-    description: "从一张更轻、更亮的主卡开始。把广播放在进入应用后的第一视线，先给用户一个继续收听的理由。"
-  },
-  radio: [
-    {
-      title: "Apple Pop Radio",
-      subtitle: "新歌首播与榜单切片",
-      eyebrow: "推荐广播",
-      cover: ["#ffd0db", "#ff7394"]
-    },
-    {
-      title: "Morning Acoustic",
-      subtitle: "清晨木吉他与低密度人声",
-      eyebrow: "清晨精选",
-      cover: ["#d2f2e9", "#70d0bc"]
-    },
-    {
-      title: "City Drive FM",
-      subtitle: "通勤速度感与电子流行",
-      eyebrow: "路上听什么",
-      cover: ["#dbe5ff", "#7c96ff"]
-    }
-  ],
-  recents: [
-    {
-      title: "静谧空间",
-      subtitle: "最近播放 · 广播",
-      eyebrow: "继续收听",
-      cover: ["#ffe4b8", "#f6a753"]
-    },
-    {
-      title: "Late Night Notes",
-      subtitle: "最近播放 · 播客",
-      eyebrow: "夜间节目",
-      cover: ["#d9dbff", "#8b7dff"]
-    },
-    {
-      title: "Studio Drafts",
-      subtitle: "最近播放 · 歌单",
-      eyebrow: "收藏歌单",
-      cover: ["#fad1eb", "#f186bd"]
-    }
-  ],
-  localTracks: [
-    {
-      title: "Amber Window",
-      subtitle: "Miya Lane · 3:42",
-      eyebrow: "本地曲库",
-      cover: ["#fde7be", "#f8b15f"]
-    },
-    {
-      title: "Soft Focus",
-      subtitle: "June Harbor · 4:08",
-      eyebrow: "最近导入",
-      cover: ["#dff2ff", "#77beff"]
-    },
-    {
-      title: "Paper Sun",
-      subtitle: "North Vale · 2:54",
-      eyebrow: "精选单曲",
-      cover: ["#f8d8e9", "#f487b4"]
-    },
-    {
-      title: "Cabin Light",
-      subtitle: "Sora Kim · 3:26",
-      eyebrow: "离线可播",
-      cover: ["#d8f3ea", "#5cc9b4"]
-    }
-  ],
-  playlists: [
-    {
-      title: "日落通勤",
-      subtitle: "更暖的合成器、恰到好处的鼓点和晚高峰。",
-      pill: "12 首",
-      cover: ["rgba(255, 220, 180, 0.72)", "rgba(246, 145, 89, 0.82)"]
-    },
-    {
-      title: "低饱和书房",
-      subtitle: "把注意力拉回文字和留白，适合慢速工作。",
-      pill: "8 首",
-      cover: ["rgba(217, 238, 255, 0.72)", "rgba(101, 145, 255, 0.8)"]
-    },
-    {
-      title: "玻璃感电子",
-      subtitle: "更贴近这版界面的材质，空灵但有节奏骨架。",
-      pill: "14 首",
-      cover: ["rgba(255, 213, 236, 0.72)", "rgba(246, 121, 174, 0.84)"]
-    },
-    {
-      title: "晨雾吉他",
-      subtitle: "拨弦靠前，氛围在后，适合把音量开得很轻。",
-      pill: "10 首",
-      cover: ["rgba(209, 247, 234, 0.76)", "rgba(79, 200, 168, 0.82)"]
-    }
-  ],
-  nowPlaying: {
-    title: "In the Quiet Air",
-    artist: "Aster Bloom · Radio Session",
-    eyebrow: "正在播放",
-    cover: ["#ffd2de", "#f36a90"],
-    progress: 46,
-    elapsed: "1:42",
-    duration: "3:48"
-  },
-  ambientTags: ["广播优先", "浅色玻璃", "800×480", "静态假数据"],
-  categoryNotes: {
-    radio: {
-      title: "广播页占位",
-      text: "强调频道、节目与立即收听的路径，布局保持视觉完整，但目前全部为静态假数据。"
-    },
-    local: {
-      title: "本地页占位",
-      text: "预留未来接入本地扫描与媒体库的结构，现在只验证列表节奏、密度和层级。"
-    },
-    playlist: {
-      title: "歌单页占位",
-      text: "用卡片承接主题化歌单和推荐入口，先把色块、留白和信息层级站稳。"
-    }
-  }
-};
+const themePresets = [
+  { id: "cyan", label: "Cyan", desc: "淡青主调" },
+  { id: "blue", label: "Blue", desc: "夜间轻冷" },
+  { id: "mint", label: "Mint", desc: "清透早晨" },
+  { id: "orange", label: "Orange", desc: "暖调黄金时刻" },
+];
 
 const state = {
   page: "home",
-  theme: "pink",
-  themeMode: "light",
-  settingsTab: "appearance"
+  theme: "mint",
+  settingsTab: "appearance",
 };
 
-function appShell() {
-  return `
-    <div class="mockup">
-      <div class="device">
-        <div class="device__screen">
-          <div class="app-shell">
-            <aside class="sidebar glass">${renderSidebar()}</aside>
-            <main class="content-shell glass">${renderContent()}</main>
-            <footer class="mini-player glass">${renderMiniPlayer()}</footer>
-          </div>
-        </div>
-      </div>
-    </div>
+const homeData = {
+  hero: {
+    topline: "Live Radio Selection",
+    title: "从广播开始，今天节奏已经选好",
+    desc: "先听推荐广播，再回到最近播放。",
+    badge: "今日主打",
+  },
+  recommends: [
+    { title: "Lo-Fi 早班电台", subtitle: "27 min continuous mix" },
+    { title: "City Pop Avenue", subtitle: "东京夜风与合成器" },
+    { title: "Pure Piano Focus", subtitle: "安静但不失推进感" },
+  ],
+  recent: [
+    { kind: "广播", title: "New Music Daily", subtitle: "Apple Music 1" },
+    { kind: "歌单", title: "Coding Without Hurry", subtitle: "18 首歌曲" },
+    { kind: "单曲", title: "Golden Hour", subtitle: "JVKE" },
+  ],
+  metrics: [
+    { label: "广播收藏", value: "12" },
+    { label: "连续收听", value: "48m" },
+    { label: "今日推荐", value: "06" },
+  ],
+};
+
+const pageData = {
+  radio: {
+    eyebrow: "广播目录",
+    title: "广播",
+    subtitle: "把首页广播优先的心智展开成频道页，适合快速挑到当下想听的气氛。",
+    bannerTitle: "Apple Music 电台精选",
+    bannerDesc: "从编辑推荐、DJ 专栏到 mood station，全部先做静态视觉确认，再迁回 LVGL 结构。",
+    badges: ["24h Live", "Editor Picks", "Trending"],
+    queueLabel: "正在预排 4 个节目",
+    list: [
+      { kind: "radio", title: "The New Music Station", subtitle: "全球新歌 / 每小时刷新", meta: "现在开始", aux: "LIVE" },
+      { kind: "radio", title: "Chill Sunday", subtitle: "低压氛围 / 柔和女声", meta: "42 分钟", aux: "Mix" },
+      { kind: "radio", title: "After Midnight Jazz", subtitle: "夜色铜管 / 慢速鼓刷", meta: "28 分钟", aux: "HD" },
+      { kind: "radio", title: "Electro Run Club", subtitle: "高 BPM / 晨跑编排", meta: "56 分钟", aux: "New" },
+    ],
+    queue: [
+      { title: "主持人开场", subtitle: "02:14 后切到主节目" },
+      { title: "新歌连播", subtitle: "含 3 首首发曲目" },
+      { title: "DJ 访谈", subtitle: "片段预留" },
+    ],
+  },
+  local: {
+    eyebrow: "本地资料库",
+    title: "本地",
+    subtitle: "先验证列表型页面在 800x480 下的信息密度、层级和留白控制。",
+    bannerTitle: "最近导入的专辑与单曲",
+    bannerDesc: "不接真实扫描逻辑，只用静态假数据模拟专辑、单曲和收藏混合视图。",
+    badges: ["Albums", "Lossless", "Recently Added"],
+    queueLabel: "资料库总量 148 项",
+    list: [
+      { kind: "album", title: "In Rainbows", subtitle: "Radiohead / 专辑", meta: "10 tracks", aux: "Album" },
+      { kind: "album", title: "Souvlaki", subtitle: "Slowdive / 专辑", meta: "9 tracks", aux: "Album" },
+      { kind: "song", title: "Nights", subtitle: "Frank Ocean / 单曲", meta: "5:07", aux: "Song" },
+      { kind: "song", title: "Sunset Rollercoaster", subtitle: "My Jinji / 单曲", meta: "4:26", aux: "Fav" },
+    ],
+    queue: [
+      { title: "下载完成", subtitle: "3 张专辑可离线播放" },
+      { title: "上次播放", subtitle: "昨晚 22:14 停在 track 07" },
+      { title: "同步状态", subtitle: "iCloud 占位 UI" },
+    ],
+  },
+  playlist: {
+    eyebrow: "歌单集合",
+    title: "歌单",
+    subtitle: "用更轻的卡片感展示个人歌单与推荐歌单，观察标题长度和二级信息的压缩方式。",
+    bannerTitle: "你的歌单今天适合这样排",
+    bannerDesc: "先把结构与节奏做顺，再决定 LVGL 里是 grid 卡片还是列表卡片混排。",
+    badges: ["Curated", "Personal", "Smart Mix"],
+    queueLabel: "收藏歌单 9 个",
+    list: [
+      { kind: "playlist", title: "晨间编译", subtitle: "15 首 / 稳定推进型", meta: "35 min", aux: "Pinned" },
+      { kind: "playlist", title: "夜行公路", subtitle: "22 首 / 合成器和鼓机", meta: "1h 24m", aux: "Road" },
+      { kind: "playlist", title: "低功耗工作流", subtitle: "13 首 / 人声克制", meta: "48 min", aux: "Focus" },
+      { kind: "playlist", title: "广播回放收藏", subtitle: "8 集 / 长节目", meta: "2h 03m", aux: "Radio" },
+    ],
+    queue: [
+      { title: "智能续播", subtitle: "按最近收听顺序推荐" },
+      { title: "封面候选", subtitle: "后续可接主题色联动" },
+      { title: "共享入口", subtitle: "本轮只保留视觉占位" },
+    ],
+  },
+};
+
+const miniPlayer = {
+  title: "Lo-Fi 早班电台",
+  subtitle: "Morning Transit Session",
+  current: "01:42",
+  total: "03:58",
+  progress: "44%",
+};
+
+function render() {
+  document.body.dataset.theme = state.theme;
+
+  const app = document.getElementById("app");
+  app.innerHTML = `
+    <aside class="sidebar">${renderSidebar()}</aside>
+    <main class="content-shell">
+      <div class="content-scroll">${renderContent()}</div>
+    </main>
+    <footer class="mini-player">${renderMiniPlayer()}</footer>
   `;
+
+  bindEvents();
 }
 
 function renderSidebar() {
-  const mainItems = navigationItems.filter((item) => item.id !== "settings");
-  const settingsItem = navigationItems.find((item) => item.id === "settings");
+  const primaryItems = navItems
+    .filter((item) => item.id !== "settings")
+    .map((item) => renderNavItem(item))
+    .join("");
+  const settingsItem = renderNavItem(navItems.find((item) => item.id === "settings"));
 
   return `
-    <div class="sidebar__brand">
-      <div class="sidebar__logo">♪</div>
-      <div>
-        <span class="sidebar__eyebrow">Now in glass</span>
-        <span class="sidebar__title">Music Mockup</span>
+    <div class="brand">
+      <div class="brand-badge">♪</div>
+      <div class="brand-copy">
+        <strong>Broadcast First</strong>
+        <span>Apple Music mockup</span>
       </div>
     </div>
-    <nav class="sidebar__nav" aria-label="主导航">
-      <div class="sidebar__nav-group">
-        ${mainItems.map(renderNavItem).join("")}
+    <div class="sidebar-section-title">导航</div>
+    <div class="nav-list">${primaryItems}</div>
+    <div class="sidebar-footer">
+      <div class="sidebar-section-title">偏好</div>
+      <div class="nav-list">${settingsItem}</div>
+      <div class="listener-card">
+        <span>正在收听</span>
+        <strong>今天先从广播开始，稍后再回到本地资料库。</strong>
+        <p>当前样机只验证 UI 层次、主题联动和页面边界。</p>
       </div>
-    </nav>
-    <div class="sidebar__footer">
-      ${renderNavItem(settingsItem)}
     </div>
   `;
 }
 
 function renderNavItem(item) {
-  const activeClass = item.id === state.page ? " is-active" : "";
+  const activeClass = item.id === state.page ? "active" : "";
   return `
-    <button class="nav-item${activeClass}" type="button" data-action="page" data-page="${item.id}">
-      <span class="nav-item__icon">${item.icon}</span>
-      <span class="nav-item__label">${item.label}</span>
-      <span class="nav-item__meta">${item.badge}</span>
+    <button class="nav-item ${activeClass}" data-page="${item.id}">
+      <span class="nav-icon">${item.icon}</span>
+      <span class="nav-label">${item.label}</span>
     </button>
   `;
 }
 
 function renderContent() {
-  switch (state.page) {
-    case "home":
-      return renderHomePage();
-    case "radio":
-      return renderListPage({
-        label: "全天在线",
-        title: "广播",
-        subtitle: "把首页那张 hero 拆成更完整的频道视图，继续保持广播优先的进入路径。",
-        items: data.radio,
-        sideTitle: data.categoryNotes.radio.title,
-        sideText: data.categoryNotes.radio.text,
-        sideBadges: ["Live", "精选主持", "每周更新"]
-      });
-    case "local":
-      return renderListPage({
-        label: "离线资料库",
-        title: "本地",
-        subtitle: "静态曲库列表先验证层次、字重和横向空间，未来再接入真实文件扫描。",
-        items: data.localTracks,
-        sideTitle: data.categoryNotes.local.title,
-        sideText: data.categoryNotes.local.text,
-        sideBadges: ["无损", "最近导入", "按专辑排序"]
-      });
-    case "playlist":
-      return renderPlaylistPage();
-    case "settings":
-      return renderSettingsPage();
-    default:
-      return "";
+  if (state.page === "home") {
+    return renderHomePage();
   }
+
+  if (state.page === "settings") {
+    return renderSettingsPage();
+  }
+
+  return renderListPage(pageData[state.page]);
 }
 
 function renderHomePage() {
@@ -258,153 +191,172 @@ function renderHomePage() {
     <section class="page">
       <header class="page-header">
         <div>
-          <p class="page-header__label">广播优先首页</p>
-          <h1 class="page-header__title">主页</h1>
-          <p class="page-header__subtitle">早上好，现在适合从广播开始。先给用户一张足够轻盈的主卡，再把继续收听和回流路径安静地摆在右侧。</p>
+          <div class="eyebrow"><span class="eyebrow-dot"></span> 广播优先首页</div>
+          <h1 class="page-title">主页</h1>
+          <p class="page-subtitle">早上好，现在适合先听一会广播，再从最近播放回到你的收藏。</p>
         </div>
-        <div class="search-pill" aria-hidden="true">
-          <span>⌕</span>
-          <span class="search-pill__field">搜索音乐、节目或电台</span>
+        <div class="search-chip">
+          <span class="search-glyph">⌕</span>
+          <span>搜索占位，本轮不接真实功能</span>
         </div>
       </header>
       <div class="home-grid">
-        <div class="home-main">
-          <section class="hero-card">
-            <div class="hero-card__layout">
-              <div>
-                <span class="hero-card__tag">${data.hero.tag}</span>
-                <h2 class="hero-card__title">${data.hero.title}</h2>
-                <p class="hero-card__desc">${data.hero.description}</p>
-                <div class="hero-card__actions">
-                  <button class="button-primary" type="button">继续收听</button>
-                  <button class="button-secondary" type="button">探索更多</button>
-                </div>
-              </div>
-              <div class="hero-art" aria-hidden="true">
-                <div class="hero-art__vinyl"></div>
-              </div>
+        <section class="hero-card">
+          <div class="hero-copy">
+            <div class="hero-topline">${homeData.hero.topline}</div>
+            <h2 class="hero-title">${homeData.hero.title}</h2>
+            <p class="hero-desc">${homeData.hero.desc}</p>
+          </div>
+          <div class="hero-actions hero-actions-docked">
+            <button class="button button-primary">继续收听</button>
+            <button class="button button-secondary">探索更多</button>
+          </div>
+          <div class="floating-pill">${homeData.hero.badge}</div>
+          <div class="hero-visual">
+            <div class="vinyl-ring"></div>
+            <div class="vinyl-core"></div>
+          </div>
+        </section>
+        <div class="side-stack">
+          <section class="panel recommend-panel">
+            <div class="panel-header">
+              <div class="panel-title">推荐广播</div>
+              <div class="linkish">查看全部</div>
+            </div>
+            <div class="recommend-list">
+              ${homeData.recommends.map(renderRecommendItem).join("")}
             </div>
           </section>
-          <section class="section-card glass">
-            <div class="section-card__header">
-              <h3 class="section-card__title">推荐广播</h3>
-              <span class="section-card__meta">3 个频道</span>
+          <section class="panel recent-panel">
+            <div class="panel-header">
+              <div class="panel-title">最近播放</div>
+              <div class="linkish">继续</div>
             </div>
-            <div class="radio-list">
-              ${data.radio.map((item) => mediaRow(item, true)).join("")}
+            <div class="recent-list">
+              ${homeData.recent.map(renderRecentItem).join("")}
+            </div>
+            <div class="recent-metrics">
+              ${homeData.metrics
+                .map(
+                  (metric) => `
+                    <div class="metric">
+                      <span>${metric.label}</span>
+                      <strong>${metric.value}</strong>
+                    </div>
+                  `
+                )
+                .join("")}
             </div>
           </section>
         </div>
-        <aside class="recent-panel">
-          <section class="ambient-note glass">
-            <p class="ambient-note__label">当前气质</p>
-            <h3 class="ambient-note__title">浅色玻璃、柔和渐变、强留白。</h3>
-            <p class="ambient-note__text">主题色会同时驱动 hero 主色、左栏选中态和底部进度高亮。设置页里切换色卡后，首页和播放条立即联动。</p>
-          </section>
-          <section class="section-card glass">
-            <div class="section-card__header">
-              <h3 class="section-card__title">最近播放</h3>
-              <span class="section-card__meta">继续回流</span>
-            </div>
-            <div class="recent-list">
-              ${data.recents.map((item) => mediaRow(item, false)).join("")}
-            </div>
-          </section>
+      </div>
+    </section>
+  `;
+}
+
+function renderRecommendItem(item) {
+  return `
+    <article class="recommend-item">
+      <div class="recommend-cover cover-wave"></div>
+      <div>
+        <div class="item-title">${item.title}</div>
+        <div class="item-subtitle">${item.subtitle}</div>
+      </div>
+      <div class="item-action">▶</div>
+    </article>
+  `;
+}
+
+function renderRecentItem(item) {
+  return `
+    <article class="recommend-item">
+      <div class="recommend-cover cover-wave"></div>
+      <div>
+        <div class="item-title">${item.title}</div>
+        <div class="item-subtitle">${item.kind} · ${item.subtitle}</div>
+      </div>
+      <div class="item-action">↺</div>
+    </article>
+  `;
+}
+
+function renderListPage(data) {
+  return `
+    <section class="page list-page">
+      <header class="page-header">
+        <div>
+          <div class="eyebrow"><span class="eyebrow-dot"></span> ${data.eyebrow}</div>
+          <h1 class="page-title">${data.title}</h1>
+          <p class="page-subtitle">${data.subtitle}</p>
+        </div>
+        <div class="search-chip">
+          <span class="search-glyph">⌕</span>
+          <span>静态目录视图</span>
+        </div>
+      </header>
+      <section class="feature-banner">
+        <div>
+          <h3>${data.bannerTitle}</h3>
+          <p>${data.bannerDesc}</p>
+          <div class="feature-badges">
+            ${data.badges.map((badge) => `<span class="feature-badge">${badge}</span>`).join("")}
+          </div>
+        </div>
+        <div class="feature-visual">
+          <div class="feature-cardlet">
+            <strong>${data.queueLabel}</strong>
+            <span>先用静态密度确认布局，再迁入 LVGL flex/grid。</span>
+          </div>
+          <div class="feature-cardlet">
+            <strong>视觉重点</strong>
+            <span>玻璃卡片、主题色高亮、二级信息尽量轻。</span>
+          </div>
+        </div>
+      </section>
+      <div class="content-grid">
+        <section class="panel catalog-panel">
+          <div class="panel-header">
+            <div class="panel-title">${data.title} 列表</div>
+            <div class="linkish">4 项假数据</div>
+          </div>
+          <div class="catalog-list">
+            ${data.list.map(renderMediaItem).join("")}
+          </div>
+        </section>
+        <aside class="panel queue-panel">
+          <div class="queue-headline">下一步结构观察</div>
+          <div class="queue-badge">${data.queueLabel}</div>
+          <div class="queue-list">
+            ${data.queue
+              .map(
+                (item) => `
+                  <div class="queue-item">
+                    <strong>${item.title}</strong>
+                    <span>${item.subtitle}</span>
+                  </div>
+                `
+              )
+              .join("")}
+          </div>
         </aside>
       </div>
     </section>
   `;
 }
 
-function renderListPage(config) {
+function renderMediaItem(item) {
   return `
-    <section class="page">
-      <header class="page-header">
-        <div>
-          <p class="page-header__label">${config.label}</p>
-          <h1 class="page-header__title">${config.title}</h1>
-          <p class="page-header__subtitle">${config.subtitle}</p>
-        </div>
-        <div class="search-pill" aria-hidden="true">
-          <span>⌕</span>
-          <span class="search-pill__field">筛选与搜索暂作占位</span>
-        </div>
-      </header>
-      <div class="list-page">
-        <section class="list-page__main">
-          <div class="section-card glass">
-            <div class="section-card__header">
-              <h3 class="section-card__title">${config.title}列表</h3>
-              <span class="section-card__meta">静态内容</span>
-            </div>
-            <div class="list-stack">
-              ${config.items.map((item) => mediaRow(item, true)).join("")}
-            </div>
-          </div>
-        </section>
-        <aside class="list-page__side">
-          <div class="side-note glass">
-            <h3 class="side-note__title">${config.sideTitle}</h3>
-            <p class="side-note__text">${config.sideText}</p>
-            <div class="badge-list">
-              ${config.sideBadges.map((badge) => `<span class="badge">${badge}</span>`).join("")}
-            </div>
-          </div>
-          <div class="section-card glass">
-            <div class="section-card__header">
-              <h3 class="section-card__title">最近播放</h3>
-            </div>
-            <div class="recent-list">
-              ${data.recents.slice(0, 2).map((item) => mediaRow(item, false)).join("")}
-            </div>
-          </div>
-        </aside>
+    <article class="media-item" data-kind="${item.kind}">
+      <div class="media-cover cover-wave"></div>
+      <div class="media-meta">
+        <div class="item-title">${item.title}</div>
+        <div class="item-subtitle">${item.subtitle}</div>
       </div>
-    </section>
-  `;
-}
-
-function renderPlaylistPage() {
-  return `
-    <section class="page">
-      <header class="page-header">
-        <div>
-          <p class="page-header__label">主题化集合</p>
-          <h1 class="page-header__title">歌单</h1>
-          <p class="page-header__subtitle">这里不做复杂逻辑，先把卡片密度、色块关系与更明显的 editorial 感做完整。</p>
-        </div>
-        <div class="search-pill" aria-hidden="true">
-          <span>⌕</span>
-          <span class="search-pill__field">未来可放搜索与筛选</span>
-        </div>
-      </header>
-      <div class="list-page">
-        <section class="list-page__main">
-          <div class="list-grid">
-            ${data.playlists.map(playlistCard).join("")}
-          </div>
-        </section>
-        <aside class="list-page__side">
-          <div class="side-note glass">
-            <h3 class="side-note__title">${data.categoryNotes.playlist.title}</h3>
-            <p class="side-note__text">${data.categoryNotes.playlist.text}</p>
-            <div class="badge-list">
-              <span class="badge">编辑推荐</span>
-              <span class="badge">主题歌单</span>
-              <span class="badge">静态占位</span>
-            </div>
-          </div>
-          <div class="section-card glass">
-            <div class="section-card__header">
-              <h3 class="section-card__title">视觉标签</h3>
-            </div>
-            <div class="badge-list">
-              ${data.ambientTags.map((tag) => `<span class="badge">${tag}</span>`).join("")}
-            </div>
-          </div>
-        </aside>
+      <div class="media-extra">
+        <span>${item.meta}</span>
+        <div class="item-action">${item.aux}</div>
       </div>
-    </section>
+    </article>
   `;
 }
 
@@ -413,18 +365,23 @@ function renderSettingsPage() {
     <section class="page">
       <header class="page-header">
         <div>
-          <p class="page-header__label">独立整页设置</p>
-          <h1 class="page-header__title">设置</h1>
-          <p class="page-header__subtitle">右侧内容区保留整页结构，当前重点完成主题色卡。外观、播放、关于三组都可切换，但只有外观做完整联动。</p>
+          <div class="eyebrow"><span class="eyebrow-dot"></span> Appearance Controls</div>
+          <h1 class="page-title">设置</h1>
+          <p class="page-subtitle">本轮重点验证主题色切换、全局 shell 稳定性，以及设置页作为独立整页的结构感。</p>
+        </div>
+        <div class="search-chip">
+          <span class="search-glyph">◌</span>
+          <span>右侧内容切页，不销毁左栏与播放条</span>
         </div>
       </header>
       <div class="settings-layout">
-        <aside class="settings-nav glass">
-          <p class="settings-nav__title">分组</p>
-          ${settingsTabs.map(renderSettingsTab).join("")}
+        <aside class="panel settings-sidebar">
+          <div class="settings-nav">
+            ${settingsTabs.map(renderSettingsTab).join("")}
+          </div>
         </aside>
-        <section class="settings-layout__detail">
-          ${renderSettingsDetail()}
+        <section class="panel settings-main">
+          ${renderSettingsPanel()}
         </section>
       </div>
     </section>
@@ -432,215 +389,159 @@ function renderSettingsPage() {
 }
 
 function renderSettingsTab(tab) {
-  const activeClass = tab.id === state.settingsTab ? " is-active" : "";
+  const activeClass = tab.id === state.settingsTab ? "active" : "";
   return `
-    <button class="settings-tab${activeClass}" type="button" data-action="settings-tab" data-tab="${tab.id}">
-      <span>${tab.label}</span>
-      <span class="settings-tab__hint">${tab.hint}</span>
+    <button class="settings-tab ${activeClass}" data-settings-tab="${tab.id}">
+      <strong>${tab.title}</strong>
+      <span>${tab.desc}</span>
     </button>
   `;
 }
 
-function renderSettingsDetail() {
+function renderSettingsPanel() {
+  if (state.settingsTab === "appearance") {
+    return `
+      <section class="settings-card">
+        <h3>主题模式</h3>
+        <p>本阶段先完成浅色主方案，深色与系统跟随作为结构占位，后续在 LVGL 里保持同样信息边界。</p>
+        <div class="mode-row">
+          <div class="pill-option active">浅色</div>
+          <div class="pill-option">深色</div>
+          <div class="pill-option">跟随系统</div>
+        </div>
+      </section>
+      <section class="settings-card">
+        <h3>主题颜色</h3>
+        <p>切换主题色时，只变更视觉 token，不改变导航、布局和信息结构。</p>
+        <div class="theme-swatches">
+          ${themePresets.map(renderThemeSwatch).join("")}
+        </div>
+      </section>
+      <div class="settings-split">
+        <section class="settings-card">
+          <h3>圆角强度</h3>
+          <p>偏柔和，贴近 Apple Music 的卡片与玻璃边界。</p>
+          <div class="slider-row">
+            <div class="slider"></div>
+            <strong>62%</strong>
+          </div>
+        </section>
+        <section class="settings-card">
+          <h3>背景氛围</h3>
+          <p>维持轻柔雾面，不让背景竞争信息层级。</p>
+          <div class="toggle-row">
+            <div class="pill-option active">柔光</div>
+            <div class="pill-option">冷雾</div>
+          </div>
+        </section>
+      </div>
+      <section class="about-card">
+        <span>当前主题</span>
+        <strong>${themePresets.find((theme) => theme.id === state.theme).label}</strong>
+        <span>联动区域：左栏选中态 / hero 渐变 / 迷你播放条进度 / 主要按钮。</span>
+      </section>
+    `;
+  }
+
   if (state.settingsTab === "playback") {
     return `
-      <article class="settings-card glass">
-        <h3 class="settings-card__title">播放</h3>
-        <p class="settings-card__desc">当前阶段不接真实播放能力，这里只保留几项结构占位，方便后续接入状态和开关。</p>
-        <div class="setting-line">
-          <div>
-            <p class="setting-line__title">自动续播</p>
-            <p class="setting-line__desc">样机阶段固定开启，仅展示交互样式。</p>
-          </div>
-          <span class="setting-line__value">已开启</span>
+      <section class="settings-card">
+        <h3>播放占位</h3>
+        <p>本轮不接真实播放器，但先确认设置页里的二级表单结构密度。</p>
+        <div class="toggle-row">
+          <div class="pill-option active">自动续播</div>
+          <div class="pill-option">Crossfade 8s</div>
+          <div class="pill-option">广播优先</div>
         </div>
-        <div class="setting-line">
-          <div>
-            <p class="setting-line__title">音质偏好</p>
-            <p class="setting-line__desc">未来可分流媒体源，这里先展示为 Lossless。</p>
-          </div>
-          <span class="setting-line__value">Lossless</span>
-        </div>
-      </article>
-    `;
-  }
-
-  if (state.settingsTab === "about") {
-    return `
-      <article class="settings-card glass">
-        <h3 class="settings-card__title">关于</h3>
-        <p class="settings-card__desc">这是第一版 HTML 高保真样机：只验证风格、结构与主题联动，不涉及真实音频、文件扫描或广播接入。</p>
-        <div class="setting-line">
-          <div>
-            <p class="setting-line__title">目标视口</p>
-            <p class="setting-line__desc">固定在 800×480 横屏设备壳里预览。</p>
-          </div>
-          <span class="setting-line__value">800×480</span>
-        </div>
-        <div class="setting-line">
-          <div>
-            <p class="setting-line__title">技术栈</p>
-            <p class="setting-line__desc">原生 HTML / CSS / JS，无构建系统。</p>
-          </div>
-          <span class="setting-line__value">Vanilla</span>
-        </div>
-      </article>
+      </section>
+      <section class="settings-card">
+        <h3>队列策略</h3>
+        <p>进入广播页时展示最近频道；进入本地页时保持上次排序。</p>
+      </section>
+      <section class="about-card">
+        <span>后续接入</span>
+        <strong>只替换右侧内容区</strong>
+        <span>这能让播放条与左栏保持稳定，降低后续接逻辑的复杂度。</span>
+      </section>
     `;
   }
 
   return `
-    <article class="settings-card glass">
-      <h3 class="settings-card__title">外观</h3>
-      <p class="settings-card__desc">浅色模式优先完成，深色与跟随系统先保留结构。主题色卡会直接驱动首页 hero、选中导航、按钮强调色和底部进度高亮。</p>
-      <div class="segmented" role="tablist" aria-label="主题模式">
-        ${["light", "dark", "system"].map((mode) => segmentedModeButton(mode)).join("")}
-      </div>
-    </article>
-    <article class="settings-card glass">
-      <h3 class="settings-card__title">主题颜色</h3>
-      <p class="settings-card__desc">四套 token 只改视觉主色，不改信息架构。当前默认使用 Pink。</p>
-      <div class="theme-grid">
-        ${themeOptions.map(themeCard).join("")}
-      </div>
-    </article>
-    <article class="settings-card glass">
-      <h3 class="settings-card__title">外观细节</h3>
-      <p class="settings-card__desc">这里只做 UI 可见，不要求真实联动。保留圆角和背景氛围两组占位，方便下一轮决定是否做成动态 token。</p>
-      <div class="toggle-row">
-        <button class="toggle-chip is-active" type="button">圆角强度 · 柔和</button>
-        <button class="toggle-chip" type="button">背景氛围 · Clear Glass</button>
-        <button class="toggle-chip" type="button">标题字重 · Bold</button>
-      </div>
-    </article>
+    <section class="settings-card">
+      <h3>关于样机</h3>
+      <p>这是先于 LVGL 的 HTML 高保真确认稿，目标是让布局、气质和主题联动先达成共识。</p>
+    </section>
+    <section class="settings-card">
+      <h3>设备假设</h3>
+      <p>目标分辨率 800x480，左栏常驻，右侧内容切页，底部迷你播放条固定。</p>
+    </section>
+    <section class="about-card">
+      <span>下一步</span>
+      <strong>LVGL v9 flex/grid 实现</strong>
+      <span>样机确认后，再把同一信息架构迁移到 SDL 运行环境。</span>
+    </section>
   `;
 }
 
-function segmentedModeButton(mode) {
-  const labels = {
-    light: "浅色",
-    dark: "深色",
-    system: "跟随系统"
-  };
-  const activeClass = state.themeMode === mode ? " is-active" : "";
+function renderThemeSwatch(theme) {
+  const activeClass = theme.id === state.theme ? "active" : "";
   return `
-    <button class="segmented__button${activeClass}" type="button" data-action="theme-mode" data-mode="${mode}">
-      ${labels[mode]}
+    <button class="swatch ${activeClass}" data-theme="${theme.id}">
+      <span class="swatch-preview swatch-${theme.id}"></span>
+      <strong>${theme.label}</strong>
+      <span>${theme.desc}</span>
     </button>
-  `;
-}
-
-function themeCard(theme) {
-  const activeClass = theme.id === state.theme ? " is-active" : "";
-  return `
-    <button class="theme-card${activeClass}" type="button" data-action="theme" data-theme="${theme.id}">
-      ${theme.id === state.theme ? '<span class="theme-card__check">✓</span>' : ""}
-      <div class="theme-card__swatch">
-        ${theme.swatches.map((color) => `<span style="background:${color}"></span>`).join("")}
-      </div>
-      <p class="theme-card__title">${theme.name}</p>
-      <p class="theme-card__desc">${theme.description}</p>
-    </button>
-  `;
-}
-
-function playlistCard(item) {
-  return `
-    <article class="playlist-card glass" style="${coverStyle(item.cover)}">
-      <p class="playlist-card__label">编辑歌单</p>
-      <h3 class="playlist-card__title">${item.title}</h3>
-      <p class="playlist-card__subtitle">${item.subtitle}</p>
-      <span class="playlist-card__pill">${item.pill}</span>
-    </article>
-  `;
-}
-
-function mediaRow(item, showAction) {
-  return `
-    <article class="media-row">
-      <div class="media-row__cover" style="${coverStyle(item.cover)}"></div>
-      <div>
-        <p class="media-row__eyebrow">${item.eyebrow}</p>
-        <h4 class="media-row__title">${item.title}</h4>
-        <p class="media-row__subtitle">${item.subtitle}</p>
-      </div>
-      ${showAction ? '<button class="media-row__action" type="button">▶</button>' : '<span class="media-row__action" aria-hidden="true">···</span>'}
-    </article>
   `;
 }
 
 function renderMiniPlayer() {
-  const current = data.nowPlaying;
   return `
-    <div class="mini-player__now">
-      <div class="mini-player__cover" style="${coverStyle(current.cover)}"></div>
-      <div>
-        <p class="mini-player__eyebrow">${current.eyebrow}</p>
-        <h3 class="mini-player__title">${current.title}</h3>
-        <p class="mini-player__subtitle">${current.artist}</p>
+    <div class="now-playing">
+      <div class="player-art"></div>
+      <div class="player-copy">
+        <strong>${miniPlayer.title}</strong>
+        <span>${miniPlayer.subtitle}</span>
       </div>
     </div>
-    <div class="mini-player__controls" aria-label="播放控制">
-      <button class="player-btn" type="button" aria-label="上一首">◁</button>
-      <button class="player-btn player-btn--play" type="button" aria-label="播放">▶</button>
-      <button class="player-btn" type="button" aria-label="下一首">▷</button>
+    <div class="player-controls">
+      <button class="control-button" aria-label="上一首">⏮</button>
+      <button class="control-button primary" aria-label="播放">▶</button>
+      <button class="control-button" aria-label="下一首">⏭</button>
     </div>
-    <div class="mini-player__progress">
-      <div class="mini-player__time">
-        <span>${current.elapsed}</span>
-        <span>${current.duration}</span>
+    <div class="progress-cluster" style="--progress: ${miniPlayer.progress}">
+      <div class="progress-meta">
+        <span>${miniPlayer.current}</span>
+        <span>Now Playing</span>
+        <span>${miniPlayer.total}</span>
       </div>
-      <div class="progress-bar" aria-hidden="true">
-        <div class="progress-bar__fill" style="--progress:${current.progress}%"></div>
-      </div>
+      <div class="progress-bar"></div>
     </div>
   `;
 }
 
-function coverStyle(colors) {
-  return `--cover-a:${colors[0]};--cover-b:${colors[1]};`;
-}
-
-function bindEvents(root) {
-  root.querySelectorAll("[data-action='page']").forEach((button) => {
+function bindEvents() {
+  document.querySelectorAll("[data-page]").forEach((button) => {
     button.addEventListener("click", () => {
       state.page = button.dataset.page;
       render();
     });
   });
 
-  root.querySelectorAll("[data-action='theme']").forEach((button) => {
+  document.querySelectorAll("[data-theme]").forEach((button) => {
+    if (button.classList.contains("swatch")) {
+      button.addEventListener("click", () => {
+        state.theme = button.dataset.theme;
+        render();
+      });
+    }
+  });
+
+  document.querySelectorAll("[data-settings-tab]").forEach((button) => {
     button.addEventListener("click", () => {
-      state.theme = button.dataset.theme;
+      state.settingsTab = button.dataset.settingsTab;
       render();
     });
   });
-
-  root.querySelectorAll("[data-action='settings-tab']").forEach((button) => {
-    button.addEventListener("click", () => {
-      state.settingsTab = button.dataset.tab;
-      render();
-    });
-  });
-
-  root.querySelectorAll("[data-action='theme-mode']").forEach((button) => {
-    button.addEventListener("click", () => {
-      state.themeMode = button.dataset.mode;
-      render();
-    });
-  });
-}
-
-function applyBodyState() {
-  document.body.dataset.theme = state.theme;
-  document.body.dataset.page = state.page;
-  document.body.dataset.themeMode = state.themeMode;
-}
-
-function render() {
-  applyBodyState();
-  const root = document.getElementById("app");
-  root.innerHTML = appShell();
-  bindEvents(root);
 }
 
 render();
