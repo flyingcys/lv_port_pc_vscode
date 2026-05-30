@@ -13,7 +13,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include "lvgl/lvgl.h"
-#include "v9-fruit_ninja/fruit_ninja.h"
+#include "v9_music_player/music_player.h"
 #include "glob.h"
 
 /*********************
@@ -72,11 +72,11 @@ int main(int argc, char **argv)
   lv_init();
 
   /*Initialize the HAL (display, input devices, tick) for LVGL*/
-  hal_init(640, 480);
+  hal_init(800, 480);
 
   #if LV_USE_OS == LV_OS_NONE
  
-  fruit_ninja_start();
+  music_player_start();
 
   while(1) {
     /* Periodically call the lv_task handler.

@@ -16,12 +16,12 @@ const themePresets = [
   { id: "cyan", label: "Cyan", desc: "淡青主调" },
   { id: "blue", label: "Blue", desc: "夜间轻冷" },
   { id: "mint", label: "Mint", desc: "清透早晨" },
-  { id: "orange", label: "Orange", desc: "暖调黄金时刻" },
+  { id: "auto-1", label: "自动一", desc: "用户自定义色槽" },
 ];
 
 const state = {
   page: "home",
-  theme: "mint",
+  theme: "cyan",
   settingsTab: "appearance",
 };
 

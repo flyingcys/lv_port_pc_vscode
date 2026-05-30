@@ -48,8 +48,8 @@ option(LV_USE_FREETYPE "Use freetype library" OFF)
 set(LV_USE_LIBPNG ON CACHE BOOL "Use libpng to decode PNG" FORCE)
 set(LV_USE_LIBJPEG_TURBO OFF CACHE BOOL "Use libjpeg turbo to decode JPEG" FORCE)
 
-file(GLOB FRUIT_NINJA_SOURCES CONFIGURE_DEPENDS
-    "${PROJECT_SOURCE_DIR}/main/src/v9-fruit_ninja/*.c"
+file(GLOB MUSIC_PLAYER_SOURCES CONFIGURE_DEPENDS
+    "${PROJECT_SOURCE_DIR}/main/src/v9_music_player/*.c"
 )
 
 # Set C and C++ standards
@@ -63,33 +63,6 @@ set(WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 # Find and include SDL2 library
 find_package(SDL2 REQUIRED)
-find_package(SDL2_mixer QUIET)
-
-if(NOT SDL2_mixer_FOUND AND NOT TARGET SDL2_mixer::SDL2_mixer AND NOT TARGET SDL2_mixer::SDL2_mixer-static)
-    find_package(PkgConfig QUIET)
-    if(PkgConfig_FOUND)
-        pkg_check_modules(SDL2_MIXER QUIET SDL2_mixer)
-    endif()
-
-    find_path(SDL2_MIXER_INCLUDE_DIR
-        NAMES SDL_mixer.h
-        PATH_SUFFIXES SDL2
-        HINTS ${SDL2_MIXER_INCLUDE_DIRS}
-    )
-    find_library(SDL2_MIXER_LIBRARY
-        NAMES SDL2_mixer
-        HINTS ${SDL2_MIXER_LIBRARY_DIRS}
-    )
-
-    if(SDL2_MIXER_INCLUDE_DIR AND SDL2_MIXER_LIBRARY)
-        set(SDL2_MIXER_INCLUDE_DIRS ${SDL2_MIXER_INCLUDE_DIR})
-        set(SDL2_MIXER_LIBRARIES ${SDL2_MIXER_LIBRARY})
-    endif()
-endif()
-
-if(NOT SDL2_mixer_FOUND AND NOT TARGET SDL2_mixer::SDL2_mixer AND NOT TARGET SDL2_mixer::SDL2_mixer-static AND NOT SDL2_MIXER_LIBRARIES)
-    message(FATAL_ERROR "SDL2_mixer is required to play Fruit Ninja audio. Install SDL2_mixer and retry.")
-endif()
 
 # Remove ARM-specific compile and linker options
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=native")
@@ -123,20 +96,11 @@ else()
     )
 endif()
 
-target_sources(main PRIVATE ${FRUIT_NINJA_SOURCES})
+target_sources(main PRIVATE ${MUSIC_PLAYER_SOURCES})
 
 # Define LVGL configuration as a simple include
 target_compile_definitions(main PRIVATE LV_CONF_INCLUDE_SIMPLE)
 target_link_libraries(main lvgl lvgl::examples lvgl::demos lvgl::thorvg ${SDL2_LIBRARIES} m pthread)
-
-if(TARGET SDL2_mixer::SDL2_mixer)
-    target_link_libraries(main SDL2_mixer::SDL2_mixer)
-elseif(TARGET SDL2_mixer::SDL2_mixer-static)
-    target_link_libraries(main SDL2_mixer::SDL2_mixer-static)
-else()
-    target_include_directories(main PRIVATE ${SDL2_MIXER_INCLUDE_DIRS})
-    target_link_libraries(main ${SDL2_MIXER_LIBRARIES})
-endif()
 
 # Only link freertos_config if the FreeRTOS directory exists
 if(USE_FREERTOS)
@@ -200,6 +164,47 @@ add_executable(fruit_ninja_model_test
 )
 target_include_directories(fruit_ninja_model_test PRIVATE ${PROJECT_SOURCE_DIR})
 
+add_executable(music_player_theme_test
+    ${PROJECT_SOURCE_DIR}/main/tests/music_player_theme_test.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_music_player/music_player_theme.c
+)
+target_include_directories(music_player_theme_test PRIVATE ${PROJECT_SOURCE_DIR})
+
+add_executable(music_player_mock_data_test
+    ${PROJECT_SOURCE_DIR}/main/tests/music_player_mock_data_test.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_music_player/music_player_mock_data.c
+)
+target_include_directories(music_player_mock_data_test PRIVATE ${PROJECT_SOURCE_DIR})
+
+add_executable(music_player_html_mockup_test
+    ${PROJECT_SOURCE_DIR}/main/tests/music_player_html_mockup_test.c
+)
+target_include_directories(music_player_html_mockup_test PRIVATE ${PROJECT_SOURCE_DIR})
+
+add_executable(music_player_shell_contract_test
+    ${PROJECT_SOURCE_DIR}/main/tests/music_player_shell_contract_test.c
+    ${MUSIC_PLAYER_SOURCES}
+)
+target_include_directories(music_player_shell_contract_test PRIVATE ${PROJECT_SOURCE_DIR})
+target_compile_definitions(music_player_shell_contract_test PRIVATE LV_CONF_INCLUDE_SIMPLE)
+set(MUSIC_PLAYER_TEST_LIBS
+    lvgl
+    lvgl::thorvg
+    ${SDL2_LIBRARIES}
+    ${PNG_LIBRARIES}
+    m
+    pthread
+)
+target_link_libraries(music_player_shell_contract_test ${MUSIC_PLAYER_TEST_LIBS})
+
+add_executable(music_player_shell_lvgl_test
+    ${PROJECT_SOURCE_DIR}/main/tests/music_player_shell_lvgl_test.c
+    ${MUSIC_PLAYER_SOURCES}
+)
+target_include_directories(music_player_shell_lvgl_test PRIVATE ${PROJECT_SOURCE_DIR})
+target_compile_definitions(music_player_shell_lvgl_test PRIVATE LV_CONF_INCLUDE_SIMPLE)
+target_link_libraries(music_player_shell_lvgl_test ${MUSIC_PLAYER_TEST_LIBS})
+
 add_test(
     NAME fruit_ninja_assets_test
     COMMAND $<TARGET_FILE:fruit_ninja_assets_test>
@@ -217,6 +222,36 @@ add_test(
     COMMAND $<TARGET_FILE:fruit_ninja_model_test>
 )
 set_tests_properties(fruit_ninja_model_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_test(
+    NAME music_player_theme_test
+    COMMAND $<TARGET_FILE:music_player_theme_test>
+)
+set_tests_properties(music_player_theme_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_test(
+    NAME music_player_mock_data_test
+    COMMAND $<TARGET_FILE:music_player_mock_data_test>
+)
+set_tests_properties(music_player_mock_data_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_test(
+    NAME music_player_html_mockup_test
+    COMMAND $<TARGET_FILE:music_player_html_mockup_test>
+)
+set_tests_properties(music_player_html_mockup_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_test(
+    NAME music_player_shell_contract_test
+    COMMAND $<TARGET_FILE:music_player_shell_contract_test>
+)
+set_tests_properties(music_player_shell_contract_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_test(
+    NAME music_player_shell_lvgl_test
+    COMMAND $<TARGET_FILE:music_player_shell_lvgl_test>
+)
+set_tests_properties(music_player_shell_lvgl_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 add_custom_target(fruit_ninja_tests
     COMMAND $<TARGET_FILE:fruit_ninja_assets_test>
