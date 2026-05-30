@@ -153,13 +153,16 @@ int main(void)
     lv_screen_load(app.screen);
     assert_shell_tree(&app);
 
+    lv_obj_t * first_mini_player = app.mini_player;
     click_sidebar_nav(&app, 1);
     assert(app.page == MUSIC_PLAYER_PAGE_RADIO);
+    assert(app.mini_player == first_mini_player);
     assert_shell_tree(&app);
 
     click_sidebar_nav(&app, music_player_shell_bottom_nav_index());
     assert(app.page == MUSIC_PLAYER_PAGE_SETTINGS);
     assert(app.settings_group == MUSIC_PLAYER_SETTINGS_APPEARANCE);
+    assert(app.mini_player == first_mini_player);
     assert_shell_tree(&app);
 
     click_settings_group(&app, MUSIC_PLAYER_SETTINGS_PLAYBACK);
@@ -198,6 +201,33 @@ int main(void)
     music_player_shell_set_page(&app, MUSIC_PLAYER_PAGE_HOME);
     assert(app.page == MUSIC_PLAYER_PAGE_HOME);
     assert_shell_tree(&app);
+
+    music_player_app_t first_app;
+    music_player_app_t second_app;
+    memset(&first_app, 0, sizeof(first_app));
+    memset(&second_app, 0, sizeof(second_app));
+    first_app.page = MUSIC_PLAYER_PAGE_HOME;
+    first_app.settings_group = MUSIC_PLAYER_SETTINGS_APPEARANCE;
+    first_app.theme = music_player_theme_default_state();
+    second_app.page = MUSIC_PLAYER_PAGE_HOME;
+    second_app.settings_group = MUSIC_PLAYER_SETTINGS_APPEARANCE;
+    second_app.theme = music_player_theme_default_state();
+    music_player_shell_create(&first_app);
+    music_player_shell_create(&second_app);
+
+    click_sidebar_nav(&first_app, 1);
+    assert(first_app.page == MUSIC_PLAYER_PAGE_RADIO);
+    assert(second_app.page == MUSIC_PLAYER_PAGE_HOME);
+
+    music_player_shell_set_page(&first_app, MUSIC_PLAYER_PAGE_SETTINGS);
+    click_settings_group(&first_app, MUSIC_PLAYER_SETTINGS_PLAYBACK);
+    assert(first_app.settings_group == MUSIC_PLAYER_SETTINGS_PLAYBACK);
+    assert(second_app.settings_group == MUSIC_PLAYER_SETTINGS_APPEARANCE);
+
+    click_settings_group(&first_app, MUSIC_PLAYER_SETTINGS_APPEARANCE);
+    click_settings_accent(&first_app, MUSIC_PLAYER_ACCENT_AUTO_1);
+    assert(first_app.theme.accent == MUSIC_PLAYER_ACCENT_AUTO_1);
+    assert(second_app.theme.accent == MUSIC_PLAYER_ACCENT_CYAN);
 
     lv_obj_invalidate(app.screen);
     lv_refr_now(display);

@@ -20,19 +20,6 @@ static const music_player_nav_descriptor_t g_nav_items[] = {
     { MUSIC_PLAYER_PAGE_SETTINGS, "Settings", "S" },
 };
 
-typedef struct {
-    music_player_app_t * app;
-    music_player_page_t page;
-} music_player_nav_click_ctx_t;
-
-static music_player_nav_click_ctx_t g_nav_click_ctx[] = {
-    { NULL, MUSIC_PLAYER_PAGE_HOME },
-    { NULL, MUSIC_PLAYER_PAGE_RADIO },
-    { NULL, MUSIC_PLAYER_PAGE_LOCAL },
-    { NULL, MUSIC_PLAYER_PAGE_PLAYLIST },
-    { NULL, MUSIC_PLAYER_PAGE_SETTINGS },
-};
-
 static const char * const g_settings_group_labels[] = {
     "Appearance",
     "Playback",
@@ -42,6 +29,7 @@ static const char * const g_settings_group_labels[] = {
 static void clear_object(lv_obj_t * obj);
 static void style_root_shell(music_player_app_t * app);
 static void build_sidebar(music_player_app_t * app);
+static void update_sidebar_selection(music_player_app_t * app);
 static void build_content(music_player_app_t * app);
 static void build_mini_player(music_player_app_t * app);
 static void build_page_content(music_player_app_t * app);
@@ -97,7 +85,8 @@ void music_player_shell_set_page(music_player_app_t * app, music_player_page_t p
     }
 
     app->page = page;
-    music_player_shell_refresh(app);
+    update_sidebar_selection(app);
+    build_content(app);
 }
 
 size_t music_player_shell_nav_count(void)
@@ -202,6 +191,7 @@ static void build_sidebar(music_player_app_t * app)
     size_t i;
 
     clear_object(app->sidebar);
+    memset(app->nav_buttons, 0, sizeof(app->nav_buttons));
 
     lv_obj_t * brand = lv_obj_create(app->sidebar);
     lv_obj_remove_style_all(brand);
@@ -251,9 +241,10 @@ static void build_sidebar(music_player_app_t * app)
         lv_obj_set_style_pad_right(btn, 12, 0);
         lv_obj_set_style_pad_top(btn, 0, 0);
         lv_obj_set_style_pad_bottom(btn, 0, 0);
-        g_nav_click_ctx[i].app = app;
-        g_nav_click_ctx[i].page = g_nav_items[i].page;
-        lv_obj_add_event_cb(btn, on_nav_clicked, LV_EVENT_CLICKED, &g_nav_click_ctx[i]);
+        app->nav_buttons[i] = btn;
+        app->nav_click_ctx[i].app = app;
+        app->nav_click_ctx[i].page = g_nav_items[i].page;
+        lv_obj_add_event_cb(btn, on_nav_clicked, LV_EVENT_CLICKED, &app->nav_click_ctx[i]);
 
         lv_obj_t * row = lv_obj_create(btn);
         lv_obj_remove_style_all(row);
@@ -304,10 +295,11 @@ static void build_sidebar(music_player_app_t * app)
     lv_obj_set_style_pad_right(btn, 12, 0);
     lv_obj_set_style_pad_top(btn, 0, 0);
     lv_obj_set_style_pad_bottom(btn, 0, 0);
-    g_nav_click_ctx[music_player_shell_bottom_nav_index()].app = app;
-    g_nav_click_ctx[music_player_shell_bottom_nav_index()].page = settings->page;
+    app->nav_buttons[music_player_shell_bottom_nav_index()] = btn;
+    app->nav_click_ctx[music_player_shell_bottom_nav_index()].app = app;
+    app->nav_click_ctx[music_player_shell_bottom_nav_index()].page = settings->page;
     lv_obj_add_event_cb(btn, on_nav_clicked, LV_EVENT_CLICKED,
-                        &g_nav_click_ctx[music_player_shell_bottom_nav_index()]);
+                        &app->nav_click_ctx[music_player_shell_bottom_nav_index()]);
 
     lv_obj_t * row = lv_obj_create(btn);
     lv_obj_remove_style_all(row);
@@ -334,6 +326,39 @@ static void build_sidebar(music_player_app_t * app)
     create_label(row, settings->label,
                  settings->page == app->page ? accent_color(app) : text_color(),
                  LV_FONT_DEFAULT);
+}
+
+static void update_sidebar_selection(music_player_app_t * app)
+{
+    size_t i;
+
+    for(i = 0; i < music_player_shell_nav_count(); ++i) {
+        lv_obj_t * btn = app->nav_buttons[i];
+        if(btn == NULL) {
+            continue;
+        }
+
+        bool selected = g_nav_items[i].page == app->page;
+        lv_obj_set_style_bg_color(btn, selected ? accent_soft_color(app) : lv_color_hex(0xeff7f6),
+                                  0);
+        lv_obj_set_style_bg_opa(btn, selected ? LV_OPA_100 : LV_OPA_60, 0);
+
+        lv_obj_t * row = lv_obj_get_child(btn, 0);
+        if(row == NULL || lv_obj_get_child_count(row) < 2U) {
+            continue;
+        }
+
+        lv_obj_t * dot = lv_obj_get_child(row, 0);
+        lv_obj_set_style_bg_color(dot, selected ? accent_color(app) : lv_color_hex(0xffffff), 0);
+
+        lv_obj_t * glyph = lv_obj_get_child(dot, 0);
+        if(glyph != NULL) {
+            lv_obj_set_style_text_color(glyph, selected ? lv_color_white() : muted_color(), 0);
+        }
+
+        lv_obj_t * label = lv_obj_get_child(row, 1);
+        lv_obj_set_style_text_color(label, selected ? accent_color(app) : text_color(), 0);
+    }
 }
 
 static void build_content(music_player_app_t * app)

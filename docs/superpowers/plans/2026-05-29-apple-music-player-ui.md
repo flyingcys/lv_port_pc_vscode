@@ -569,6 +569,7 @@ rtk git commit -m "feat: add apple music player ui"
 - 最新完整验证命令 `rtk cmake -S . -B build && rtk cmake --build build --target music_player_theme_test music_player_mock_data_test music_player_html_mockup_test music_player_shell_contract_test music_player_shell_lvgl_test main && rtk ctest --test-dir build --output-on-failure` 为 `8/8 PASS`。
 - SDL 进程 smoke 无启动期日志输出，`/tmp/music_player_sdl_smoke.log` 为 `0` 行；窗口存在性已由 `pgrep/ps`、`lsappinfo visibleProcessList`、CoreGraphics 窗口枚举和 ScreenCaptureKit `SCShareableContent` 证明。
 - GitNexus `detect_changes --scope all` 最新风险为 `medium`，受影响流程集中在 `Main -> lv_group_set_default / lv_indev_set_group / lv_indev_set_display / lv_display_set_default`，无 `HIGH` / `CRITICAL`。
+- 2026-05-30 follow-up 修复后，普通页面切换路径只更新左栏选中态并替换 `content_host`，不再重建 `mini_player`；导航、设置分组和主题色卡事件上下文已改为 `music_player_app_t` 实例持有，避免多实例之间互相覆盖。`music_player_shell_lvgl_test` 新增覆盖：点击切页后 `mini_player` 指针保持不变；创建两个 `music_player_app_t` 后，点击第一个实例的 nav/settings/theme 不会改变第二个实例状态。
 
 仍不能表述为完成的范围：
 

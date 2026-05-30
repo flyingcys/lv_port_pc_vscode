@@ -1,28 +1,5 @@
 #include "music_player_shell.h"
 
-typedef struct {
-    music_player_app_t * app;
-    music_player_theme_accent_t accent;
-} music_player_theme_click_ctx_t;
-
-typedef struct {
-    music_player_app_t * app;
-    music_player_settings_group_t group;
-} music_player_settings_group_ctx_t;
-
-static music_player_theme_click_ctx_t g_theme_click_ctx[] = {
-    { NULL, MUSIC_PLAYER_ACCENT_CYAN },
-    { NULL, MUSIC_PLAYER_ACCENT_BLUE },
-    { NULL, MUSIC_PLAYER_ACCENT_MINT },
-    { NULL, MUSIC_PLAYER_ACCENT_AUTO_1 },
-};
-
-static music_player_settings_group_ctx_t g_settings_group_ctx[] = {
-    { NULL, MUSIC_PLAYER_SETTINGS_APPEARANCE },
-    { NULL, MUSIC_PLAYER_SETTINGS_PLAYBACK },
-    { NULL, MUSIC_PLAYER_SETTINGS_ABOUT },
-};
-
 static void on_theme_clicked(lv_event_t * e)
 {
     music_player_theme_click_ctx_t * ctx =
@@ -89,7 +66,9 @@ void music_player_settings_view_build(lv_obj_t * parent, music_player_app_t * ap
         lv_obj_set_width(group_btn, LV_PCT(100));
         lv_obj_set_style_radius(group_btn, 14, 0);
         lv_obj_set_style_border_width(group_btn, 0, 0);
-        if(app->settings_group == g_settings_group_ctx[i].group) {
+        app->settings_group_click_ctx[i].app = app;
+        app->settings_group_click_ctx[i].group = (music_player_settings_group_t)i;
+        if(app->settings_group == app->settings_group_click_ctx[i].group) {
             lv_obj_set_style_bg_color(group_btn,
                                       lv_color_hex(music_player_theme_accent_hex(&app->theme)), 0);
             lv_obj_set_style_text_color(group_btn, lv_color_white(), 0);
@@ -97,11 +76,11 @@ void music_player_settings_view_build(lv_obj_t * parent, music_player_app_t * ap
         else {
             lv_obj_set_style_bg_color(group_btn, lv_color_hex(0xf3f8f8), 0);
         }
-        g_settings_group_ctx[i].app = app;
         lv_obj_add_event_cb(group_btn, on_settings_group_clicked, LV_EVENT_CLICKED,
-                            &g_settings_group_ctx[i]);
+                            &app->settings_group_click_ctx[i]);
         lv_label_set_text(lv_label_create(group_btn),
-                          music_player_shell_settings_group_label(g_settings_group_ctx[i].group));
+                          music_player_shell_settings_group_label(
+                              app->settings_group_click_ctx[i].group));
     }
 
     lv_obj_t * main = lv_obj_create(page);
@@ -157,9 +136,10 @@ void music_player_settings_view_build(lv_obj_t * parent, music_player_app_t * ap
             }
             lv_obj_set_grid_cell(swatch, LV_GRID_ALIGN_STRETCH, (int32_t)i, 1,
                                  LV_GRID_ALIGN_STRETCH, 0, 1);
-            g_theme_click_ctx[i].app = app;
-            g_theme_click_ctx[i].accent = item->accent;
-            lv_obj_add_event_cb(swatch, on_theme_clicked, LV_EVENT_CLICKED, &g_theme_click_ctx[i]);
+            app->theme_click_ctx[i].app = app;
+            app->theme_click_ctx[i].accent = item->accent;
+            lv_obj_add_event_cb(swatch, on_theme_clicked, LV_EVENT_CLICKED,
+                                &app->theme_click_ctx[i]);
             lv_label_set_text(lv_label_create(swatch), item->label);
         }
 

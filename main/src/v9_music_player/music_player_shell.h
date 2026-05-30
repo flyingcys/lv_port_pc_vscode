@@ -40,6 +40,25 @@ typedef struct {
     size_t playlist_count;
 } music_player_page_model_t;
 
+#define MUSIC_PLAYER_NAV_ITEM_COUNT 5U
+#define MUSIC_PLAYER_SETTINGS_GROUP_ITEM_COUNT 3U
+#define MUSIC_PLAYER_THEME_ACCENT_ITEM_COUNT 4U
+
+typedef struct {
+    music_player_app_t * app;
+    music_player_page_t page;
+} music_player_nav_click_ctx_t;
+
+typedef struct {
+    music_player_app_t * app;
+    music_player_theme_accent_t accent;
+} music_player_theme_click_ctx_t;
+
+typedef struct {
+    music_player_app_t * app;
+    music_player_settings_group_t group;
+} music_player_settings_group_ctx_t;
+
 struct music_player_app {
     lv_obj_t * screen;
     lv_obj_t * root;
@@ -47,6 +66,10 @@ struct music_player_app {
     lv_obj_t * content_shell;
     lv_obj_t * content_host;
     lv_obj_t * mini_player;
+    lv_obj_t * nav_buttons[MUSIC_PLAYER_NAV_ITEM_COUNT];
+    music_player_nav_click_ctx_t nav_click_ctx[MUSIC_PLAYER_NAV_ITEM_COUNT];
+    music_player_theme_click_ctx_t theme_click_ctx[MUSIC_PLAYER_THEME_ACCENT_ITEM_COUNT];
+    music_player_settings_group_ctx_t settings_group_click_ctx[MUSIC_PLAYER_SETTINGS_GROUP_ITEM_COUNT];
     music_player_page_t page;
     music_player_settings_group_t settings_group;
     music_player_theme_state_t theme;
