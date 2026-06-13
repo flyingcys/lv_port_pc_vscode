@@ -388,7 +388,7 @@ uint32_t music_player_get_duration_ms(void) {
     return g_current_duration_ms;
 }
 
-/* ── seek stub (full implementation in Task S3) ──────────────────────── */
+/* ── seek (Task S3) ──────────────────────────────────────────────────── */
 void music_player_seek(uint32_t position_ms) {
-    (void)position_ms;
+    if(g_controller) player_controller_seek(g_controller, position_ms);
 }
