@@ -1,6 +1,7 @@
 #define _DEFAULT_SOURCE
 #include "music_player.h"
 #include <dirent.h>
+#include <stdatomic.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,9 +22,9 @@ static size_t              g_url_count  = 0;
 static player_controller_t *g_controller = NULL;
 static lv_timer_t          *g_poll_timer = NULL;
 
-static uint32_t g_audio_sample_rate   = 0;
-static uint8_t  g_audio_channels      = 0;
-static uint8_t  g_audio_bps           = 16;
+static _Atomic uint32_t g_audio_sample_rate = 0U;
+static _Atomic uint8_t  g_audio_channels    = 0U;
+static _Atomic uint8_t  g_audio_bps         = 16U;
 static uint32_t g_current_duration_ms = 0;
 
 typedef struct {
@@ -312,15 +313,18 @@ static uint32_t audio_probe_duration_ms(const char *url) {
         fseek(f, 0, SEEK_END);
         file_size = ftell(f);
         rewind(f);
+        if(file_size <= 0L) { fclose(f); return 0U; }
         n = fread(buf, 1, sizeof(buf), f);
         fclose(f);
     }
     if(n < 12U) return 0U;
 
-    /* WAV */
+    /* WAV (standard PCM only: fmt chunk size = 16, AudioFormat = 1) */
     if(n >= 44U &&
        buf[0]=='R' && buf[1]=='I' && buf[2]=='F' && buf[3]=='F' &&
-       buf[8]=='W' && buf[9]=='A' && buf[10]=='V' && buf[11]=='E') {
+       buf[8]=='W' && buf[9]=='A' && buf[10]=='V' && buf[11]=='E' &&
+       buf[16]==16U && buf[17]==0U &&          /* fmt chunk size == 16 */
+       buf[20]==1U  && buf[21]==0U) {          /* AudioFormat == PCM */
         uint32_t byte_rate = (uint32_t)buf[28] | ((uint32_t)buf[29]<<8)
                            | ((uint32_t)buf[30]<<16) | ((uint32_t)buf[31]<<24);
         uint32_t data_size = (uint32_t)buf[40] | ((uint32_t)buf[41]<<8)
@@ -346,7 +350,18 @@ static uint32_t audio_probe_duration_ms(const char *url) {
         static const uint32_t kbps_mpeg1_l3[16] = {
             0,32,40,48,56,64,80,96,112,128,160,192,224,256,320,0
         };
+        uint32_t id3v2_size = 0U;
         uint32_t i;
+
+        /* skip ID3v2 tag if present */
+        if(n >= 10U && buf[0]=='I' && buf[1]=='D' && buf[2]=='3') {
+            id3v2_size = 10U
+                + (((uint32_t)(buf[6] & 0x7FU)) << 21)
+                + (((uint32_t)(buf[7] & 0x7FU)) << 14)
+                + (((uint32_t)(buf[8] & 0x7FU)) <<  7)
+                +  ((uint32_t)(buf[9] & 0x7FU));
+        }
+
         for(i = 0U; i + 3U < (uint32_t)n; i++) {
             if(buf[i] == 0xFFU && (buf[i+1U] & 0xE0U) == 0xE0U) {
                 uint8_t version = (buf[i+1U] >> 3) & 0x03U;
@@ -355,7 +370,11 @@ static uint32_t audio_probe_duration_ms(const char *url) {
                 if(version == 3U && layer == 1U && br_idx > 0U && br_idx < 15U) {
                     uint32_t bps2 = kbps_mpeg1_l3[br_idx] * 1000U;
                     if(bps2 == 0U) break;
-                    uint32_t audio_bytes = (uint32_t)(file_size > 128L ? file_size - 128L : file_size);
+                    /* subtract ID3v2 header and ID3v1 trailer from file_size */
+                    uint32_t id3v1_size = (file_size > 128L) ? 128U : 0U;
+                    uint32_t audio_bytes = (uint32_t)file_size
+                                           - (id3v2_size < (uint32_t)file_size ? id3v2_size : 0U)
+                                           - id3v1_size;
                     return audio_bytes * 8U / (bps2 / 1000U);
                 }
                 break;
