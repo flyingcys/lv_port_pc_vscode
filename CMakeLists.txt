@@ -61,6 +61,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
+find_package(OpenSSL REQUIRED)
+find_package(Threads REQUIRED)
+find_package(ALSA REQUIRED)
+
+set(HLS_PROJECT_ROOT_DIR ${PROJECT_SOURCE_DIR}/third-party/hls_player_demo)
+
+add_subdirectory(${HLS_PROJECT_ROOT_DIR}/src/http_client)
+add_subdirectory(${HLS_PROJECT_ROOT_DIR}/src/player_controller)
+add_subdirectory(${HLS_PROJECT_ROOT_DIR}/src/stream_player)
+
 # Find and include SDL2 library
 find_package(SDL2 REQUIRED)
 find_package(SDL2_mixer QUIET)
@@ -119,7 +129,22 @@ if(USE_FREERTOS)
 else()
     add_executable(main
         ${PROJECT_SOURCE_DIR}/main/src/main.c
+        ${PROJECT_SOURCE_DIR}/main/src/music_player.c
         ${PROJECT_SOURCE_DIR}/main/src/mouse_cursor_icon.c
+    )
+
+    target_include_directories(main PRIVATE
+        ${HLS_PROJECT_ROOT_DIR}/src
+        ${HLS_PROJECT_ROOT_DIR}/src/stream_player/include
+        ${HLS_PROJECT_ROOT_DIR}/src/player_controller
+        ${HLS_PROJECT_ROOT_DIR}/src/http_client
+        ${ALSA_INCLUDE_DIRS}
+    )
+
+    target_compile_definitions(main PRIVATE
+        PLATFORM_LINUX
+        OPUS_BUILD
+        VAR_ARRAYS
     )
 endif()
 
@@ -127,7 +152,11 @@ target_sources(main PRIVATE ${FRUIT_NINJA_SOURCES})
 
 # Define LVGL configuration as a simple include
 target_compile_definitions(main PRIVATE LV_CONF_INCLUDE_SIMPLE)
-target_link_libraries(main lvgl lvgl::examples lvgl::demos lvgl::thorvg ${SDL2_LIBRARIES} m pthread)
+target_link_libraries(main lvgl lvgl::examples lvgl::demos lvgl::thorvg ${SDL2_LIBRARIES} m pthread
+    player_controller
+    stream_player_module_linux
+    ${ALSA_LIBRARIES}
+)
 
 if(TARGET SDL2_mixer::SDL2_mixer)
     target_link_libraries(main SDL2_mixer::SDL2_mixer)
