@@ -58,13 +58,6 @@ static const char *mp_local_path(const char *url) {
     return url;
 }
 
-static char *mp_strdup(const char *s) {
-    size_t len = strlen(s);
-    char *copy = (char *)malloc(len + 1U);
-    if(copy) memcpy(copy, s, len + 1U);
-    return copy;
-}
-
 static char *mp_join_path(const char *dir, const char *name) {
     size_t dlen = strlen(dir);
     size_t nlen = strlen(name);
@@ -125,7 +118,7 @@ static void mp_add_url(const char *url) {
         mp_expand_directory(local);
         return;
     }
-    g_urls[g_url_count] = mp_strdup(url);
+    g_urls[g_url_count] = strdup(url);
     if(g_urls[g_url_count]) g_url_count++;
 }
 
@@ -136,6 +129,7 @@ void music_player_init(const char **urls, size_t count) {
     size_t i;
 
     if(!urls || count == 0U) return;
+    if(g_controller) music_player_deinit();
 
     for(i = 0U; i < count; i++) mp_add_url(urls[i]);
     if(g_url_count == 0U) return;
@@ -154,6 +148,7 @@ void music_player_init(const char **urls, size_t count) {
     if(player_controller_load_urls(g_controller, (const char * const *)g_urls, g_url_count) != 0) goto cleanup;
 
     g_poll_timer = lv_timer_create(poll_timer_cb, 100, NULL);
+    if(!g_poll_timer) goto cleanup;
     player_controller_play(g_controller);
     return;
 
@@ -165,6 +160,7 @@ cleanup:
 
 void music_player_deinit(void) {
     size_t i;
+    lv_async_call_cancel(music_player_async_handler, NULL);
     if(g_poll_timer) { lv_timer_delete(g_poll_timer); g_poll_timer = NULL; }
     if(g_controller) { player_controller_destroy(g_controller); g_controller = NULL; }
     for(i = 0U; i < g_url_count; i++) { free(g_urls[i]); g_urls[i] = NULL; }
