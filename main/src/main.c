@@ -15,6 +15,7 @@
 #include "lvgl/lvgl.h"
 #include "v9-fruit_ninja/fruit_ninja.h"
 #include "glob.h"
+#include "music_player.h"
 
 /*********************
  *      DEFINES
@@ -65,18 +66,19 @@ extern void freertos_main(void);
 
 int main(int argc, char **argv)
 {
-  (void)argc; /*Unused*/
-  (void)argv; /*Unused*/
-
   /*Initialize LVGL*/
   lv_init();
 
   /*Initialize the HAL (display, input devices, tick) for LVGL*/
   hal_init(640, 480);
 
+  music_player_init((const char **)(argc > 1 ? argv + 1 : NULL),
+                    (size_t)(argc > 1 ? argc - 1 : 0));
+
   #if LV_USE_OS == LV_OS_NONE
  
-  fruit_ninja_start();
+  // fruit_ninja_start();
+  lv_demo_music();
 
   while(1) {
     /* Periodically call the lv_task handler.
@@ -92,6 +94,7 @@ int main(int argc, char **argv)
 
   #endif
 
+  music_player_deinit();
   return 0;
 }
 
