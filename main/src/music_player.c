@@ -1,6 +1,7 @@
 #define _DEFAULT_SOURCE
 #include "music_player.h"
 #include <dirent.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -12,10 +13,18 @@
 
 #define MUSIC_PLAYER_MAX_TRACKS 64U
 
+/* forward declaration */
+static uint32_t audio_probe_duration_ms(const char *url);
+
 static char               *g_urls[MUSIC_PLAYER_MAX_TRACKS];
 static size_t              g_url_count  = 0;
 static player_controller_t *g_controller = NULL;
 static lv_timer_t          *g_poll_timer = NULL;
+
+static uint32_t g_audio_sample_rate   = 0;
+static uint8_t  g_audio_channels      = 0;
+static uint8_t  g_audio_bps           = 16;
+static uint32_t g_current_duration_ms = 0;
 
 typedef struct {
     player_controller_event_t  event;
@@ -149,6 +158,12 @@ void music_player_init(const char **urls, size_t count) {
 
     g_poll_timer = lv_timer_create(poll_timer_cb, 100, NULL);
     if(!g_poll_timer) goto cleanup;
+    {
+        const player_playlist_item_t *first =
+            player_controller_get_playlist_item(g_controller, 0U);
+        g_current_duration_ms = (first && !first->is_live)
+                                ? audio_probe_duration_ms(first->url) : 0U;
+    }
     player_controller_play(g_controller);
     return;
 
@@ -201,9 +216,16 @@ static void music_player_async_handler(void *data) {
     if(!arg) return;
 
     switch(arg->event) {
-        case PLAYER_CONTROLLER_EVENT_TRACK_CHANGED:
+        case PLAYER_CONTROLLER_EVENT_TRACK_CHANGED: {
+            const player_playlist_item_t *item =
+                player_controller_get_playlist_item(g_controller, arg->track_index);
+            g_audio_sample_rate   = 0U;
+            g_audio_channels      = 0U;
+            g_current_duration_ms = (item && !item->is_live)
+                                    ? audio_probe_duration_ms(item->url) : 0U;
             _lv_demo_music_play((uint32_t)arg->track_index);
             break;
+        }
         case PLAYER_CONTROLLER_EVENT_STATE_CHANGED:
             if(arg->state == PLAYER_CONTROLLER_STATE_PAUSED ||
                arg->state == PLAYER_CONTROLLER_STATE_STOPPED) {
@@ -249,4 +271,105 @@ static void on_player_event(player_controller_t *controller,
                        : PLAYER_CONTROLLER_STATE_IDLE;
 
     lv_async_call(music_player_async_handler, arg);
+}
+
+/* ── hls observer: capture actual audio output format ───────────────── */
+void hls_observer_audio_output_started(uint32_t sample_rate,
+                                       uint32_t channels,
+                                       uint32_t bits_per_sample) {
+    g_audio_sample_rate = sample_rate;
+    g_audio_channels    = (uint8_t)channels;
+    g_audio_bps         = (uint8_t)bits_per_sample;
+}
+
+/* ── real position from PCM bytes written ────────────────────────────── */
+uint32_t music_player_get_position_ms(void) {
+    stream_player_stats_t stats;
+    uint32_t denom;
+
+    if(!g_controller) return 0U;
+    if(g_audio_sample_rate == 0U || g_audio_channels == 0U) return 0U;
+    if(player_controller_get_stats(g_controller, &stats) != 0) return 0U;
+
+    denom = g_audio_sample_rate * (uint32_t)g_audio_channels * ((uint32_t)g_audio_bps / 8U);
+    if(denom == 0U) return 0U;
+    return (uint32_t)(stats.pcm_bytes_written * 1000ULL / denom);
+}
+
+/* ── audio file duration probe ───────────────────────────────────────── */
+static uint32_t audio_probe_duration_ms(const char *url) {
+    FILE   *f;
+    uint8_t buf[48];
+    size_t  n;
+    long    file_size;
+
+    if(!url) return 0U;
+    if(strstr(url, "://") && strncmp(url, "file://", 7) != 0) return 0U;
+    {
+        const char *path = (strncmp(url, "file://", 7) == 0) ? url + 7 : url;
+        f = fopen(path, "rb");
+        if(!f) return 0U;
+        fseek(f, 0, SEEK_END);
+        file_size = ftell(f);
+        rewind(f);
+        n = fread(buf, 1, sizeof(buf), f);
+        fclose(f);
+    }
+    if(n < 12U) return 0U;
+
+    /* WAV */
+    if(n >= 44U &&
+       buf[0]=='R' && buf[1]=='I' && buf[2]=='F' && buf[3]=='F' &&
+       buf[8]=='W' && buf[9]=='A' && buf[10]=='V' && buf[11]=='E') {
+        uint32_t byte_rate = (uint32_t)buf[28] | ((uint32_t)buf[29]<<8)
+                           | ((uint32_t)buf[30]<<16) | ((uint32_t)buf[31]<<24);
+        uint32_t data_size = (uint32_t)buf[40] | ((uint32_t)buf[41]<<8)
+                           | ((uint32_t)buf[42]<<16) | ((uint32_t)buf[43]<<24);
+        if(byte_rate == 0U) return 0U;
+        return data_size / byte_rate * 1000U + (data_size % byte_rate) * 1000U / byte_rate;
+    }
+
+    /* FLAC */
+    if(n >= 42U &&
+       buf[0]=='f' && buf[1]=='L' && buf[2]=='a' && buf[3]=='C') {
+        uint32_t sr = ((uint32_t)buf[18] << 12) | ((uint32_t)buf[19] << 4)
+                    | ((uint32_t)buf[20] >> 4);
+        uint64_t total = ((uint64_t)(buf[21] & 0x0FU) << 32)
+                       | ((uint64_t)buf[22] << 24) | ((uint64_t)buf[23] << 16)
+                       | ((uint64_t)buf[24] << 8)  |  (uint64_t)buf[25];
+        if(sr == 0U) return 0U;
+        return (uint32_t)(total * 1000ULL / sr);
+    }
+
+    /* MP3 CBR estimate */
+    {
+        static const uint32_t kbps_mpeg1_l3[16] = {
+            0,32,40,48,56,64,80,96,112,128,160,192,224,256,320,0
+        };
+        uint32_t i;
+        for(i = 0U; i + 3U < (uint32_t)n; i++) {
+            if(buf[i] == 0xFFU && (buf[i+1U] & 0xE0U) == 0xE0U) {
+                uint8_t version = (buf[i+1U] >> 3) & 0x03U;
+                uint8_t layer   = (buf[i+1U] >> 1) & 0x03U;
+                uint8_t br_idx  = (buf[i+2U] >> 4) & 0x0FU;
+                if(version == 3U && layer == 1U && br_idx > 0U && br_idx < 15U) {
+                    uint32_t bps2 = kbps_mpeg1_l3[br_idx] * 1000U;
+                    if(bps2 == 0U) break;
+                    uint32_t audio_bytes = (uint32_t)(file_size > 128L ? file_size - 128L : file_size);
+                    return audio_bytes * 8U / (bps2 / 1000U);
+                }
+                break;
+            }
+        }
+    }
+    return 0U;
+}
+
+uint32_t music_player_get_duration_ms(void) {
+    return g_current_duration_ms;
+}
+
+/* ── seek stub (full implementation in Task S3) ──────────────────────── */
+void music_player_seek(uint32_t position_ms) {
+    (void)position_ms;
 }
