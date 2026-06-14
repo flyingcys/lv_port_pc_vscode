@@ -2,6 +2,7 @@
 #include "am_widgets.h"
 #include "am_theme.h"
 #include "am_fonts.h"
+#include "am_metrics.h"
 
 /* 2 段:by-value 样式 API,无指针生命周期问题 */
 void am_fill_grad2(lv_obj_t *o, lv_color_t top, lv_color_t bottom)
@@ -60,9 +61,10 @@ lv_obj_t *am_cover(lv_obj_t *parent, int size, lv_color_t a, lv_color_t b)
 lv_obj_t *am_nav_item(lv_obj_t *parent, const char *icon, const char *label, bool active)
 {
     const am_theme_t *t = am_theme_get(am_theme_current());
+    const am_metrics_t *m = am_metrics();
     lv_obj_t *btn = lv_obj_create(parent);
     lv_obj_remove_style_all(btn);
-    lv_obj_set_size(btn, LV_PCT(100), 42);
+    lv_obj_set_size(btn, LV_PCT(100), m->nav_h);
     lv_obj_set_style_radius(btn, 16, 0);
     lv_obj_set_flex_flow(btn, LV_FLEX_FLOW_ROW);
     lv_obj_set_flex_align(btn, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
@@ -79,10 +81,10 @@ lv_obj_t *am_nav_item(lv_obj_t *parent, const char *icon, const char *label, boo
     lv_obj_set_style_bg_color(ic, AM_WHITE, 0); lv_obj_set_style_bg_opa(ic, 153, 0);
     lv_obj_clear_flag(ic, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_t *icl = lv_label_create(ic); lv_label_set_text(icl, icon);
-    lv_obj_center(icl); lv_obj_set_style_text_font(icl, &am_font_14, 0);
+    lv_obj_center(icl); lv_obj_set_style_text_font(icl, m->f_icon, 0);
     lv_obj_set_style_text_color(icl, label_color, 0);
     lv_obj_t *lbl = lv_label_create(btn); lv_label_set_text(lbl, label);
-    lv_obj_set_style_text_font(lbl, &am_font_14, 0);
+    lv_obj_set_style_text_font(lbl, m->f_strong, 0);
     lv_obj_set_style_text_color(lbl, label_color, 0);
     return btn;
 }
@@ -143,14 +145,16 @@ lv_obj_t *am_pill(lv_obj_t *parent, const char *text, bool active)
         lv_obj_set_style_bg_color(pill, AM_WHITE, 0);
         lv_obj_set_style_bg_opa(pill, 179, 0);
     }
-    lv_obj_t *lbl = am_text(pill, text, &am_font_12, text_color);
+    const am_metrics_t *m = am_metrics();
+    lv_obj_t *lbl = am_text(pill, text, m->f_label, text_color);
     lv_obj_center(lbl);
     return pill;
 }
 
 lv_obj_t *am_section_title(lv_obj_t *parent, const char *text)
 {
-    lv_obj_t *lbl = am_text(parent, text, &am_font_11, AM_MUTED);
+    const am_metrics_t *m = am_metrics();
+    lv_obj_t *lbl = am_text(parent, text, m->f_label, AM_MUTED);
     lv_obj_set_style_text_letter_space(lbl, 2, 0);
     return lbl;
 }
@@ -158,14 +162,15 @@ lv_obj_t *am_section_title(lv_obj_t *parent, const char *text)
 lv_obj_t *am_item_action(lv_obj_t *parent, const char *glyph)
 {
     const am_theme_t *t = am_theme_get(am_theme_current());
+    const am_metrics_t *m = am_metrics();
     lv_obj_t *obj = lv_obj_create(parent);
     lv_obj_remove_style_all(obj);
-    lv_obj_set_size(obj, 30, 30);
+    lv_obj_set_size(obj, m->item_action, m->item_action);
     lv_obj_set_style_radius(obj, LV_RADIUS_CIRCLE, 0);
     lv_obj_set_style_bg_color(obj, t->accent, 0);
     lv_obj_set_style_bg_opa(obj, 36, 0);
     lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_t *lbl = am_text(obj, glyph, &am_font_12, t->accent);
+    lv_obj_t *lbl = am_text(obj, glyph, m->f_label, t->accent);
     lv_obj_center(lbl);
     return obj;
 }
