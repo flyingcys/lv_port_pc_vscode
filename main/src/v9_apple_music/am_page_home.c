@@ -162,16 +162,15 @@ static lv_obj_t *build_hero_card(lv_obj_t *parent)
     /* hero min_height scales with tier:
      * 800 (sidebar_w=164)→290, 640 (sidebar_w=140)→220, 480 (sidebar_w=108)→160 */
     int16_t hero_min_h;
-    if (m->sidebar_w >= 150)       hero_min_h = 290;   /* AM_TIER_800 */
-    else if (m->sidebar_w >= 120)  hero_min_h = 220;   /* AM_TIER_640 */
-    else                           hero_min_h = 160;   /* AM_TIER_480 */
+    if (m->sidebar_w >= 150)       hero_min_h = 218;   /* AM_TIER_800 — matches mockup min-height:218px */
+    else if (m->sidebar_w >= 120)  hero_min_h = 210;   /* AM_TIER_640 */
+    else                           hero_min_h = 150;   /* AM_TIER_480 */
 
     /* 外框:r28, 三段渐变, 阴影;自然高度 */
     lv_obj_t *hero = lv_obj_create(parent);
     lv_obj_remove_style_all(hero);
     lv_obj_set_width(hero, LV_PCT(100));
-    lv_obj_set_height(hero, LV_SIZE_CONTENT);
-    lv_obj_set_style_min_height(hero, hero_min_h, 0);
+    lv_obj_set_height(hero, hero_min_h);   /* 固定高度:与 mockup 紧凑 hero 一致,不被内容/grid 撑高 */
     lv_obj_set_style_radius(hero, 28, 0);
     am_fill_grad3(hero, t->hero_a, t->hero_b, t->hero_c);
     lv_obj_set_style_shadow_width(hero, 44, 0);
@@ -434,7 +433,7 @@ static lv_obj_t *build_recent_panel(lv_obj_t *parent)
                                LV_FLEX_ALIGN_START);
         lv_obj_set_style_pad_row(card, 4, 0);
         lv_obj_set_grid_cell(card, LV_GRID_ALIGN_STRETCH, i, 1,
-                             LV_GRID_ALIGN_STRETCH, 0, 1);
+                             LV_GRID_ALIGN_START, 0, 1);
 
         lv_obj_t *lbl  = am_text(card, am_home_metrics[i].label, m->f_label, AM_MUTED);
         lv_obj_set_style_text_letter_space(lbl, 1, 0);  /* letter-spacing 近似 */

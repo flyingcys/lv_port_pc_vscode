@@ -251,7 +251,7 @@ static lv_obj_t *build_swatch(lv_obj_t *parent, int index, bool active,
 
     /* desc */
     lv_obj_t *desc = am_text(sw, am_theme_presets[index].desc, m->f_label, AM_MUTED);
-    lv_label_set_long_mode(desc, LV_LABEL_LONG_WRAP);
+    lv_label_set_long_mode(desc, LV_LABEL_LONG_DOT);
     lv_obj_set_width(desc, LV_PCT(100));
 
     /* 挂点击事件 */
@@ -386,13 +386,13 @@ static void build_main_appearance(lv_obj_t *main_panel,
         for(int i = 0; i < 4; i++) {
             lv_obj_t *sw = build_swatch(swatches, i, (i == cur), on_theme, on_tab, user);
             lv_obj_set_grid_cell(sw, LV_GRID_ALIGN_STRETCH, i % 2, 1,
-                                 LV_GRID_ALIGN_STRETCH, i / 2, 1);
+                                 LV_GRID_ALIGN_START, i / 2, 1);
         }
     } else {
         for(int i = 0; i < 4; i++) {
             lv_obj_t *sw = build_swatch(swatches, i, (i == cur), on_theme, on_tab, user);
             lv_obj_set_grid_cell(sw, LV_GRID_ALIGN_STRETCH, i, 1,
-                                 LV_GRID_ALIGN_STRETCH, 0, 1);
+                                 LV_GRID_ALIGN_START, 0, 1);
         }
     }
 
@@ -416,7 +416,7 @@ static void build_main_appearance(lv_obj_t *main_panel,
         /* 偏柔和，贴近 Apple Music 的卡片与玻璃边界。 */
     );
     lv_obj_set_grid_cell(corner_card, LV_GRID_ALIGN_STRETCH, 0, 1,
-                         LV_GRID_ALIGN_STRETCH, 0, 1);
+                         LV_GRID_ALIGN_START, 0, 1);
 
     /* slider-row */
     lv_obj_t *slider_row = lv_obj_create(corner_card);
@@ -460,7 +460,7 @@ static void build_main_appearance(lv_obj_t *main_panel,
         /* 维持轻柔雾面，不让背景竞争信息层级。 */
     );
     lv_obj_set_grid_cell(amb_card, LV_GRID_ALIGN_STRETCH, 1, 1,
-                         LV_GRID_ALIGN_STRETCH, 0, 1);
+                         LV_GRID_ALIGN_START, 0, 1);
 
     /* toggle-row pills */
     lv_obj_t *toggle_row = lv_obj_create(amb_card);
