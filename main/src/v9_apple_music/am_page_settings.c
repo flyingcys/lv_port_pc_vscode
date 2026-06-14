@@ -1,8 +1,10 @@
 /* main/src/v9_apple_music/am_page_settings.c
  * Apple Music 设置页 —— 对应 HTML renderSettingsPage()
- * 布局: flex 列 gap16 → page-header + settings-layout(grid 2cols [180,FR1])
- *   左栏: settings-sidebar (am_panel, 3 tabs)
- *   右栏: settings-main (am_panel, 按 active_tab 渲染内容)
+ * 布局:
+ *   800/640: flex 列 gap=page_gap → page-header + settings-layout(grid 2cols [settings_nav_w,FR1])
+ *     左栏: settings-sidebar (am_panel, 3 tabs)
+ *     右栏: settings-main (am_panel, 按 active_tab 渲染内容)
+ *   480 (stack_content): flex 列 → page-header + horizontal tab-row + settings-main 全宽
  * page 自身 LV_SIZE_CONTENT 高度,由父容器负责滚动。
  */
 #include "am_page_settings.h"
@@ -11,6 +13,7 @@
 #include "am_fonts.h"
 #include "am_icons.h"
 #include "am_data.h"
+#include "am_metrics.h"
 
 /* ── 回调上下文结构 ──────────────────────────────────────────────────── */
 typedef struct {
@@ -40,7 +43,8 @@ static void free_cb_ctx(lv_event_t *e)
 /* ── page-header (eyebrow + 设置 + subtitle + search-chip) ─────────── */
 static void build_page_header(lv_obj_t *parent)
 {
-    const am_theme_t *t = am_theme_get(am_theme_current());
+    const am_theme_t   *t = am_theme_get(am_theme_current());
+    const am_metrics_t *m = am_metrics();
 
     lv_obj_t *hdr = lv_obj_create(parent);
     lv_obj_remove_style_all(hdr);
@@ -49,7 +53,7 @@ static void build_page_header(lv_obj_t *parent)
     lv_obj_set_flex_flow(hdr, LV_FLEX_FLOW_ROW);
     lv_obj_set_flex_align(hdr, LV_FLEX_ALIGN_SPACE_BETWEEN,
                            LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
-    lv_obj_set_style_pad_column(hdr, 18, 0);
+    lv_obj_set_style_pad_column(hdr, m->panel_pad, 0);
     lv_obj_clear_flag(hdr, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
 
     /* ─ 左侧列 ─ */
@@ -87,18 +91,18 @@ static void build_page_header(lv_obj_t *parent)
     lv_obj_set_style_bg_opa(dot, LV_OPA_COVER, 0);
     lv_obj_clear_flag(dot, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
 
-    am_text(eyebrow, "Appearance Controls", &am_font_11, AM_MUTED_STRONG);
+    am_text(eyebrow, "Appearance Controls", m->f_label, AM_MUTED_STRONG);
 
     /* 主标题 */
-    lv_obj_t *title = am_text(left, "\xe8\xae\xbe\xe7\xbd\xae", &am_font_34, AM_TEXT);
+    lv_obj_t *title = am_text(left, "\xe8\xae\xbe\xe7\xbd\xae", m->f_title, AM_TEXT);
     lv_obj_set_style_pad_top(title, 2, 0);
 
     /* 副标题(换行) */
     lv_obj_t *sub = am_text(left,
         "\xe6\x9c\xac\xe8\xbd\xae\xe9\x87\x8d\xe7\x82\xb9\xe9\xaa\x8c\xe8\xaf\x81\xe4\xb8\xbb\xe9\xa2\x98\xe8\x89\xb2\xe5\x88\x87\xe6\x8d\xa2\xe3\x80\x81\xe5\x85\xa8\xe5\xb1\x80 shell \xe7\xa8\xb3\xe5\xae\x9a\xe6\x80\xa7\xef\xbc\x8c\xe4\xbb\xa5\xe5\x8f\x8a\xe8\xae\xbe\xe7\xbd\xae\xe9\xa1\xb5\xe4\xbd\x9c\xe4\xb8\xba\xe7\x8b\xac\xe7\xab\x8b\xe6\x95\xb4\xe9\xa1\xb5\xe7\x9a\x84\xe7\xbb\x93\xe6\x9e\x84\xe6\x84\x9f\xe3\x80\x82",
-        &am_font_13, AM_MUTED);
+        m->f_body, AM_MUTED);
     lv_label_set_long_mode(sub, LV_LABEL_LONG_WRAP);
-    lv_obj_set_width(sub, 460);
+    lv_obj_set_width(sub, LV_PCT(100));
 
     /* ─ 右侧 search-chip ─ */
     lv_obj_t *chip = lv_obj_create(hdr);
@@ -115,10 +119,10 @@ static void build_page_header(lv_obj_t *parent)
     lv_obj_set_style_pad_column(chip, 10, 0);
     lv_obj_clear_flag(chip, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
 
-    am_text(chip, AM_ICON_SEARCH2, &am_font_12, AM_MUTED);
+    am_text(chip, AM_ICON_SEARCH2, m->f_label, AM_MUTED);
     am_text(chip,
         "\xe5\x8f\xb3\xe4\xbe\xa7\xe5\x86\x85\xe5\xae\xb9\xe5\x88\x87\xe9\xa1\xb5\xef\xbc\x8c\xe4\xb8\x8d\xe9\x94\x80\xe6\xaf\x81\xe5\xb7\xa6\xe6\xa0\x8f\xe4\xb8\x8e\xe6\x92\xad\xe6\x94\xbe\xe6\x9d\xa1",
-        &am_font_12, AM_MUTED);
+        m->f_label, AM_MUTED);
 }
 
 /* ── settings-tab (一个左栏 tab 项) ────────────────────────────────── */
@@ -126,7 +130,8 @@ static lv_obj_t *build_settings_tab(lv_obj_t *parent, int index, bool active,
                                     am_theme_pick_cb_t on_theme, am_tab_pick_cb_t on_tab,
                                     void *user)
 {
-    const am_theme_t *t = am_theme_get(am_theme_current());
+    const am_theme_t   *t = am_theme_get(am_theme_current());
+    const am_metrics_t *m = am_metrics();
 
     lv_obj_t *tab = am_card(parent, 16, active ? 0 : 128); /* bg set below */
     lv_obj_set_width(tab, LV_PCT(100));
@@ -155,11 +160,11 @@ static lv_obj_t *build_settings_tab(lv_obj_t *parent, int index, bool active,
     /* accent_soft may be too close; use AM_MUTED for inactive and accent for active */
     if(!active) desc_col = AM_MUTED;
 
-    lv_obj_t *title_lbl = am_text(tab, am_settings_tabs[index].title, &am_font_13, title_col);
+    lv_obj_t *title_lbl = am_text(tab, am_settings_tabs[index].title, m->f_body, title_col);
     lv_obj_set_style_text_decor(title_lbl, LV_TEXT_DECOR_NONE, 0); /* bold via font weight; use as-is */
     LV_UNUSED(title_lbl);
 
-    lv_obj_t *desc_lbl = am_text(tab, am_settings_tabs[index].desc, &am_font_11, desc_col);
+    lv_obj_t *desc_lbl = am_text(tab, am_settings_tabs[index].desc, m->f_label, desc_col);
     lv_label_set_long_mode(desc_lbl, LV_LABEL_LONG_WRAP);
     lv_obj_set_width(desc_lbl, LV_PCT(100));
 
@@ -185,16 +190,18 @@ static void build_sidebar(lv_obj_t *parent, int active_tab,
                            am_theme_pick_cb_t on_theme, am_tab_pick_cb_t on_tab,
                            void *user)
 {
+    const am_metrics_t *m = am_metrics();
+
     lv_obj_t *sidebar = am_panel(parent);
     lv_obj_set_grid_cell(sidebar, LV_GRID_ALIGN_STRETCH, 0, 1,
                          LV_GRID_ALIGN_START, 0, 1);
     lv_obj_set_width(sidebar, LV_PCT(100));
     lv_obj_set_height(sidebar, LV_SIZE_CONTENT);
-    lv_obj_set_style_pad_all(sidebar, 16, 0);
+    lv_obj_set_style_pad_all(sidebar, m->panel_pad, 0);
     lv_obj_set_flex_flow(sidebar, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(sidebar, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START,
                            LV_FLEX_ALIGN_START);
-    lv_obj_set_style_pad_row(sidebar, 8, 0);
+    lv_obj_set_style_pad_row(sidebar, m->content_pad, 0);
     lv_obj_clear_flag(sidebar, LV_OBJ_FLAG_CLICKABLE);
 
     for(int i = 0; i < 3; i++) {
@@ -207,7 +214,8 @@ static lv_obj_t *build_swatch(lv_obj_t *parent, int index, bool active,
                                am_theme_pick_cb_t on_theme, am_tab_pick_cb_t on_tab,
                                void *user)
 {
-    const am_theme_t *t_current = am_theme_get(am_theme_current());
+    const am_theme_t   *t_current = am_theme_get(am_theme_current());
+    const am_metrics_t *m = am_metrics();
     /* Each swatch uses ITS OWN theme's hero gradient */
     const am_theme_t *t_own = am_theme_get((am_theme_id_t)index);
 
@@ -238,11 +246,11 @@ static lv_obj_t *build_swatch(lv_obj_t *parent, int index, bool active,
     am_fill_grad3(preview, t_own->hero_a, t_own->hero_b, t_own->hero_c);
 
     /* label */
-    lv_obj_t *lbl = am_text(sw, am_theme_presets[index].label, &am_font_12, AM_TEXT);
+    lv_obj_t *lbl = am_text(sw, am_theme_presets[index].label, m->f_body, AM_TEXT);
     LV_UNUSED(lbl);
 
     /* desc */
-    lv_obj_t *desc = am_text(sw, am_theme_presets[index].desc, &am_font_11, AM_MUTED);
+    lv_obj_t *desc = am_text(sw, am_theme_presets[index].desc, m->f_label, AM_MUTED);
     lv_label_set_long_mode(desc, LV_LABEL_LONG_WRAP);
     lv_obj_set_width(desc, LV_PCT(100));
 
@@ -266,20 +274,22 @@ static lv_obj_t *build_swatch(lv_obj_t *parent, int index, bool active,
 /* ── settings-card helper (标题 + 段落文字) ─────────────────────────── */
 static lv_obj_t *build_settings_card(lv_obj_t *parent, const char *title, const char *body)
 {
+    const am_metrics_t *m = am_metrics();
+
     lv_obj_t *card = am_card(parent, 20, 143); /* white@0.56 */
     lv_obj_set_width(card, LV_PCT(100));
     lv_obj_set_height(card, LV_SIZE_CONTENT);
-    lv_obj_set_style_pad_all(card, 16, 0);
+    lv_obj_set_style_pad_all(card, m->panel_pad, 0);
     lv_obj_set_flex_flow(card, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(card, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START,
                            LV_FLEX_ALIGN_START);
     lv_obj_set_style_pad_row(card, 6, 0);
     lv_obj_clear_flag(card, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
 
-    am_text(card, title, &am_font_14, AM_TEXT);
+    am_text(card, title, m->f_strong, AM_TEXT);
 
     if(body && body[0]) {
-        lv_obj_t *p = am_text(card, body, &am_font_12, AM_MUTED);
+        lv_obj_t *p = am_text(card, body, m->f_label, AM_MUTED);
         lv_label_set_long_mode(p, LV_LABEL_LONG_WRAP);
         lv_obj_set_width(p, LV_PCT(100));
     }
@@ -291,19 +301,21 @@ static lv_obj_t *build_settings_card(lv_obj_t *parent, const char *title, const 
 static void build_about_card(lv_obj_t *parent, const char *span1,
                               const char *strong, const char *span2)
 {
+    const am_metrics_t *m = am_metrics();
+
     lv_obj_t *card = am_card(parent, 18, 138); /* white@0.54 */
     lv_obj_set_width(card, LV_PCT(100));
     lv_obj_set_height(card, LV_SIZE_CONTENT);
-    lv_obj_set_style_pad_all(card, 14, 0);
+    lv_obj_set_style_pad_all(card, m->content_pad, 0);
     lv_obj_set_flex_flow(card, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(card, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START,
                            LV_FLEX_ALIGN_START);
     lv_obj_set_style_pad_row(card, 4, 0);
     lv_obj_clear_flag(card, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
 
-    am_text(card, span1,  &am_font_11, AM_MUTED);
-    am_text(card, strong, &am_font_16, AM_TEXT);
-    lv_obj_t *sp2 = am_text(card, span2, &am_font_11, AM_MUTED);
+    am_text(card, span1,  m->f_label,  AM_MUTED);
+    am_text(card, strong, m->f_metric, AM_TEXT);
+    lv_obj_t *sp2 = am_text(card, span2, m->f_label, AM_MUTED);
     lv_label_set_long_mode(sp2, LV_LABEL_LONG_WRAP);
     lv_obj_set_width(sp2, LV_PCT(100));
 }
@@ -313,7 +325,8 @@ static void build_main_appearance(lv_obj_t *main_panel,
                                   am_theme_pick_cb_t on_theme, am_tab_pick_cb_t on_tab,
                                   void *user)
 {
-    const am_theme_t *t = am_theme_get(am_theme_current());
+    const am_theme_t   *t = am_theme_get(am_theme_current());
+    const am_metrics_t *m = am_metrics();
 
     /* ─ 1. 主题模式卡片 ─ */
     lv_obj_t *mode_card = build_settings_card(main_panel,
@@ -344,27 +357,43 @@ static void build_main_appearance(lv_obj_t *main_panel,
         /* 切换主题色时，只变更视觉 token，不改变导航、布局和信息结构。 */
     );
 
-    /* theme-swatches: grid 4 cols gap10 */
-    static const int32_t sw_cols[] = {LV_GRID_FR(1), LV_GRID_FR(1),
-                                       LV_GRID_FR(1), LV_GRID_FR(1),
-                                       LV_GRID_TEMPLATE_LAST};
-    static const int32_t sw_rows[] = {LV_GRID_CONTENT, LV_GRID_TEMPLATE_LAST};
+    /* theme-swatches: grid 4 cols (800/640) or 2 cols (480/stack_content) */
+    static const int32_t sw_cols4[] = {LV_GRID_FR(1), LV_GRID_FR(1),
+                                        LV_GRID_FR(1), LV_GRID_FR(1),
+                                        LV_GRID_TEMPLATE_LAST};
+    static const int32_t sw_cols2[] = {LV_GRID_FR(1), LV_GRID_FR(1),
+                                        LV_GRID_TEMPLATE_LAST};
+    static const int32_t sw_rows1[] = {LV_GRID_CONTENT, LV_GRID_TEMPLATE_LAST};
+    static const int32_t sw_rows2[] = {LV_GRID_CONTENT, LV_GRID_CONTENT, LV_GRID_TEMPLATE_LAST};
 
     lv_obj_t *swatches = lv_obj_create(color_card);
     lv_obj_remove_style_all(swatches);
     lv_obj_set_width(swatches, LV_PCT(100));
     lv_obj_set_height(swatches, LV_SIZE_CONTENT);
-    lv_obj_set_grid_dsc_array(swatches, sw_cols, sw_rows);
+    if(m->stack_content) {
+        lv_obj_set_grid_dsc_array(swatches, sw_cols2, sw_rows2);
+    } else {
+        lv_obj_set_grid_dsc_array(swatches, sw_cols4, sw_rows1);
+    }
     lv_obj_set_style_pad_column(swatches, 10, 0);
     lv_obj_set_style_pad_row(swatches, 10, 0);
     lv_obj_clear_flag(swatches, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_set_scrollbar_mode(swatches, LV_SCROLLBAR_MODE_OFF);
 
     int cur = (int)am_theme_current();
-    for(int i = 0; i < 4; i++) {
-        lv_obj_t *sw = build_swatch(swatches, i, (i == cur), on_theme, on_tab, user);
-        lv_obj_set_grid_cell(sw, LV_GRID_ALIGN_STRETCH, i, 1,
-                             LV_GRID_ALIGN_STRETCH, 0, 1);
+    if(m->stack_content) {
+        /* 2-col layout: 4 swatches in 2x2 grid */
+        for(int i = 0; i < 4; i++) {
+            lv_obj_t *sw = build_swatch(swatches, i, (i == cur), on_theme, on_tab, user);
+            lv_obj_set_grid_cell(sw, LV_GRID_ALIGN_STRETCH, i % 2, 1,
+                                 LV_GRID_ALIGN_STRETCH, i / 2, 1);
+        }
+    } else {
+        for(int i = 0; i < 4; i++) {
+            lv_obj_t *sw = build_swatch(swatches, i, (i == cur), on_theme, on_tab, user);
+            lv_obj_set_grid_cell(sw, LV_GRID_ALIGN_STRETCH, i, 1,
+                                 LV_GRID_ALIGN_STRETCH, 0, 1);
+        }
     }
 
     /* ─ 3. settings-split: grid 2 cols gap12 ─ */
@@ -421,7 +450,7 @@ static void build_main_appearance(lv_obj_t *main_panel,
     lv_obj_clear_flag(fill, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
     am_fill_grad2(fill, t->accent, t->accent);
 
-    lv_obj_t *pct_lbl = am_text(slider_row, "62%", &am_font_13, AM_TEXT);
+    lv_obj_t *pct_lbl = am_text(slider_row, "62%", m->f_body, AM_TEXT);
     LV_UNUSED(pct_lbl);
 
     /* 背景氛围卡片 */
@@ -529,16 +558,105 @@ static void build_main(lv_obj_t *parent, int active_tab,
                         am_theme_pick_cb_t on_theme, am_tab_pick_cb_t on_tab,
                         void *user)
 {
+    const am_metrics_t *m = am_metrics();
+
     lv_obj_t *main_panel = am_panel(parent);
     lv_obj_set_grid_cell(main_panel, LV_GRID_ALIGN_STRETCH, 1, 1,
                          LV_GRID_ALIGN_START, 0, 1);
     lv_obj_set_width(main_panel, LV_PCT(100));
     lv_obj_set_height(main_panel, LV_SIZE_CONTENT);
-    lv_obj_set_style_pad_all(main_panel, 16, 0);
+    lv_obj_set_style_pad_all(main_panel, m->panel_pad, 0);
     lv_obj_set_flex_flow(main_panel, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(main_panel, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START,
                            LV_FLEX_ALIGN_START);
-    lv_obj_set_style_pad_row(main_panel, 12, 0);
+    lv_obj_set_style_pad_row(main_panel, m->page_gap, 0);
+    lv_obj_clear_flag(main_panel, LV_OBJ_FLAG_CLICKABLE);
+
+    switch(active_tab) {
+    case 1:  build_main_playback(main_panel); break;
+    case 2:  build_main_about(main_panel);    break;
+    default: build_main_appearance(main_panel, on_theme, on_tab, user); break;
+    }
+}
+
+/* ── 480 水平 tab 行 (stack_content 模式) ───────────────────────────── */
+static void build_tab_row(lv_obj_t *parent, int active_tab,
+                           am_theme_pick_cb_t on_theme, am_tab_pick_cb_t on_tab,
+                           void *user)
+{
+    const am_theme_t   *t = am_theme_get(am_theme_current());
+    const am_metrics_t *m = am_metrics();
+
+    /* 外层 panel 全宽 */
+    lv_obj_t *row_panel = am_panel(parent);
+    lv_obj_set_width(row_panel, LV_PCT(100));
+    lv_obj_set_height(row_panel, LV_SIZE_CONTENT);
+    lv_obj_set_style_pad_all(row_panel, m->content_pad, 0);
+    lv_obj_set_flex_flow(row_panel, LV_FLEX_FLOW_ROW);
+    lv_obj_set_flex_align(row_panel, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER,
+                           LV_FLEX_ALIGN_CENTER);
+    lv_obj_set_style_pad_column(row_panel, m->content_pad, 0);
+    lv_obj_clear_flag(row_panel, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
+
+    for(int i = 0; i < 3; i++) {
+        bool active = (i == active_tab);
+
+        lv_obj_t *btn = am_card(row_panel, 14, active ? 0 : 102);
+        lv_obj_set_flex_grow(btn, 1);
+        lv_obj_set_height(btn, LV_SIZE_CONTENT);
+        lv_obj_set_style_pad_hor(btn, m->content_pad, 0);
+        lv_obj_set_style_pad_ver(btn, 8, 0);
+        lv_obj_set_flex_flow(btn, LV_FLEX_FLOW_COLUMN);
+        lv_obj_set_flex_align(btn, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER,
+                               LV_FLEX_ALIGN_CENTER);
+        lv_obj_set_style_pad_row(btn, 2, 0);
+
+        if(active) {
+            lv_obj_set_style_bg_color(btn, t->accent, 0);
+            lv_obj_set_style_bg_opa(btn, AM_OPA_ACCENT_12, 0);
+            lv_obj_set_style_border_width(btn, 2, 0);
+            lv_obj_set_style_border_color(btn, t->accent, 0);
+            lv_obj_set_style_border_opa(btn, LV_OPA_COVER, 0);
+            lv_obj_set_style_border_side(btn, LV_BORDER_SIDE_FULL, 0);
+        } else {
+            lv_obj_set_style_bg_color(btn, AM_WHITE, 0);
+            lv_obj_set_style_bg_opa(btn, 102, 0); /* white@0.40 */
+        }
+
+        lv_color_t col = active ? t->accent : AM_TEXT;
+        am_text(btn, am_settings_tabs[i].title, m->f_body, col);
+
+        /* 点击回调 */
+        lv_obj_add_flag(btn, LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_clear_flag(btn, LV_OBJ_FLAG_SCROLLABLE);
+
+        am_cb_ctx_t *ctx = lv_malloc(sizeof(am_cb_ctx_t));
+        if(ctx) {
+            ctx->on_theme = on_theme;
+            ctx->on_tab   = on_tab;
+            ctx->user     = user;
+            ctx->index    = i;
+            lv_obj_add_event_cb(btn, tab_click_cb, LV_EVENT_CLICKED, ctx);
+            lv_obj_add_event_cb(btn, free_cb_ctx,  LV_EVENT_DELETE,  ctx);
+        }
+    }
+}
+
+/* ── 480 stack_content 下的 settings-main panel ─────────────────────── */
+static void build_main_stacked(lv_obj_t *parent, int active_tab,
+                                am_theme_pick_cb_t on_theme, am_tab_pick_cb_t on_tab,
+                                void *user)
+{
+    const am_metrics_t *m = am_metrics();
+
+    lv_obj_t *main_panel = am_panel(parent);
+    lv_obj_set_width(main_panel, LV_PCT(100));
+    lv_obj_set_height(main_panel, LV_SIZE_CONTENT);
+    lv_obj_set_style_pad_all(main_panel, m->panel_pad, 0);
+    lv_obj_set_flex_flow(main_panel, LV_FLEX_FLOW_COLUMN);
+    lv_obj_set_flex_align(main_panel, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START,
+                           LV_FLEX_ALIGN_START);
+    lv_obj_set_style_pad_row(main_panel, m->page_gap, 0);
     lv_obj_clear_flag(main_panel, LV_OBJ_FLAG_CLICKABLE);
 
     switch(active_tab) {
@@ -553,7 +671,9 @@ lv_obj_t *am_page_settings_create(lv_obj_t *content_parent, int active_tab,
                                   am_theme_pick_cb_t on_theme, am_tab_pick_cb_t on_tab,
                                   void *user)
 {
-    /* page 根容器:100%宽,自然高,flex 列 gap16,透明,禁滚动 */
+    const am_metrics_t *m = am_metrics();
+
+    /* page 根容器:100%宽,自然高,flex 列 gap=page_gap,透明,禁滚动 */
     lv_obj_t *page = lv_obj_create(content_parent);
     lv_obj_remove_style_all(page);
     lv_obj_set_width(page, LV_PCT(100));
@@ -561,31 +681,53 @@ lv_obj_t *am_page_settings_create(lv_obj_t *content_parent, int active_tab,
     lv_obj_set_flex_flow(page, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(page, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START,
                            LV_FLEX_ALIGN_START);
-    lv_obj_set_style_pad_row(page, 16, 0);
+    lv_obj_set_style_pad_row(page, m->page_gap, 0);
     lv_obj_clear_flag(page, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
     lv_obj_set_scrollbar_mode(page, LV_SCROLLBAR_MODE_OFF);
 
     /* page-header */
     build_page_header(page);
 
-    /* settings-layout: grid [180, FR1] gap14, content-height row */
-    static const int32_t lay_cols[] = {180, LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};
-    static const int32_t lay_rows[] = {LV_GRID_CONTENT, LV_GRID_TEMPLATE_LAST};
+    if(m->stack_content) {
+        /* ── 480 单列模式:水平 tab 行 + settings-main 全宽 ── */
+        build_tab_row(page, active_tab, on_theme, on_tab, user);
+        build_main_stacked(page, active_tab, on_theme, on_tab, user);
+    } else {
+        /* ── 800/640 双列模式: grid [settings_nav_w, FR1] ── */
+        int32_t nav_w = (int32_t)m->settings_nav_w;
+        /* 动态 grid 列描述符(栈上 VLA-like,但 LVGL grid 要求指针持久有效直到对象销毁)
+         * 分配在 lv_malloc 保证对象生命周期内有效 */
+        int32_t *lay_cols = lv_malloc(3 * sizeof(int32_t));
+        int32_t *lay_rows = lv_malloc(2 * sizeof(int32_t));
+        if(lay_cols && lay_rows) {
+            lay_cols[0] = nav_w;
+            lay_cols[1] = LV_GRID_FR(1);
+            lay_cols[2] = LV_GRID_TEMPLATE_LAST;
+            lay_rows[0] = LV_GRID_CONTENT;
+            lay_rows[1] = LV_GRID_TEMPLATE_LAST;
+        }
 
-    lv_obj_t *layout = lv_obj_create(page);
-    lv_obj_remove_style_all(layout);
-    lv_obj_set_width(layout, LV_PCT(100));
-    lv_obj_set_height(layout, LV_SIZE_CONTENT);
-    lv_obj_set_grid_dsc_array(layout, lay_cols, lay_rows);
-    lv_obj_set_style_pad_column(layout, 14, 0);
-    lv_obj_clear_flag(layout, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_set_scrollbar_mode(layout, LV_SCROLLBAR_MODE_OFF);
+        lv_obj_t *layout = lv_obj_create(page);
+        lv_obj_remove_style_all(layout);
+        lv_obj_set_width(layout, LV_PCT(100));
+        lv_obj_set_height(layout, LV_SIZE_CONTENT);
+        if(lay_cols && lay_rows) {
+            lv_obj_set_grid_dsc_array(layout, lay_cols, lay_rows);
+        }
+        lv_obj_set_style_pad_column(layout, m->page_gap, 0);
+        lv_obj_clear_flag(layout, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_set_scrollbar_mode(layout, LV_SCROLLBAR_MODE_OFF);
 
-    /* left: sidebar */
-    build_sidebar(layout, active_tab, on_theme, on_tab, user);
+        /* 释放描述符时机:layout 销毁时,复用 free_cb_ctx (lv_free user_data) */
+        if(lay_cols) lv_obj_add_event_cb(layout, free_cb_ctx, LV_EVENT_DELETE, lay_cols);
+        if(lay_rows) lv_obj_add_event_cb(layout, free_cb_ctx, LV_EVENT_DELETE, lay_rows);
 
-    /* right: main content */
-    build_main(layout, active_tab, on_theme, on_tab, user);
+        /* left: sidebar */
+        build_sidebar(layout, active_tab, on_theme, on_tab, user);
+
+        /* right: main content */
+        build_main(layout, active_tab, on_theme, on_tab, user);
+    }
 
     return page;
 }
