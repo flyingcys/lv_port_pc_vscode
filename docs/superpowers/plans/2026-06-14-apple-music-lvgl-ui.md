@@ -454,19 +454,25 @@ git commit -m "feat(music): add am_theme tokens (4 themes) + lookup test"
 
 ## Task 4: 子集字体生成(外部工具)
 
-> ⚠️ 外部依赖:`lv_font_conv`(`npm i -g lv_font_conv` 或 `npx`)+ 源字体 TTF(网络获取)。若环境受限,先确认可用再开工。
+> 工具:`lv_font_conv`(用 `npx lv_font_conv`,首次自动拉取;已确认 node/npm/网络可用)。
+> **源字体直接用仓库自带,无需下载**(已确认存在):
+> - 中文:`lvgl/demos/multilang/assets/fonts/NotoSansSC-Medium.otf`
+> - 拉丁:`lvgl/demos/multilang/assets/fonts/Montserrat-SemiBold.ttf`
+> - 符号:`lvgl/scripts/built_in_font/DejaVuSans.ttf`(覆盖 ⌂◉♫≣⚙♪⌕◌▶↺ 等;若 ⏮⏭ 等媒体符缺失,迷你条上下曲键回退 `LV_SYMBOL_PREV/NEXT`)
 
 **Files:**
 - Create: `main/src/v9_apple_music/fonts/am_font_{11,12,13,14,16,18,24,34}.c`(各字号一个)
 - Create: `main/src/v9_apple_music/am_fonts.h`
 - Modify: `lv_conf.h`(`LV_FONT_CUSTOM_DECLARE`)
 
-- [ ] **Step 1: 准备源字体**
+- [ ] **Step 1: 确认源字体存在(仓库自带,无需下载)**
 
-下载到 `main/src/v9_apple_music/fonts/src/`:
-- 拉丁:`PlusJakartaSans-SemiBold.ttf`(Google Fonts,OFL)
-- 中文:`NotoSansSC-Regular.otf` / `.ttf`(Google Fonts,OFL)
-- 符号:`NotoSansSymbols2-Regular.ttf`(覆盖 ⌂◉♫≣⚙♪⌕◌▶⏮⏭↺)
+```bash
+ls -l lvgl/demos/multilang/assets/fonts/NotoSansSC-Medium.otf \
+      lvgl/demos/multilang/assets/fonts/Montserrat-SemiBold.ttf \
+      lvgl/scripts/built_in_font/DejaVuSans.ttf
+```
+Expected: 三个文件均存在。
 
 - [ ] **Step 2: 提取字符集**
 
@@ -489,9 +495,9 @@ PY
 ```bash
 SYMS="$(cat main/src/v9_apple_music/fonts/charset.txt)"
 npx lv_font_conv --no-compress --format lvgl --bpp 4 --size 14 \
-  --font main/src/v9_apple_music/fonts/src/PlusJakartaSans-SemiBold.ttf -r 0x20-0x7F \
-  --font main/src/v9_apple_music/fonts/src/NotoSansSC-Regular.ttf --symbols "$SYMS" \
-  --font main/src/v9_apple_music/fonts/src/NotoSansSymbols2-Regular.ttf --symbols "⌂◉♫≣⚙♪⌕◌▶⏮⏭↺" \
+  --font lvgl/demos/multilang/assets/fonts/Montserrat-SemiBold.ttf -r 0x20-0x7F \
+  --font lvgl/demos/multilang/assets/fonts/NotoSansSC-Medium.otf --symbols "$SYMS" \
+  --font lvgl/scripts/built_in_font/DejaVuSans.ttf --symbols "⌂◉♫≣⚙♪⌕◌▶↺" \
   -o main/src/v9_apple_music/fonts/am_font_14.c --force-fast-kern-format
 ```
 生成的 C 文件里字体变量名形如 `am_font_14`(由 `-o` 文件名决定;如不符可加 `--lv-font-name am_font_14`)。
