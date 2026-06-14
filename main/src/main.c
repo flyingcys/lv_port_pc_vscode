@@ -18,6 +18,7 @@
 #include "music_player.h"
 #include "v9_apple_music/apple_music.h"
 #include "v9_apple_music/am_screenshot.h"
+#include "v9_apple_music/am_metrics.h"
 
 /*********************
  *      DEFINES
@@ -72,7 +73,10 @@ int main(int argc, char **argv)
   lv_init();
 
   /*Initialize the HAL (display, input devices, tick) for LVGL*/
-  hal_init(800, 480);
+  int W = (argc >= 3) ? atoi(argv[1]) : 800;
+  int H = (argc >= 3) ? atoi(argv[2]) : 480;
+  hal_init(W, H);
+  am_metrics_init(W, H);
 
   // music_player_init((const char **)(argc > 1 ? argv + 1 : NULL),
   //                   (size_t)(argc > 1 ? argc - 1 : 0));
