@@ -271,6 +271,16 @@ target_link_libraries(apple_music_theme_test lvgl)
 add_test(NAME apple_music_theme_test COMMAND $<TARGET_FILE:apple_music_theme_test>)
 set_tests_properties(apple_music_theme_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
+add_executable(apple_music_metrics_test
+    ${PROJECT_SOURCE_DIR}/main/tests/apple_music_metrics_test.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_metrics.c
+    ${PROJECT_SOURCE_DIR}/main/tests/am_fonts_stub.c)
+target_include_directories(apple_music_metrics_test PRIVATE ${PROJECT_SOURCE_DIR})
+target_compile_definitions(apple_music_metrics_test PRIVATE LV_CONF_INCLUDE_SIMPLE)
+target_link_libraries(apple_music_metrics_test lvgl)
+add_test(NAME apple_music_metrics_test COMMAND $<TARGET_FILE:apple_music_metrics_test>)
+set_tests_properties(apple_music_metrics_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
 add_custom_target(fruit_ninja_tests
     COMMAND $<TARGET_FILE:fruit_ninja_assets_test>
     COMMAND $<TARGET_FILE:fruit_ninja_collision_test>
