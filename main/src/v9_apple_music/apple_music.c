@@ -1,6 +1,9 @@
 /* main/src/v9_apple_music/apple_music.c */
 #include "apple_music.h"
+#include "am_shell.h"
 #include "lvgl/lvgl.h"
+
+static void on_nav(int idx, void *u){ LV_UNUSED(u); LV_LOG_USER("nav %d", idx); }
 
 #define AM_SIDEBAR_W   164
 #define AM_PLAYER_H    78
@@ -20,12 +23,11 @@ void apple_music_create(void)
     lv_obj_set_style_pad_all(root, 0, 0);
     lv_obj_set_style_pad_gap(root, 0, 0);
 
-    /* 侧栏占位:col0 row0 跨两行 */
+    /* 侧栏:col0 row0 跨两行 */
     lv_obj_t *sidebar = lv_obj_create(root);
     lv_obj_remove_style_all(sidebar);
-    lv_obj_set_style_bg_color(sidebar, lv_color_hex(0xffffff), 0);
-    lv_obj_set_style_bg_opa(sidebar, LV_OPA_80, 0);
     lv_obj_set_grid_cell(sidebar, LV_GRID_ALIGN_STRETCH, 0, 1, LV_GRID_ALIGN_STRETCH, 0, 2);
+    am_shell_build_sidebar(sidebar, 0, on_nav, NULL);
 
     /* 内容区占位:col1 row0 */
     lv_obj_t *content = lv_obj_create(root);
@@ -34,10 +36,9 @@ void apple_music_create(void)
     lv_obj_set_style_bg_opa(content, LV_OPA_COVER, 0);
     lv_obj_set_grid_cell(content, LV_GRID_ALIGN_STRETCH, 1, 1, LV_GRID_ALIGN_STRETCH, 0, 1);
 
-    /* 迷你播放条占位:col1 row1 */
+    /* 迷你播放条:col1 row1 */
     lv_obj_t *player = lv_obj_create(root);
     lv_obj_remove_style_all(player);
-    lv_obj_set_style_bg_color(player, lv_color_hex(0xf9fafc), 0);
-    lv_obj_set_style_bg_opa(player, LV_OPA_COVER, 0);
     lv_obj_set_grid_cell(player, LV_GRID_ALIGN_STRETCH, 1, 1, LV_GRID_ALIGN_STRETCH, 1, 1);
+    am_shell_build_miniplayer(player);
 }
