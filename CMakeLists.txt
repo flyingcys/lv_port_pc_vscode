@@ -52,6 +52,11 @@ file(GLOB FRUIT_NINJA_SOURCES CONFIGURE_DEPENDS
     "${PROJECT_SOURCE_DIR}/main/src/v9-fruit_ninja/*.c"
 )
 
+file(GLOB APPLE_MUSIC_SOURCES CONFIGURE_DEPENDS
+    "${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/*.c")
+file(GLOB APPLE_MUSIC_FONTS CONFIGURE_DEPENDS
+    "${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/fonts/*.c")
+
 # Set C and C++ standards
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_CXX_STANDARD 17)
@@ -149,6 +154,7 @@ else()
 endif()
 
 target_sources(main PRIVATE ${FRUIT_NINJA_SOURCES})
+target_sources(main PRIVATE ${APPLE_MUSIC_SOURCES} ${APPLE_MUSIC_FONTS})
 
 # Define LVGL configuration as a simple include
 target_compile_definitions(main PRIVATE LV_CONF_INCLUDE_SIMPLE)

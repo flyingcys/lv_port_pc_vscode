@@ -16,6 +16,7 @@
 #include "v9-fruit_ninja/fruit_ninja.h"
 #include "glob.h"
 #include "music_player.h"
+#include "v9_apple_music/apple_music.h"
 
 /*********************
  *      DEFINES
@@ -70,15 +71,16 @@ int main(int argc, char **argv)
   lv_init();
 
   /*Initialize the HAL (display, input devices, tick) for LVGL*/
-  hal_init(640, 480);
+  hal_init(800, 480);
 
-  music_player_init((const char **)(argc > 1 ? argv + 1 : NULL),
-                    (size_t)(argc > 1 ? argc - 1 : 0));
+  // music_player_init((const char **)(argc > 1 ? argv + 1 : NULL),
+  //                   (size_t)(argc > 1 ? argc - 1 : 0));
 
   #if LV_USE_OS == LV_OS_NONE
  
   // fruit_ninja_start();
-  lv_demo_music();
+  // lv_demo_music();
+  apple_music_create();
 
   while(1) {
     /* Periodically call the lv_task handler.
@@ -94,7 +96,7 @@ int main(int argc, char **argv)
 
   #endif
 
-  music_player_deinit();
+  // music_player_deinit();
   return 0;
 }
 
