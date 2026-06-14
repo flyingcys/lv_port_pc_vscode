@@ -17,6 +17,7 @@
 #include "glob.h"
 #include "music_player.h"
 #include "v9_apple_music/apple_music.h"
+#include "v9_apple_music/am_screenshot.h"
 
 /*********************
  *      DEFINES
@@ -81,6 +82,13 @@ int main(int argc, char **argv)
   // fruit_ninja_start();
   // lv_demo_music();
   apple_music_create();
+
+  const char *am_shot = getenv("AM_SHOT");
+  if (am_shot) {
+      for (int i = 0; i < 200; i++) { lv_timer_handler(); usleep(10 * 1000); }
+      am_screenshot_take(am_shot);
+      return 0;
+  }
 
   while(1) {
     /* Periodically call the lv_task handler.
