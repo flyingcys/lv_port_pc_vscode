@@ -3,6 +3,7 @@
 #include "lvgl/lvgl.h"
 #include "am_theme.h"
 #include "am_data.h"
+#include "am_metrics.h"
 #include "am_shell.h"
 #include "am_page_home.h"
 #include "am_page_list.h"
@@ -11,10 +12,9 @@
 #include <stdlib.h>   /* getenv */
 #include <string.h>
 
-#define AM_SIDEBAR_W 164
-#define AM_PLAYER_H  78
-static const int32_t col_dsc[] = {AM_SIDEBAR_W, LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};
-static const int32_t row_dsc[] = {LV_GRID_FR(1), AM_PLAYER_H, LV_GRID_TEMPLATE_LAST};
+/* lv_obj_set_grid_dsc_array 仅存指针不拷贝,数组必须为文件级静态 */
+static int32_t col_dsc[3];
+static int32_t row_dsc[3];
 
 typedef enum { AM_PAGE_HOME, AM_PAGE_RADIO, AM_PAGE_LOCAL, AM_PAGE_PLAYLIST, AM_PAGE_SETTINGS } am_page_e;
 static am_page_e s_page         = AM_PAGE_HOME;
@@ -44,12 +44,18 @@ static void rebuild_content(void)
 /* 全量重建 shell(首次构建 + 主题切换) */
 static void build_all(void)
 {
+    const am_metrics_t *m = am_metrics();
     const am_theme_t *t = am_theme_get(am_theme_current());
     s_root = lv_screen_active();
     lv_obj_clean(s_root);
     lv_obj_remove_style_all(s_root);
     lv_obj_set_scrollbar_mode(s_root, LV_SCROLLBAR_MODE_OFF);
     am_fill_grad2(s_root, t->bg_top, t->bg_bottom);
+
+    /* 根据当前 tier 填充 grid 描述符(指针生命期:文件级静态) */
+    col_dsc[0] = m->sidebar_w; col_dsc[1] = LV_GRID_FR(1); col_dsc[2] = LV_GRID_TEMPLATE_LAST;
+    row_dsc[0] = LV_GRID_FR(1); row_dsc[1] = m->player_h;  row_dsc[2] = LV_GRID_TEMPLATE_LAST;
+
     lv_obj_set_grid_dsc_array(s_root, col_dsc, row_dsc);
     lv_obj_set_style_pad_all(s_root, 0, 0);
     lv_obj_set_style_pad_gap(s_root, 0, 0);
@@ -66,7 +72,7 @@ static void build_all(void)
     lv_obj_set_flex_flow(s_content, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_scroll_dir(s_content, LV_DIR_VER);
     lv_obj_set_scrollbar_mode(s_content, LV_SCROLLBAR_MODE_AUTO);
-    lv_obj_set_style_pad_all(s_content, 20, 0);
+    lv_obj_set_style_pad_all(s_content, m->content_pad, 0);
 
     /* 迷你播放条:col1 row1 */
     s_player = lv_obj_create(s_root);
