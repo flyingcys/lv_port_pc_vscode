@@ -1,8 +1,5 @@
 #include "fruit_ninja.h"
 
-#include <math.h>
-#include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -10,7 +7,6 @@
 
 #include "fruit_ninja_assets.h"
 #include "fruit_ninja_audio.h"
-#include "fruit_ninja_collision.h"
 #include "fruit_ninja_effects.h"
 #include "fruit_ninja_internal.h"
 #include "fruit_ninja_physics.h"
