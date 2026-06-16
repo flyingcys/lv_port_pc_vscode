@@ -68,7 +68,7 @@
 
 #if LV_USE_STDLIB_MALLOC == LV_STDLIB_BUILTIN
     /** Size of memory available for `lv_malloc()` in bytes (>= 2kB) */
-    #define LV_MEM_SIZE (1024 * 1024)
+    #define LV_MEM_SIZE (4 * 1024 * 1024)     /*[bytes]*/
 
     /** Size of the memory expand for `lv_malloc()` in bytes */
     #define LV_MEM_POOL_EXPAND_SIZE 0
@@ -460,7 +460,7 @@
 
 /** Number of stops allowed per gradient. Increase this to allow more stops.
  *  This adds (sizeof(lv_color_t) + 1) bytes per additional stop. */
-#define LV_GRADIENT_MAX_STOPS   2
+#define LV_GRADIENT_MAX_STOPS   4
 
 /** Adjust color mix functions rounding. GPUs might calculate color mix (blending) differently.
  *  - 0:   round down,
@@ -1003,7 +1003,7 @@
 /* Documentation for several of the below items can be found here: https://docs.lvgl.io/master/details/auxiliary-modules/index.html . */
 
 /** 1: Enable API to take snapshot for object */
-#define LV_USE_SNAPSHOT 0
+#define LV_USE_SNAPSHOT 1
 
 /** 1: Enable system monitor component */
 #define LV_USE_SYSMON   1
