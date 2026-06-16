@@ -281,6 +281,7 @@ void fruit_ninja_state_enter_exploding(fruit_ninja_game_t * game, float x, float
     game->state = FRUIT_NINJA_STATE_EXPLODING;
     game->state_elapsed_ms = 0;
     fruit_ninja_effects_spawn_flash(game, x, y);
+    fruit_ninja_effects_start_blast(game, x, y);
     if(game->smoke_overlay == NULL) {
         game->smoke_overlay = lv_image_create(game->overlay_layer);
         if(fruit_ninja_make_image_path(path, sizeof(path), s_smoke)) {

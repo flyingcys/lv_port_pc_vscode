@@ -97,6 +97,14 @@ void fruit_ninja_effects_update_score_pulse(fruit_ninja_game_t * game)
     }
 }
 
+void fruit_ninja_effects_start_blast(fruit_ninja_game_t * game, float x, float y)
+{
+    game->blast.active = true;
+    game->blast.cx     = x;
+    game->blast.cy     = y;
+    game->blast.age_ms = 0U;
+}
+
 void fruit_ninja_effects_clear_explosion(fruit_ninja_game_t * game)
 {
     fruit_ninja_destroy_if_present(&game->smoke_overlay);
@@ -248,7 +256,48 @@ void fruit_ninja_effects_render(fruit_ninja_game_t * game, uint32_t delta_ms)
             lv_draw_arc(&layer, &ad);
         }
     }
-    /* Phase 5 追加光线/火焰 */
+    /* Phase 5 Task12: 炸弹 10 道放射爆炸光线 */
+    if(game->blast.active) {
+        lv_draw_triangle_dsc_t td;
+        float cx;
+        float cy;
+        float ray_len;
+        float half_w;
+        int rays_shown;
+        int r;
+
+        game->blast.age_ms += delta_ms;
+        rays_shown = (int)(game->blast.age_ms / 100U) + 1;
+        if(rays_shown > 10) rays_shown = 10;
+
+        lv_draw_triangle_dsc_init(&td);
+        td.bg_color = lv_color_hex(0xffffff);
+        td.bg_opa   = LV_OPA_COVER;
+
+        cx       = fruit_ninja_viewport_x(game->blast.cx);
+        cy       = fruit_ninja_viewport_y(game->blast.cy);
+        ray_len  = fruit_ninja_viewport_len(400.0f);
+        half_w   = fruit_ninja_viewport_len(14.0f);
+
+        for(r = 0; r < rays_shown; ++r) {
+            float a  = (float)r * (6.2831853f / 10.0f);
+            float dx = cosf(a);
+            float dy = sinf(a);
+            float px = -dy;   /* 垂直方向 */
+            float py = dx;
+            td.p[0].x = cx + dx * ray_len;  /* 尖端 */
+            td.p[0].y = cy + dy * ray_len;
+            td.p[1].x = cx + px * half_w;
+            td.p[1].y = cy + py * half_w;
+            td.p[2].x = cx - px * half_w;
+            td.p[2].y = cy - py * half_w;
+            lv_draw_triangle(&layer, &td);
+        }
+
+        if(game->blast.age_ms >= FRUIT_NINJA_EXPLODING_MS) {
+            game->blast.active = false;
+        }
+    }
 
     lv_canvas_finish_layer(game->effect_canvas, &layer);
 }

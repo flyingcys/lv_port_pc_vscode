@@ -152,6 +152,12 @@ typedef struct {
     float y2;
 } fruit_ninja_segment_t;
 
+typedef struct {
+    bool     active;
+    float    cx, cy;        /* 爆心,逻辑 */
+    uint32_t age_ms;        /* 整个爆炸已进行时间 */
+} fruit_ninja_blast_t;
+
 typedef struct fruit_ninja_game {
     fruit_ninja_state_t state;
     bool resources_ready;
@@ -185,6 +191,7 @@ typedef struct fruit_ninja_game {
 
     fruit_ninja_blade_seg_t blades[FRUIT_NINJA_MAX_BLADE_SEGMENTS];
     fruit_ninja_juice_t juice[FRUIT_NINJA_MAX_JUICE];
+    fruit_ninja_blast_t blast;
 
     lv_obj_t * logo_image;
     lv_obj_t * home_mask_image;
