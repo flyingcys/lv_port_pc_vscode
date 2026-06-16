@@ -26,4 +26,8 @@ void       fruit_ninja_hide_obj(lv_obj_t * obj);
 void       fruit_ninja_show_obj(lv_obj_t * obj);
 void       fruit_ninja_destroy_if_present(lv_obj_t ** obj);
 
+/* —— scene 状态/UI 回调(physics 模块逐字搬移时需调用)—— */
+void fruit_ninja_scene_update_miss_icons(fruit_ninja_game_t * game);
+void fruit_ninja_scene_enter_game_over(fruit_ninja_game_t * game);
+
 #endif
