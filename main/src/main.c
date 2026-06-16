@@ -83,9 +83,9 @@ int main(int argc, char **argv)
 
   #if LV_USE_OS == LV_OS_NONE
  
-  // fruit_ninja_start();
+  fruit_ninja_start();
   // lv_demo_music();
-  apple_music_create();
+  // apple_music_create();
 
   const char *am_shot = getenv("AM_SHOT");
   if (am_shot) {
