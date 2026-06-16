@@ -129,3 +129,11 @@ void ir2_panels_apply_initial(icon_replace_2_panels_t * p, const char * which){
     if(strcmp(which, "control") == 0 && p->control) slide_to(p->control, 0, false);
     else if(strcmp(which, "notify") == 0 && p->notify) slide_to(p->notify, m->screen_h - m->panel_h, false);
 }
+
+lv_obj_t * ir2_panels_get_control(icon_replace_2_panels_t * p){
+    return p ? p->control : NULL;
+}
+
+lv_obj_t * ir2_panels_get_notify(icon_replace_2_panels_t * p){
+    return p ? p->notify : NULL;
+}

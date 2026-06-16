@@ -12,6 +12,9 @@ void ir2_panels_show_control(icon_replace_2_panels_t * p, bool show);
 void ir2_panels_show_notify(icon_replace_2_panels_t * p, bool show);
 /* 供截图钩子按 AM_PANEL 设初始态："control" / "notify" / 其它=none。直接定位(无动画)便于快照。 */
 void ir2_panels_apply_initial(icon_replace_2_panels_t * p, const char * which);
+/* 返回面板根对象（可为 NULL），供外部挂载手势收起事件 */
+lv_obj_t * ir2_panels_get_control(icon_replace_2_panels_t * p);
+lv_obj_t * ir2_panels_get_notify(icon_replace_2_panels_t * p);
 #ifdef __cplusplus
 }
 #endif
