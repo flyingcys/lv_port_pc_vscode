@@ -299,5 +299,78 @@ void fruit_ninja_effects_render(fruit_ninja_game_t * game, uint32_t delta_ms)
         }
     }
 
+    /* Phase 5 Task14: 炸弹持续火焰效果 */
+    {
+        lv_draw_arc_dsc_t fd;
+        int fi;
+
+        /* 累加时间,每 40ms 尝试生成一簇火苗 */
+        game->flame_accum_ms += delta_ms;
+        while(game->flame_accum_ms >= 40U) {
+            game->flame_accum_ms -= 40U;
+            /* 只在炸弹存活时、90% 概率生成 */
+            if(game->bomb_alive && (rand() % 100) < 90) {
+                /* 找空闲槽 */
+                for(fi = 0; fi < FRUIT_NINJA_MAX_FLAMES; ++fi) {
+                    if(!game->flames[fi].active) {
+                        fruit_ninja_flame_t * fl = &game->flames[fi];
+                        fl->active  = true;
+                        fl->x       = game->bomb_x + (float)((rand() % 13) - 6);  /* ±6 逻辑抖动 */
+                        fl->y       = game->bomb_y + (float)((rand() % 13) - 6);
+                        fl->age_ms  = 0U;
+                        fl->life_ms = 200U + (uint32_t)(rand() % 500);             /* 200–700ms */
+                        fl->seed    = (float)(rand() % 1000) / 1000.0f;
+                        break;
+                    }
+                }
+            }
+        }
+
+        /* 更新并绘制每个火苗 */
+        lv_draw_arc_dsc_init(&fd);
+        fd.start_angle = 0;
+        fd.end_angle   = 3600;
+        fd.rounded     = 1;
+
+        for(fi = 0; fi < FRUIT_NINJA_MAX_FLAMES; ++fi) {
+            fruit_ninja_flame_t * fl = &game->flames[fi];
+            float p;
+            float lx;
+            float ly;
+            float radius_f;
+            uint8_t cr, cg, cb;
+
+            if(!fl->active) continue;
+            fl->age_ms += delta_ms;
+            if(fl->age_ms >= fl->life_ms) {
+                fl->active = false;
+                continue;
+            }
+
+            p  = (float)fl->age_ms / (float)fl->life_ms;  /* 0..1 */
+
+            /* 上浮 + 轻微横向摆动 */
+            ly = fl->y - p * 40.0f;
+            lx = fl->x + sinf((p + fl->seed) * 6.2831853f) * 4.0f;
+
+            /* 半径:由 ~8 缩到 0 */
+            radius_f = fruit_ninja_viewport_len((1.0f - p) * 8.0f);
+            if(radius_f < 1.0f) continue;
+
+            /* 颜色:#fafad9(250,250,217) → #f0ef9c(240,239,156) */
+            cr = (uint8_t)(250.0f + (240.0f - 250.0f) * p);
+            cg = (uint8_t)(250.0f + (239.0f - 250.0f) * p);
+            cb = (uint8_t)(217.0f + (156.0f - 217.0f) * p);
+
+            fd.center.x = (int32_t)fruit_ninja_viewport_x(lx);
+            fd.center.y = (int32_t)fruit_ninja_viewport_y(ly);
+            fd.radius   = (uint16_t)radius_f;
+            fd.width    = (int32_t)radius_f;   /* width=radius -> 实心圆 */
+            fd.color    = lv_color_make(cr, cg, cb);
+            fd.opa      = (lv_opa_t)(LV_OPA_COVER * (1.0f - p));  /* 淡出 */
+            lv_draw_arc(&layer, &fd);
+        }
+    }
+
     lv_canvas_finish_layer(game->effect_canvas, &layer);
 }

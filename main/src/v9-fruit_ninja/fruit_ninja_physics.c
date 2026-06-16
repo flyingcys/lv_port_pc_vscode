@@ -211,9 +211,19 @@ void fruit_ninja_physics_update_fruits(fruit_ninja_game_t * game)
 {
     uint32_t i;
 
+    /* 每帧重置炸弹跟踪;循环内若找到 active 未切炸弹则置 true */
+    game->bomb_alive = false;
+
     for(i = 0; i < FRUIT_NINJA_MAX_FRUITS; ++i) {
         fruit_ninja_fruit_t * fruit = &game->fruits[i];
         if(!fruit->active) continue;
+
+        /* 炸弹位置跟踪:active 且未被切割的炸弹 */
+        if(fruit->def != NULL && fruit->def->is_bomb && !fruit->sliced) {
+            game->bomb_alive = true;
+            game->bomb_x = fruit->x;
+            game->bomb_y = fruit->y;
+        }
 
         if(game->state == FRUIT_NINJA_STATE_RUNNING) {
             float prev_x = fruit->x;

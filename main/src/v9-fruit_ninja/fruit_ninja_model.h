@@ -12,6 +12,14 @@
 #define FRUIT_NINJA_SEGMENT_MIN_DIST 12.0f
 #define FRUIT_NINJA_MAX_BLADE_SEGMENTS 48
 #define FRUIT_NINJA_MAX_JUICE 80
+#define FRUIT_NINJA_MAX_FLAMES 32
+
+typedef struct {
+    bool     active;
+    float    x, y;        /* 逻辑坐标 */
+    uint32_t age_ms, life_ms;
+    float    seed;        /* 用于横向轻摆/大小变化 */
+} fruit_ninja_flame_t;
 
 typedef struct {
     bool     active;
@@ -193,6 +201,10 @@ typedef struct fruit_ninja_game {
     fruit_ninja_blade_seg_t blades[FRUIT_NINJA_MAX_BLADE_SEGMENTS];
     fruit_ninja_juice_t juice[FRUIT_NINJA_MAX_JUICE];
     fruit_ninja_blast_t blast;
+    fruit_ninja_flame_t flames[FRUIT_NINJA_MAX_FLAMES];
+    uint32_t flame_accum_ms;
+    bool bomb_alive;
+    float bomb_x, bomb_y;
 
     lv_obj_t * logo_image;
     lv_obj_t * home_mask_image;

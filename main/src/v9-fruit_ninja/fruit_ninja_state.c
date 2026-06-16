@@ -221,6 +221,10 @@ void fruit_ninja_state_enter_home(fruit_ninja_game_t * game)
     game->misses = 0;
     game->volley_num = 2U;
     game->volley_multiple = 5U;
+    /* 清理火焰状态(防御) */
+    game->bomb_alive = false;
+    game->flame_accum_ms = 0;
+    memset(game->flames, 0, sizeof(game->flames));
     fruit_ninja_state_update_score_label(game);
     fruit_ninja_state_update_miss_icons(game);
     fruit_ninja_show_obj(game->home_layer);
@@ -251,6 +255,10 @@ void fruit_ninja_state_enter_running(fruit_ninja_game_t * game)
     game->score = 0;
     game->misses = 0;
     game->spawn_index = 0;
+    /* 清理火焰状态(防御) */
+    game->bomb_alive = false;
+    game->flame_accum_ms = 0;
+    memset(game->flames, 0, sizeof(game->flames));
     fruit_ninja_state_update_score_label(game);
     fruit_ninja_state_update_miss_icons(game);
     fruit_ninja_hide_obj(game->home_layer);
@@ -291,6 +299,10 @@ void fruit_ninja_state_enter_exploding(fruit_ninja_game_t * game, float x, float
     game->state = FRUIT_NINJA_STATE_EXPLODING;
     game->state_elapsed_ms = 0;
     game->shake_accum_ms = 0;
+    /* 炸弹爆炸:停止生成火焰,清空已有火焰 */
+    game->bomb_alive = false;
+    game->flame_accum_ms = 0;
+    memset(game->flames, 0, sizeof(game->flames));
     fruit_ninja_effects_spawn_flash(game, x, y);
     fruit_ninja_effects_start_blast(game, x, y);
     if(game->smoke_overlay == NULL) {
