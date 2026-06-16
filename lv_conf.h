@@ -625,7 +625,8 @@
  *  #define LV_FONT_CUSTOM_DECLARE   LV_FONT_DECLARE(my_font_1) LV_FONT_DECLARE(my_font_2)
  *  @endcode
  */
-#define LV_FONT_CUSTOM_DECLARE
+#define LV_FONT_CUSTOM_DECLARE  LV_FONT_DECLARE(ir2_simsun_16) LV_FONT_DECLARE(ir2_simsun_12) \
+                                LV_FONT_DECLARE(ir2_phosphor_20) LV_FONT_DECLARE(ir2_phosphor_14)
 
 /** Always set a default font */
 #define LV_FONT_DEFAULT &lv_font_montserrat_14

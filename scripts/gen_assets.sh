@@ -67,3 +67,71 @@ process_icon "Fruit Ninja"                   "img_app_fruitninja"
 
 rm -rf "$TMP"
 echo "[icons] done"
+
+# ---- fonts ----
+TMP2="$(mktemp -d)"
+PH_TTF="$TMP2/Phosphor-Fill.ttf"
+PH_CSS="$TMP2/phosphor.css"
+mkdir -p "$FONTS"
+
+echo "[fonts] downloading Phosphor..."
+curl -sSL "https://unpkg.com/@phosphor-icons/web/src/fill/Phosphor-Fill.ttf" -o "$PH_TTF"
+curl -sSL "https://unpkg.com/@phosphor-icons/web/src/fill/style.css" -o "$PH_CSS"
+echo "[fonts] Phosphor TTF: $(du -h "$PH_TTF" | cut -f1), CSS: $(du -h "$PH_CSS" | cut -f1)"
+
+# Extract codepoints for 10 status-bar icons
+RANGE=$(python3 - "$PH_CSS" <<'PY'
+import re, sys
+css = open(sys.argv[1], encoding='utf-8').read()
+names = "cell-signal-full wifi-high battery-full battery-medium battery-warning bluetooth airplane-tilt moon sun speaker-high".split()
+cps = []
+for n in names:
+    m = re.search(r'\.ph-fill\.ph-' + re.escape(n) + r':before\s*\{[^}]*content:\s*"\\([0-9a-fA-F]+)"', css)
+    if m:
+        cps.append('0x' + m.group(1))
+    else:
+        print(f"ERROR: codepoint not found for {n}", file=__import__('sys').stderr)
+        raise SystemExit(1)
+print(",".join(cps))
+PY
+)
+echo "[fonts] Phosphor RANGE=$RANGE"
+
+# Build SimSun CJK symbol set from data.c + fixed UI strings
+SIMSUN="/home/share/samba/lvgl/lv_binding_js/deps/lvgl/scripts/built_in_font/SimSun.woff"
+CJK=$(python3 - <<'PY'
+import re
+texts = []
+texts.append(open("main/icon_replace_2/icon_replace_2_data.c", encoding="utf-8").read())
+texts.append("控制中心 通知中心 下午")
+s = "".join(texts)
+seen = []
+for ch in s:
+    if ord(ch) > 0x7F and ch not in seen and ch.strip():
+        seen.append(ch)
+print("".join(seen))
+PY
+)
+echo "[fonts] CJK set (${#CJK} chars): $CJK"
+
+gen_simsun() {  # $1=size $2=name
+    lv_font_conv --font "$SIMSUN" -r 0x20-0x7E --symbols "$CJK" \
+        --size "$1" --bpp 4 --format lvgl --no-compress --no-prefilter \
+        --lv-font-name "$2" -o "$FONTS/$2.c"
+    echo "  [font] $2 done"
+}
+
+gen_phosphor() {  # $1=size $2=name
+    lv_font_conv --font "$PH_TTF" -r "$RANGE" \
+        --size "$1" --bpp 4 --format lvgl --no-compress --no-prefilter \
+        --lv-font-name "$2" -o "$FONTS/$2.c"
+    echo "  [font] $2 done"
+}
+
+gen_simsun 16 ir2_simsun_16
+gen_simsun 12 ir2_simsun_12
+gen_phosphor 20 ir2_phosphor_20
+gen_phosphor 14 ir2_phosphor_14
+
+rm -rf "$TMP2"
+echo "[fonts] done"
