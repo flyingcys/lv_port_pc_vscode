@@ -3,12 +3,25 @@
 #include "icon_replace_2_assets.h"
 #include "icon_replace_2_desktop.h"
 #include "icon_replace_2_layout.h"
+#include "icon_replace_2_metrics.h"
 #include "icon_replace_2_page_config.h"
 #include "icon_replace_2_top_bar.h"
+#include "icon_replace_2_widgets.h"
 
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+
+LV_IMAGE_DECLARE(img_wallpaper_800x480);
+LV_IMAGE_DECLARE(img_wallpaper_640x480);
+LV_IMAGE_DECLARE(img_wallpaper_480x272);
+
+static const lv_image_dsc_t * wallpaper_for(const ir2_metrics_t * m)
+{
+    if(m->screen_w == 640) return &img_wallpaper_640x480;
+    if(m->screen_w == 480) return &img_wallpaper_480x272;
+    return &img_wallpaper_800x480;
+}
 
 #define PAGE0_ICON_COUNT 13
 #define PAGE1_ICON_COUNT 14
@@ -105,6 +118,24 @@ void icon_replace_demo_2(void)
             icons[j][i].page = j;
             icons[j][i].index = i;
         }
+    }
+
+    /* 铺全屏壁纸作最底层背景 */
+    {
+        const ir2_metrics_t * m = ir2_metrics();
+        lv_obj_set_style_bg_color(lv_screen_active(), lv_color_black(), 0);
+        lv_obj_t * wp = lv_image_create(lv_screen_active());
+        lv_image_set_src(wp, wallpaper_for(m));
+        lv_obj_set_pos(wp, 0, 0);
+        ir2_make_decorative(wp);
+        lv_obj_move_background(wp);
+    }
+
+    /* 让 tileview 与各 page 背景透明，使壁纸透出 */
+    lv_obj_set_style_bg_opa(icon_replace_2_desktop_get_tileview(desktop), LV_OPA_TRANSP, 0);
+    for(j = 0; j < PAGE_COUNT; j++) {
+        lv_obj_t * pg = icon_replace_2_desktop_get_page(desktop, j);
+        if(pg) lv_obj_set_style_bg_opa(pg, LV_OPA_TRANSP, 0);
     }
 
     for(j = 0; j < PAGE_COUNT; j++) {
