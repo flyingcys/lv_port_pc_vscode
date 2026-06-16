@@ -47,6 +47,7 @@ static lv_obj_t * page[IR2_PAGE_COUNT];
 static lv_obj_t * screen;
 static icon_replace_2_desktop_t * desktop;
 static icon_replace_2_top_bar_t * top_bar;
+static lv_obj_t * pager_dots;
 static int drag_page;
 
 static int clamp_index(int index);
@@ -178,6 +179,11 @@ void icon_replace_demo_2(void)
     icon_replace_2_top_bar_set_wifi_state(top_bar, WIFI_STATE_NORMAL);
     icon_replace_2_top_bar_start_minute_timer(top_bar);
 
+    /* 底部分页圆点：仅代表 2 个 app 页（page_1/2），锁屏页隐藏 */
+    pager_dots = ir2_widget_dots(lv_screen_active(), 2, 0);
+    lv_obj_align(pager_dots, LV_ALIGN_BOTTOM_MID, 0, -6);
+    lv_obj_add_flag(pager_dots, LV_OBJ_FLAG_HIDDEN);   /* 初始在 page_0 锁屏，先隐藏 */
+
     /* 截图钩子：按 AM_PAGE 切到指定页（无动画），便于无头逐页出图 */
     {
         const char * am_page = getenv("AM_PAGE");
@@ -185,6 +191,8 @@ void icon_replace_demo_2(void)
             int idx = atoi(am_page);
             if(idx >= 0 && idx < IR2_PAGE_COUNT && page[idx] != NULL) {
                 lv_tileview_set_tile(screen, page[idx], LV_ANIM_OFF);
+                /* 同步分页圆点状态（VALUE_CHANGED 可能在帧后触发，截图钩子提前补偿） */
+                desktop_page_changed_cb((uint32_t)idx, NULL);
             }
         }
     }
@@ -195,6 +203,7 @@ static void clear_runtime_object_refs(void)
     uint32_t page_index;
 
     screen = NULL;
+    pager_dots = NULL;
 
     for(page_index = 0; page_index < IR2_PAGE_COUNT; page_index++) {
         page[page_index] = NULL;
@@ -205,11 +214,18 @@ static void desktop_page_changed_cb(uint32_t page_index, void * user_data)
 {
     LV_UNUSED(user_data);
 
-    if(top_bar == NULL) {
-        return;
+    if(top_bar != NULL) {
+        icon_replace_2_top_bar_apply(top_bar, icon_replace_2_get_page_config(page_index));
     }
 
-    icon_replace_2_top_bar_apply(top_bar, icon_replace_2_get_page_config(page_index));
+    if(pager_dots != NULL) {
+        if(page_index == 0) {
+            lv_obj_add_flag(pager_dots, LV_OBJ_FLAG_HIDDEN);   /* 锁屏页隐藏 */
+        } else {
+            lv_obj_remove_flag(pager_dots, LV_OBJ_FLAG_HIDDEN);
+            ir2_widget_dots_set_active(pager_dots, page_index - 1);  /* page_1→0, page_2→1 */
+        }
+    }
 }
 
 static void top_bar_deleted_cb(lv_event_t * e)
