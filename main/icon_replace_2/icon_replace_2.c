@@ -7,6 +7,7 @@
 #include "icon_replace_2_theme.h"
 #include "icon_replace_2_top_bar.h"
 #include "icon_replace_2_widgets.h"
+#include "icon_replace_2_panels.h"
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -49,6 +50,7 @@ static icon_replace_2_desktop_t * desktop;
 static icon_replace_2_top_bar_t * top_bar;
 static lv_obj_t * pager_dots;
 static int drag_page;
+static icon_replace_2_panels_t * panels;
 
 static int clamp_index(int index);
 static void clear_runtime_object_refs(void);
@@ -93,6 +95,11 @@ void icon_replace_demo_2(void)
     if(desktop != NULL) {
         icon_replace_2_desktop_destroy(desktop);
         desktop = NULL;
+    }
+
+    if(panels != NULL) {
+        ir2_panels_destroy(panels);
+        panels = NULL;
     }
 
     clear_runtime_object_refs();
@@ -196,6 +203,14 @@ void icon_replace_demo_2(void)
             }
         }
     }
+
+    panels = ir2_panels_create(lv_screen_active());
+
+    /* 截图钩子：按 AM_PANEL 展开指定面板（无动画） */
+    {
+        const char * am_panel = getenv("AM_PANEL");
+        if(am_panel != NULL) ir2_panels_apply_initial(panels, am_panel);
+    }
 }
 
 static void clear_runtime_object_refs(void)
@@ -204,6 +219,7 @@ static void clear_runtime_object_refs(void)
 
     screen = NULL;
     pager_dots = NULL;
+    panels = NULL;
 
     for(page_index = 0; page_index < IR2_PAGE_COUNT; page_index++) {
         page[page_index] = NULL;
