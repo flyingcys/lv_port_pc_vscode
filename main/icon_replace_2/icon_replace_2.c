@@ -5,6 +5,7 @@
 #include "icon_replace_2_layout.h"
 #include "icon_replace_2_metrics.h"
 #include "icon_replace_2_page_config.h"
+#include "icon_replace_2_theme.h"
 #include "icon_replace_2_top_bar.h"
 #include "icon_replace_2_widgets.h"
 
@@ -77,6 +78,7 @@ void icon_replace_demo_2(void)
     int j;
 
     memcpy(page_icon_count, page_icon_count_init, sizeof(page_icon_count));
+    page_icon_count[0] = 0;   /* page_0 为锁屏页，不放 app 图标 */
     memset(icons, 0, sizeof(icons));
 
     offsetx = 0;
@@ -153,6 +155,19 @@ void icon_replace_demo_2(void)
             lv_obj_add_event_cb(icon_obj, touching_cb, LV_EVENT_PRESSING, NULL);
             icon_set_meta(icon_obj, &icons[j][i]);
         }
+    }
+
+    /* page_0 锁屏：居中大时钟 */
+    {
+        const ir2_metrics_t * mm = ir2_metrics();
+        lv_obj_t * big = lv_label_create(page[0]);
+        lv_obj_set_style_text_font(big, mm->font_big_clock, 0);
+        lv_obj_set_style_text_color(big, ir2_theme()->text_primary, 0);
+        lv_label_set_text(big, "09:41");
+        lv_obj_align(big, LV_ALIGN_CENTER,
+                     (mm->screen_w - DESKTOP_W) / 2,
+                     (mm->screen_h - mm->top_bar_h - DESKTOP_H) / 2);
+        ir2_make_decorative(big);
     }
 
     top_bar = icon_replace_2_top_bar_create(lv_screen_active());

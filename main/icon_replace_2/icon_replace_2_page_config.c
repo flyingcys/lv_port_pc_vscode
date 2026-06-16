@@ -22,11 +22,11 @@ static const topbar_page_config_t g_page_configs[PAGE_COUNT] = {
         .show_system_right = true,
     },
     {
-        .left_type = TOPBAR_SLOT_TEXT,
-        .left_text = "Custom",
-        .center_type = TOPBAR_SLOT_TEXT,
-        .center_text = "More",
-        .page_mode = TOPBAR_PAGE_MODE_CUSTOM,
+        .left_type = TOPBAR_SLOT_NONE,
+        .left_text = NULL,
+        .center_type = TOPBAR_SLOT_NONE,
+        .center_text = NULL,
+        .page_mode = TOPBAR_PAGE_MODE_HOME,
         .show_system_right = true,
     },
 };
