@@ -186,8 +186,9 @@ void fruit_ninja_physics_spawn_one_fruit(fruit_ninja_game_t * game)
     fruit->falling = false;
 
     if(!def->is_bomb) {
+        static const float SPINS[3] = {60.0f, 50.0f, 40.0f};
         float sign = (rand() % 2 == 0) ? -1.0f : 1.0f;
-        fruit->angular_velocity = sign * (float)(90 + (rand() % 180));
+        fruit->angular_velocity = sign * SPINS[rand() % 3];
     }
 
     fruit->shadow_image = lv_image_create(game->fruit_layer);
