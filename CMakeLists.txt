@@ -79,6 +79,7 @@ set(ICON_REPLACE_2_SOURCES
     ${PROJECT_SOURCE_DIR}/main/icon_replace_2/icon_replace_2_desktop.c
     ${PROJECT_SOURCE_DIR}/main/icon_replace_2/icon_replace_2_page_config.c
     ${PROJECT_SOURCE_DIR}/main/icon_replace_2/icon_replace_2_top_bar.c
+    ${PROJECT_SOURCE_DIR}/main/icon_replace_2/icon_replace_2_metrics.c
 )
 
 add_executable(test_page_config
