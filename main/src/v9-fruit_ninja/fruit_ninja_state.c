@@ -268,10 +268,13 @@ void fruit_ninja_state_enter_home(fruit_ninja_game_t * game)
     game->misses = 0;
     game->volley_num = 2U;
     game->volley_multiple = 5U;
-    /* 清理火焰状态(防御) */
+    /* 清理火焰/刀光/汁液/爆炸波状态(防御) */
     game->bomb_alive = false;
     game->flame_accum_ms = 0;
     memset(game->flames, 0, sizeof(game->flames));
+    memset(game->blades, 0, sizeof(game->blades));
+    memset(game->juice, 0, sizeof(game->juice));
+    game->blast.active = false;
     fruit_ninja_state_update_score_label(game);
     fruit_ninja_state_update_miss_icons(game);
     fruit_ninja_show_obj(game->home_layer);
@@ -304,10 +307,13 @@ void fruit_ninja_state_enter_running(fruit_ninja_game_t * game)
     game->score = 0;
     game->misses = 0;
     game->spawn_index = 0;
-    /* 清理火焰状态(防御) */
+    /* 清理火焰/刀光/汁液/爆炸波状态(防御) */
     game->bomb_alive = false;
     game->flame_accum_ms = 0;
     memset(game->flames, 0, sizeof(game->flames));
+    memset(game->blades, 0, sizeof(game->blades));
+    memset(game->juice, 0, sizeof(game->juice));
+    game->blast.active = false;
     fruit_ninja_state_update_score_label(game);
     fruit_ninja_state_update_miss_icons(game);
     fruit_ninja_hide_obj(game->home_layer);
@@ -330,6 +336,9 @@ void fruit_ninja_state_enter_game_over(fruit_ninja_game_t * game)
     if(game->background != NULL) {
         lv_obj_set_pos(game->background, 0, 0);
     }
+    /* 清理上一局残留水果和碎片,防止冻结在 game over 画面 */
+    clear_fruits(game);
+    clear_fragments(game);
     fruit_ninja_hide_obj(game->hint_label);
     fruit_ninja_show_obj(game->game_over_image);
     fruit_ninja_show_obj(game->restart_label);

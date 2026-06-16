@@ -86,6 +86,7 @@ static void slice_fruit(fruit_ninja_game_t * game, fruit_ninja_fruit_t * fruit, 
     if(fruit->sliced) return;
 
     if(fruit->def->is_bomb) {
+        fruit->sliced = true;   /* 炸弹被切:置 sliced 防止 update_fruits 每帧重置 bomb_alive */
         fruit_ninja_hide_obj(fruit->whole_image);
         fruit_ninja_hide_obj(fruit->shadow_image);
         fruit_ninja_state_enter_exploding(game, fruit->x, fruit->y);

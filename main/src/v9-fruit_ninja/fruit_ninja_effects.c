@@ -121,6 +121,9 @@ float fruit_ninja_blade_width(uint32_t age_ms)
 
 void fruit_ninja_effects_init_canvas(fruit_ninja_game_t * game, int phys_w, int phys_h)
 {
+    /* 缓冲区上限 800x480 ARGB8888;超界分辨率退化为只用左上角区域 */
+    if(phys_w > 800) phys_w = 800;
+    if(phys_h > 480) phys_h = 480;
     game->effect_canvas = lv_canvas_create(game->effect_layer);
     lv_canvas_set_buffer(game->effect_canvas, g_canvas_buf, phys_w, phys_h,
                          LV_COLOR_FORMAT_ARGB8888);
