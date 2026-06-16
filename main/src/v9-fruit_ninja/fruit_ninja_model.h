@@ -11,12 +11,21 @@
 #define FRUIT_NINJA_MAX_TRAIL_POINTS 24
 #define FRUIT_NINJA_SEGMENT_MIN_DIST 12.0f
 #define FRUIT_NINJA_MAX_BLADE_SEGMENTS 48
+#define FRUIT_NINJA_MAX_JUICE 80
 
 typedef struct {
     bool     active;
     float    sx, sy, ex, ey;   /* 逻辑坐标 */
     uint32_t age_ms;
 } fruit_ninja_blade_seg_t;
+
+typedef struct {
+    bool     active;
+    float    origin_x, origin_y;  /* 逻辑 */
+    float    angle_rad, distance; /* 径向方向与最大距离 */
+    uint32_t age_ms, life_ms;
+    uint8_t  cr, cg, cb;          /* 果色 */
+} fruit_ninja_juice_t;
 #define FRUIT_NINJA_SCREEN_WIDTH 640
 #define FRUIT_NINJA_SCREEN_HEIGHT 480
 
@@ -38,6 +47,8 @@ typedef struct {
     int16_t base_rotation_deg;
     bool reverse_spin;
     bool is_bomb;
+    bool has_juice;
+    uint8_t juice_r, juice_g, juice_b;
 } fruit_ninja_fruit_def_t;
 
 typedef struct {
@@ -173,6 +184,7 @@ typedef struct fruit_ninja_game {
     lv_obj_t * input_layer;
 
     fruit_ninja_blade_seg_t blades[FRUIT_NINJA_MAX_BLADE_SEGMENTS];
+    fruit_ninja_juice_t juice[FRUIT_NINJA_MAX_JUICE];
 
     lv_obj_t * logo_image;
     lv_obj_t * home_mask_image;

@@ -1,6 +1,10 @@
 #include "fruit_ninja_effects.h"
+#include "fruit_ninja_easing.h"
 #include "fruit_ninja_internal.h"
 #include "fruit_ninja_viewport.h"
+
+#include <math.h>
+#include <stdlib.h>
 
 /* 静态 canvas 缓冲区:按最大物理屏 800x480 ARGB8888 = 1.5 MB */
 static uint8_t g_canvas_buf[800 * 480 * 4];
@@ -110,6 +114,30 @@ void fruit_ninja_effects_init_canvas(fruit_ninja_game_t * game, int phys_w, int 
     lv_canvas_fill_bg(game->effect_canvas, lv_color_black(), LV_OPA_TRANSP);
 }
 
+void fruit_ninja_effects_spawn_juice(fruit_ninja_game_t * game, float x, float y,
+                                     uint8_t r, uint8_t g, uint8_t b)
+{
+    int spawned = 0;
+    int i;
+
+    for(i = 0; i < FRUIT_NINJA_MAX_JUICE && spawned < 10; ++i) {
+        if(game->juice[i].active) continue;
+        fruit_ninja_juice_t * j = &game->juice[i];
+        j->active    = true;
+        j->origin_x  = x;
+        j->origin_y  = y;
+        /* 随机角度 0..2pi,距离 100..300 */
+        j->angle_rad = ((float)(rand() % 360)) * 0.01745329f;
+        j->distance  = 100.0f + (float)(rand() % 200);
+        j->age_ms    = 0;
+        j->life_ms   = 1500;
+        j->cr        = r;
+        j->cg        = g;
+        j->cb        = b;
+        ++spawned;
+    }
+}
+
 void fruit_ninja_effects_push_blade(fruit_ninja_game_t * game,
                                     float sx, float sy, float ex, float ey)
 {
@@ -176,7 +204,45 @@ void fruit_ninja_effects_render(fruit_ninja_game_t * game, uint32_t delta_ms)
         ld.p2.y = (lv_value_precise_t)fruit_ninja_viewport_y(b->ey);
         lv_draw_line(&layer, &ld);
     }
-    /* Phase 4 Task10 在此追加汁液绘制;Phase 5 追加光线/火焰 */
+    /* Phase 4 Task10: 汁液飞溅粒子绘制 */
+    {
+        lv_draw_arc_dsc_t ad;
+        lv_draw_arc_dsc_init(&ad);
+        ad.start_angle = 0;
+        ad.end_angle   = 3600;
+        ad.rounded     = 1;
+
+        for(i = 0; i < FRUIT_NINJA_MAX_JUICE; ++i) {
+            float p;
+            float dist;
+            float lx;
+            float ly;
+            float radius_f;
+            fruit_ninja_juice_t * j = &game->juice[i];
+
+            if(!j->active) continue;
+            j->age_ms += delta_ms;
+            if(j->age_ms >= j->life_ms) { j->active = false; continue; }
+
+            p      = (float)j->age_ms / (float)j->life_ms;           /* 0..1 */
+            dist   = fruit_ninja_ease_out_expo(p) * j->distance;     /* 径向展开 */
+            lx     = j->origin_x + cosf(j->angle_rad) * dist;
+            ly     = j->origin_y + sinf(j->angle_rad) * dist
+                     + fruit_ninja_ease_out_quad(p) * 200.0f;        /* 重力下坠 */
+            radius_f = fruit_ninja_viewport_len(10.0f * (1.0f - p)); /* 缩小至 0 */
+
+            if(radius_f < 1.0f) continue;
+
+            ad.center.x = (int32_t)fruit_ninja_viewport_x(lx);
+            ad.center.y = (int32_t)fruit_ninja_viewport_y(ly);
+            ad.radius   = (uint16_t)radius_f;
+            ad.width    = (int32_t)radius_f;   /* width=radius -> 实心圆 */
+            ad.color    = lv_color_make(j->cr, j->cg, j->cb);
+            ad.opa      = (lv_opa_t)(LV_OPA_COVER * (1.0f - p)); /* 同步淡出 */
+            lv_draw_arc(&layer, &ad);
+        }
+    }
+    /* Phase 5 追加光线/火焰 */
 
     lv_canvas_finish_layer(game->effect_canvas, &layer);
 }

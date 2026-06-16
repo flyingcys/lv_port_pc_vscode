@@ -118,6 +118,10 @@ static void slice_fruit(fruit_ninja_game_t * game, fruit_ninja_fruit_t * fruit, 
         right_fragment->phase_elapsed_ms = 0U;
     }
     fruit_ninja_effects_spawn_flash(game, fruit->x + dx * 0.1f, fruit->y + dy * 0.1f);
+    if(fruit->def->has_juice) {
+        fruit_ninja_effects_spawn_juice(game, fruit->x, fruit->y,
+                                        fruit->def->juice_r, fruit->def->juice_g, fruit->def->juice_b);
+    }
     game->score += 1;
     game->score_pulse_ms = FRUIT_NINJA_SCORE_PULSE_MS;
     if(game->score > game->volley_num * game->volley_multiple) {

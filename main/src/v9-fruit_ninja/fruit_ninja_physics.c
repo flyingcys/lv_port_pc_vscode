@@ -12,12 +12,18 @@
 #define PHYSICS_SHADOW_PATH "images/shadow.png"
 
 static const fruit_ninja_fruit_def_t g_fruit_defs[] = {
-    { "peach", "images/fruit/peach.png", "images/fruit/peach-1.png", "images/fruit/peach-2.png", 62, 59, 37.0f, -50, false, false },
-    { "sandia", "images/fruit/sandia.png", "images/fruit/sandia-1.png", "images/fruit/sandia-2.png", 98, 85, 38.0f, -100, false, false },
-    { "apple", "images/fruit/apple.png", "images/fruit/apple-1.png", "images/fruit/apple-2.png", 66, 66, 31.0f, -54, false, false },
-    { "banana", "images/fruit/banana.png", "images/fruit/banana-1.png", "images/fruit/banana-2.png", 126, 50, 43.0f, 90, false, false },
-    { "basaha", "images/fruit/basaha.png", "images/fruit/basaha-1.png", "images/fruit/basaha-2.png", 68, 72, 32.0f, -135, false, false },
-    { "boom", "images/fruit/boom.png", NULL, NULL, 66, 68, 26.0f, 0, false, true },
+    /* [0] peach(桃):桃黄色汁液 */
+    { "peach", "images/fruit/peach.png", "images/fruit/peach-1.png", "images/fruit/peach-2.png", 62, 59, 37.0f, -50, false, false, true, 0xe6, 0xc7, 0x31 },
+    /* [1] sandia(西瓜):红色汁液 */
+    { "sandia", "images/fruit/sandia.png", "images/fruit/sandia-1.png", "images/fruit/sandia-2.png", 98, 85, 38.0f, -100, false, false, true, 0xcc, 0x00, 0x00 },
+    /* [2] apple(苹果):黄绿色汁液 */
+    { "apple", "images/fruit/apple.png", "images/fruit/apple-1.png", "images/fruit/apple-2.png", 66, 66, 31.0f, -54, false, false, true, 0xc8, 0xe9, 0x25 },
+    /* [3] banana(香蕉):无汁液 */
+    { "banana", "images/fruit/banana.png", "images/fruit/banana-1.png", "images/fruit/banana-2.png", 126, 50, 43.0f, 90, false, false, false, 0x00, 0x00, 0x00 },
+    /* [4] basaha:红色汁液 */
+    { "basaha", "images/fruit/basaha.png", "images/fruit/basaha-1.png", "images/fruit/basaha-2.png", 68, 72, 32.0f, -135, false, false, true, 0xcc, 0x00, 0x00 },
+    /* [5] boom(炸弹):无汁液 */
+    { "boom", "images/fruit/boom.png", NULL, NULL, 66, 68, 26.0f, 0, false, true, false, 0x00, 0x00, 0x00 },
 };
 
 static inline float frand_range(float min_value, float max_value)
