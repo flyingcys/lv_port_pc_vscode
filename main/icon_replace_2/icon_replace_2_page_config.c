@@ -1,10 +1,10 @@
 #include "icon_replace_2_page_config.h"
 
-#include "icon_replace_2_layout.h"
+#include "icon_replace_2_metrics.h"
 
 #include <stddef.h>
 
-static const topbar_page_config_t g_page_configs[PAGE_COUNT] = {
+static const topbar_page_config_t g_page_configs[IR2_PAGE_COUNT] = {
     {
         .left_type = TOPBAR_SLOT_NONE,
         .left_text = NULL,
@@ -33,7 +33,7 @@ static const topbar_page_config_t g_page_configs[PAGE_COUNT] = {
 
 const topbar_page_config_t * icon_replace_2_get_page_config(uint32_t page_index)
 {
-    if(page_index >= PAGE_COUNT) {
+    if(page_index >= IR2_PAGE_COUNT) {
         return &g_page_configs[1];
     }
 

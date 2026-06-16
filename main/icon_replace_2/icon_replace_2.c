@@ -1,8 +1,7 @@
 #include "lvgl.h"
 #include "icon_replace_2.h"
-#include "icon_replace_2_assets.h"
+#include "icon_replace_2_data.h"
 #include "icon_replace_2_desktop.h"
-#include "icon_replace_2_layout.h"
 #include "icon_replace_2_metrics.h"
 #include "icon_replace_2_page_config.h"
 #include "icon_replace_2_theme.h"
@@ -24,24 +23,17 @@ static const lv_image_dsc_t * wallpaper_for(const ir2_metrics_t * m)
     return &img_wallpaper_800x480;
 }
 
-#define PAGE0_ICON_COUNT 13
-#define PAGE1_ICON_COUNT 14
-#define PAGE2_ICON_COUNT 15
-
 typedef struct {
     lv_obj_t * icon;
     int page;
     int index;
 } icon_type;
 
-static const int page_icon_count_init[PAGE_COUNT] = {
-    PAGE0_ICON_COUNT,
-    PAGE1_ICON_COUNT,
-    PAGE2_ICON_COUNT,
-};
+/* page_0: 锁屏 (0 个 app); page_1: 10 个 app; page_2: 2 个 app */
+static const int page_icon_count_init[IR2_PAGE_COUNT] = { 0, 10, 2 };
 
-static int page_icon_count[PAGE_COUNT];
-static icon_type icons[PAGE_COUNT][ICON_SLOT_COUNT];
+static int page_icon_count[IR2_PAGE_COUNT];
+static icon_type icons[IR2_PAGE_COUNT][IR2_SLOT_COUNT];
 static int offsetx;
 static int offsety;
 static int touching;
@@ -51,7 +43,7 @@ static int new_index;
 static int icon_shake;
 static int border_lefttest_count;
 static int border_righttest_count;
-static lv_obj_t * page[PAGE_COUNT];
+static lv_obj_t * page[IR2_PAGE_COUNT];
 static lv_obj_t * screen;
 static icon_replace_2_desktop_t * desktop;
 static icon_replace_2_top_bar_t * top_bar;
@@ -112,10 +104,10 @@ void icon_replace_demo_2(void)
 
     screen = icon_replace_2_desktop_get_tileview(desktop);
 
-    for(j = 0; j < PAGE_COUNT; j++) {
+    for(j = 0; j < IR2_PAGE_COUNT; j++) {
         page[j] = icon_replace_2_desktop_get_page(desktop, j);
 
-        for(i = 0; i < ICON_SLOT_COUNT; i++) {
+        for(i = 0; i < IR2_SLOT_COUNT; i++) {
             icons[j][i].icon = NULL;
             icons[j][i].page = j;
             icons[j][i].index = i;
@@ -135,25 +127,33 @@ void icon_replace_demo_2(void)
 
     /* 让 tileview 与各 page 背景透明，使壁纸透出 */
     lv_obj_set_style_bg_opa(icon_replace_2_desktop_get_tileview(desktop), LV_OPA_TRANSP, 0);
-    for(j = 0; j < PAGE_COUNT; j++) {
+    for(j = 0; j < IR2_PAGE_COUNT; j++) {
         lv_obj_t * pg = icon_replace_2_desktop_get_page(desktop, j);
         if(pg) lv_obj_set_style_bg_opa(pg, LV_OPA_TRANSP, 0);
     }
 
-    for(j = 0; j < PAGE_COUNT; j++) {
-        for(i = 0; i < page_icon_count[j]; i++) {
-            lv_obj_t * icon_obj = lv_image_create(page[j]);
-            const lv_image_dsc_t * image = icon_replace_2_assets[i % icon_replace_2_asset_count];
+    {
+        /* 按 ir2_apps[] 的 page 字段把真实瓷砖填入对应页 */
+        const int32_t row_h = ir2_grid_row_h();
+        int slot_k[IR2_PAGE_COUNT];   /* 各页已填槽位计数 */
+        for(j = 0; j < IR2_PAGE_COUNT; j++) slot_k[j] = 0;
 
-            icons[j][i].icon = icon_obj;
+        for(i = 0; i < (int)ir2_app_count; i++) {
+            int pg_idx = (int)ir2_apps[i].page;  /* 1 或 2 */
+            if(pg_idx < 0 || pg_idx >= IR2_PAGE_COUNT) continue;
+            int k = slot_k[pg_idx];
+            if(k >= IR2_SLOT_COUNT) continue;   /* 超出槽位则跳过 */
 
-            lv_image_set_src(icon_obj, image);
-            lv_image_set_scale(icon_obj, LV_SCALE_NONE * 2);
-            lv_obj_set_pos(icon_obj, x_by_index(i), y_by_index(i));
-            lv_obj_add_flag(icon_obj, LV_OBJ_FLAG_CLICKABLE);
-            lv_obj_add_event_cb(icon_obj, released_cb, LV_EVENT_RELEASED, NULL);
-            lv_obj_add_event_cb(icon_obj, touching_cb, LV_EVENT_PRESSING, NULL);
-            icon_set_meta(icon_obj, &icons[j][i]);
+            lv_obj_t * tile = ir2_widget_app_tile(page[pg_idx], &ir2_apps[i]);
+            lv_obj_set_size(tile, ir2_grid_col_w(), row_h);
+            lv_obj_set_pos(tile, x_by_index(k), y_by_index(k));
+            lv_obj_add_event_cb(tile, released_cb, LV_EVENT_RELEASED, NULL);
+            lv_obj_add_event_cb(tile, touching_cb, LV_EVENT_PRESSING, NULL);
+
+            icons[pg_idx][k].icon = tile;
+            icon_set_meta(tile, &icons[pg_idx][k]);
+
+            slot_k[pg_idx]++;
         }
     }
 
@@ -164,9 +164,7 @@ void icon_replace_demo_2(void)
         lv_obj_set_style_text_font(big, mm->font_big_clock, 0);
         lv_obj_set_style_text_color(big, ir2_theme()->text_primary, 0);
         lv_label_set_text(big, "09:41");
-        lv_obj_align(big, LV_ALIGN_CENTER,
-                     (mm->screen_w - DESKTOP_W) / 2,
-                     (mm->screen_h - mm->top_bar_h - DESKTOP_H) / 2);
+        lv_obj_center(big);
         ir2_make_decorative(big);
     }
 
@@ -187,7 +185,7 @@ static void clear_runtime_object_refs(void)
 
     screen = NULL;
 
-    for(page_index = 0; page_index < PAGE_COUNT; page_index++) {
+    for(page_index = 0; page_index < IR2_PAGE_COUNT; page_index++) {
         page[page_index] = NULL;
     }
 }
@@ -209,14 +207,17 @@ static void top_bar_deleted_cb(lv_event_t * e)
     top_bar = NULL;
 }
 
+static int32_t cell_w(void) { return ir2_grid_col_w(); }
+static int32_t cell_h(void) { return ir2_grid_row_h(); }
+
 static int x_by_index(int index)
 {
-    return (index % ICON_MAX_COL) * ICON_X_DISTANCE + ICON_START_X;
+    return (index % IR2_GRID_COLS) * cell_w();
 }
 
 static int y_by_index(int index)
 {
-    return (index / ICON_MAX_COL) * ICON_Y_DISTANCE + ICON_START_Y;
+    return (index / IR2_GRID_COLS) * cell_h();
 }
 
 static int clamp_index(int index)
@@ -225,8 +226,8 @@ static int clamp_index(int index)
         return 0;
     }
 
-    if(index >= ICON_SLOT_COUNT) {
-        return ICON_SLOT_COUNT - 1;
+    if(index >= IR2_SLOT_COUNT) {
+        return IR2_SLOT_COUNT - 1;
     }
 
     return index;
@@ -244,10 +245,13 @@ static void icon_set_meta(lv_obj_t * obj, icon_type * meta)
 
 static int index_by_xy(const lv_point_t * click_point)
 {
-    int index = (click_point->x - ICON_START_X) / ICON_X_DISTANCE +
-                ((click_point->y - ICON_START_Y) / ICON_Y_DISTANCE) * ICON_MAX_COL;
-
-    return clamp_index(index);
+    int col = click_point->x / cell_w();
+    int row = click_point->y / cell_h();
+    if(col < 0) col = 0;
+    if(col >= IR2_GRID_COLS) col = IR2_GRID_COLS - 1;
+    if(row < 0) row = 0;
+    if(row >= IR2_GRID_ROWS) row = IR2_GRID_ROWS - 1;
+    return clamp_index(row * IR2_GRID_COLS + col);
 }
 
 static void touching_cb(lv_event_t * e)
@@ -286,15 +290,19 @@ static void touching_cb(lv_event_t * e)
 
         lv_obj_set_pos(target, local_point.x - offsetx, local_point.y - offsety);
 
-        if(local_point.x < ICON_SIZE / 2) {
-            border_lefttest_count++;
-        }
-        else if(local_point.x > PAGE_WIDTH - ICON_SIZE / 2) {
-            border_righttest_count++;
-        }
-        else {
-            border_lefttest_count = 0;
-            border_righttest_count = 0;
+        {
+            const ir2_metrics_t * mb = ir2_metrics();
+            int32_t half_icon = mb->icon_size / 2;
+            if(local_point.x < half_icon) {
+                border_lefttest_count++;
+            }
+            else if(local_point.x > mb->screen_w - half_icon) {
+                border_righttest_count++;
+            }
+            else {
+                border_lefttest_count = 0;
+                border_righttest_count = 0;
+            }
         }
 
         if(border_lefttest_count > 70) {
@@ -305,7 +313,7 @@ static void touching_cb(lv_event_t * e)
         }
 
         if(border_righttest_count > 70) {
-            drag_page = drag_page < PAGE_COUNT - 1 ? drag_page + 1 : PAGE_COUNT - 1;
+            drag_page = drag_page < IR2_PAGE_COUNT - 1 ? drag_page + 1 : IR2_PAGE_COUNT - 1;
             lv_obj_set_parent(target, page[drag_page]);
             lv_tileview_set_tile(screen, page[drag_page], LV_ANIM_ON);
             border_righttest_count = 0;
@@ -327,7 +335,7 @@ static void touching_cb(lv_event_t * e)
 
     icon_shake = 1;
 
-    for(j = 0; j < PAGE_COUNT; j++) {
+    for(j = 0; j < IR2_PAGE_COUNT; j++) {
         for(i = 0; i < page_icon_count[j]; i++) {
             lv_anim_t a;
             lv_anim_init(&a);
@@ -364,9 +372,9 @@ static void released_cb(lv_event_t * e)
     lv_obj_add_flag(screen, LV_OBJ_FLAG_SCROLLABLE);
     lv_anim_del(NULL, icon_shake_cb);
 
-    for(j = 0; j < PAGE_COUNT; j++) {
+    for(j = 0; j < IR2_PAGE_COUNT; j++) {
         for(i = 0; i < page_icon_count[j]; i++) {
-            lv_image_set_rotation(icons[j][i].icon, 0);
+            lv_obj_set_style_transform_rotation(icons[j][i].icon, 0, 0);
         }
     }
 
@@ -457,7 +465,7 @@ static void released_cb(lv_event_t * e)
         icon_shake = 0;
         new_index = index_by_xy(&local_point);
 
-        if(icons[drag_page][ICON_SLOT_COUNT - 1].icon == NULL) {
+        if(icons[drag_page][IR2_SLOT_COUNT - 1].icon == NULL) {
             j = drag_page;
             for(i = page_icon_count[drag_page]; i > new_index; i--) {
                 icons[j][i].icon = icons[j][i - 1].icon;
@@ -531,5 +539,6 @@ static void set_y_cb(void * var, int32_t v)
 
 static void icon_shake_cb(void * var, int32_t v)
 {
-    lv_image_set_rotation((lv_obj_t *)var, v);
+    /* 瓷砖是 lv_obj 容器，不是 lv_image；用 style transform 旋转 */
+    lv_obj_set_style_transform_rotation((lv_obj_t *)var, v, 0);
 }

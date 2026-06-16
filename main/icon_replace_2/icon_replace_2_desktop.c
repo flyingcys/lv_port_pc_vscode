@@ -1,11 +1,11 @@
 #include "icon_replace_2_desktop.h"
 
-#include "icon_replace_2_layout.h"
+#include "icon_replace_2_metrics.h"
 
 struct icon_replace_2_desktop {
     lv_obj_t * host;
     lv_obj_t * tileview;
-    lv_obj_t * pages[PAGE_COUNT];
+    lv_obj_t * pages[IR2_PAGE_COUNT];
     icon_replace_2_page_changed_cb_t page_changed_cb;
     void * user_data;
     uint32_t current_page;
@@ -36,8 +36,13 @@ icon_replace_2_desktop_t * icon_replace_2_desktop_create(lv_obj_t * parent,
     }
 
     lv_obj_add_event_cb(desktop->host, desktop_delete_cb, LV_EVENT_DELETE, desktop);
-    lv_obj_set_pos(desktop->host, 0, TOP_BAR_H);
-    lv_obj_set_size(desktop->host, DESKTOP_W, DESKTOP_H);
+    {
+        const ir2_metrics_t * m = ir2_metrics();
+        int32_t desktop_w = m->screen_w;
+        int32_t desktop_h = m->screen_h - m->top_bar_h;
+        lv_obj_set_pos(desktop->host, 0, m->top_bar_h);
+        lv_obj_set_size(desktop->host, desktop_w, desktop_h);
+    }
     lv_obj_clear_flag(desktop->host, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_set_style_radius(desktop->host, 0, 0);
     lv_obj_set_style_border_width(desktop->host, 0, 0);
@@ -50,21 +55,27 @@ icon_replace_2_desktop_t * icon_replace_2_desktop_create(lv_obj_t * parent,
         return NULL;
     }
 
-    lv_obj_set_size(desktop->tileview, DESKTOP_W, DESKTOP_H);
-    lv_obj_set_style_bg_color(desktop->tileview, lv_color_hex(0x000000), LV_PART_MAIN);
-    lv_obj_set_style_radius(desktop->tileview, 0, 0);
-    lv_obj_set_style_border_width(desktop->tileview, 0, 0);
-    lv_obj_add_event_cb(desktop->tileview, desktop_tileview_value_changed_cb, LV_EVENT_VALUE_CHANGED, desktop);
+    {
+        const ir2_metrics_t * m = ir2_metrics();
+        int32_t desktop_w = m->screen_w;
+        int32_t desktop_h = m->screen_h - m->top_bar_h;
 
-    for(page_index = 0; page_index < PAGE_COUNT; page_index++) {
-        desktop->pages[page_index] = lv_tileview_add_tile(desktop->tileview, page_index, 0, LV_DIR_ALL);
-        if(desktop->pages[page_index] == NULL) {
-            lv_obj_delete(desktop->host);
-            return NULL;
+        lv_obj_set_size(desktop->tileview, desktop_w, desktop_h);
+        lv_obj_set_style_bg_color(desktop->tileview, lv_color_hex(0x000000), LV_PART_MAIN);
+        lv_obj_set_style_radius(desktop->tileview, 0, 0);
+        lv_obj_set_style_border_width(desktop->tileview, 0, 0);
+        lv_obj_add_event_cb(desktop->tileview, desktop_tileview_value_changed_cb, LV_EVENT_VALUE_CHANGED, desktop);
+
+        for(page_index = 0; page_index < IR2_PAGE_COUNT; page_index++) {
+            desktop->pages[page_index] = lv_tileview_add_tile(desktop->tileview, page_index, 0, LV_DIR_ALL);
+            if(desktop->pages[page_index] == NULL) {
+                lv_obj_delete(desktop->host);
+                return NULL;
+            }
+
+            lv_obj_set_size(desktop->pages[page_index], desktop_w, desktop_h);
+            lv_obj_clear_flag(desktop->pages[page_index], LV_OBJ_FLAG_SCROLLABLE);
         }
-
-        lv_obj_set_size(desktop->pages[page_index], DESKTOP_W, DESKTOP_H);
-        lv_obj_clear_flag(desktop->pages[page_index], LV_OBJ_FLAG_SCROLLABLE);
     }
 
     lv_tileview_set_tile(desktop->tileview, desktop->pages[0], LV_ANIM_OFF);
@@ -110,7 +121,7 @@ lv_obj_t * icon_replace_2_desktop_get_tileview(const icon_replace_2_desktop_t * 
 
 lv_obj_t * icon_replace_2_desktop_get_page(const icon_replace_2_desktop_t * desktop, uint32_t page_index)
 {
-    if(desktop == NULL || page_index >= PAGE_COUNT) {
+    if(desktop == NULL || page_index >= IR2_PAGE_COUNT) {
         return NULL;
     }
 
@@ -145,7 +156,7 @@ static void desktop_delete_cb(lv_event_t * e)
 
     desktop->host = NULL;
     desktop->tileview = NULL;
-    for(page_index = 0; page_index < PAGE_COUNT; page_index++) {
+    for(page_index = 0; page_index < IR2_PAGE_COUNT; page_index++) {
         desktop->pages[page_index] = NULL;
     }
 
@@ -167,7 +178,7 @@ static void desktop_tileview_value_changed_cb(lv_event_t * e)
         return;
     }
 
-    for(page_index = 0; page_index < PAGE_COUNT; page_index++) {
+    for(page_index = 0; page_index < IR2_PAGE_COUNT; page_index++) {
         if(desktop->pages[page_index] == active_tile) {
             desktop->current_page = page_index;
 
