@@ -253,6 +253,15 @@ add_test(
 )
 set_tests_properties(fruit_ninja_model_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
+add_executable(fruit_ninja_easing_test
+    ${PROJECT_SOURCE_DIR}/main/tests/fruit_ninja_easing_test.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9-fruit_ninja/fruit_ninja_easing.c
+)
+target_include_directories(fruit_ninja_easing_test PRIVATE ${PROJECT_SOURCE_DIR})
+target_link_libraries(fruit_ninja_easing_test m)
+add_test(NAME fruit_ninja_easing_test COMMAND $<TARGET_FILE:fruit_ninja_easing_test>)
+set_tests_properties(fruit_ninja_easing_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
 add_executable(apple_music_data_test
     ${PROJECT_SOURCE_DIR}/main/tests/apple_music_data_test.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_data.c
