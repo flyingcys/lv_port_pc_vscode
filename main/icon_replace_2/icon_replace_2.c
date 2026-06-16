@@ -177,6 +177,17 @@ void icon_replace_demo_2(void)
     icon_replace_2_top_bar_apply(top_bar, icon_replace_2_get_page_config(0));
     icon_replace_2_top_bar_set_wifi_state(top_bar, WIFI_STATE_NORMAL);
     icon_replace_2_top_bar_start_minute_timer(top_bar);
+
+    /* 截图钩子：按 AM_PAGE 切到指定页（无动画），便于无头逐页出图 */
+    {
+        const char * am_page = getenv("AM_PAGE");
+        if(am_page != NULL) {
+            int idx = atoi(am_page);
+            if(idx >= 0 && idx < IR2_PAGE_COUNT && page[idx] != NULL) {
+                lv_tileview_set_tile(screen, page[idx], LV_ANIM_OFF);
+            }
+        }
+    }
 }
 
 static void clear_runtime_object_refs(void)
@@ -306,7 +317,7 @@ static void touching_cb(lv_event_t * e)
         }
 
         if(border_lefttest_count > 70) {
-            drag_page = drag_page > 0 ? drag_page - 1 : 0;
+            drag_page = drag_page > 1 ? drag_page - 1 : 1;   /* page_0 为锁屏，不可拖入 */
             lv_obj_set_parent(target, page[drag_page]);
             lv_tileview_set_tile(screen, page[drag_page], LV_ANIM_ON);
             border_lefttest_count = 0;
@@ -466,6 +477,10 @@ static void released_cb(lv_event_t * e)
         new_index = index_by_xy(&local_point);
 
         if(icons[drag_page][IR2_SLOT_COUNT - 1].icon == NULL) {
+            /* 防 NULL 空洞：插入位置不得越过当前页末尾（insert 分支已保证未满，上界即 count） */
+            if(new_index > page_icon_count[drag_page]) {
+                new_index = page_icon_count[drag_page];
+            }
             j = drag_page;
             for(i = page_icon_count[drag_page]; i > new_index; i--) {
                 icons[j][i].icon = icons[j][i - 1].icon;
@@ -516,7 +531,6 @@ static void released_cb(lv_event_t * e)
             lv_obj_set_pos(icons[old_page][old_page_index].icon,
                            x_by_index(old_page_index),
                            y_by_index(old_page_index));
-            icon_set_meta(icons[drag_page][new_index].icon, &icons[drag_page][new_index]);
             icon_set_meta(icons[old_page][old_page_index].icon, &icons[old_page][old_page_index]);
 
             icons[drag_page][new_index].icon = target;
