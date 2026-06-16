@@ -18,7 +18,7 @@
  * 顶部条：按下后手指向下移动超过 EDGE_THRESHOLD px → 展开控制中心
  * 底部条：按下后手指向上移动超过 EDGE_THRESHOLD px → 展开通知中心
  * ----------------------------------------------------------------------- */
-#define EDGE_SENSOR_H   28      /* 感应带高度（px） */
+#define EDGE_SENSOR_H   28      /* 感应带高度（px）；勿超过最小 top_bar_h（480x272=28） */
 #define EDGE_THRESHOLD  40      /* 触发所需位移（px） */
 
 LV_IMAGE_DECLARE(img_wallpaper_800x480);
@@ -256,6 +256,7 @@ void icon_replace_demo_2(void)
         lv_obj_remove_flag(edge_top, LV_OBJ_FLAG_GESTURE_BUBBLE);
         lv_obj_add_event_cb(edge_top, edge_top_pressed_cb,  LV_EVENT_PRESSED,  NULL);
         lv_obj_add_event_cb(edge_top, edge_top_pressing_cb, LV_EVENT_PRESSING, NULL);
+        lv_obj_add_event_cb(edge_top, panel_gesture_cb,     LV_EVENT_GESTURE,  NULL);  /* 面板展开时在顶部 28px 带内也能滑回收起 */
 
         /* 底部感应条 */
         edge_bot = lv_obj_create(lv_screen_active());
@@ -268,6 +269,7 @@ void icon_replace_demo_2(void)
         lv_obj_remove_flag(edge_bot, LV_OBJ_FLAG_GESTURE_BUBBLE);
         lv_obj_add_event_cb(edge_bot, edge_bot_pressed_cb,  LV_EVENT_PRESSED,  NULL);
         lv_obj_add_event_cb(edge_bot, edge_bot_pressing_cb, LV_EVENT_PRESSING, NULL);
+        lv_obj_add_event_cb(edge_bot, panel_gesture_cb,     LV_EVENT_GESTURE,  NULL);  /* 面板展开时在底部 28px 带内也能滑回收起 */
 
         /* 面板收起：在面板根对象上监听 LV_EVENT_GESTURE，方向反向则收起 */
         if(panels != NULL) {
@@ -723,8 +725,9 @@ static void edge_bot_pressing_cb(lv_event_t * e)
  */
 static void panel_gesture_cb(lv_event_t * e)
 {
-    lv_dir_t dir = lv_indev_get_gesture_dir(lv_indev_get_act());
-    lv_obj_t * target = lv_event_get_target(e);
+    lv_indev_t * indev = lv_event_get_indev(e);
+    if(indev == NULL) return;
+    lv_dir_t dir = lv_indev_get_gesture_dir(indev);
 
     if(edge_panel_open == 1) {
         /* 控制中心：向上滑 → 收起 */
@@ -746,5 +749,4 @@ static void panel_gesture_cb(lv_event_t * e)
             ir2_panels_show_notify(panels, false);
         }
     }
-    LV_UNUSED(target);
 }
