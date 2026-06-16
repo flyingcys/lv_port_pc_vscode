@@ -59,13 +59,23 @@ static void clear_fruits(fruit_ninja_game_t * game)
     }
 }
 
+/* 首页图像 y 动画:入参 logic_top_y 为逻辑左上角 y(640x480 系)。
+ * 图像 pivot 默认在原始位图中心、经 set_scale 缩放,故物理 y =
+ *   viewport_y(逻辑中心 y) - 原始位图半高。 */
+static void set_home_image_logic_y(lv_obj_t * obj, int32_t logic_top_y)
+{
+    float nh = (float)lv_obj_get_height(obj);
+    float cy = (float)logic_top_y + nh * 0.5f;
+    lv_obj_set_y(obj, (int32_t)lroundf(fruit_ninja_viewport_y(cy) - nh * 0.5f));
+}
+
 static void stage_home_object(lv_obj_t * obj, bool visible, lv_opa_t opa, int32_t y)
 {
     if(obj == NULL) return;
     if(visible) fruit_ninja_show_obj(obj);
     else fruit_ninja_hide_obj(obj);
     lv_obj_set_style_opa(obj, opa, 0);
-    lv_obj_set_y(obj, y);
+    set_home_image_logic_y(obj, y);
 }
 
 void fruit_ninja_state_start_running_timer_cb(lv_timer_t * timer)
@@ -153,11 +163,9 @@ void fruit_ninja_state_update_home_animation(fruit_ninja_game_t * game)
     }
     if(game->logo_image != NULL) {
         stage_home_object(game->logo_image, stage0, LV_OPA_COVER, 32 + (int32_t)(sinf(t / 380.0f) * 6.0f));
-        lv_obj_set_y(game->logo_image, 32 + (int32_t)(sinf(t / 380.0f) * 6.0f));
     }
     if(game->ninja_image != NULL) {
         stage_home_object(game->ninja_image, stage1, LV_OPA_COVER, 162 + (int32_t)bob);
-        lv_obj_set_y(game->ninja_image, 162 + (int32_t)bob);
     }
     if(game->home_desc_image != NULL) {
         stage_home_object(game->home_desc_image, stage2, LV_OPA_COVER, 206);
@@ -170,7 +178,7 @@ void fruit_ninja_state_update_home_animation(fruit_ninja_game_t * game)
     }
     if(game->new_sign_image != NULL && stage3) {
         fruit_ninja_show_obj(game->new_sign_image);
-        lv_obj_set_y(game->new_sign_image, 252 + (int32_t)(sinf(t / 180.0f) * 4.0f));
+        set_home_image_logic_y(game->new_sign_image, 252 + (int32_t)(sinf(t / 180.0f) * 4.0f));
         lv_obj_set_style_opa(game->new_sign_image, LV_OPA_COVER, 0);
     }
     else if(game->new_sign_image != NULL) {
@@ -279,7 +287,19 @@ void fruit_ninja_state_enter_exploding(fruit_ninja_game_t * game, float x, float
             lv_image_set_src(game->smoke_overlay, path);
         }
     }
-    lv_obj_set_pos(game->smoke_overlay, (int32_t)x - 22, (int32_t)y - 22);
+    /* 烟雾是"内容"(定位于爆炸点),走 viewport 映射 + 缩放;
+     * 逻辑左上角 (x-22, y-22),pivot 默认中心,故按逻辑中心映射。 */
+    {
+        float sw = (float)lv_obj_get_width(game->smoke_overlay);
+        float sh = (float)lv_obj_get_height(game->smoke_overlay);
+        float scx = (x - 22.0f) + sw * 0.5f;
+        float scy = (y - 22.0f) + sh * 0.5f;
+        lv_image_set_scale(game->smoke_overlay,
+                           (uint16_t)(fruit_ninja_viewport_scale() * 256.0f));
+        lv_obj_set_pos(game->smoke_overlay,
+                       (int32_t)lroundf(fruit_ninja_viewport_x(scx) - sw * 0.5f),
+                       (int32_t)lroundf(fruit_ninja_viewport_y(scy) - sh * 0.5f));
+    }
     fruit_ninja_show_obj(game->smoke_overlay);
     if(game->white_flash_overlay == NULL) {
         game->white_flash_overlay = lv_obj_create(game->overlay_layer);

@@ -23,14 +23,16 @@ static void update_trail_points(fruit_ninja_game_t * game)
 {
     uint16_t i;
     fruit_ninja_trail_t * trail = &game->trail;
+    /* trail->points 存逻辑坐标(供碰撞);设给 lv_line 时经 viewport 映射回物理。 */
+    static lv_point_precise_t phys_points[FRUIT_NINJA_MAX_TRAIL_POINTS];
 
     for(i = 0; i < trail->count; ++i) {
-        trail->points[i].x = trail->points[i].x;
-        trail->points[i].y = trail->points[i].y;
+        phys_points[i].x = (lv_value_precise_t)fruit_ninja_viewport_x((float)trail->points[i].x);
+        phys_points[i].y = (lv_value_precise_t)fruit_ninja_viewport_y((float)trail->points[i].y);
     }
 
     if(trail->count >= 2) {
-        lv_line_set_points(trail->line, trail->points, trail->count);
+        lv_line_set_points(trail->line, phys_points, trail->count);
         lv_obj_clear_flag(trail->line, LV_OBJ_FLAG_HIDDEN);
     }
     else {
@@ -206,9 +208,13 @@ static void input_event_cb(lv_event_t * e)
     if(indev == NULL) return;
     lv_indev_get_point(indev, &point);
 
+    /* indev 给出物理坐标:先反映射到逻辑系(640x480),再喂给轨迹/碰撞。 */
+    float lx = fruit_ninja_viewport_to_logic_x((float)point.x);
+    float ly = fruit_ninja_viewport_to_logic_y((float)point.y);
+
     if(code == LV_EVENT_PRESSED) {
         if(game->state == FRUIT_NINJA_STATE_HOME) {
-            fruit_ninja_input_begin(game, (float)point.x, (float)point.y);
+            fruit_ninja_input_begin(game, lx, ly);
             return;
         }
         if(game->state == FRUIT_NINJA_STATE_GAME_OVER) {
@@ -216,19 +222,19 @@ static void input_event_cb(lv_event_t * e)
             return;
         }
         if(game->state == FRUIT_NINJA_STATE_RUNNING) {
-            fruit_ninja_input_begin(game, (float)point.x, (float)point.y);
+            fruit_ninja_input_begin(game, lx, ly);
         }
         return;
     }
 
     if(code == LV_EVENT_PRESSING && game->state == FRUIT_NINJA_STATE_RUNNING) {
-        segment = fruit_ninja_input_push_point(game, (float)point.x, (float)point.y);
+        segment = fruit_ninja_input_push_point(game, lx, ly);
         handle_segment_hits(game, segment);
         return;
     }
 
     if(code == LV_EVENT_PRESSING && game->state == FRUIT_NINJA_STATE_HOME) {
-        segment = fruit_ninja_input_push_point(game, (float)point.x, (float)point.y);
+        segment = fruit_ninja_input_push_point(game, lx, ly);
         handle_home_menu_hits(game, segment);
         return;
     }
@@ -246,7 +252,9 @@ void fruit_ninja_input_init(fruit_ninja_game_t * game)
     memset(trail, 0, sizeof(*trail));
     trail->line = lv_line_create(game->effect_layer);
     lv_obj_remove_style_all(trail->line);
-    lv_obj_set_style_line_width(trail->line, 10, 0);
+    /* 线宽用 viewport_len 等比缩放(逻辑 10px)。 */
+    lv_obj_set_style_line_width(trail->line,
+                                (int32_t)(fruit_ninja_viewport_len(10.0f) + 0.5f), 0);
     lv_obj_set_style_line_color(trail->line, lv_color_hex(0xcbd3db), 0);
     lv_obj_set_style_line_opa(trail->line, LV_OPA_90, 0);
     lv_obj_add_flag(trail->line, LV_OBJ_FLAG_HIDDEN);

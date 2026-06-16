@@ -89,7 +89,11 @@ int main(int argc, char **argv)
 
   const char *am_shot = getenv("AM_SHOT");
   if (am_shot) {
-      for (int i = 0; i < 200; i++) { lv_timer_handler(); usleep(10 * 1000); }
+      /* Fruit Ninja 首页揭幕动画在 state_elapsed>=2000ms(stage3)才显示 dojo/new-game 环
+       * 与三颗菜单水果。该 state_elapsed 由真实墙钟驱动(SDL tick),200 帧(每帧 usleep 10ms)
+       * 恰好落在 2000ms 边界;在渲染更快的 480x272 上墙钟更易贴近下限,可能在 stage3 前截图,
+       * 导致整组(环+水果)未显示。预热帧数留足余量,保证三档分辨率均跨过 stage3 后再截图。 */
+      for (int i = 0; i < 300; i++) { lv_timer_handler(); usleep(10 * 1000); }
       am_screenshot_take(am_shot);
       return 0;
   }

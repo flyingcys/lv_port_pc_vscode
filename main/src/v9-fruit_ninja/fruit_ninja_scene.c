@@ -1,5 +1,6 @@
 #include "fruit_ninja.h"
 
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -63,8 +64,43 @@ lv_obj_t * fruit_ninja_create_file_image(lv_obj_t * parent, const char * relativ
 
 void fruit_ninja_set_image_geometry(lv_obj_t * obj, int32_t x, int32_t y, int32_t w, int32_t h)
 {
-    lv_obj_set_pos(obj, x, y);
+    /* 入参为逻辑坐标(640x480 系),(x,y)=左上角,(w,h)=原始位图尺寸。
+     * lv_image 经 set_scale 围绕 pivot(默认图像中心,原始像素)做缩放,而 obj 的 pos
+     * 仅定位"原始位图左上角"。故要让"缩放后位图中心"落在逻辑中心的 viewport 映射处:
+     *   pos = viewport(逻辑中心) - 原始位图半宽高。 */
+    float cx = (float)x + (float)w * 0.5f;
+    float cy = (float)y + (float)h * 0.5f;
+
+    lv_image_set_scale(obj, (uint16_t)(fruit_ninja_viewport_scale() * 256.0f));
     lv_obj_set_size(obj, w, h);
+    lv_obj_set_pos(obj,
+                   (int32_t)lroundf(fruit_ninja_viewport_x(cx) - (float)w * 0.5f),
+                   (int32_t)lroundf(fruit_ninja_viewport_y(cy) - (float)h * 0.5f));
+}
+
+void fruit_ninja_place_logic(lv_obj_t * obj, float lx, float ly, bool centered, bool scale_image)
+{
+    if(obj == NULL) return;
+
+    if(scale_image) {
+        lv_image_set_scale(obj, (uint16_t)(fruit_ninja_viewport_scale() * 256.0f));
+    }
+
+    if(centered) {
+        /* lx/ly 为对象逻辑中心:pivot 默认在原始位图中心,故
+         *   pos = viewport(中心) - 原始位图半宽高。 */
+        float hw = (float)lv_obj_get_width(obj) * 0.5f;
+        float hh = (float)lv_obj_get_height(obj) * 0.5f;
+        lv_obj_set_pos(obj,
+                       (int32_t)lroundf(fruit_ninja_viewport_x(lx) - hw),
+                       (int32_t)lroundf(fruit_ninja_viewport_y(ly) - hh));
+    }
+    else {
+        /* lx/ly 为对象左上角(用于 label 等非缩放对象)。 */
+        lv_obj_set_pos(obj,
+                       (int32_t)lroundf(fruit_ninja_viewport_x(lx)),
+                       (int32_t)lroundf(fruit_ninja_viewport_y(ly)));
+    }
 }
 
 static void init_ui_asset_paths(void)
@@ -175,7 +211,16 @@ static void create_static_scene(fruit_ninja_game_t * game)
     lv_obj_clear_flag(game->screen, LV_OBJ_FLAG_SCROLLABLE);
 
     game->background = fruit_ninja_create_file_image(game->screen, g_ui_assets.background);
-    fruit_ninja_set_image_geometry(game->background, 0, 0, FRUIT_NINJA_SCREEN_WIDTH, FRUIT_NINJA_SCREEN_HEIGHT);
+    /* 背景铺满物理屏(允许非等比拉伸,不做 letterbox):obj 铺满物理屏,
+     * inner_align=STRETCH 自动把位图缩放到 obj 尺寸(scale_x/scale_y 各自计算)。 */
+    {
+        lv_display_t * disp = lv_display_get_default();
+        int32_t pw = lv_display_get_horizontal_resolution(disp);
+        int32_t ph = lv_display_get_vertical_resolution(disp);
+        lv_obj_set_pos(game->background, 0, 0);
+        lv_obj_set_size(game->background, pw, ph);
+        lv_image_set_inner_align(game->background, LV_IMAGE_ALIGN_STRETCH);
+    }
 
     game->home_layer = fruit_ninja_create_layer(game->screen);
     game->fruit_layer = fruit_ninja_create_layer(game->screen);
@@ -216,7 +261,9 @@ static void create_static_scene(fruit_ninja_game_t * game)
     game->hint_label = lv_label_create(game->home_layer);
     lv_label_set_text(game->hint_label, "Slice the middle fruit to start");
     lv_obj_set_style_text_color(game->hint_label, lv_color_hex(0xffffff), 0);
-    lv_obj_align(game->hint_label, LV_ALIGN_BOTTOM_MID, 0, -20);
+    /* 逻辑底部居中(y≈460):用 viewport center + 等比纵向偏移,落在 letterbox 内容区内。 */
+    lv_obj_align(game->hint_label, LV_ALIGN_CENTER, 0,
+                 (int32_t)lroundf(fruit_ninja_viewport_len(220.0f)));
 
     game->score_image = fruit_ninja_create_file_image(game->hud_layer, g_ui_assets.score);
     fruit_ninja_set_image_geometry(game->score_image, 6, 8, 29, 31);
@@ -225,7 +272,8 @@ static void create_static_scene(fruit_ninja_game_t * game)
     lv_label_set_text(game->score_label, "0");
     lv_obj_set_style_text_color(game->score_label, lv_color_hex(0xffec53), 0);
     lv_obj_set_style_text_font(game->score_label, LV_FONT_DEFAULT, 0);
-    lv_obj_set_pos(game->score_label, 44, 18);
+    /* 逻辑 (44,18) -> 物理(label 不缩放位图,故 scale_image=false)。 */
+    fruit_ninja_place_logic(game->score_label, 44.0f, 18.0f, false, false);
 
     for(uint32_t i = 0; i < 3; ++i) {
         game->miss_icons[i] = fruit_ninja_create_file_image(game->hud_layer, g_ui_assets.lose_empty[i]);
@@ -239,7 +287,9 @@ static void create_static_scene(fruit_ninja_game_t * game)
     game->restart_label = lv_label_create(game->overlay_layer);
     lv_label_set_text(game->restart_label, "Click to return home");
     lv_obj_set_style_text_color(game->restart_label, lv_color_hex(0xffffff), 0);
-    lv_obj_align(game->restart_label, LV_ALIGN_CENTER, 0, 80);
+    /* 逻辑中心 +80:viewport center + 等比纵向偏移。 */
+    lv_obj_align(game->restart_label, LV_ALIGN_CENTER, 0,
+                 (int32_t)lroundf(fruit_ninja_viewport_len(80.0f)));
     fruit_ninja_hide_obj(game->restart_label);
 
     fruit_ninja_input_init(game);
@@ -251,8 +301,16 @@ void fruit_ninja_start(void)
     char cwd[512];
 
     memset(&g_game, 0, sizeof(g_game));
+    /* 逻辑坐标系恒定 640x480;显示经 viewport 等比 letterbox 映射到物理屏。 */
     g_game.screen_width = FRUIT_NINJA_SCREEN_WIDTH;
     g_game.screen_height = FRUIT_NINJA_SCREEN_HEIGHT;
+
+    {
+        lv_display_t * disp = lv_display_get_default();
+        int phys_w = (int)lv_display_get_horizontal_resolution(disp);
+        int phys_h = (int)lv_display_get_vertical_resolution(disp);
+        fruit_ninja_viewport_init(phys_w, phys_h);
+    }
 
     if(!g_seeded_random) {
         srand((unsigned int)time(NULL));

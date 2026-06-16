@@ -138,6 +138,9 @@ typedef struct fruit_ninja_game {
     fruit_ninja_state_t state;
     bool resources_ready;
     bool audio_ready;
+    /* 逻辑画面尺寸,恒为 640x480(FRUIT_NINJA_SCREEN_WIDTH/HEIGHT)。
+     * 物理屏尺寸不存于此:显示经 fruit_ninja_viewport_* 等比 letterbox 映射,
+     * 输入物理坐标经 viewport_to_logic_* 反映射后再喂给游戏逻辑。 */
     uint32_t screen_width;
     uint32_t screen_height;
     uint32_t tick_count;

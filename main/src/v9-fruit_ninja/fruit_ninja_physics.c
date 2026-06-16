@@ -101,7 +101,11 @@ fruit_ninja_fragment_t * fruit_ninja_physics_spawn_fragment(fruit_ninja_game_t *
         lv_image_set_src(fragment->image, path);
     }
     lv_image_set_pivot(fragment->image, 32, 32);
-    lv_obj_set_pos(fragment->image, (int32_t)x, (int32_t)y);
+    lv_image_set_scale(fragment->image, (uint16_t)(fruit_ninja_viewport_scale() * 256.0f));
+    /* pivot=(32,32) 原始像素:pos = viewport(逻辑 pivot 点) - 32。 */
+    lv_obj_set_pos(fragment->image,
+                   (int32_t)lroundf(fruit_ninja_viewport_x(x + 32.0f) - 32.0f),
+                   (int32_t)lroundf(fruit_ninja_viewport_y(y + 32.0f) - 32.0f));
     lv_image_set_rotation(fragment->image, (int32_t)(angle * 10.0f));
     return fragment;
 }
@@ -121,13 +125,30 @@ fruit_ninja_fruit_t * fruit_ninja_physics_alloc_fruit(fruit_ninja_game_t * game)
 
 void fruit_ninja_physics_update_single_fruit_visual(fruit_ninja_fruit_t * fruit)
 {
+    /* fruit->x/y 为逻辑坐标(640x480 系):显示时经 viewport 等比映射到物理屏。
+     * lv_image 经 set_scale 围绕 pivot(原始位图中心)缩放,obj pos 仍定位"原始位图左上角",
+     * 故:pos = viewport(逻辑中心) - 原始位图半宽高(原始像素,非缩放后)。 */
+    uint16_t img_scale = (uint16_t)(fruit_ninja_viewport_scale() * 256.0f);
+
     if(fruit->shadow_image != NULL) {
-        lv_obj_set_pos(fruit->shadow_image, (int32_t)(fruit->x - 53.0f), (int32_t)(fruit->y - 5.0f + 50.0f));
+        /* shadow 默认 pivot 为位图中心;原始逻辑左上角为 (x-53, y+45)。 */
+        float sw = (float)lv_obj_get_width(fruit->shadow_image);
+        float sh = (float)lv_obj_get_height(fruit->shadow_image);
+        float scx = (fruit->x - 53.0f) + sw * 0.5f;
+        float scy = (fruit->y - 5.0f + 50.0f) + sh * 0.5f;
+        lv_image_set_scale(fruit->shadow_image, img_scale);
+        lv_obj_set_pos(fruit->shadow_image,
+                       (int32_t)lroundf(fruit_ninja_viewport_x(scx) - sw * 0.5f),
+                       (int32_t)lroundf(fruit_ninja_viewport_y(scy) - sh * 0.5f));
     }
     if(fruit->whole_image != NULL) {
+        /* whole_image pivot 设为 (width/2, height/2),逻辑中心即 (fruit->x, fruit->y)。 */
+        float hw = (float)fruit->def->width * 0.5f;
+        float hh = (float)fruit->def->height * 0.5f;
+        lv_image_set_scale(fruit->whole_image, img_scale);
         lv_obj_set_pos(fruit->whole_image,
-                       (int32_t)(fruit->x - fruit->def->width / 2),
-                       (int32_t)(fruit->y - fruit->def->height / 2));
+                       (int32_t)lroundf(fruit_ninja_viewport_x(fruit->x) - hw),
+                       (int32_t)lroundf(fruit_ninja_viewport_y(fruit->y) - hh));
         lv_image_set_rotation(fruit->whole_image, (int32_t)(fruit->angle * 10.0f));
     }
 }
@@ -272,7 +293,10 @@ void fruit_ninja_physics_update_fragments(fruit_ninja_game_t * game)
         }
 
         if(fragment->image != NULL) {
-            lv_obj_set_pos(fragment->image, (int32_t)fragment->x, (int32_t)fragment->y);
+            /* pivot=(32,32) 原始像素:pos = viewport(逻辑 pivot 点) - 32。 */
+            lv_obj_set_pos(fragment->image,
+                           (int32_t)lroundf(fruit_ninja_viewport_x(fragment->x + 32.0f) - 32.0f),
+                           (int32_t)lroundf(fruit_ninja_viewport_y(fragment->y + 32.0f) - 32.0f));
             lv_image_set_rotation(fragment->image, (int32_t)(fragment->angle * 10.0f));
         }
 
