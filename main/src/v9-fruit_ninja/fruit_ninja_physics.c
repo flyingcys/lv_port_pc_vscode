@@ -233,9 +233,9 @@ void fruit_ninja_physics_update_fruits(fruit_ninja_game_t * game)
             fruit_ninja_destroy_if_present(&fruit->whole_image);
             fruit_ninja_destroy_if_present(&fruit->shadow_image);
             game->misses += 1;
-            fruit_ninja_scene_update_miss_icons(game);
+            fruit_ninja_state_update_miss_icons(game);
             if(game->misses >= 3) {
-                fruit_ninja_scene_enter_game_over(game);
+                fruit_ninja_state_enter_game_over(game);
                 return;
             }
             continue;

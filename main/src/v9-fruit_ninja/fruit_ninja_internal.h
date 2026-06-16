@@ -3,6 +3,7 @@
 
 #include "lvgl/lvgl.h"
 #include "fruit_ninja_model.h"
+#include "fruit_ninja_state.h"
 
 /* —— 时间/物理常量(原 scene.c 顶部)—— */
 #define FRUIT_NINJA_UPDATE_MS            16U
@@ -26,8 +27,5 @@ void       fruit_ninja_hide_obj(lv_obj_t * obj);
 void       fruit_ninja_show_obj(lv_obj_t * obj);
 void       fruit_ninja_destroy_if_present(lv_obj_t ** obj);
 
-/* —— scene 状态/UI 回调(physics 模块逐字搬移时需调用)—— */
-void fruit_ninja_scene_update_miss_icons(fruit_ninja_game_t * game);
-void fruit_ninja_scene_enter_game_over(fruit_ninja_game_t * game);
 
 #endif
