@@ -3,6 +3,7 @@
 #include "fruit_ninja_internal.h"
 #include "fruit_ninja_physics.h"
 #include "fruit_ninja_audio.h"
+#include "fruit_ninja_easing.h"
 
 #include <math.h>
 #include <stdbool.h>
@@ -105,12 +106,56 @@ void fruit_ninja_state_update_miss_icons(fruit_ninja_game_t * game)
 {
     uint32_t i;
     char path[512];
+    /* 记录新变为"满"的图标下标:misses-1 即本次新漏的那一个 */
+    int32_t new_miss = (int32_t)game->misses - 1;
 
     for(i = 0; i < 3; ++i) {
         if(fruit_ninja_make_image_path(path, sizeof(path), i < game->misses ? s_lose_full[i] : s_lose_empty[i])) {
             lv_image_set_src(game->miss_icons[i], path);
         }
     }
+    /* 启动弹出:仅当 new_miss 合法且图标对象存在时 */
+    if(new_miss >= 0 && new_miss < 3 && game->miss_icons[new_miss] != NULL) {
+        game->miss_pop_index = new_miss;
+        game->miss_pop_ms    = 0;
+    }
+}
+
+/* miss 图标弹出动画:每帧推进,ease_out_back scale 1e-5→1 (500ms)。
+ * miss 图标由 fruit_ninja_set_image_geometry 以 viewport_scale*256 设置基础 scale,
+ * 弹出时叠加 ease 因子:scale = ease(p) * viewport_scale * 256。*/
+void fruit_ninja_state_update_miss_pop(fruit_ninja_game_t * game)
+{
+#define FRUIT_NINJA_MISS_POP_MS 500U
+    int32_t idx = game->miss_pop_index;
+    float p;
+    float ease_val;
+    uint16_t scale;
+    uint16_t base;
+
+    if(idx < 0 || idx >= 3) return;
+    if(game->miss_icons[idx] == NULL) return;
+
+    game->miss_pop_ms += FRUIT_NINJA_UPDATE_MS;
+    p = (float)game->miss_pop_ms / (float)FRUIT_NINJA_MISS_POP_MS;
+    if(p > 1.0f) p = 1.0f;
+
+    ease_val = fruit_ninja_ease_out_back(p);
+    /* 基础 scale = viewport_scale * 256 */
+    base     = (uint16_t)(fruit_ninja_viewport_scale() * 256.0f);
+    /* 叠加:ease_val 对基础 scale 的缩放因子;下限 1 避免 0 */
+    scale    = (uint16_t)((float)base * ease_val);
+    if(scale < 1U) scale = 1U;
+
+    lv_image_set_scale(game->miss_icons[idx], scale);
+
+    if(game->miss_pop_ms >= FRUIT_NINJA_MISS_POP_MS) {
+        /* 动画完成:固定回基础 scale */
+        lv_image_set_scale(game->miss_icons[idx], base);
+        game->miss_pop_index = -1;
+        game->miss_pop_ms    = 0;
+    }
+#undef FRUIT_NINJA_MISS_POP_MS
 }
 
 void fruit_ninja_state_build_home_menu_fruits(fruit_ninja_game_t * game)
@@ -204,6 +249,8 @@ void fruit_ninja_state_enter_home(fruit_ninja_game_t * game)
     game->state = FRUIT_NINJA_STATE_HOME;
     game->state_elapsed_ms = 0;
     game->shake_accum_ms = 0;
+    game->miss_pop_index = -1;
+    game->miss_pop_ms    = 0;
     /* 进入 home 时确保背景复位到原点(避免抖动偏移残留)。 */
     if(game->background != NULL) {
         lv_obj_set_pos(game->background, 0, 0);
@@ -244,6 +291,8 @@ void fruit_ninja_state_enter_running(fruit_ninja_game_t * game)
     game->state = FRUIT_NINJA_STATE_RUNNING;
     game->state_elapsed_ms = 0;
     game->shake_accum_ms = 0;
+    game->miss_pop_index = -1;
+    game->miss_pop_ms    = 0;
     game->spawn_elapsed_ms = 500;
     game->spawn_interval_ms = 1000;
     clear_fruits(game);

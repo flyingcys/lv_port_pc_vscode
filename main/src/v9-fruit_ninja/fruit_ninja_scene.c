@@ -161,6 +161,7 @@ static void update_timer_cb(lv_timer_t * timer)
 
     fruit_ninja_effects_update_flash(game);
     fruit_ninja_effects_update_score_pulse(game);
+    fruit_ninja_state_update_miss_pop(game);
     fruit_ninja_input_tick(game, FRUIT_NINJA_UPDATE_MS);
 
     if(game->state == FRUIT_NINJA_STATE_HOME) {
@@ -329,6 +330,8 @@ void fruit_ninja_start(void)
     /* 逻辑坐标系恒定 640x480;显示经 viewport 等比 letterbox 映射到物理屏。 */
     g_game.screen_width = FRUIT_NINJA_SCREEN_WIDTH;
     g_game.screen_height = FRUIT_NINJA_SCREEN_HEIGHT;
+    /* miss 弹出动画初始无效 */
+    g_game.miss_pop_index = -1;
 
     {
         lv_display_t * disp = lv_display_get_default();

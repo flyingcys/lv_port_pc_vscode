@@ -17,7 +17,7 @@
 #define FRUIT_NINJA_HOME_BG_COLOR        0x111111
 #define FRUIT_NINJA_HOME_FLOAT_AMPLITUDE 8.0f
 #define FRUIT_NINJA_HOME_SLICE_FEEDBACK_MS 240U
-#define FRUIT_NINJA_SCORE_PULSE_MS       90U
+#define FRUIT_NINJA_SCORE_PULSE_MS       60U
 
 /* —— 共享 helper(实现留在 scene.c)—— */
 lv_obj_t * fruit_ninja_create_layer(lv_obj_t * parent);

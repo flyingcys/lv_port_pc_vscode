@@ -188,6 +188,10 @@ typedef struct fruit_ninja_game {
     uint32_t volley_multiple;
     uint32_t shake_accum_ms;
 
+    /* miss 图标弹出动画:-1=无,0-2=正在弹出的图标下标 */
+    int32_t  miss_pop_index;
+    uint32_t miss_pop_ms;
+
     lv_obj_t * screen;
     lv_obj_t * background;
     lv_obj_t * home_layer;
