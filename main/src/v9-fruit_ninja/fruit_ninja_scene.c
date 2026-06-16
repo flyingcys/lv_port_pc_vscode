@@ -11,6 +11,7 @@
 #include "fruit_ninja_assets.h"
 #include "fruit_ninja_audio.h"
 #include "fruit_ninja_collision.h"
+#include "fruit_ninja_effects.h"
 #include "fruit_ninja_internal.h"
 #include "fruit_ninja_physics.h"
 #include "fruit_ninja_state.h"
@@ -28,7 +29,6 @@ typedef struct {
     const char * lose_full[3];
     const char * lose_empty[3];
     const char * game_over;
-    const char * flash;
     const char * shadow;
     const char * smoke;
 } fruit_ninja_ui_assets_t;
@@ -89,7 +89,6 @@ static void init_ui_asset_paths(void)
     g_ui_assets.lose_full[1] = "images/xxf.png";
     g_ui_assets.lose_full[2] = "images/xxxf.png";
     g_ui_assets.game_over = "images/game-over.png";
-    g_ui_assets.flash = "images/flash.png";
     g_ui_assets.shadow = "images/shadow.png";
     g_ui_assets.smoke = "images/smoke.png";
 }
@@ -116,245 +115,6 @@ void fruit_ninja_destroy_if_present(lv_obj_t ** obj)
     }
 }
 
-static void spawn_flash(fruit_ninja_game_t * game, float x, float y)
-{
-    lv_obj_t * flash = fruit_ninja_create_file_image(game->effect_layer, g_ui_assets.flash);
-    fruit_ninja_set_image_geometry(flash, (int32_t)x - 179, (int32_t)y - 10, 358, 20);
-    lv_obj_set_style_opa(flash, LV_OPA_100, 0);
-    lv_image_set_pivot(flash, 179, 10);
-    lv_image_set_scale(flash, 1);
-
-    if(game->flash_overlay != NULL) {
-        lv_obj_delete(game->flash_overlay);
-    }
-    game->flash_overlay = flash;
-    game->flash_age_ms = 0;
-}
-
-static void clear_explosion_overlays(fruit_ninja_game_t * game)
-{
-    fruit_ninja_destroy_if_present(&game->smoke_overlay);
-    fruit_ninja_destroy_if_present(&game->white_flash_overlay);
-}
-
-static void clear_flash_if_needed(fruit_ninja_game_t * game)
-{
-    if(game->flash_overlay != NULL) {
-        uint32_t age = game->flash_age_ms;
-        uint32_t scale;
-        uint32_t opa;
-
-        if(age < FRUIT_NINJA_FLASH_MS / 2U) {
-            scale = 32U + (age * (256U - 32U)) / (FRUIT_NINJA_FLASH_MS / 2U);
-        }
-        else if(age < FRUIT_NINJA_FLASH_MS) {
-            uint32_t down_age = age - FRUIT_NINJA_FLASH_MS / 2U;
-            scale = 256U - (down_age * (256U - 48U)) / (FRUIT_NINJA_FLASH_MS / 2U);
-        }
-        else {
-            scale = 48U;
-        }
-
-        if(age >= FRUIT_NINJA_FLASH_MS) {
-            lv_obj_delete(game->flash_overlay);
-            game->flash_overlay = NULL;
-            game->flash_age_ms = 0;
-            return;
-        }
-
-        opa = (uint32_t)((FRUIT_NINJA_FLASH_MS - age) * LV_OPA_100 / FRUIT_NINJA_FLASH_MS);
-        lv_image_set_scale(game->flash_overlay, scale);
-        lv_obj_set_style_opa(game->flash_overlay, (lv_opa_t)opa, 0);
-    }
-}
-
-static void update_score_pulse(fruit_ninja_game_t * game)
-{
-    uint32_t scale;
-
-    if(game->score_image == NULL) return;
-
-    if(game->score_pulse_ms == 0U) {
-        lv_image_set_scale(game->score_image, 256);
-        return;
-    }
-
-    if(game->score_pulse_ms >= FRUIT_NINJA_SCORE_PULSE_MS / 2U) {
-        uint32_t age = FRUIT_NINJA_SCORE_PULSE_MS - game->score_pulse_ms;
-        scale = 256U + (age * (307U - 256U)) / (FRUIT_NINJA_SCORE_PULSE_MS / 2U);
-    }
-    else {
-        scale = 256U + (game->score_pulse_ms * (307U - 256U)) / (FRUIT_NINJA_SCORE_PULSE_MS / 2U);
-    }
-
-    lv_image_set_scale(game->score_image, scale);
-    if(game->score_pulse_ms > FRUIT_NINJA_UPDATE_MS) {
-        game->score_pulse_ms -= FRUIT_NINJA_UPDATE_MS;
-    }
-    else {
-        game->score_pulse_ms = 0U;
-        lv_image_set_scale(game->score_image, 256);
-    }
-}
-
-static void slice_fruit(fruit_ninja_game_t * game, fruit_ninja_fruit_t * fruit, float dx, float dy)
-{
-    fruit_ninja_fragment_t * left_fragment;
-    fruit_ninja_fragment_t * right_fragment;
-    float left_target_x;
-    float right_target_x;
-    float target_y = FRUIT_NINJA_JS_START_Y;
-    float left_target_angle;
-    float right_target_angle;
-    float x = fruit->x - (float)fruit->def->width / 2.0f;
-    float y = fruit->y - (float)fruit->def->height / 2.0f;
-
-    if(fruit->sliced) return;
-
-    if(fruit->def->is_bomb) {
-        fruit_ninja_hide_obj(fruit->whole_image);
-        fruit_ninja_hide_obj(fruit->shadow_image);
-        fruit_ninja_state_enter_exploding(game, fruit->x, fruit->y);
-        return;
-    }
-
-    fruit->sliced = true;
-    fruit_ninja_hide_obj(fruit->whole_image);
-    fruit_ninja_hide_obj(fruit->shadow_image);
-    left_target_x = -(float)((rand() % 200) + 75);
-    right_target_x = (float)(rand() % 275);
-    left_target_angle = -(float)(rand() % 150) - 50.0f;
-    right_target_angle = (float)(rand() % 150) + 50.0f;
-    left_fragment = fruit_ninja_physics_spawn_fragment(game, fruit->def->split_left_rel_path, x - 6.0f, y, 0.0f, 0.0f, 0.0f, fruit->angle);
-    right_fragment = fruit_ninja_physics_spawn_fragment(game, fruit->def->split_right_rel_path, x + 6.0f, y, 0.0f, 0.0f, 0.0f, fruit->angle);
-    if(left_fragment != NULL) {
-        left_fragment->target_x = left_target_x;
-        left_fragment->target_y = target_y;
-        left_fragment->start_angle = fruit->angle;
-        left_fragment->target_angle = left_target_angle;
-        left_fragment->life_ms = FRUIT_NINJA_DROP_TIME_MS;
-        left_fragment->phase_elapsed_ms = 0U;
-    }
-    if(right_fragment != NULL) {
-        right_fragment->target_x = right_target_x;
-        right_fragment->target_y = target_y;
-        right_fragment->start_angle = fruit->angle;
-        right_fragment->target_angle = right_target_angle;
-        right_fragment->life_ms = FRUIT_NINJA_DROP_TIME_MS;
-        right_fragment->phase_elapsed_ms = 0U;
-    }
-    spawn_flash(game, fruit->x + dx * 0.1f, fruit->y + dy * 0.1f);
-    game->score += 1;
-    game->score_pulse_ms = FRUIT_NINJA_SCORE_PULSE_MS;
-    if(game->score > game->volley_num * game->volley_multiple) {
-        game->volley_num += 1U;
-        game->volley_multiple += 50U;
-    }
-    fruit_ninja_state_update_score_label(game);
-    if(game->audio_ready) {
-        fruit_ninja_audio_play_slice();
-    }
-}
-
-static void handle_home_menu_hits(fruit_ninja_game_t * game, fruit_ninja_segment_t segment)
-{
-    uint32_t i;
-
-    if(!segment.valid || game->state != FRUIT_NINJA_STATE_HOME) return;
-
-    for(i = 0; i < 3; ++i) {
-        fruit_ninja_fruit_t * fruit = &game->home_menu_fruits[i];
-        if(!fruit->active || fruit->sliced) continue;
-
-        if(fruit_ninja_segment_hits_circle(segment.x1, segment.y1, segment.x2, segment.y2,
-                                           fruit->x, fruit->y, fruit->radius)) {
-            spawn_flash(game, fruit->x, fruit->y);
-            if(i == 1U) {
-                fruit_ninja_hide_obj(fruit->whole_image);
-                fruit_ninja_hide_obj(fruit->shadow_image);
-                fruit->sliced = true;
-                if(game->audio_ready) fruit_ninja_audio_play_slice();
-                lv_timer_create(fruit_ninja_state_start_running_timer_cb, FRUIT_NINJA_HOME_SLICE_FEEDBACK_MS, game);
-                fruit_ninja_hide_obj(game->hint_label);
-                return;
-            }
-
-            fruit->sliced = true;
-            fruit_ninja_hide_obj(fruit->whole_image);
-            fruit_ninja_hide_obj(fruit->shadow_image);
-            if(game->audio_ready) {
-                if(i == 2U) fruit_ninja_audio_play_boom();
-                else fruit_ninja_audio_play_slice();
-            }
-            lv_timer_create(fruit_ninja_state_restore_home_fruit_timer_cb, FRUIT_NINJA_HOME_SLICE_FEEDBACK_MS, fruit);
-            return;
-        }
-    }
-}
-
-static void handle_segment_hits(fruit_ninja_game_t * game, fruit_ninja_segment_t segment)
-{
-    uint32_t i;
-    if(!segment.valid || game->state != FRUIT_NINJA_STATE_RUNNING) return;
-
-    for(i = 0; i < FRUIT_NINJA_MAX_FRUITS; ++i) {
-        fruit_ninja_fruit_t * fruit = &game->fruits[i];
-        if(!fruit->active || fruit->sliced) continue;
-
-        if(fruit_ninja_segment_hits_circle(segment.x1, segment.y1, segment.x2, segment.y2,
-                                           fruit->x, fruit->y, fruit->radius)) {
-            slice_fruit(game, fruit, segment.x2 - segment.x1, segment.y2 - segment.y1);
-            if(game->state != FRUIT_NINJA_STATE_RUNNING) {
-                return;
-            }
-        }
-    }
-}
-
-static void input_event_cb(lv_event_t * e)
-{
-    fruit_ninja_game_t * game = lv_event_get_user_data(e);
-    lv_event_code_t code = lv_event_get_code(e);
-    lv_indev_t * indev = lv_indev_active();
-    lv_point_t point;
-    fruit_ninja_segment_t segment;
-
-    if(indev == NULL) return;
-    lv_indev_get_point(indev, &point);
-
-    if(code == LV_EVENT_PRESSED) {
-        if(game->state == FRUIT_NINJA_STATE_HOME) {
-            fruit_ninja_input_begin(game, (float)point.x, (float)point.y);
-            return;
-        }
-        if(game->state == FRUIT_NINJA_STATE_GAME_OVER) {
-            fruit_ninja_state_enter_home(game);
-            return;
-        }
-        if(game->state == FRUIT_NINJA_STATE_RUNNING) {
-            fruit_ninja_input_begin(game, (float)point.x, (float)point.y);
-        }
-        return;
-    }
-
-    if(code == LV_EVENT_PRESSING && game->state == FRUIT_NINJA_STATE_RUNNING) {
-        segment = fruit_ninja_input_push_point(game, (float)point.x, (float)point.y);
-        handle_segment_hits(game, segment);
-        return;
-    }
-
-    if(code == LV_EVENT_PRESSING && game->state == FRUIT_NINJA_STATE_HOME) {
-        segment = fruit_ninja_input_push_point(game, (float)point.x, (float)point.y);
-        handle_home_menu_hits(game, segment);
-        return;
-    }
-
-    if((code == LV_EVENT_RELEASED || code == LV_EVENT_PRESS_LOST)
-       && (game->state == FRUIT_NINJA_STATE_RUNNING || game->state == FRUIT_NINJA_STATE_HOME)) {
-        fruit_ninja_input_end(game);
-    }
-}
-
 static void update_timer_cb(lv_timer_t * timer)
 {
     fruit_ninja_game_t * game = timer->user_data;
@@ -367,8 +127,8 @@ static void update_timer_cb(lv_timer_t * timer)
         game->flash_age_ms += FRUIT_NINJA_UPDATE_MS;
     }
 
-    clear_flash_if_needed(game);
-    update_score_pulse(game);
+    fruit_ninja_effects_update_flash(game);
+    fruit_ninja_effects_update_score_pulse(game);
     fruit_ninja_input_tick(game, FRUIT_NINJA_UPDATE_MS);
 
     if(game->state == FRUIT_NINJA_STATE_HOME) {
@@ -404,7 +164,7 @@ static void update_timer_cb(lv_timer_t * timer)
             lv_obj_set_style_opa(game->smoke_overlay, (lv_opa_t)smoke_opa, 0);
         }
         if(game->state_elapsed_ms >= FRUIT_NINJA_EXPLODING_MS) {
-            clear_explosion_overlays(game);
+            fruit_ninja_effects_clear_explosion(game);
             fruit_ninja_state_enter_game_over(game);
         }
     }
@@ -486,13 +246,8 @@ static void create_static_scene(fruit_ninja_game_t * game)
     lv_obj_align(game->restart_label, LV_ALIGN_CENTER, 0, 80);
     fruit_ninja_hide_obj(game->restart_label);
 
-    lv_obj_add_flag(game->input_layer, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_add_event_cb(game->input_layer, input_event_cb, LV_EVENT_PRESSED, game);
-    lv_obj_add_event_cb(game->input_layer, input_event_cb, LV_EVENT_PRESSING, game);
-    lv_obj_add_event_cb(game->input_layer, input_event_cb, LV_EVENT_RELEASED, game);
-    lv_obj_add_event_cb(game->input_layer, input_event_cb, LV_EVENT_PRESS_LOST, game);
-
     fruit_ninja_input_init(game);
+    fruit_ninja_input_attach(game);
 }
 
 void fruit_ninja_start(void)

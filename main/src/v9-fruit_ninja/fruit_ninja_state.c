@@ -1,4 +1,5 @@
 #include "fruit_ninja_state.h"
+#include "fruit_ninja_effects.h"
 #include "fruit_ninja_internal.h"
 #include "fruit_ninja_physics.h"
 #include "fruit_ninja_audio.h"
@@ -13,7 +14,6 @@ static const char * const s_lose_full[3]  = { "images/xf.png",  "images/xxf.png"
 static const char * const s_lose_empty[3] = { "images/x.png",   "images/xx.png",   "images/xxx.png"  };
 static const char *       s_shadow        = "images/shadow.png";
 static const char *       s_smoke         = "images/smoke.png";
-static const char *       s_flash         = "images/flash.png";
 
 static const lv_point_t s_home_menu_positions[3] = {
     { 137, 333 },
@@ -66,27 +66,6 @@ static void stage_home_object(lv_obj_t * obj, bool visible, lv_opa_t opa, int32_
     else fruit_ninja_hide_obj(obj);
     lv_obj_set_style_opa(obj, opa, 0);
     lv_obj_set_y(obj, y);
-}
-
-static void spawn_flash(fruit_ninja_game_t * game, float x, float y)
-{
-    lv_obj_t * flash = fruit_ninja_create_file_image(game->effect_layer, s_flash);
-    fruit_ninja_set_image_geometry(flash, (int32_t)x - 179, (int32_t)y - 10, 358, 20);
-    lv_obj_set_style_opa(flash, LV_OPA_100, 0);
-    lv_image_set_pivot(flash, 179, 10);
-    lv_image_set_scale(flash, 1);
-
-    if(game->flash_overlay != NULL) {
-        lv_obj_delete(game->flash_overlay);
-    }
-    game->flash_overlay = flash;
-    game->flash_age_ms = 0;
-}
-
-static void clear_explosion_overlays(fruit_ninja_game_t * game)
-{
-    fruit_ninja_destroy_if_present(&game->smoke_overlay);
-    fruit_ninja_destroy_if_present(&game->white_flash_overlay);
 }
 
 void fruit_ninja_state_start_running_timer_cb(lv_timer_t * timer)
@@ -236,7 +215,7 @@ void fruit_ninja_state_enter_home(fruit_ninja_game_t * game)
     fruit_ninja_hide_obj(game->game_over_image);
     fruit_ninja_hide_obj(game->restart_label);
     fruit_ninja_show_obj(game->hint_label);
-    clear_explosion_overlays(game);
+    fruit_ninja_effects_clear_explosion(game);
     fruit_ninja_audio_stop_music();
     if(game->audio_ready) {
         fruit_ninja_audio_play_menu_music();
@@ -265,7 +244,7 @@ void fruit_ninja_state_enter_running(fruit_ninja_game_t * game)
     fruit_ninja_hide_obj(game->game_over_image);
     fruit_ninja_hide_obj(game->restart_label);
     fruit_ninja_hide_obj(game->hint_label);
-    clear_explosion_overlays(game);
+    fruit_ninja_effects_clear_explosion(game);
     if(game->audio_ready) {
         fruit_ninja_audio_stop_music();
         fruit_ninja_audio_play_start();
@@ -293,7 +272,7 @@ void fruit_ninja_state_enter_exploding(fruit_ninja_game_t * game, float x, float
 
     game->state = FRUIT_NINJA_STATE_EXPLODING;
     game->state_elapsed_ms = 0;
-    spawn_flash(game, x, y);
+    fruit_ninja_effects_spawn_flash(game, x, y);
     if(game->smoke_overlay == NULL) {
         game->smoke_overlay = lv_image_create(game->overlay_layer);
         if(fruit_ninja_make_image_path(path, sizeof(path), s_smoke)) {

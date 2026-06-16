@@ -5,6 +5,13 @@
 
 #include "lvgl/lvgl.h"
 
+#include "fruit_ninja_audio.h"
+#include "fruit_ninja_collision.h"
+#include "fruit_ninja_effects.h"
+#include "fruit_ninja_internal.h"
+#include "fruit_ninja_physics.h"
+#include "fruit_ninja_state.h"
+
 static fruit_ninja_segment_t empty_segment(void)
 {
     fruit_ninja_segment_t segment;
@@ -72,6 +79,164 @@ static fruit_ninja_segment_t push_internal(fruit_ninja_game_t * game, float x, f
 
     update_trail_points(game);
     return segment;
+}
+
+static void slice_fruit(fruit_ninja_game_t * game, fruit_ninja_fruit_t * fruit, float dx, float dy)
+{
+    fruit_ninja_fragment_t * left_fragment;
+    fruit_ninja_fragment_t * right_fragment;
+    float left_target_x;
+    float right_target_x;
+    float target_y = FRUIT_NINJA_JS_START_Y;
+    float left_target_angle;
+    float right_target_angle;
+    float x = fruit->x - (float)fruit->def->width / 2.0f;
+    float y = fruit->y - (float)fruit->def->height / 2.0f;
+
+    if(fruit->sliced) return;
+
+    if(fruit->def->is_bomb) {
+        fruit_ninja_hide_obj(fruit->whole_image);
+        fruit_ninja_hide_obj(fruit->shadow_image);
+        fruit_ninja_state_enter_exploding(game, fruit->x, fruit->y);
+        return;
+    }
+
+    fruit->sliced = true;
+    fruit_ninja_hide_obj(fruit->whole_image);
+    fruit_ninja_hide_obj(fruit->shadow_image);
+    left_target_x = -(float)((rand() % 200) + 75);
+    right_target_x = (float)(rand() % 275);
+    left_target_angle = -(float)(rand() % 150) - 50.0f;
+    right_target_angle = (float)(rand() % 150) + 50.0f;
+    left_fragment = fruit_ninja_physics_spawn_fragment(game, fruit->def->split_left_rel_path, x - 6.0f, y, 0.0f, 0.0f, 0.0f, fruit->angle);
+    right_fragment = fruit_ninja_physics_spawn_fragment(game, fruit->def->split_right_rel_path, x + 6.0f, y, 0.0f, 0.0f, 0.0f, fruit->angle);
+    if(left_fragment != NULL) {
+        left_fragment->target_x = left_target_x;
+        left_fragment->target_y = target_y;
+        left_fragment->start_angle = fruit->angle;
+        left_fragment->target_angle = left_target_angle;
+        left_fragment->life_ms = FRUIT_NINJA_DROP_TIME_MS;
+        left_fragment->phase_elapsed_ms = 0U;
+    }
+    if(right_fragment != NULL) {
+        right_fragment->target_x = right_target_x;
+        right_fragment->target_y = target_y;
+        right_fragment->start_angle = fruit->angle;
+        right_fragment->target_angle = right_target_angle;
+        right_fragment->life_ms = FRUIT_NINJA_DROP_TIME_MS;
+        right_fragment->phase_elapsed_ms = 0U;
+    }
+    fruit_ninja_effects_spawn_flash(game, fruit->x + dx * 0.1f, fruit->y + dy * 0.1f);
+    game->score += 1;
+    game->score_pulse_ms = FRUIT_NINJA_SCORE_PULSE_MS;
+    if(game->score > game->volley_num * game->volley_multiple) {
+        game->volley_num += 1U;
+        game->volley_multiple += 50U;
+    }
+    fruit_ninja_state_update_score_label(game);
+    if(game->audio_ready) {
+        fruit_ninja_audio_play_slice();
+    }
+}
+
+static void handle_home_menu_hits(fruit_ninja_game_t * game, fruit_ninja_segment_t segment)
+{
+    uint32_t i;
+
+    if(!segment.valid || game->state != FRUIT_NINJA_STATE_HOME) return;
+
+    for(i = 0; i < 3; ++i) {
+        fruit_ninja_fruit_t * fruit = &game->home_menu_fruits[i];
+        if(!fruit->active || fruit->sliced) continue;
+
+        if(fruit_ninja_segment_hits_circle(segment.x1, segment.y1, segment.x2, segment.y2,
+                                           fruit->x, fruit->y, fruit->radius)) {
+            fruit_ninja_effects_spawn_flash(game, fruit->x, fruit->y);
+            if(i == 1U) {
+                fruit_ninja_hide_obj(fruit->whole_image);
+                fruit_ninja_hide_obj(fruit->shadow_image);
+                fruit->sliced = true;
+                if(game->audio_ready) fruit_ninja_audio_play_slice();
+                lv_timer_create(fruit_ninja_state_start_running_timer_cb, FRUIT_NINJA_HOME_SLICE_FEEDBACK_MS, game);
+                fruit_ninja_hide_obj(game->hint_label);
+                return;
+            }
+
+            fruit->sliced = true;
+            fruit_ninja_hide_obj(fruit->whole_image);
+            fruit_ninja_hide_obj(fruit->shadow_image);
+            if(game->audio_ready) {
+                if(i == 2U) fruit_ninja_audio_play_boom();
+                else fruit_ninja_audio_play_slice();
+            }
+            lv_timer_create(fruit_ninja_state_restore_home_fruit_timer_cb, FRUIT_NINJA_HOME_SLICE_FEEDBACK_MS, fruit);
+            return;
+        }
+    }
+}
+
+static void handle_segment_hits(fruit_ninja_game_t * game, fruit_ninja_segment_t segment)
+{
+    uint32_t i;
+    if(!segment.valid || game->state != FRUIT_NINJA_STATE_RUNNING) return;
+
+    for(i = 0; i < FRUIT_NINJA_MAX_FRUITS; ++i) {
+        fruit_ninja_fruit_t * fruit = &game->fruits[i];
+        if(!fruit->active || fruit->sliced) continue;
+
+        if(fruit_ninja_segment_hits_circle(segment.x1, segment.y1, segment.x2, segment.y2,
+                                           fruit->x, fruit->y, fruit->radius)) {
+            slice_fruit(game, fruit, segment.x2 - segment.x1, segment.y2 - segment.y1);
+            if(game->state != FRUIT_NINJA_STATE_RUNNING) {
+                return;
+            }
+        }
+    }
+}
+
+static void input_event_cb(lv_event_t * e)
+{
+    fruit_ninja_game_t * game = lv_event_get_user_data(e);
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_indev_t * indev = lv_indev_active();
+    lv_point_t point;
+    fruit_ninja_segment_t segment;
+
+    if(indev == NULL) return;
+    lv_indev_get_point(indev, &point);
+
+    if(code == LV_EVENT_PRESSED) {
+        if(game->state == FRUIT_NINJA_STATE_HOME) {
+            fruit_ninja_input_begin(game, (float)point.x, (float)point.y);
+            return;
+        }
+        if(game->state == FRUIT_NINJA_STATE_GAME_OVER) {
+            fruit_ninja_state_enter_home(game);
+            return;
+        }
+        if(game->state == FRUIT_NINJA_STATE_RUNNING) {
+            fruit_ninja_input_begin(game, (float)point.x, (float)point.y);
+        }
+        return;
+    }
+
+    if(code == LV_EVENT_PRESSING && game->state == FRUIT_NINJA_STATE_RUNNING) {
+        segment = fruit_ninja_input_push_point(game, (float)point.x, (float)point.y);
+        handle_segment_hits(game, segment);
+        return;
+    }
+
+    if(code == LV_EVENT_PRESSING && game->state == FRUIT_NINJA_STATE_HOME) {
+        segment = fruit_ninja_input_push_point(game, (float)point.x, (float)point.y);
+        handle_home_menu_hits(game, segment);
+        return;
+    }
+
+    if((code == LV_EVENT_RELEASED || code == LV_EVENT_PRESS_LOST)
+       && (game->state == FRUIT_NINJA_STATE_RUNNING || game->state == FRUIT_NINJA_STATE_HOME)) {
+        fruit_ninja_input_end(game);
+    }
 }
 
 void fruit_ninja_input_init(fruit_ninja_game_t * game)
@@ -142,4 +307,13 @@ void fruit_ninja_input_tick(fruit_ninja_game_t * game, uint32_t delta_ms)
 
     new_opa = (uint32_t)((180U - trail->fade_ms) * LV_OPA_90 / 180U);
     lv_obj_set_style_line_opa(trail->line, (lv_opa_t)new_opa, 0);
+}
+
+void fruit_ninja_input_attach(fruit_ninja_game_t * game)
+{
+    lv_obj_add_flag(game->input_layer, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_event_cb(game->input_layer, input_event_cb, LV_EVENT_PRESSED, game);
+    lv_obj_add_event_cb(game->input_layer, input_event_cb, LV_EVENT_PRESSING, game);
+    lv_obj_add_event_cb(game->input_layer, input_event_cb, LV_EVENT_RELEASED, game);
+    lv_obj_add_event_cb(game->input_layer, input_event_cb, LV_EVENT_PRESS_LOST, game);
 }

@@ -192,5 +192,6 @@ fruit_ninja_segment_t fruit_ninja_input_begin(fruit_ninja_game_t * game, float x
 fruit_ninja_segment_t fruit_ninja_input_push_point(fruit_ninja_game_t * game, float x, float y);
 void fruit_ninja_input_end(fruit_ninja_game_t * game);
 void fruit_ninja_input_tick(fruit_ninja_game_t * game, uint32_t delta_ms);
+void fruit_ninja_input_attach(fruit_ninja_game_t * game);
 
 #endif
