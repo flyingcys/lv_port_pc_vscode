@@ -33,17 +33,7 @@ void fruit_ninja_effects_update_flash(fruit_ninja_game_t * game)
         uint32_t scale;
         uint32_t opa;
 
-        if(age < FRUIT_NINJA_FLASH_MS / 2U) {
-            scale = 32U + (age * (256U - 32U)) / (FRUIT_NINJA_FLASH_MS / 2U);
-        }
-        else if(age < FRUIT_NINJA_FLASH_MS) {
-            uint32_t down_age = age - FRUIT_NINJA_FLASH_MS / 2U;
-            scale = 256U - (down_age * (256U - 48U)) / (FRUIT_NINJA_FLASH_MS / 2U);
-        }
-        else {
-            scale = 48U;
-        }
-
+        /* age >= 200ms: 销毁 flash 对象 */
         if(age >= FRUIT_NINJA_FLASH_MS) {
             lv_obj_delete(game->flash_overlay);
             game->flash_overlay = NULL;
@@ -51,7 +41,23 @@ void fruit_ninja_effects_update_flash(fruit_ninja_game_t * game)
             return;
         }
 
-        opa = (uint32_t)((FRUIT_NINJA_FLASH_MS - age) * LV_OPA_100 / FRUIT_NINJA_FLASH_MS);
+        /* 对齐 JS: scale 1e-5→1→1e-5 over 200ms
+         * 放大相(0–100ms): scale 0→256
+         * 缩小相(100–200ms): scale 256→0
+         * 注意先乘后除避免截断;scale=0 时图不可见,等价 JS 的 1e-5 */
+        if(age < FRUIT_NINJA_FLASH_MS / 2U) {
+            scale = age * 256U / (FRUIT_NINJA_FLASH_MS / 2U);
+        }
+        else {
+            uint32_t down_age = age - FRUIT_NINJA_FLASH_MS / 2U;
+            scale = 256U - down_age * 256U / (FRUIT_NINJA_FLASH_MS / 2U);
+        }
+        /* scale=0 时 LVGL 可能异常,用下限 1 */
+        if(scale == 0U) scale = 1U;
+
+        /* opa 同步线性淡出:(200 - age) * 255 / 200 */
+        opa = (FRUIT_NINJA_FLASH_MS - age) * 255U / FRUIT_NINJA_FLASH_MS;
+
         /* 动画 scale 为相对原始位图(256=原始);叠加 viewport scale 以适配 letterbox。 */
         lv_image_set_scale(game->flash_overlay,
                            (uint16_t)((float)scale * fruit_ninja_viewport_scale()));
