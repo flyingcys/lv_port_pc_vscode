@@ -3,6 +3,7 @@
 #include "icon_replace_2_metrics.h"
 #include "icon_replace_2_theme.h"
 #include "icon_replace_2_glyphs.h"
+#include "icon_replace_2_data.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -55,9 +56,53 @@ icon_replace_2_panels_t * ir2_panels_create(lv_obj_t * parent){
     ir2_widget_slider(p->control, IR2_GLYPH_SUN, 70);
     ir2_widget_slider(p->control, IR2_GLYPH_SPEAKER, 45);
 
-    /* 通知中心容器：Task 20 填充内容；先建空容器置于底部外 */
+    /* 通知中心容器：Task 20 填充内容 */
     p->notify = ir2_widget_glass_panel(parent, m->screen_w, m->panel_h);
     lv_obj_set_pos(p->notify, 0, m->screen_h);
+
+    lv_obj_set_flex_flow(p->notify, LV_FLEX_FLOW_COLUMN);
+    lv_obj_set_flex_align(p->notify, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
+    lv_obj_set_style_pad_all(p->notify, 16, 0);
+    lv_obj_set_style_pad_row(p->notify, 10, 0);
+    make_title(p->notify, "\xe9\x80\x9a\xe7\x9f\xa5\xe4\xb8\xad\xe5\xbf\x83");
+
+    for(uint32_t i = 0; i < ir2_notify_count; i++) {
+        const ir2_notify_t * n = &ir2_notifies[i];
+        const ir2_metrics_t * mm = ir2_metrics();
+        const ir2_theme_t * th = ir2_theme();
+        lv_obj_t * card = lv_obj_create(p->notify);
+        lv_obj_remove_style_all(card);
+        lv_obj_set_size(card, LV_PCT(100), LV_SIZE_CONTENT);
+        lv_obj_set_style_bg_color(card, th->glass_hi, 0);
+        lv_obj_set_style_bg_opa(card, th->glass_hi_opa, 0);
+        lv_obj_set_style_radius(card, 14, 0);
+        lv_obj_set_style_pad_all(card, 10, 0);
+        lv_obj_set_flex_flow(card, LV_FLEX_FLOW_COLUMN);
+        lv_obj_set_style_pad_row(card, 4, 0);
+        ir2_make_decorative(card);
+
+        lv_obj_t * title = lv_label_create(card);
+        lv_obj_set_style_text_font(title, mm->font_label, 0);
+        lv_obj_set_style_text_color(title, th->text_primary, 0);
+        lv_label_set_text(title, n->title);
+        ir2_make_decorative(title);
+
+        lv_obj_t * body = lv_label_create(card);
+        lv_obj_set_style_text_font(body, mm->font_label, 0);
+        lv_obj_set_style_text_color(body, th->text_primary, 0);
+        lv_obj_set_style_text_opa(body, 204, 0); /* ~LV_OPA_80 */
+        lv_obj_set_width(body, LV_PCT(100));
+        lv_label_set_long_mode(body, LV_LABEL_LONG_MODE_WRAP);
+        lv_label_set_text(body, n->body);
+        ir2_make_decorative(body);
+
+        lv_obj_t * tm = lv_label_create(card);
+        lv_obj_set_style_text_font(tm, mm->font_label, 0);
+        lv_obj_set_style_text_color(tm, th->text_primary, 0);
+        lv_obj_set_style_text_opa(tm, 128, 0); /* ~LV_OPA_50 */
+        lv_label_set_text(tm, n->time);
+        ir2_make_decorative(tm);
+    }
 
     return p;
 }
