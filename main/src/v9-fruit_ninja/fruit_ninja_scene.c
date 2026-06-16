@@ -184,9 +184,11 @@ static void update_timer_cb(lv_timer_t * timer)
 
     if(game->state == FRUIT_NINJA_STATE_EXPLODING) {
         if(game->white_flash_overlay != NULL) {
+            /* 全屏白闪:从 LV_OPA_COVER(255) 线性渐隐到 0,持续 4000ms。
+             * 先乘后除避免整型截断。elapsed 超出时钳为 0。 */
             uint32_t flash_opa = (game->state_elapsed_ms >= FRUIT_NINJA_EXPLODING_MS)
                                ? 0U
-                               : (uint32_t)((FRUIT_NINJA_EXPLODING_MS - game->state_elapsed_ms) * LV_OPA_80 / FRUIT_NINJA_EXPLODING_MS);
+                               : (uint32_t)((FRUIT_NINJA_EXPLODING_MS - game->state_elapsed_ms) * (uint32_t)LV_OPA_COVER / FRUIT_NINJA_EXPLODING_MS);
             lv_obj_set_style_bg_opa(game->white_flash_overlay, (lv_opa_t)flash_opa, 0);
         }
         if(game->smoke_overlay != NULL) {
@@ -194,6 +196,16 @@ static void update_timer_cb(lv_timer_t * timer)
                                ? 0U
                                : (uint32_t)((1200U - game->state_elapsed_ms) * LV_OPA_90 / 1200U);
             lv_obj_set_style_opa(game->smoke_overlay, (lv_opa_t)smoke_opa, 0);
+        }
+        /* 背景抖动:每 50ms 随机偏移 ±6 物理像素(直接操作物理坐标,不经 viewport)。 */
+        if(game->background != NULL) {
+            game->shake_accum_ms += FRUIT_NINJA_UPDATE_MS;
+            if(game->shake_accum_ms >= 50U) {
+                game->shake_accum_ms = 0;
+                lv_obj_set_pos(game->background,
+                               (rand() % 13) - 6,
+                               (rand() % 13) - 6);
+            }
         }
         if(game->state_elapsed_ms >= FRUIT_NINJA_EXPLODING_MS) {
             fruit_ninja_effects_clear_explosion(game);

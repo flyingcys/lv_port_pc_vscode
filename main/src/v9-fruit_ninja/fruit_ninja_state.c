@@ -203,6 +203,11 @@ void fruit_ninja_state_enter_home(fruit_ninja_game_t * game)
 {
     game->state = FRUIT_NINJA_STATE_HOME;
     game->state_elapsed_ms = 0;
+    game->shake_accum_ms = 0;
+    /* 进入 home 时确保背景复位到原点(避免抖动偏移残留)。 */
+    if(game->background != NULL) {
+        lv_obj_set_pos(game->background, 0, 0);
+    }
     game->spawn_elapsed_ms = 0;
     game->spawn_interval_ms = 1000;
     clear_fruits(game);
@@ -234,6 +239,7 @@ void fruit_ninja_state_enter_running(fruit_ninja_game_t * game)
 {
     game->state = FRUIT_NINJA_STATE_RUNNING;
     game->state_elapsed_ms = 0;
+    game->shake_accum_ms = 0;
     game->spawn_elapsed_ms = 500;
     game->spawn_interval_ms = 1000;
     clear_fruits(game);
@@ -263,6 +269,10 @@ void fruit_ninja_state_enter_game_over(fruit_ninja_game_t * game)
 {
     game->state = FRUIT_NINJA_STATE_GAME_OVER;
     game->state_elapsed_ms = 0;
+    /* 退出 EXPLODING 时复位背景位置,避免抖动偏移残留。 */
+    if(game->background != NULL) {
+        lv_obj_set_pos(game->background, 0, 0);
+    }
     fruit_ninja_hide_obj(game->hint_label);
     fruit_ninja_show_obj(game->game_over_image);
     fruit_ninja_show_obj(game->restart_label);
@@ -280,6 +290,7 @@ void fruit_ninja_state_enter_exploding(fruit_ninja_game_t * game, float x, float
 
     game->state = FRUIT_NINJA_STATE_EXPLODING;
     game->state_elapsed_ms = 0;
+    game->shake_accum_ms = 0;
     fruit_ninja_effects_spawn_flash(game, x, y);
     fruit_ninja_effects_start_blast(game, x, y);
     if(game->smoke_overlay == NULL) {
@@ -308,7 +319,7 @@ void fruit_ninja_state_enter_exploding(fruit_ninja_game_t * game, float x, float
         lv_obj_set_size(game->white_flash_overlay, LV_PCT(100), LV_PCT(100));
         lv_obj_set_style_bg_color(game->white_flash_overlay, lv_color_hex(0xffffff), 0);
     }
-    lv_obj_set_style_bg_opa(game->white_flash_overlay, LV_OPA_80, 0);
+    lv_obj_set_style_bg_opa(game->white_flash_overlay, LV_OPA_COVER, 0);
     fruit_ninja_show_obj(game->white_flash_overlay);
     for(i = 0; i < FRUIT_NINJA_MAX_FRUITS; ++i) {
         if(game->fruits[i].active) {
