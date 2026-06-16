@@ -10,6 +10,13 @@
 #define FRUIT_NINJA_MAX_FRAGMENTS 32
 #define FRUIT_NINJA_MAX_TRAIL_POINTS 24
 #define FRUIT_NINJA_SEGMENT_MIN_DIST 12.0f
+#define FRUIT_NINJA_MAX_BLADE_SEGMENTS 48
+
+typedef struct {
+    bool     active;
+    float    sx, sy, ex, ey;   /* 逻辑坐标 */
+    uint32_t age_ms;
+} fruit_ninja_blade_seg_t;
 #define FRUIT_NINJA_SCREEN_WIDTH 640
 #define FRUIT_NINJA_SCREEN_HEIGHT 480
 
@@ -160,9 +167,12 @@ typedef struct fruit_ninja_game {
     lv_obj_t * home_layer;
     lv_obj_t * fruit_layer;
     lv_obj_t * effect_layer;
+    lv_obj_t * effect_canvas;
     lv_obj_t * hud_layer;
     lv_obj_t * overlay_layer;
     lv_obj_t * input_layer;
+
+    fruit_ninja_blade_seg_t blades[FRUIT_NINJA_MAX_BLADE_SEGMENTS];
 
     lv_obj_t * logo_image;
     lv_obj_t * home_mask_image;

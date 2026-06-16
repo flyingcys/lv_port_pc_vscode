@@ -11,6 +11,7 @@
 #include "fruit_ninja_internal.h"
 #include "fruit_ninja_physics.h"
 #include "fruit_ninja_state.h"
+#include "fruit_ninja_viewport.h"
 
 static fruit_ninja_segment_t empty_segment(void)
 {
@@ -21,23 +22,10 @@ static fruit_ninja_segment_t empty_segment(void)
 
 static void update_trail_points(fruit_ninja_game_t * game)
 {
-    uint16_t i;
-    fruit_ninja_trail_t * trail = &game->trail;
-    /* trail->points 存逻辑坐标(供碰撞);设给 lv_line 时经 viewport 映射回物理。 */
-    static lv_point_precise_t phys_points[FRUIT_NINJA_MAX_TRAIL_POINTS];
-
-    for(i = 0; i < trail->count; ++i) {
-        phys_points[i].x = (lv_value_precise_t)fruit_ninja_viewport_x((float)trail->points[i].x);
-        phys_points[i].y = (lv_value_precise_t)fruit_ninja_viewport_y((float)trail->points[i].y);
-    }
-
-    if(trail->count >= 2) {
-        lv_line_set_points(trail->line, phys_points, trail->count);
-        lv_obj_clear_flag(trail->line, LV_OBJ_FLAG_HIDDEN);
-    }
-    else {
-        lv_obj_add_flag(trail->line, LV_OBJ_FLAG_HIDDEN);
-    }
+    /* trail->points 存逻辑坐标,供碰撞检测使用。
+     * 刀光绘制已改由 canvas 特效层(fruit_ninja_effects_push_blade/render)负责,
+     * 此处不再操作 lv_line。 */
+    (void)game;
 }
 
 static fruit_ninja_segment_t push_internal(fruit_ninja_game_t * game, float x, float y, bool reset_chain)
@@ -148,6 +136,11 @@ static void handle_home_menu_hits(fruit_ninja_game_t * game, fruit_ninja_segment
 
     if(!segment.valid || game->state != FRUIT_NINJA_STATE_HOME) return;
 
+    /* 投喂刀光段(canvas 特效层渲染) */
+    if(game->effect_canvas != NULL) {
+        fruit_ninja_effects_push_blade(game, segment.x1, segment.y1, segment.x2, segment.y2);
+    }
+
     for(i = 0; i < 3; ++i) {
         fruit_ninja_fruit_t * fruit = &game->home_menu_fruits[i];
         if(!fruit->active || fruit->sliced) continue;
@@ -182,6 +175,11 @@ static void handle_segment_hits(fruit_ninja_game_t * game, fruit_ninja_segment_t
 {
     uint32_t i;
     if(!segment.valid || game->state != FRUIT_NINJA_STATE_RUNNING) return;
+
+    /* 投喂刀光段(canvas 特效层渲染) */
+    if(game->effect_canvas != NULL) {
+        fruit_ninja_effects_push_blade(game, segment.x1, segment.y1, segment.x2, segment.y2);
+    }
 
     for(i = 0; i < FRUIT_NINJA_MAX_FRUITS; ++i) {
         fruit_ninja_fruit_t * fruit = &game->fruits[i];
@@ -249,15 +247,10 @@ void fruit_ninja_input_init(fruit_ninja_game_t * game)
 {
     fruit_ninja_trail_t * trail = &game->trail;
 
+    /* 刀光拖尾已由 canvas 特效层(fruit_ninja_effects_render)渲染,
+     * lv_line 不再创建;逻辑点采集仍保留用于碰撞检测。 */
     memset(trail, 0, sizeof(*trail));
-    trail->line = lv_line_create(game->effect_layer);
-    lv_obj_remove_style_all(trail->line);
-    /* 线宽用 viewport_len 等比缩放(逻辑 10px)。 */
-    lv_obj_set_style_line_width(trail->line,
-                                (int32_t)(fruit_ninja_viewport_len(10.0f) + 0.5f), 0);
-    lv_obj_set_style_line_color(trail->line, lv_color_hex(0xcbd3db), 0);
-    lv_obj_set_style_line_opa(trail->line, LV_OPA_90, 0);
-    lv_obj_add_flag(trail->line, LV_OBJ_FLAG_HIDDEN);
+    trail->line = NULL;
 }
 
 void fruit_ninja_input_reset(fruit_ninja_game_t * game)
@@ -269,7 +262,7 @@ void fruit_ninja_input_reset(fruit_ninja_game_t * game)
     trail->has_last_point = false;
     trail->count = 0;
     trail->fade_ms = 0;
-    lv_obj_add_flag(trail->line, LV_OBJ_FLAG_HIDDEN);
+    /* trail->line 不再使用(刀光由 canvas 特效层渲染) */
 }
 
 fruit_ninja_segment_t fruit_ninja_input_begin(fruit_ninja_game_t * game, float x, float y)
@@ -296,25 +289,17 @@ void fruit_ninja_input_end(fruit_ninja_game_t * game)
 void fruit_ninja_input_tick(fruit_ninja_game_t * game, uint32_t delta_ms)
 {
     fruit_ninja_trail_t * trail = &game->trail;
-    uint32_t new_opa;
 
-    if(trail->pressing) {
-        lv_obj_set_style_line_opa(trail->line, LV_OPA_90, 0);
-        return;
-    }
+    /* 刀光拖尾渐隐已由 canvas 特效层(fruit_ninja_effects_render)逐段管理,
+     * 此处仅维护 trail 活跃状态供碰撞逻辑使用。 */
+    if(trail->pressing) return;
 
-    if(!trail->active) {
-        return;
-    }
+    if(!trail->active) return;
 
     trail->fade_ms += delta_ms;
-    if(trail->fade_ms >= 180) {
+    if(trail->fade_ms >= 180U) {
         fruit_ninja_input_reset(game);
-        return;
     }
-
-    new_opa = (uint32_t)((180U - trail->fade_ms) * LV_OPA_90 / 180U);
-    lv_obj_set_style_line_opa(trail->line, (lv_opa_t)new_opa, 0);
 }
 
 void fruit_ninja_input_attach(fruit_ninja_game_t * game)

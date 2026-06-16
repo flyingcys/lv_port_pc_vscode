@@ -271,6 +271,21 @@ target_link_libraries(fruit_ninja_viewport_test m)
 add_test(NAME fruit_ninja_viewport_test COMMAND $<TARGET_FILE:fruit_ninja_viewport_test>)
 set_tests_properties(fruit_ninja_viewport_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
+add_executable(fruit_ninja_blade_test
+    ${PROJECT_SOURCE_DIR}/main/tests/fruit_ninja_blade_test.c
+    ${PROJECT_SOURCE_DIR}/main/tests/fruit_ninja_effects_stub.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9-fruit_ninja/fruit_ninja_effects.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9-fruit_ninja/fruit_ninja_easing.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9-fruit_ninja/fruit_ninja_viewport.c)
+target_include_directories(fruit_ninja_blade_test PRIVATE ${PROJECT_SOURCE_DIR})
+target_compile_definitions(fruit_ninja_blade_test PRIVATE LV_CONF_INCLUDE_SIMPLE)
+target_link_libraries(fruit_ninja_blade_test lvgl lvgl::thorvg m)
+if(LV_USE_LIBPNG)
+    target_link_libraries(fruit_ninja_blade_test ${PNG_LIBRARIES})
+endif()
+add_test(NAME fruit_ninja_blade_test COMMAND $<TARGET_FILE:fruit_ninja_blade_test>)
+set_tests_properties(fruit_ninja_blade_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
 add_executable(apple_music_data_test
     ${PROJECT_SOURCE_DIR}/main/tests/apple_music_data_test.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_data.c

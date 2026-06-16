@@ -1,5 +1,9 @@
 #include "fruit_ninja_effects.h"
 #include "fruit_ninja_internal.h"
+#include "fruit_ninja_viewport.h"
+
+/* 静态 canvas 缓冲区:按最大物理屏 800x480 ARGB8888 = 1.5 MB */
+static uint8_t g_canvas_buf[800 * 480 * 4];
 
 void fruit_ninja_effects_spawn_flash(fruit_ninja_game_t * game, float x, float y)
 {
@@ -87,4 +91,92 @@ void fruit_ninja_effects_clear_explosion(fruit_ninja_game_t * game)
 {
     fruit_ninja_destroy_if_present(&game->smoke_overlay);
     fruit_ninja_destroy_if_present(&game->white_flash_overlay);
+}
+
+/* ---- Canvas 特效层 ---- */
+
+float fruit_ninja_blade_width(uint32_t age_ms)
+{
+    if(age_ms >= 200U) return 0.0f;
+    return 10.0f * (1.0f - (float)age_ms / 200.0f);
+}
+
+void fruit_ninja_effects_init_canvas(fruit_ninja_game_t * game, int phys_w, int phys_h)
+{
+    game->effect_canvas = lv_canvas_create(game->effect_layer);
+    lv_canvas_set_buffer(game->effect_canvas, g_canvas_buf, phys_w, phys_h,
+                         LV_COLOR_FORMAT_ARGB8888);
+    lv_obj_set_pos(game->effect_canvas, 0, 0);
+    lv_canvas_fill_bg(game->effect_canvas, lv_color_black(), LV_OPA_TRANSP);
+}
+
+void fruit_ninja_effects_push_blade(fruit_ninja_game_t * game,
+                                    float sx, float sy, float ex, float ey)
+{
+    int i;
+    int oldest;
+    uint32_t max_age;
+
+    for(i = 0; i < FRUIT_NINJA_MAX_BLADE_SEGMENTS; ++i) {
+        if(!game->blades[i].active) {
+            game->blades[i].active = true;
+            game->blades[i].sx     = sx;
+            game->blades[i].sy     = sy;
+            game->blades[i].ex     = ex;
+            game->blades[i].ey     = ey;
+            game->blades[i].age_ms = 0U;
+            return;
+        }
+    }
+    /* 满了:覆盖最老的 */
+    oldest = 0;
+    max_age = 0U;
+    for(i = 0; i < FRUIT_NINJA_MAX_BLADE_SEGMENTS; ++i) {
+        if(game->blades[i].age_ms >= max_age) {
+            max_age = game->blades[i].age_ms;
+            oldest = i;
+        }
+    }
+    game->blades[oldest].active = true;
+    game->blades[oldest].sx     = sx;
+    game->blades[oldest].sy     = sy;
+    game->blades[oldest].ex     = ex;
+    game->blades[oldest].ey     = ey;
+    game->blades[oldest].age_ms = 0U;
+}
+
+void fruit_ninja_effects_render(fruit_ninja_game_t * game, uint32_t delta_ms)
+{
+    int i;
+    lv_layer_t layer;
+    lv_draw_line_dsc_t ld;
+
+    lv_canvas_fill_bg(game->effect_canvas, lv_color_black(), LV_OPA_TRANSP);
+    lv_canvas_init_layer(game->effect_canvas, &layer);
+
+    /* 刀光:逐段按年龄衰减线宽 */
+    lv_draw_line_dsc_init(&ld);
+    ld.color       = lv_color_hex(0xcbd3db);
+    ld.opa         = LV_OPA_90;
+    ld.round_start = 1;
+    ld.round_end   = 1;
+
+    for(i = 0; i < FRUIT_NINJA_MAX_BLADE_SEGMENTS; ++i) {
+        fruit_ninja_blade_seg_t * b = &game->blades[i];
+        float w;
+        if(!b->active) continue;
+        b->age_ms += delta_ms;
+        w = fruit_ninja_blade_width(b->age_ms);
+        if(w <= 0.1f) { b->active = false; continue; }
+        ld.width = (int32_t)fruit_ninja_viewport_len(w);
+        if(ld.width < 1) ld.width = 1;
+        ld.p1.x = (lv_value_precise_t)fruit_ninja_viewport_x(b->sx);
+        ld.p1.y = (lv_value_precise_t)fruit_ninja_viewport_y(b->sy);
+        ld.p2.x = (lv_value_precise_t)fruit_ninja_viewport_x(b->ex);
+        ld.p2.y = (lv_value_precise_t)fruit_ninja_viewport_y(b->ey);
+        lv_draw_line(&layer, &ld);
+    }
+    /* Phase 4 Task10 在此追加汁液绘制;Phase 5 追加光线/火焰 */
+
+    lv_canvas_finish_layer(game->effect_canvas, &layer);
 }

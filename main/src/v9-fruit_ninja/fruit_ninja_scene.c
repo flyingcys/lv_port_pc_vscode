@@ -200,6 +200,11 @@ static void update_timer_cb(lv_timer_t * timer)
             fruit_ninja_state_enter_game_over(game);
         }
     }
+
+    /* canvas 特效层收尾绘制(刀光逐段衰减) */
+    if(game->effect_canvas != NULL) {
+        fruit_ninja_effects_render(game, FRUIT_NINJA_UPDATE_MS);
+    }
 }
 
 static void create_static_scene(fruit_ninja_game_t * game)
@@ -294,6 +299,14 @@ static void create_static_scene(fruit_ninja_game_t * game)
 
     fruit_ninja_input_init(game);
     fruit_ninja_input_attach(game);
+
+    /* 创建 canvas 特效层(effect_layer 已建,canvas 透明覆盖全物理屏) */
+    {
+        lv_display_t * disp = lv_display_get_default();
+        int pw = (int)lv_display_get_horizontal_resolution(disp);
+        int ph = (int)lv_display_get_vertical_resolution(disp);
+        fruit_ninja_effects_init_canvas(game, pw, ph);
+    }
 }
 
 void fruit_ninja_start(void)
