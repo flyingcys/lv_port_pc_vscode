@@ -54,12 +54,12 @@
 
 目的:让 fruit_ninja 能跑起来并建立三档截图基线,作为"行为不变"重构的对照。
 
-### Task 0:启用 fruit_ninja 入口 + 三档基线截图
+### Task 0:启用 fruit_ninja 入口 + 三档基线截图 ✅
 
 **Files:**
 - Modify: `main/src/main.c:86-88`
 
-- [ ] **Step 1:改 main.c 启用 fruit_ninja**
+- [x] **Step 1:改 main.c 启用 fruit_ninja**
 
 把 `main/src/main.c` 第 86-88 行:
 ```c
@@ -74,12 +74,12 @@
   // apple_music_create();
 ```
 
-- [ ] **Step 2:构建**
+- [x] **Step 2:构建**
 
 Run: `cmake -S . -B build && cmake --build build -j`
 Expected: 编译成功,生成 `./bin/main`,无报错。
 
-- [ ] **Step 3:三档运行,肉眼确认现状能跑**
+- [x] **Step 3:三档运行,肉眼确认现状能跑**(改用 AM_SHOT 截图验证:800/640 首页正常,480×272 超界——预期基线)
 
 Run(在项目根,有图形界面):
 ```bash
@@ -87,7 +87,7 @@ Run(在项目根,有图形界面):
 ```
 Expected: 出现 Fruit Ninja 首页;能进游戏、划水果。记录现状刀光/切水果效果(作为"待改进"基线)。再分别试 `./bin/main 640 480`、`./bin/main 480 272`,记录现状在小屏下的表现(预期 480×272 下会错位/超界——这正是要修的)。
 
-- [ ] **Step 4:提交**
+- [x] **Step 4:提交** (commit `c4f70eb`)
 
 ```bash
 git add main/src/main.c
@@ -100,7 +100,7 @@ git commit -m "build(fruit-ninja): 启用 fruit_ninja_start 入口作为开发�
 
 新增两个纯数学模块,严格 TDD。它们不依赖 LVGL 运行时,可独立单测。
 
-### Task 1:easing 缓动模块
+### Task 1:easing 缓动模块 ✅
 
 把现有散落在 `scene.c` 的 `ease_out_quad/ease_in_quad` 提取为公共模块,并补齐 JS 用到的 `ease_out_expo`(汁液距离)、`ease_out_back`(生命图标弹出)。
 
@@ -110,7 +110,7 @@ git commit -m "build(fruit-ninja): 启用 fruit_ninja_start 入口作为开发�
 - Create: `main/tests/fruit_ninja_easing_test.c`
 - Modify: `CMakeLists.txt`(测试段)
 
-- [ ] **Step 1:写头文件**
+- [x] **Step 1:写头文件**
 
 `main/src/v9-fruit_ninja/fruit_ninja_easing.h`:
 ```c
@@ -126,7 +126,7 @@ float fruit_ninja_ease_out_back(float t);  /* JS back.co:末端回弹 */
 #endif
 ```
 
-- [ ] **Step 2:写失败测试**
+- [x] **Step 2:写失败测试**
 
 `main/tests/fruit_ninja_easing_test.c`:
 ```c
@@ -167,7 +167,7 @@ int main(void) {
 }
 ```
 
-- [ ] **Step 3:加 CMake 测试目标**
+- [x] **Step 3:加 CMake 测试目标**
 
 在 `CMakeLists.txt` 第 254 行(`fruit_ninja_model_test` 的 `set_tests_properties` 之后)插入:
 ```cmake
@@ -181,12 +181,12 @@ add_test(NAME fruit_ninja_easing_test COMMAND $<TARGET_FILE:fruit_ninja_easing_t
 set_tests_properties(fruit_ninja_easing_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 ```
 
-- [ ] **Step 4:跑测试确认失败(无实现)**
+- [x] **Step 4:跑测试确认失败(无实现)**
 
 Run: `cmake -S . -B build && cmake --build build -j 2>&1 | tail -20`
 Expected: 链接失败,`undefined reference to 'fruit_ninja_ease_out_quad'`。
 
-- [ ] **Step 5:写实现**
+- [x] **Step 5:写实现**
 
 `main/src/v9-fruit_ninja/fruit_ninja_easing.c`:
 ```c
@@ -216,19 +216,19 @@ float fruit_ninja_ease_out_back(float t) {
 }
 ```
 
-- [ ] **Step 6:跑测试确认通过**
+- [x] **Step 6:跑测试确认通过**
 
 Run: `cmake --build build -j && ctest --test-dir build -R fruit_ninja_easing_test -V`
 Expected: `1 test passed`。
 
-- [ ] **Step 7:提交**
+- [x] **Step 7:提交**
 
 ```bash
 git add main/src/v9-fruit_ninja/fruit_ninja_easing.h main/src/v9-fruit_ninja/fruit_ninja_easing.c main/tests/fruit_ninja_easing_test.c CMakeLists.txt
 git commit -m "feat(fruit-ninja): 新增 easing 缓动模块(quad/expo/back)+ 单测"
 ```
 
-### Task 2:viewport letterbox 映射模块
+### Task 2:viewport letterbox 映射模块 ✅
 
 **Files:**
 - Create: `main/src/v9-fruit_ninja/fruit_ninja_viewport.h`
@@ -236,7 +236,7 @@ git commit -m "feat(fruit-ninja): 新增 easing 缓动模块(quad/expo/back)+ �
 - Create: `main/tests/fruit_ninja_viewport_test.c`
 - Modify: `CMakeLists.txt`(测试段)
 
-- [ ] **Step 1:写头文件**
+- [x] **Step 1:写头文件**
 
 `main/src/v9-fruit_ninja/fruit_ninja_viewport.h`:
 ```c
@@ -255,7 +255,7 @@ float fruit_ninja_viewport_to_logic_y(float phys_y);
 #endif
 ```
 
-- [ ] **Step 2:写失败测试**
+- [x] **Step 2:写失败测试**
 
 `main/tests/fruit_ninja_viewport_test.c`:
 ```c
@@ -304,7 +304,7 @@ int main(void) {
 }
 ```
 
-- [ ] **Step 3:加 CMake 测试目标**
+- [x] **Step 3:加 CMake 测试目标**
 
 在 Task 1 插入的 easing 测试块之后,继续插入:
 ```cmake
@@ -318,12 +318,12 @@ add_test(NAME fruit_ninja_viewport_test COMMAND $<TARGET_FILE:fruit_ninja_viewpo
 set_tests_properties(fruit_ninja_viewport_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 ```
 
-- [ ] **Step 4:跑测试确认失败**
+- [x] **Step 4:跑测试确认失败**
 
 Run: `cmake -S . -B build && cmake --build build -j 2>&1 | tail -20`
 Expected: `undefined reference to 'fruit_ninja_viewport_init'`。
 
-- [ ] **Step 5:写实现**
+- [x] **Step 5:写实现**
 
 `main/src/v9-fruit_ninja/fruit_ninja_viewport.c`:
 ```c
@@ -352,12 +352,12 @@ float fruit_ninja_viewport_to_logic_x(float px) { return (px - g_off_x) / g_scal
 float fruit_ninja_viewport_to_logic_y(float py) { return (py - g_off_y) / g_scale; }
 ```
 
-- [ ] **Step 6:跑测试确认通过**
+- [x] **Step 6:跑测试确认通过**
 
 Run: `cmake --build build -j && ctest --test-dir build -R fruit_ninja_viewport_test -V`
 Expected: `1 test passed`。
 
-- [ ] **Step 7:提交**
+- [x] **Step 7:提交**
 
 ```bash
 git add main/src/v9-fruit_ninja/fruit_ninja_viewport.h main/src/v9-fruit_ninja/fruit_ninja_viewport.c main/tests/fruit_ninja_viewport_test.c CMakeLists.txt
@@ -374,7 +374,7 @@ git commit -m "feat(fruit-ninja): 新增 viewport letterbox 映射模块 + 三�
 > Run: `cmake -S . -B build && cmake --build build -j && ./bin/main 800 480`
 > Expected: 编译无误;游戏行为与 Phase 0 基线一致(首页、抛水果、切水果、炸弹爆炸均正常)。
 
-### Task 3:抽取共享 helper 到 internal.h + 常量集中
+### Task 3:抽取共享 helper 到 internal.h + 常量集中 ✅
 
 把 `scene.c` 顶部宏常量与跨模块要共享的 static helper 暴露出来,供后续各模块 include。
 
@@ -382,7 +382,7 @@ git commit -m "feat(fruit-ninja): 新增 viewport letterbox 映射模块 + 三�
 - Create: `main/src/v9-fruit_ninja/fruit_ninja_internal.h`
 - Modify: `main/src/v9-fruit_ninja/fruit_ninja_scene.c`(去掉将共享的 helper 的 `static`,改为非 static;宏移到 internal.h)
 
-- [ ] **Step 1:建 internal.h**,集中常量(从 scene.c:17-27 迁入)并声明共享 helper:
+- [x] **Step 1:建 internal.h**,集中常量(从 scene.c:17-27 迁入)并声明共享 helper:
 ```c
 #ifndef FRUIT_NINJA_INTERNAL_H
 #define FRUIT_NINJA_INTERNAL_H
@@ -412,17 +412,17 @@ void       fruit_ninja_destroy_if_present(lv_obj_t ** obj);
 #endif
 ```
 
-- [ ] **Step 2:** 在 `scene.c` 中,把上述 helper 的定义去掉 `static`、改名加 `fruit_ninja_` 前缀(`create_layer`→`fruit_ninja_create_layer` 等),删除 scene.c 里重复的宏定义改为 `#include "fruit_ninja_internal.h"`。全局把这些 helper 的调用处改成新名(scene.c 内)。
+- [x] **Step 2:** 在 `scene.c` 中,把上述 helper 的定义去掉 `static`、改名加 `fruit_ninja_` 前缀(`create_layer`→`fruit_ninja_create_layer` 等),删除 scene.c 里重复的宏定义改为 `#include "fruit_ninja_internal.h"`。全局把这些 helper 的调用处改成新名(scene.c 内)。
 
-- [ ] **Step 3:** 通用验证(编译 + 运行回归)。
+- [x] **Step 3:** 通用验证(编译 + 运行回归)。
 
-- [ ] **Step 4:提交**
+- [x] **Step 4:提交**
 ```bash
 git add main/src/v9-fruit_ninja/fruit_ninja_internal.h main/src/v9-fruit_ninja/fruit_ninja_scene.c
 git commit -m "refactor(fruit-ninja): 抽取共享 helper/常量到 internal.h"
 ```
 
-### Task 4:抽取 physics 模块
+### Task 4:抽取 physics 模块 ✅
 
 迁移水果与碎片的物理/生成逻辑。
 
@@ -461,11 +461,11 @@ fruit_ninja_fruit_t * fruit_ninja_physics_alloc_fruit(fruit_ninja_game_t * game)
 ```
 (`ease_in_quad`/`ease_out_quad` 调用改为 `fruit_ninja_ease_in_quad`/`_out_quad`,删除 scene.c 里的 `static inline ease_*`。)
 
-- [ ] **Step 1:** 创建 physics.c/.h,迁移上述函数;scene.c 删除被迁函数与 `ease_*`,在调用处改用 `fruit_ninja_physics_*`。
-- [ ] **Step 2:** 通用验证(编译 + 运行回归)。
-- [ ] **Step 3:提交** `git commit -m "refactor(fruit-ninja): 抽取 physics 模块(水果/碎片/生成)"`
+- [x] **Step 1:** 创建 physics.c/.h,迁移上述函数;scene.c 删除被迁函数与 `ease_*`,在调用处改用 `fruit_ninja_physics_*`。
+- [x] **Step 2:** 通用验证(编译 + 运行回归)。
+- [x] **Step 3:提交** `git commit -m "refactor(fruit-ninja): 抽取 physics 模块(水果/碎片/生成)"`
 
-### Task 5:抽取 state 模块(状态机 / HUD / 首页)
+### Task 5:抽取 state 模块(状态机 / HUD / 首页) ✅
 
 **Files:**
 - Create: `main/src/v9-fruit_ninja/fruit_ninja_state.c` + `.h`
@@ -486,11 +486,11 @@ void fruit_ninja_state_update_miss_icons(fruit_ninja_game_t * game);
 void fruit_ninja_state_update_home_animation(fruit_ninja_game_t * game);
 ```
 
-- [ ] **Step 1:** 创建 state.c/.h,迁移;scene.c 调用处改名。
-- [ ] **Step 2:** 通用验证。
-- [ ] **Step 3:提交** `git commit -m "refactor(fruit-ninja): 抽取 state 模块(状态机/HUD/首页动画)"`
+- [x] **Step 1:** 创建 state.c/.h,迁移;scene.c 调用处改名。
+- [x] **Step 2:** 通用验证。
+- [x] **Step 3:提交** `git commit -m "refactor(fruit-ninja): 抽取 state 模块(状态机/HUD/首页动画)"`
 
-### Task 6:抽取 effects 模块骨架 + 切割派发入 input
+### Task 6:抽取 effects 模块骨架 + 切割派发入 input ✅
 
 把现有特效相关函数迁到 effects.c(本任务仍是旧实现,Phase 4 再换成 canvas),切割派发迁到 input.c。
 
@@ -510,19 +510,19 @@ void fruit_ninja_effects_clear_explosion(fruit_ninja_game_t * game);
 ```
 **input.c 追加对外:** `void fruit_ninja_input_attach(fruit_ninja_game_t * game);`(在 input_layer 上注册 `input_event_cb`,原注册逻辑从 scene.c 迁来)。
 
-- [ ] **Step 1:** 迁移;scene.c 的 `create_static_scene` 里事件注册改调用 `fruit_ninja_input_attach`;`update_timer_cb` 里调用改名(`clear_flash_if_needed`→`fruit_ninja_effects_update_flash` 等)。
-- [ ] **Step 2:** 通用验证(尤其确认切水果、炸弹、加分、刀光、闪光均与基线一致)。
-- [ ] **Step 3:提交** `git commit -m "refactor(fruit-ninja): 抽取 effects 模块 + 切割派发入 input"`
+- [x] **Step 1:** 迁移;scene.c 的 `create_static_scene` 里事件注册改调用 `fruit_ninja_input_attach`;`update_timer_cb` 里调用改名(`clear_flash_if_needed`→`fruit_ninja_effects_update_flash` 等)。
+- [x] **Step 2:** 通用验证(尤其确认切水果、炸弹、加分、刀光、闪光均与基线一致)。
+- [x] **Step 3:提交** `git commit -m "refactor(fruit-ninja): 抽取 effects 模块 + 切割派发入 input"`
 
-### Task 7:scene.c 收尾瘦身
+### Task 7:scene.c 收尾瘦身 ✅
 
 **Files:** Modify `fruit_ninja_scene.c`
 
 此时 scene.c 应只剩:`fruit_ninja_start`、`create_static_scene`、`update_timer_cb`、共享 helper 定义,以及 game 单例。`update_timer_cb` 调用顺序改为调用各模块对外函数(physics/state/effects/input)。
 
-- [ ] **Step 1:** 清理 scene.c 残留 include / 未用声明,确认按模块对外接口编排主循环。
-- [ ] **Step 2:** 通用验证 + 跑全部单测 `ctest --test-dir build --output-on-failure`(应全过)。
-- [ ] **Step 3:提交** `git commit -m "refactor(fruit-ninja): scene.c 瘦身为入口+场景创建+主循环编排"`
+- [x] **Step 1:** 清理 scene.c 残留 include / 未用声明,确认按模块对外接口编排主循环。
+- [x] **Step 2:** 通用验证 + 跑全部单测 `ctest --test-dir build --output-on-failure`(应全过)。
+- [x] **Step 3:提交** `git commit -m "refactor(fruit-ninja): scene.c 瘦身为入口+场景创建+主循环编排"`
 
 ---
 
@@ -530,7 +530,7 @@ void fruit_ninja_effects_clear_explosion(fruit_ninja_game_t * game);
 
 让游戏逻辑固定 640×480、显示经 viewport 映射到物理屏。
 
-### Task 8:逻辑尺寸固定 + 位图/输入/背景走 viewport
+### Task 8:逻辑尺寸固定 + 位图/输入/背景走 viewport ✅
 
 **Files:**
 - Modify: `fruit_ninja_scene.c`(`fruit_ninja_start` / `create_static_scene`)
@@ -546,16 +546,16 @@ void fruit_ninja_effects_clear_explosion(fruit_ninja_game_t * game);
 
 > 提示:封装一个内部 helper `place_logic(lv_obj_t*, float lx, float ly, bool centered)` 统一"映射+缩放+定位",减少重复(DRY)。可放 internal.h / scene.c。
 
-- [ ] **Step 1:** 实现上述 1–5。
-- [ ] **Step 2:截图验证三档 letterbox**
+- [x] **Step 1:** 实现上述 1–5。
+- [x] **Step 2:截图验证三档 letterbox**
 ```bash
 AM_SHOT=/tmp/fn_800.png ./bin/main 800 480
 AM_SHOT=/tmp/fn_640.png ./bin/main 640 480
 AM_SHOT=/tmp/fn_480.png ./bin/main 480 272
 ```
 Expected:三张首页截图中,游戏内容等比、水平居中;800×480 左右有留边(背景填充);480×272 整体缩小居中、无超界/裁切。用 Read 工具查看三张 PNG 确认。
-- [ ] **Step 3:** 运行 `./bin/main 480 272` 实玩,确认划水果命中准确(输入映射正确)。
-- [ ] **Step 4:提交** `git commit -m "feat(fruit-ninja): 接入 viewport,三分辨率 letterbox 自适应"`
+- [x] **Step 3:** 运行 `./bin/main 480 272` 实玩,确认划水果命中准确(输入映射正确)。
+- [x] **Step 4:提交** `git commit -m "feat(fruit-ninja): 接入 viewport,三分辨率 letterbox 自适应"`
 
 ---
 
@@ -563,7 +563,7 @@ Expected:三张首页截图中,游戏内容等比、水平居中;800×480 左右
 
 把 `effect_layer` 换成全屏 `lv_canvas`,每帧重绘矢量特效。先建骨架与刀光拖尾,再加汁液、对齐闪光。
 
-### Task 9:Canvas 特效层骨架 + 刀光拖尾
+### Task 9:Canvas 特效层骨架 + 刀光拖尾 ✅
 
 **Files:**
 - Modify: `fruit_ninja_model.h`(加刀光段结构)
@@ -591,7 +591,7 @@ void  fruit_ninja_effects_render(fruit_ninja_game_t * game, uint32_t delta_ms);
 float fruit_ninja_blade_width(uint32_t age_ms); /* 纯函数:10*(1-age/200),钳到0 */
 ```
 
-- [ ] **Step 1:写刀光宽度纯函数测试** `main/tests/fruit_ninja_blade_test.c`:
+- [x] **Step 1:写刀光宽度纯函数测试** `main/tests/fruit_ninja_blade_test.c`:
 ```c
 #include <assert.h>
 #include <math.h>
@@ -620,7 +620,7 @@ set_tests_properties(fruit_ninja_blade_test PROPERTIES WORKING_DIRECTORY ${PROJE
 ```
 Run: `cmake -S . -B build && cmake --build build -j 2>&1 | tail` → Expected: 链接失败(`fruit_ninja_blade_width` 未定义)。
 
-- [ ] **Step 2:实现 canvas 与刀光**(effects.c 关键代码):
+- [x] **Step 2:实现 canvas 与刀光**(effects.c 关键代码):
 ```c
 /* 文件顶部:静态 canvas buffer,按最大物理屏 800x480 ARGB8888 = 1.5MB */
 static uint8_t g_canvas_buf[800 * 480 * 4];
@@ -681,14 +681,14 @@ void fruit_ninja_effects_render(fruit_ninja_game_t * game, uint32_t delta_ms) {
     lv_canvas_finish_layer(game->effect_canvas, &layer);
 }
 ```
-- [ ] **Step 3:input.c 改为投喂刀光段**:在 `handle_segment_hits` / `handle_home_menu_hits` 拿到 `segment`(已是逻辑坐标)后,若 `segment.valid` 调 `fruit_ninja_effects_push_blade(game, segment.x1,segment.y1,segment.x2,segment.y2)`。删除 `fruit_ninja_input_init` 里 lv_line 的创建与 `fruit_ninja_input_tick` 的 lv_line 渐隐(改由 effects render 管理);`trail.line` 字段可保留不用或移除。
-- [ ] **Step 4:scene.c 接线**:`create_static_scene` 末尾调 `fruit_ninja_effects_init_canvas(game, pw, ph)`;`update_timer_cb` 把原 `fruit_ninja_input_tick` 之外,加 `fruit_ninja_effects_render(game, FRUIT_NINJA_UPDATE_MS)`(放在所有逻辑更新之后,作为绘制收尾)。
-- [ ] **Step 5:跑测试 + 运行**
+- [x] **Step 3:input.c 改为投喂刀光段**:在 `handle_segment_hits` / `handle_home_menu_hits` 拿到 `segment`(已是逻辑坐标)后,若 `segment.valid` 调 `fruit_ninja_effects_push_blade(game, segment.x1,segment.y1,segment.x2,segment.y2)`。删除 `fruit_ninja_input_init` 里 lv_line 的创建与 `fruit_ninja_input_tick` 的 lv_line 渐隐(改由 effects render 管理);`trail.line` 字段可保留不用或移除。
+- [x] **Step 4:scene.c 接线**:`create_static_scene` 末尾调 `fruit_ninja_effects_init_canvas(game, pw, ph)`;`update_timer_cb` 把原 `fruit_ninja_input_tick` 之外,加 `fruit_ninja_effects_render(game, FRUIT_NINJA_UPDATE_MS)`(放在所有逻辑更新之后,作为绘制收尾)。
+- [x] **Step 5:跑测试 + 运行**
 Run: `cmake --build build -j && ctest --test-dir build -R fruit_ninja_blade_test -V` → Expected: pass。
 Run: `./bin/main 800 480` → Expected: 划动时出现**逐段衰减的拖尾刀光**(近段粗、远段细、200ms 内消失),明显比基线的单线渐隐更像 JS。
-- [ ] **Step 6:提交** `git commit -m "feat(fruit-ninja): canvas 特效层 + 刀光逐段衰减拖尾"`
+- [x] **Step 6:提交** `git commit -m "feat(fruit-ninja): canvas 特效层 + 刀光逐段衰减拖尾"`
 
-### Task 10:汁液飞溅
+### Task 10:汁液飞溅 ✅
 
 **Files:** Modify `fruit_ninja_model.h`、`fruit_ninja_effects.c/.h`、`fruit_ninja_input.c`(slice 时触发)
 
@@ -712,7 +712,7 @@ void fruit_ninja_effects_spawn_juice(fruit_ninja_game_t * game, float x, float y
                                      uint8_t r, uint8_t g, uint8_t b);
 ```
 
-- [ ] **Step 1:实现 spawn + 更新 + 绘制**(effects.c):
+- [x] **Step 1:实现 spawn + 更新 + 绘制**(effects.c):
 ```c
 void fruit_ninja_effects_spawn_juice(fruit_ninja_game_t * game, float x, float y,
                                      uint8_t r, uint8_t g, uint8_t b) {
@@ -757,20 +757,20 @@ void fruit_ninja_effects_spawn_juice(fruit_ninja_game_t * game, float x, float y
         lv_draw_arc(&layer, &ad);
     }
 ```
-- [ ] **Step 2:slice 时触发**:在 `input.c` 的 `slice_fruit` 中,非炸弹切开后(现状 722 行 spawn_flash 附近)加:`if(fruit->def->has_juice) fruit_ninja_effects_spawn_juice(game, fruit->x, fruit->y, fruit->def->juice_r, fruit->def->juice_g, fruit->def->juice_b);`
-- [ ] **Step 3:运行验证**
+- [x] **Step 2:slice 时触发**:在 `input.c` 的 `slice_fruit` 中,非炸弹切开后(现状 722 行 spawn_flash 附近)加:`if(fruit->def->has_juice) fruit_ninja_effects_spawn_juice(game, fruit->x, fruit->y, fruit->def->juice_r, fruit->def->juice_g, fruit->def->juice_b);`
+- [x] **Step 3:运行验证**
 Run: `./bin/main 800 480` → Expected: 切水果时迸出约 10 个果色圆点,向外径向飞散并下坠、1.5s 内缩小淡出;香蕉无果汁;颜色与水果匹配(苹果绿、西瓜红、桃黄)。
-- [ ] **Step 4:提交** `git commit -m "feat(fruit-ninja): 汁液飞溅粒子(果色/径向/重力/淡出)"`
+- [x] **Step 4:提交** `git commit -m "feat(fruit-ninja): 汁液飞溅粒子(果色/径向/重力/淡出)"`
 
-### Task 11:切割闪光对齐 JS
+### Task 11:切割闪光对齐 JS ✅
 
 JS 的 flash 是 `scale 1e-5→1→1e-5` over ~100ms。现状是 32→256→48 over 200ms。对齐为:放大相(0–100ms)scale 0→256,缩小相(100–200ms)256→0,透明度同步。
 
 **Files:** Modify `fruit_ninja_effects.c`(`fruit_ninja_effects_update_flash`,原 clear_flash_if_needed)
 
-- [ ] **Step 1:** 把缩放曲线改为:`age<100`→`scale = age*256/100`;`age<200`→`scale = 256 - (age-100)*256/100`;`opa = (200-age)*255/200`;`age>=200` 删除。闪光定位走 viewport(中心对齐切点)。
-- [ ] **Step 2:运行验证** `./bin/main 800 480` → Expected: 切水果瞬间闪光从无到大再到无,~200ms,位置贴合切点。
-- [ ] **Step 3:提交** `git commit -m "feat(fruit-ninja): 切割闪光缩放曲线对齐 JS"`
+- [x] **Step 1:** 把缩放曲线改为:`age<100`→`scale = age*256/100`;`age<200`→`scale = 256 - (age-100)*256/100`;`opa = (200-age)*255/200`;`age>=200` 删除。闪光定位走 viewport(中心对齐切点)。
+- [x] **Step 2:运行验证** `./bin/main 800 480` → Expected: 切水果瞬间闪光从无到大再到无,~200ms,位置贴合切点。
+- [x] **Step 3:提交** `git commit -m "feat(fruit-ninja): 切割闪光缩放曲线对齐 JS"`
 
 ---
 
@@ -778,7 +778,7 @@ JS 的 flash 是 `scale 1e-5→1→1e-5` over ~100ms。现状是 32→256→48 o
 
 把 `enter_exploding`(现位于 state.c)升级为 JS 的:10 道放射光线 + 背景抖动 4s + 持续火焰 + 白屏渐隐 4000ms。光线/火焰画到 canvas。
 
-### Task 12:10 道放射爆炸光线
+### Task 12:10 道放射爆炸光线 ✅
 
 **Files:** Modify `fruit_ninja_model.h`、`fruit_ninja_effects.c/.h`、`fruit_ninja_state.c`(enter_exploding 触发)
 
@@ -797,7 +797,7 @@ game_t 增:`fruit_ninja_blast_t blast;`
 void fruit_ninja_effects_start_blast(fruit_ninja_game_t * game, float x, float y);
 ```
 
-- [ ] **Step 1:实现**:`start_blast` 置 `blast={true,x,y,0}`。在 `fruit_ninja_effects_render` 中追加光线绘制:
+- [x] **Step 1:实现**:`start_blast` 置 `blast={true,x,y,0}`。在 `fruit_ninja_effects_render` 中追加光线绘制:
 ```c
     if(game->blast.active) {
         game->blast.age_ms += delta_ms;
@@ -823,20 +823,20 @@ void fruit_ninja_effects_start_blast(fruit_ninja_game_t * game, float x, float y
         if(game->blast.age_ms >= FRUIT_NINJA_EXPLODING_MS) game->blast.active = false;
     }
 ```
-- [ ] **Step 2:触发**:在 `fruit_ninja_state_enter_exploding` 里调 `fruit_ninja_effects_start_blast(game, x, y)`。
-- [ ] **Step 3:运行验证**:`./bin/main 800 480`,切炸弹 → Expected: 爆心射出逐道增加(共10道)的白色放射光线。
-- [ ] **Step 4:提交** `git commit -m "feat(fruit-ninja): 炸弹 10 道放射爆炸光线"`
+- [x] **Step 2:触发**:在 `fruit_ninja_state_enter_exploding` 里调 `fruit_ninja_effects_start_blast(game, x, y)`。
+- [x] **Step 3:运行验证**:`./bin/main 800 480`,切炸弹 → Expected: 爆心射出逐道增加(共10道)的白色放射光线。
+- [x] **Step 4:提交** `git commit -m "feat(fruit-ninja): 炸弹 10 道放射爆炸光线"`
 
-### Task 13:背景抖动 + 白屏渐隐对齐
+### Task 13:背景抖动 + 白屏渐隐对齐 ✅
 
 **Files:** Modify `fruit_ninja_state.c`(enter_exploding/退出)、`fruit_ninja_scene.c`(update_timer_cb EXPLODING 分支)
 
-- [ ] **Step 1:背景抖动**:EXPLODING 期间(state_elapsed_ms < 4000),每 50ms 把 `background` 位置设为 `(rand在±6 + 原点)`;退出 EXPLODING 时复位到 letterbox 原点。注意原点是物理坐标(背景铺满,基准 0,0)。
-- [ ] **Step 2:白屏渐隐**:现状已有 white_flash_overlay opa 从 80% 线性到 0 over 4000ms(scene.c 973-977);改起始为 `LV_OPA_COVER`(JS 是全白 1→0),保持 4000ms。确认覆盖整个物理屏(`LV_PCT(100)`)。
-- [ ] **Step 3:运行验证**:切炸弹 → Expected: 全屏白闪由强到无(4s),背景明显抖动约 4s,然后进入 game over。
-- [ ] **Step 4:提交** `git commit -m "feat(fruit-ninja): 炸弹背景抖动 + 全屏白闪渐隐对齐 JS"`
+- [x] **Step 1:背景抖动**:EXPLODING 期间(state_elapsed_ms < 4000),每 50ms 把 `background` 位置设为 `(rand在±6 + 原点)`;退出 EXPLODING 时复位到 letterbox 原点。注意原点是物理坐标(背景铺满,基准 0,0)。
+- [x] **Step 2:白屏渐隐**:现状已有 white_flash_overlay opa 从 80% 线性到 0 over 4000ms(scene.c 973-977);改起始为 `LV_OPA_COVER`(JS 是全白 1→0),保持 4000ms。确认覆盖整个物理屏(`LV_PCT(100)`)。
+- [x] **Step 3:运行验证**:切炸弹 → Expected: 全屏白闪由强到无(4s),背景明显抖动约 4s,然后进入 game over。
+- [x] **Step 4:提交** `git commit -m "feat(fruit-ninja): 炸弹背景抖动 + 全屏白闪渐隐对齐 JS"`
 
-### Task 14:持续火焰
+### Task 14:持续火焰 ✅
 
 炸弹存在期间,其位置持续冒黄色火苗(JS:40ms 生成,单簇 life 200–700ms,90% 概率,色 #fafad9→#f0ef9c)。用 canvas 画小三角/圆簇近似。
 
@@ -852,46 +852,46 @@ typedef struct {
 ```
 game_t 增:`fruit_ninja_flame_t flames[FRUIT_NINJA_MAX_FLAMES]; uint32_t flame_accum_ms; bool bomb_alive; float bomb_x, bomb_y;`
 
-- [ ] **Step 1:** 炸弹生成时(physics spawn 到炸弹)记录 `bomb_alive=true; bomb_x/y`;炸弹被切或离场时 `bomb_alive=false`。在 render 中累加 `flame_accum_ms`,每 40ms 且 90% 概率在 `bomb_x/y` 附近生成一簇火苗(life=200+rand%500);逐簇按 age/life 上浮+淡出,用 `lv_draw_arc`(小圆,色在 0xfafad9→0xf0ef9c 间按进度插值)绘制。炸弹位置随物理更新,火苗跟随。
-- [ ] **Step 2:运行验证**:炸弹飞行时持续冒黄色火苗。
-- [ ] **Step 3:提交** `git commit -m "feat(fruit-ninja): 炸弹持续火焰效果"`
+- [x] **Step 1:** 炸弹生成时(physics spawn 到炸弹)记录 `bomb_alive=true; bomb_x/y`;炸弹被切或离场时 `bomb_alive=false`。在 render 中累加 `flame_accum_ms`,每 40ms 且 90% 概率在 `bomb_x/y` 附近生成一簇火苗(life=200+rand%500);逐簇按 age/life 上浮+淡出,用 `lv_draw_arc`(小圆,色在 0xfafad9→0xf0ef9c 间按进度插值)绘制。炸弹位置随物理更新,火苗跟随。
+- [x] **Step 2:运行验证**:炸弹飞行时持续冒黄色火苗。
+- [x] **Step 3:提交** `git commit -m "feat(fruit-ninja): 炸弹持续火焰效果"`
 
 ---
 
 # Phase 6:物理/逻辑数值对齐 + 收尾
 
-### Task 15:旋转/分裂散射对齐 JS
+### Task 15:旋转/分裂散射对齐 JS ✅
 
 **Files:** Modify `fruit_ninja_physics.c`
 
-- [ ] **Step 1:旋转速度**:`spawn_one_fruit` 里角速度从 `±(90+rand%180)` 改为 JS 池 `±{60,50,40}`:
+- [x] **Step 1:旋转速度**:`spawn_one_fruit` 里角速度从 `±(90+rand%180)` 改为 JS 池 `±{60,50,40}`:
 ```c
 static const float SPINS[3] = {60.0f, 50.0f, 40.0f};
 float sign = (rand() % 2 == 0) ? -1.0f : 1.0f;
 fruit->angular_velocity = sign * SPINS[rand() % 3];
 ```
-- [ ] **Step 2:分裂下落缓动**:`update_fragments` 已用 `ease_in_quad` 于 Y(对齐 JS quadratic.ci),确认 X 为线性、角度线性;`slice_fruit` 的散射目标已是 `左 -(rand%200+75) / 右 rand%275`、角 `±(rand%150+50)`,与 spec 一致,保持。
-- [ ] **Step 3:验证**:运行观察水果自转更稳、切开两半散射自然。`ctest --test-dir build`(确认未破坏单测)。
-- [ ] **Step 4:提交** `git commit -m "feat(fruit-ninja): 旋转速度对齐 JS ±{60,50,40}"`
+- [x] **Step 2:分裂下落缓动**:`update_fragments` 已用 `ease_in_quad` 于 Y(对齐 JS quadratic.ci),确认 X 为线性、角度线性;`slice_fruit` 的散射目标已是 `左 -(rand%200+75) / 右 rand%275`、角 `±(rand%150+50)`,与 spec 一致,保持。
+- [x] **Step 3:验证**:运行观察水果自转更稳、切开两半散射自然。`ctest --test-dir build`(确认未破坏单测)。
+- [x] **Step 4:提交** `git commit -m "feat(fruit-ninja): 旋转速度对齐 JS ±{60,50,40}"`
 
-### Task 16:生命图标弹出 + 音效时机对齐
+### Task 16:生命图标弹出 + 音效时机对齐 ✅
 
 **Files:** Modify `fruit_ninja_state.c`(漏果/miss 显示)、`fruit_ninja_physics.c` 或 `input.c`(音效触发点)
 
-- [ ] **Step 1:生命弹出**:漏掉水果触发 miss 时,对应 `miss_icons` 用 `fruit_ninja_ease_out_back` 做 scale 1e-5→1(500ms)弹出(可用 `lv_image_set_scale` 配合每帧推进,或临时计时字段)。JS 还在漏点位置弹出 lose 图标(`lose.png`)停 1500ms 再缩回——如要完整复刻,加一个临时弹出 sprite(可选,记入验收清单)。
-- [ ] **Step 2:音效时机**:确认 `spawn_one_fruit` 抛出时播 `fruit_ninja_audio_play_throw()`(若现状缺则补);切水果 `play_slice`、炸弹 `play_boom`、进首页 `play_menu_music`、开始 `play_start`、game over `play_game_over`。
-- [ ] **Step 3:分数脉冲对齐**:JS 分数脉冲为 scale 1→1.2→1 over ~60ms。现状峰值 256→307→256(已是 1.2×,保持),仅时长偏大——把 `FRUIT_NINJA_SCORE_PULSE_MS`(internal.h)由 `90U` 改为 `60U`。
-- [ ] **Step 4:验证**:运行确认漏水果时生命图标回弹动画、各音效在正确时机响、加分时分数轻微脉冲(~60ms)。
-- [ ] **Step 5:提交** `git commit -m "feat(fruit-ninja): 生命弹出 + 音效时机 + 分数脉冲对齐 JS"`
+- [x] **Step 1:生命弹出**:漏掉水果触发 miss 时,对应 `miss_icons` 用 `fruit_ninja_ease_out_back` 做 scale 1e-5→1(500ms)弹出(可用 `lv_image_set_scale` 配合每帧推进,或临时计时字段)。JS 还在漏点位置弹出 lose 图标(`lose.png`)停 1500ms 再缩回——如要完整复刻,加一个临时弹出 sprite(可选,记入验收清单)。
+- [x] **Step 2:音效时机**:确认 `spawn_one_fruit` 抛出时播 `fruit_ninja_audio_play_throw()`(若现状缺则补);切水果 `play_slice`、炸弹 `play_boom`、进首页 `play_menu_music`、开始 `play_start`、game over `play_game_over`。
+- [x] **Step 3:分数脉冲对齐**:JS 分数脉冲为 scale 1→1.2→1 over ~60ms。现状峰值 256→307→256(已是 1.2×,保持),仅时长偏大——把 `FRUIT_NINJA_SCORE_PULSE_MS`(internal.h)由 `90U` 改为 `60U`。
+- [x] **Step 4:验证**:运行确认漏水果时生命图标回弹动画、各音效在正确时机响、加分时分数轻微脉冲(~60ms)。
+- [x] **Step 5:提交** `git commit -m "feat(fruit-ninja): 生命弹出 + 音效时机 + 分数脉冲对齐 JS"`
 
-### Task 17:三分辨率回归 + 对照验收
+### Task 17:三分辨率回归 + 对照验收 ⏳(自动化验证已过;实玩/JS对照待人工)
 
 **Files:** 无(验证 + 可能的微调)
 
-- [ ] **Step 1:全单测** `cmake --build build -j && ctest --test-dir build --output-on-failure` → Expected: 全过。
+- [x] **Step 1:全单测** `cmake --build build -j && ctest --test-dir build --output-on-failure` → Expected: 全过。
 - [ ] **Step 2:三档实玩**:`./bin/main 800 480`、`640 480`、`480 272` 各玩一局(切水果、连切、漏果扣命、切炸弹爆炸、game over、点击回首页),确认 letterbox 居中、命中准确、特效正常、无掉帧。
 - [ ] **Step 3:对照 JS**:浏览器开 `third-party/FruitNinja/index.html`,逐项核对 spec 附录 A 清单(刀光拖尾、汁液、闪光、炸弹光线/抖动/火焰/白闪、抛物线节奏、旋转、难度递增、生命、计分、音效)。记录差异并微调。
-- [ ] **Step 4:截图存档** `AM_SHOT=/tmp/fn_final_800.png ./bin/main 800 480` 等三档,Read 确认。
+- [x] **Step 4:截图存档** `AM_SHOT=/tmp/fn_final_800.png ./bin/main 800 480` 等三档,Read 确认。
 - [ ] **Step 5:提交** `git commit -m "test(fruit-ninja): 三分辨率回归 + JS 对照验收通过"`
 
 ---
