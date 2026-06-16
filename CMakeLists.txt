@@ -73,13 +73,10 @@ add_compile_definitions($<$<BOOL:${LV_USE_FFMPEG}>:LV_USE_FFMPEG=1>)
 add_subdirectory(lvgl)
 target_include_directories(lvgl PUBLIC ${PROJECT_SOURCE_DIR} ${SDL2_INCLUDE_DIRS})
 
-set(ICON_REPLACE_2_SOURCES
-    ${PROJECT_SOURCE_DIR}/main/icon_replace_2/icon_replace_2.c
-    ${PROJECT_SOURCE_DIR}/main/icon_replace_2/icon_replace_2_assets_bundle.c
-    ${PROJECT_SOURCE_DIR}/main/icon_replace_2/icon_replace_2_desktop.c
-    ${PROJECT_SOURCE_DIR}/main/icon_replace_2/icon_replace_2_page_config.c
-    ${PROJECT_SOURCE_DIR}/main/icon_replace_2/icon_replace_2_top_bar.c
-    ${PROJECT_SOURCE_DIR}/main/icon_replace_2/icon_replace_2_metrics.c
+file(GLOB ICON_REPLACE_2_SOURCES CONFIGURE_DEPENDS
+    "${PROJECT_SOURCE_DIR}/main/icon_replace_2/*.c"
+    "${PROJECT_SOURCE_DIR}/main/icon_replace_2/assets/*.c"
+    "${PROJECT_SOURCE_DIR}/main/icon_replace_2/assets/fonts/*.c"
 )
 
 add_executable(test_page_config

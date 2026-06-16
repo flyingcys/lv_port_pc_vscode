@@ -1,7 +1,7 @@
 #include "icon_replace_2_metrics.h"
 
-/* Task 11 会把这里替换为生成的子集字体外部声明 */
-LV_FONT_DECLARE(lv_font_simsun_16_cjk);
+LV_FONT_DECLARE(ir2_simsun_16); LV_FONT_DECLARE(ir2_simsun_12);
+LV_FONT_DECLARE(ir2_phosphor_20); LV_FONT_DECLARE(ir2_phosphor_14);
 
 typedef enum { IR2_RES_800, IR2_RES_640, IR2_RES_480, IR2_RES_NUM } ir2_res_t;
 static ir2_res_t s_res = IR2_RES_800;
@@ -9,14 +9,14 @@ static ir2_res_t s_res = IR2_RES_800;
 /* 文件级 static —— 表本身长期存活，getter 返回其指针 */
 static const ir2_metrics_t s_metrics[IR2_RES_NUM] = {
     /* 800x480 */ { 800,480, 40,24, 96,20, 408,
-                    &lv_font_simsun_16_cjk, &lv_font_montserrat_18,
-                    &lv_font_montserrat_48, &lv_font_simsun_16_cjk },
+                    &ir2_simsun_16, &lv_font_montserrat_18,
+                    &lv_font_montserrat_48, &ir2_phosphor_20 },
     /* 640x480 */ { 640,480, 40,24, 88,20, 408,
-                    &lv_font_simsun_16_cjk, &lv_font_montserrat_18,
-                    &lv_font_montserrat_48, &lv_font_simsun_16_cjk },
+                    &ir2_simsun_16, &lv_font_montserrat_18,
+                    &lv_font_montserrat_48, &ir2_phosphor_20 },
     /* 480x272 */ { 480,272, 28,16, 60,14, 231,
-                    &lv_font_simsun_16_cjk, &lv_font_montserrat_14,
-                    &lv_font_montserrat_40, &lv_font_simsun_16_cjk },
+                    &ir2_simsun_12, &lv_font_montserrat_14,
+                    &lv_font_montserrat_40, &ir2_phosphor_14 },
 };
 
 void icon_replace_2_set_resolution(int32_t w, int32_t h)
