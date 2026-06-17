@@ -66,8 +66,9 @@ static lv_obj_t * edge_bot;     /* 底部感应条 */
 /* 按下时记录起始 Y（屏幕坐标），用于判断位移方向与幅度 */
 static int32_t    edge_top_press_y;
 static int32_t    edge_bot_press_y;
-/* 避免重复触发：0=未展开, 1=控制中心, 2=通知中心 */
-static int        edge_panel_open;
+/* 边缘条跟手拖拽进行中标志（避免无 begin 的 pressing/released 误触发） */
+static int        edge_top_dragging;
+static int        edge_bot_dragging;
 
 static int clamp_index(int index);
 static void clear_runtime_object_refs(void);
@@ -88,8 +89,8 @@ static void edge_top_pressed_cb(lv_event_t * e);
 static void edge_top_pressing_cb(lv_event_t * e);
 static void edge_bot_pressed_cb(lv_event_t * e);
 static void edge_bot_pressing_cb(lv_event_t * e);
-/* 面板收起手势 */
-static void panel_gesture_cb(lv_event_t * e);
+static void edge_top_released_cb(lv_event_t * e);
+static void edge_bot_released_cb(lv_event_t * e);
 
 void icon_replace_demo_2(void)
 {
@@ -256,7 +257,7 @@ void icon_replace_demo_2(void)
         lv_obj_remove_flag(edge_top, LV_OBJ_FLAG_GESTURE_BUBBLE);
         lv_obj_add_event_cb(edge_top, edge_top_pressed_cb,  LV_EVENT_PRESSED,  NULL);
         lv_obj_add_event_cb(edge_top, edge_top_pressing_cb, LV_EVENT_PRESSING, NULL);
-        lv_obj_add_event_cb(edge_top, panel_gesture_cb,     LV_EVENT_GESTURE,  NULL);  /* 面板展开时在顶部 28px 带内也能滑回收起 */
+        lv_obj_add_event_cb(edge_top, edge_top_released_cb, LV_EVENT_RELEASED, NULL);
 
         /* 底部感应条 */
         edge_bot = lv_obj_create(lv_screen_active());
@@ -269,23 +270,7 @@ void icon_replace_demo_2(void)
         lv_obj_remove_flag(edge_bot, LV_OBJ_FLAG_GESTURE_BUBBLE);
         lv_obj_add_event_cb(edge_bot, edge_bot_pressed_cb,  LV_EVENT_PRESSED,  NULL);
         lv_obj_add_event_cb(edge_bot, edge_bot_pressing_cb, LV_EVENT_PRESSING, NULL);
-        lv_obj_add_event_cb(edge_bot, panel_gesture_cb,     LV_EVENT_GESTURE,  NULL);  /* 面板展开时在底部 28px 带内也能滑回收起 */
-
-        /* 面板收起：在面板根对象上监听 LV_EVENT_GESTURE，方向反向则收起 */
-        if(panels != NULL) {
-            lv_obj_t * ctrl  = ir2_panels_get_control(panels);
-            lv_obj_t * ntfy  = ir2_panels_get_notify(panels);
-            if(ctrl) {
-                lv_obj_add_flag(ctrl, LV_OBJ_FLAG_CLICKABLE);
-                lv_obj_remove_flag(ctrl, LV_OBJ_FLAG_GESTURE_BUBBLE);
-                lv_obj_add_event_cb(ctrl, panel_gesture_cb, LV_EVENT_GESTURE, NULL);
-            }
-            if(ntfy) {
-                lv_obj_add_flag(ntfy, LV_OBJ_FLAG_CLICKABLE);
-                lv_obj_remove_flag(ntfy, LV_OBJ_FLAG_GESTURE_BUBBLE);
-                lv_obj_add_event_cb(ntfy, panel_gesture_cb, LV_EVENT_GESTURE, NULL);
-            }
-        }
+        lv_obj_add_event_cb(edge_bot, edge_bot_released_cb, LV_EVENT_RELEASED, NULL);
     }
 }
 
@@ -301,7 +286,8 @@ static void clear_runtime_object_refs(void)
     edge_bot = NULL;
     edge_top_press_y = 0;
     edge_bot_press_y = 0;
-    edge_panel_open = 0;
+    edge_top_dragging = 0;
+    edge_bot_dragging = 0;
 
     for(page_index = 0; page_index < IR2_PAGE_COUNT; page_index++) {
         page[page_index] = NULL;
@@ -675,78 +661,60 @@ static void icon_shake_cb(void * var, int32_t v)
  * 边缘感应条回调
  * ----------------------------------------------------------------------- */
 
-/* 顶部条：PRESSED — 记录起始 Y */
+/* 顶部条：PRESSED — 记录起点并开始跟手（仅当无面板展开） */
 static void edge_top_pressed_cb(lv_event_t * e)
 {
     LV_UNUSED(e);
-    lv_point_t pt;
-    lv_indev_get_point(lv_indev_get_act(), &pt);
+    if(ir2_panels_active(panels) != 0) { edge_top_dragging = 0; return; }
+    lv_point_t pt; lv_indev_get_point(lv_indev_get_act(), &pt);
     edge_top_press_y = pt.y;
+    edge_top_dragging = 1;
+    ir2_panels_drag_begin(panels, IR2_PANEL_CONTROL);
 }
 
-/* 顶部条：PRESSING — 检测向下滑动超阈值 → 展开控制中心 */
+/* 顶部条：PRESSING — 转发 reveal（下滑为正） */
 static void edge_top_pressing_cb(lv_event_t * e)
 {
     LV_UNUSED(e);
-    if(edge_panel_open != 0) return;   /* 已有面板展开，忽略 */
-    lv_point_t pt;
-    lv_indev_get_point(lv_indev_get_act(), &pt);
-    if(pt.y - edge_top_press_y >= EDGE_THRESHOLD) {
-        edge_panel_open = 1;
-        ir2_panels_show_control(panels, true);
-    }
+    if(!edge_top_dragging) return;
+    lv_point_t pt; lv_indev_get_point(lv_indev_get_act(), &pt);
+    ir2_panels_drag_update(panels, IR2_PANEL_CONTROL, pt.y - edge_top_press_y);
 }
 
-/* 底部条：PRESSED — 记录起始 Y */
+/* 顶部条：RELEASED — 松手吸附 */
+static void edge_top_released_cb(lv_event_t * e)
+{
+    LV_UNUSED(e);
+    if(!edge_top_dragging) return;
+    edge_top_dragging = 0;
+    ir2_panels_drag_end(panels, IR2_PANEL_CONTROL);
+}
+
+/* 底部条：PRESSED — 记录起点并开始跟手（仅当无面板展开） */
 static void edge_bot_pressed_cb(lv_event_t * e)
 {
     LV_UNUSED(e);
-    lv_point_t pt;
-    lv_indev_get_point(lv_indev_get_act(), &pt);
+    if(ir2_panels_active(panels) != 0) { edge_bot_dragging = 0; return; }
+    lv_point_t pt; lv_indev_get_point(lv_indev_get_act(), &pt);
     edge_bot_press_y = pt.y;
+    edge_bot_dragging = 1;
+    ir2_panels_drag_begin(panels, IR2_PANEL_NOTIFY);
 }
 
-/* 底部条：PRESSING — 检测向上滑动超阈值 → 展开通知中心 */
+/* 底部条：PRESSING — 转发 reveal（上滑为正） */
 static void edge_bot_pressing_cb(lv_event_t * e)
 {
     LV_UNUSED(e);
-    if(edge_panel_open != 0) return;   /* 已有面板展开，忽略 */
-    lv_point_t pt;
-    lv_indev_get_point(lv_indev_get_act(), &pt);
-    if(edge_bot_press_y - pt.y >= EDGE_THRESHOLD) {
-        edge_panel_open = 2;
-        ir2_panels_show_notify(panels, true);
-    }
+    if(!edge_bot_dragging) return;
+    lv_point_t pt; lv_indev_get_point(lv_indev_get_act(), &pt);
+    ir2_panels_drag_update(panels, IR2_PANEL_NOTIFY, edge_bot_press_y - pt.y);
 }
 
-/* 面板上的手势：
- *   控制中心（edge_panel_open==1）收到向上手势 → 收起
- *   通知中心（edge_panel_open==2）收到向下手势 → 收起
- */
-static void panel_gesture_cb(lv_event_t * e)
+/* 底部条：RELEASED — 松手吸附 */
+static void edge_bot_released_cb(lv_event_t * e)
 {
-    lv_indev_t * indev = lv_event_get_indev(e);
-    if(indev == NULL) return;
-    lv_dir_t dir = lv_indev_get_gesture_dir(indev);
-
-    if(edge_panel_open == 1) {
-        /* 控制中心：向上滑 → 收起 */
-        if(dir == LV_DIR_TOP) {
-            ir2_panels_show_control(panels, false);
-            edge_panel_open = 0;
-        }
-    } else if(edge_panel_open == 2) {
-        /* 通知中心：向下滑 → 收起 */
-        if(dir == LV_DIR_BOTTOM) {
-            ir2_panels_show_notify(panels, false);
-            edge_panel_open = 0;
-        }
-    } else {
-        /* panels 被外部（截图钩子）展开时，两个方向都尝试收起 */
-        if(dir == LV_DIR_TOP) {
-            ir2_panels_show_control(panels, false);
-        } else if(dir == LV_DIR_BOTTOM) {
-            ir2_panels_show_notify(panels, false);
-        }
-    }
+    LV_UNUSED(e);
+    if(!edge_bot_dragging) return;
+    edge_bot_dragging = 0;
+    ir2_panels_drag_end(panels, IR2_PANEL_NOTIFY);
 }
