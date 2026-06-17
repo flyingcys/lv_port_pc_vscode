@@ -13,6 +13,8 @@ extern "C" {
 #define IR2_PANEL_FLICK_PX 12
 
 /* 由「从全关起算的露出像素 reveal」算出面板 y（已钳制到 [全关, 全开]）。
+ * 前置条件：panel_h > 0。
+ *   which : IR2_PANEL_CONTROL 或 IR2_PANEL_NOTIFY（其它值按 NOTIFY 处理）
  *   control: 全关 y=-panel_h, 全开 y=0                  （reveal 下滑为正）
  *   notify : 全关 y=screen_h, 全开 y=screen_h-panel_h   （reveal 上滑为正）
  */

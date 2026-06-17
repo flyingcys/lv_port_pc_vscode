@@ -2,10 +2,10 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-static int report_check(bool cond, const char * msg)
+static int report_check(bool condition, const char * message)
 {
-    if(cond) return 0;
-    fprintf(stderr, "test_panels_geom: %s\n", msg);
+    if(condition) return 0;
+    fprintf(stderr, "test_panels_geom: %s\n", message);
     return 1;
 }
 
@@ -27,6 +27,13 @@ int main(void)
     failures += report_check(ir2_panel_drag_y(IR2_PANEL_NOTIFY, H,    H, SH) == SH - H,     "notify open y=SH-H");
     failures += report_check(ir2_panel_drag_y(IR2_PANEL_NOTIFY, H+50, H, SH) == SH - H,     "notify reveal>H clamps open");
 
+    /* drag_y: notify 反向越界 + 中段（对称补全） */
+    failures += report_check(ir2_panel_drag_y(IR2_PANEL_NOTIFY, -50, H, SH) == SH,        "notify reveal<0 clamps closed");
+    failures += report_check(ir2_panel_drag_y(IR2_PANEL_NOTIFY, H/2, H, SH) == SH - H/2,  "notify mid y");
+
+    /* drag_y: panel_h=0 退化（control 端） */
+    failures += report_check(ir2_panel_drag_y(IR2_PANEL_CONTROL, 5, 0, SH) == 0,          "control panel_h=0 -> y=0 (degenerate)");
+
     /* snap: 位置阈值 50% */
     failures += report_check(ir2_panel_snap_open(H/2,     H, 0) == true,  "reveal=50% -> open");
     failures += report_check(ir2_panel_snap_open(H/2 - 1, H, 0) == false, "reveal<50% -> close");
@@ -35,6 +42,10 @@ int main(void)
     /* snap: 甩动方向兜底（忽略位置） */
     failures += report_check(ir2_panel_snap_open(10,    H,  IR2_PANEL_FLICK_PX) == true,  "flick-open overrides position");
     failures += report_check(ir2_panel_snap_open(H-10,  H, -IR2_PANEL_FLICK_PX) == false, "flick-close overrides position");
+
+    /* snap: 全开端点 + 甩动阈值边界（差 1 不触发甩动，回落位置判定） */
+    failures += report_check(ir2_panel_snap_open(H, H, 0) == true,                        "reveal=100% -> open");
+    failures += report_check(ir2_panel_snap_open(10, H, IR2_PANEL_FLICK_PX - 1) == false, "below-flick -> position governs (close)");
 
     /* 退化保护 */
     failures += report_check(ir2_panel_snap_open(0, 0, 0) == false, "panel_h=0 -> close");
