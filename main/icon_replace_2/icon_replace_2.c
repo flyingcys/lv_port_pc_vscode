@@ -664,7 +664,6 @@ static void icon_shake_cb(void * var, int32_t v)
  * 边缘感应条回调
  * ----------------------------------------------------------------------- */
 
-/* 顶部条：PRESSED — 记录起点并开始跟手（仅当无面板展开） */
 static void edge_top_pressed_cb(lv_event_t * e)
 {
     LV_UNUSED(e);
@@ -672,28 +671,25 @@ static void edge_top_pressed_cb(lv_event_t * e)
     lv_point_t pt; lv_indev_get_point(lv_indev_get_act(), &pt);
     edge_top_press_y = pt.y;
     edge_top_dragging = 1;
-    ir2_panels_drag_begin(panels, IR2_PANEL_CONTROL);
 }
 
-/* 顶部条：PRESSING — 转发 reveal（下滑为正） */
 static void edge_top_pressing_cb(lv_event_t * e)
 {
     LV_UNUSED(e);
     if(!edge_top_dragging) return;
     lv_point_t pt; lv_indev_get_point(lv_indev_get_act(), &pt);
-    ir2_panels_drag_update(panels, IR2_PANEL_CONTROL, pt.y - edge_top_press_y);
+    if(pt.y - edge_top_press_y > 50) {
+        ir2_panels_show_control(panels, true);
+        edge_top_dragging = 0;
+    }
 }
 
-/* 顶部条：RELEASED — 松手吸附 */
 static void edge_top_released_cb(lv_event_t * e)
 {
     LV_UNUSED(e);
-    if(!edge_top_dragging) return;
     edge_top_dragging = 0;
-    ir2_panels_drag_end(panels, IR2_PANEL_CONTROL);
 }
 
-/* 底部条：PRESSED — 记录起点并开始跟手（仅当无面板展开） */
 static void edge_bot_pressed_cb(lv_event_t * e)
 {
     LV_UNUSED(e);
@@ -701,23 +697,21 @@ static void edge_bot_pressed_cb(lv_event_t * e)
     lv_point_t pt; lv_indev_get_point(lv_indev_get_act(), &pt);
     edge_bot_press_y = pt.y;
     edge_bot_dragging = 1;
-    ir2_panels_drag_begin(panels, IR2_PANEL_NOTIFY);
 }
 
-/* 底部条：PRESSING — 转发 reveal（上滑为正） */
 static void edge_bot_pressing_cb(lv_event_t * e)
 {
     LV_UNUSED(e);
     if(!edge_bot_dragging) return;
     lv_point_t pt; lv_indev_get_point(lv_indev_get_act(), &pt);
-    ir2_panels_drag_update(panels, IR2_PANEL_NOTIFY, edge_bot_press_y - pt.y);
+    if(edge_bot_press_y - pt.y > 50) {
+        ir2_panels_show_notify(panels, true);
+        edge_bot_dragging = 0;
+    }
 }
 
-/* 底部条：RELEASED — 松手吸附 */
 static void edge_bot_released_cb(lv_event_t * e)
 {
     LV_UNUSED(e);
-    if(!edge_bot_dragging) return;
     edge_bot_dragging = 0;
-    ir2_panels_drag_end(panels, IR2_PANEL_NOTIFY);
 }
