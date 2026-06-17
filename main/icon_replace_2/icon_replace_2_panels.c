@@ -30,12 +30,12 @@ static int32_t open_y_of(int which, int32_t H, int32_t screen_h){
     return (which == IR2_PANEL_CONTROL) ? 0 : (screen_h - H);
 }
 
-static void slide_to(lv_obj_t * o, int32_t y, bool anim){
+static void slide_to(lv_obj_t * o, int32_t y, bool anim, bool overshoot){
     if(anim){
         lv_anim_t a; lv_anim_init(&a); lv_anim_set_var(&a,o);
         lv_anim_set_exec_cb(&a,(lv_anim_exec_xcb_t)lv_obj_set_y);
         lv_anim_set_time(&a,400); lv_anim_set_values(&a, lv_obj_get_y(o), y);
-        lv_anim_set_path_cb(&a, lv_anim_path_overshoot);
+        lv_anim_set_path_cb(&a, overshoot ? lv_anim_path_overshoot : lv_anim_path_ease_in);
         lv_anim_start(&a);
     } else {
         lv_anim_delete(o, (lv_anim_exec_xcb_t)lv_obj_set_y);
@@ -70,14 +70,10 @@ static void panel_pressing_cb(lv_event_t * e){
     if(close_amount > 50) {
         const ir2_metrics_t * m = ir2_metrics();
         int32_t H = panel_h_of(p, which);
-        slide_to(obj_of(p, which), closed_y_of(which, H, m->screen_h), true);
+        slide_to(obj_of(p, which), closed_y_of(which, H, m->screen_h), true, false);
         p->active = 0;
     }
 }
-static void panel_released_cb(lv_event_t * e){
-    LV_UNUSED(e);
-}
-
 static lv_obj_t * make_title(lv_obj_t * parent, const char * txt){
     const ir2_metrics_t * m = ir2_metrics();
     lv_obj_t * t = lv_label_create(parent);
@@ -92,7 +88,6 @@ static void attach_drag(icon_replace_2_panels_t * p, lv_obj_t * panel){
     lv_obj_add_flag(panel, LV_OBJ_FLAG_CLICKABLE);   /* glass_panel 默认装饰性，这里恢复可点击 */
     lv_obj_add_event_cb(panel, panel_pressed_cb,  LV_EVENT_PRESSED,  p);
     lv_obj_add_event_cb(panel, panel_pressing_cb, LV_EVENT_PRESSING, p);
-    lv_obj_add_event_cb(panel, panel_released_cb, LV_EVENT_RELEASED, p);
 }
 
 icon_replace_2_panels_t * ir2_panels_create(lv_obj_t * parent){
@@ -209,7 +204,7 @@ void ir2_panels_show_control(icon_replace_2_panels_t * p, bool show){
     if(!p || !p->control) return;
     slide_to(p->control,
              show ? open_y_of(IR2_PANEL_CONTROL, p->h_control, m->screen_h)
-                  : closed_y_of(IR2_PANEL_CONTROL, p->h_control, m->screen_h), true);
+                  : closed_y_of(IR2_PANEL_CONTROL, p->h_control, m->screen_h), true, show);
     p->active = show ? IR2_PANEL_CONTROL : 0;
 }
 void ir2_panels_show_notify(icon_replace_2_panels_t * p, bool show){
@@ -217,7 +212,7 @@ void ir2_panels_show_notify(icon_replace_2_panels_t * p, bool show){
     if(!p || !p->notify) return;
     slide_to(p->notify,
              show ? open_y_of(IR2_PANEL_NOTIFY, p->h_notify, m->screen_h)
-                  : closed_y_of(IR2_PANEL_NOTIFY, p->h_notify, m->screen_h), true);
+                  : closed_y_of(IR2_PANEL_NOTIFY, p->h_notify, m->screen_h), true, show);
     p->active = show ? IR2_PANEL_NOTIFY : 0;
 }
 
@@ -225,10 +220,10 @@ void ir2_panels_apply_initial(icon_replace_2_panels_t * p, const char * which){
     const ir2_metrics_t * m = ir2_metrics();
     if(!p || !which) return;
     if(strcmp(which, "control") == 0 && p->control) {
-        slide_to(p->control, open_y_of(IR2_PANEL_CONTROL, p->h_control, m->screen_h), false);
+        slide_to(p->control, open_y_of(IR2_PANEL_CONTROL, p->h_control, m->screen_h), false, false);
         p->active = IR2_PANEL_CONTROL;
     } else if(strcmp(which, "notify") == 0 && p->notify) {
-        slide_to(p->notify, open_y_of(IR2_PANEL_NOTIFY, p->h_notify, m->screen_h), false);
+        slide_to(p->notify, open_y_of(IR2_PANEL_NOTIFY, p->h_notify, m->screen_h), false, false);
         p->active = IR2_PANEL_NOTIFY;
     }
 }
