@@ -37,9 +37,11 @@ static void slide_to(lv_obj_t * o, int32_t y, bool anim){
     if(anim){
         lv_anim_t a; lv_anim_init(&a); lv_anim_set_var(&a,o);
         lv_anim_set_exec_cb(&a,(lv_anim_exec_xcb_t)lv_obj_set_y);
-        lv_anim_set_time(&a,250); lv_anim_set_values(&a, lv_obj_get_y(o), y); lv_anim_start(&a);
+        lv_anim_set_time(&a,400); lv_anim_set_values(&a, lv_obj_get_y(o), y);
+        lv_anim_set_path_cb(&a, lv_anim_path_overshoot);
+        lv_anim_start(&a);
     } else {
-        lv_anim_delete(o, (lv_anim_exec_xcb_t)lv_obj_set_y);   /* 跟手时清掉残留动画，防打架 */
+        lv_anim_delete(o, (lv_anim_exec_xcb_t)lv_obj_set_y);
         lv_obj_set_y(o, y);
     }
 }
