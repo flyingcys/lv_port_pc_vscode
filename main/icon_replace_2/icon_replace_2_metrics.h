@@ -2,14 +2,10 @@
 #define ICON_REPLACE_2_METRICS_H
 #include "lvgl.h"
 #include <stdint.h>
+#include "icon_replace_2_layout.h"   /* 纯尺寸常量：IR2_PAGE_COUNT / 网格维度（lvgl-free） */
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#define IR2_PAGE_COUNT 3
-#define IR2_GRID_COLS  5
-#define IR2_GRID_ROWS  2
-#define IR2_SLOT_COUNT (IR2_GRID_COLS * IR2_GRID_ROWS)   /* 10 */
 
 typedef struct {
     int32_t screen_w, screen_h;

@@ -1,6 +1,6 @@
 #include "icon_replace_2_page_config.h"
 
-#include "icon_replace_2_metrics.h"
+#include "icon_replace_2_layout.h"
 
 #include <stddef.h>
 

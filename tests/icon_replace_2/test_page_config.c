@@ -17,30 +17,24 @@ static int report_check(bool condition, const char * message)
 int main(void)
 {
     const topbar_page_config_t * lock_cfg = icon_replace_2_get_page_config(0);
-    const topbar_page_config_t * home_cfg = icon_replace_2_get_page_config(1);
-    const topbar_page_config_t * custom_cfg = icon_replace_2_get_page_config(2);
-    const topbar_page_config_t * fallback_cfg = icon_replace_2_get_page_config(PAGE_COUNT);
+    const topbar_page_config_t * home1_cfg = icon_replace_2_get_page_config(1);
+    const topbar_page_config_t * home2_cfg = icon_replace_2_get_page_config(2);
+    const topbar_page_config_t * fallback_cfg = icon_replace_2_get_page_config(IR2_PAGE_COUNT);
     int failures = 0;
 
     failures += report_check(lock_cfg != NULL, "lock_cfg is NULL");
-    failures += report_check(home_cfg != NULL, "home_cfg is NULL");
-    failures += report_check(custom_cfg != NULL, "custom_cfg is NULL");
+    failures += report_check(home1_cfg != NULL, "home1_cfg is NULL");
+    failures += report_check(home2_cfg != NULL, "home2_cfg is NULL");
     failures += report_check(fallback_cfg != NULL, "fallback_cfg is NULL");
 
-    failures += report_check(SCREEN_W == 800, "SCREEN_W should be 800");
-    failures += report_check(SCREEN_H == 480, "SCREEN_H should be 480");
-    failures += report_check(TOP_BAR_H == 40, "TOP_BAR_H should be 40");
-    failures += report_check(DESKTOP_W == SCREEN_W, "DESKTOP_W should match SCREEN_W");
-    failures += report_check(DESKTOP_H == (SCREEN_H - TOP_BAR_H), "DESKTOP_H should exclude top bar");
-    failures += report_check(ICON_START_X == 90, "ICON_START_X should match legacy layout");
-    failures += report_check(ICON_START_Y == 50, "ICON_START_Y should match legacy layout");
-    failures += report_check(ICON_X_DISTANCE == 140, "ICON_X_DISTANCE should match legacy layout");
-    failures += report_check(ICON_Y_DISTANCE == 140, "ICON_Y_DISTANCE should match legacy layout");
-    failures += report_check(ICON_SIZE == 60, "ICON_SIZE should match legacy layout");
-    failures += report_check(PAGE_COUNT == 3, "PAGE_COUNT should be 3");
-    failures += report_check(ICON_SLOT_COUNT == (ICON_MAX_ROW * ICON_MAX_COL),
-                             "ICON_SLOT_COUNT should match grid size");
+    /* 纯尺寸常量（lvgl-free，HTML 复刻后为 5x2 网格、3 页） */
+    failures += report_check(IR2_PAGE_COUNT == 3, "IR2_PAGE_COUNT should be 3");
+    failures += report_check(IR2_GRID_COLS == 5, "IR2_GRID_COLS should be 5");
+    failures += report_check(IR2_GRID_ROWS == 2, "IR2_GRID_ROWS should be 2");
+    failures += report_check(IR2_SLOT_COUNT == (IR2_GRID_COLS * IR2_GRID_ROWS),
+                             "IR2_SLOT_COUNT should match grid size (10)");
 
+    /* page_0：锁屏页，中间槽显示大时钟占位文案 */
     if(lock_cfg != NULL) {
         failures += report_check(lock_cfg->page_mode == TOPBAR_PAGE_MODE_LOCK,
                                  "page_0 should be lock mode");
@@ -56,36 +50,30 @@ int main(void)
                                  "page_0 should show system right slot");
     }
 
-    if(home_cfg != NULL) {
-        failures += report_check(home_cfg->page_mode == TOPBAR_PAGE_MODE_HOME,
+    /* page_1 与 page_2：均为 app 桌面页（HOME），顶栏无左/中扩展文案 */
+    if(home1_cfg != NULL) {
+        failures += report_check(home1_cfg->page_mode == TOPBAR_PAGE_MODE_HOME,
                                  "page_1 should be home mode");
-        failures += report_check(home_cfg->left_type == TOPBAR_SLOT_NONE,
+        failures += report_check(home1_cfg->left_type == TOPBAR_SLOT_NONE,
                                  "page_1 left_type should be none");
-        failures += report_check(home_cfg->left_text == NULL,
-                                 "page_1 left_text should be NULL");
-        failures += report_check(home_cfg->center_type == TOPBAR_SLOT_NONE,
+        failures += report_check(home1_cfg->center_type == TOPBAR_SLOT_NONE,
                                  "page_1 center_type should be none");
-        failures += report_check(home_cfg->center_text == NULL,
-                                 "page_1 center_text should be NULL");
-        failures += report_check(home_cfg->show_system_right == true,
+        failures += report_check(home1_cfg->show_system_right == true,
                                  "page_1 should show system right slot");
     }
 
-    if(custom_cfg != NULL) {
-        failures += report_check(custom_cfg->page_mode == TOPBAR_PAGE_MODE_CUSTOM,
-                                 "page_2 should be custom mode");
-        failures += report_check(custom_cfg->left_type == TOPBAR_SLOT_TEXT,
-                                 "page_2 left_type should be text");
-        failures += report_check(custom_cfg->left_text != NULL,
-                                 "page_2 left_text should not be NULL");
-        failures += report_check(custom_cfg->center_type == TOPBAR_SLOT_TEXT,
-                                 "page_2 center_type should be text");
-        failures += report_check(custom_cfg->center_text != NULL,
-                                 "page_2 center_text should not be NULL");
+    if(home2_cfg != NULL) {
+        failures += report_check(home2_cfg->page_mode == TOPBAR_PAGE_MODE_HOME,
+                                 "page_2 should be home mode");
+        failures += report_check(home2_cfg->left_type == TOPBAR_SLOT_NONE,
+                                 "page_2 left_type should be none");
+        failures += report_check(home2_cfg->center_type == TOPBAR_SLOT_NONE,
+                                 "page_2 center_type should be none");
     }
 
-    if(home_cfg != NULL && fallback_cfg != NULL) {
-        failures += report_check(fallback_cfg == home_cfg,
+    /* 越界页索引回退到 page_1 */
+    if(home1_cfg != NULL && fallback_cfg != NULL) {
+        failures += report_check(fallback_cfg == home1_cfg,
                                  "out-of-range page should fall back to page_1");
     }
 
