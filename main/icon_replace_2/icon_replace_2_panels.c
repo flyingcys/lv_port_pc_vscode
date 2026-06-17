@@ -13,9 +13,6 @@ struct icon_replace_2_panels {
     int32_t    h_control;     /* 实测内容高 */
     int32_t    h_notify;
     int        active;        /* 0=无 1=控制中心 2=通知中心 */
-    int        dragging;      /* 当前拖拽的 which；0=无 */
-    int32_t    cur_reveal;    /* 跟手过程当前 reveal */
-    int32_t    last_delta;    /* 末段露出增量（朝开为正），供甩动判定 */
     int32_t    handle_press_y;/* 把手收起拖拽起点(屏幕Y) */
 };
 
@@ -44,37 +41,6 @@ static void slide_to(lv_obj_t * o, int32_t y, bool anim){
         lv_anim_delete(o, (lv_anim_exec_xcb_t)lv_obj_set_y);
         lv_obj_set_y(o, y);
     }
-}
-
-/* 跟手：按 reveal 直接定位（无动画） */
-static void apply_reveal(icon_replace_2_panels_t * p, int which, int32_t reveal){
-    const ir2_metrics_t * m = ir2_metrics();
-    int32_t H = panel_h_of(p, which);
-    slide_to(obj_of(p, which), ir2_panel_drag_y(which, reveal, H, m->screen_h), false);
-}
-
-/* 松手吸附 */
-static void snap_release(icon_replace_2_panels_t * p, int which){
-    const ir2_metrics_t * m = ir2_metrics();
-    int32_t H = panel_h_of(p, which);
-    bool open = ir2_panel_snap_open(p->cur_reveal, H, p->last_delta);
-    slide_to(obj_of(p, which),
-             open ? open_y_of(which, H, m->screen_h) : closed_y_of(which, H, m->screen_h),
-             true);
-    p->active = open ? which : 0;
-    p->dragging = 0;
-}
-
-/* ---- 内部拖拽状态机（展开/收起共用） ---- */
-static void drag_begin_internal(icon_replace_2_panels_t * p, int which, int32_t reveal0){
-    p->dragging   = which;
-    p->cur_reveal = reveal0;
-    p->last_delta = 0;
-}
-static void drag_update_internal(icon_replace_2_panels_t * p, int which, int32_t reveal){
-    p->last_delta = reveal - p->cur_reveal;   /* 朝开为正 */
-    p->cur_reveal = reveal;
-    apply_reveal(p, which, reveal);
 }
 
 /* ---- 收起拖拽回调（绑在整个面板上：空白处任意反向滑动都能收起） ---- */
@@ -228,7 +194,6 @@ icon_replace_2_panels_t * ir2_panels_create(lv_obj_t * parent){
     lv_obj_set_pos(p->notify,  0, closed_y_of(IR2_PANEL_NOTIFY,  p->h_notify,  m->screen_h));
 
     p->active = 0;
-    p->dragging = 0;
     return p;
 }
 
@@ -246,7 +211,6 @@ void ir2_panels_show_control(icon_replace_2_panels_t * p, bool show){
              show ? open_y_of(IR2_PANEL_CONTROL, p->h_control, m->screen_h)
                   : closed_y_of(IR2_PANEL_CONTROL, p->h_control, m->screen_h), true);
     p->active = show ? IR2_PANEL_CONTROL : 0;
-    p->dragging = 0;
 }
 void ir2_panels_show_notify(icon_replace_2_panels_t * p, bool show){
     const ir2_metrics_t * m = ir2_metrics();
@@ -255,7 +219,6 @@ void ir2_panels_show_notify(icon_replace_2_panels_t * p, bool show){
              show ? open_y_of(IR2_PANEL_NOTIFY, p->h_notify, m->screen_h)
                   : closed_y_of(IR2_PANEL_NOTIFY, p->h_notify, m->screen_h), true);
     p->active = show ? IR2_PANEL_NOTIFY : 0;
-    p->dragging = 0;
 }
 
 void ir2_panels_apply_initial(icon_replace_2_panels_t * p, const char * which){
@@ -268,20 +231,6 @@ void ir2_panels_apply_initial(icon_replace_2_panels_t * p, const char * which){
         slide_to(p->notify, open_y_of(IR2_PANEL_NOTIFY, p->h_notify, m->screen_h), false);
         p->active = IR2_PANEL_NOTIFY;
     }
-}
-
-void ir2_panels_drag_begin(icon_replace_2_panels_t * p, int which){
-    if(!p) return;
-    if(which != IR2_PANEL_CONTROL && which != IR2_PANEL_NOTIFY) return;
-    drag_begin_internal(p, which, 0);   /* 从全关起拖 */
-}
-void ir2_panels_drag_update(icon_replace_2_panels_t * p, int which, int32_t reveal){
-    if(!p || p->dragging != which) return;
-    drag_update_internal(p, which, reveal);
-}
-void ir2_panels_drag_end(icon_replace_2_panels_t * p, int which){
-    if(!p || p->dragging != which) return;
-    snap_release(p, which);
 }
 
 int ir2_panels_active(icon_replace_2_panels_t * p){

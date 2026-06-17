@@ -18,15 +18,6 @@ void ir2_panels_show_notify(icon_replace_2_panels_t * p, bool show);
 /* 截图钩子按 AM_PANEL 设初始全开态（无动画）："control" / "notify" / 其它=none。 */
 void ir2_panels_apply_initial(icon_replace_2_panels_t * p, const char * which);
 
-/* 跟手拖拽（由屏幕边缘感应条驱动）。
- *   which: IR2_PANEL_CONTROL / IR2_PANEL_NOTIFY
- *   reveal: 从全关起算的露出像素（control 下滑为正、notify 上滑为正）
- *   begin 从全关起拖；update 实时跟手；end 松手按位置/甩动吸附。
- */
-void ir2_panels_drag_begin(icon_replace_2_panels_t * p, int which);
-void ir2_panels_drag_update(icon_replace_2_panels_t * p, int which, int32_t reveal);
-void ir2_panels_drag_end(icon_replace_2_panels_t * p, int which);
-
 /* 当前展开态：0=无 1=控制中心 2=通知中心。供边缘条门控（展开时忽略边缘按下）。 */
 int  ir2_panels_active(icon_replace_2_panels_t * p);
 
