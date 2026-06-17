@@ -88,6 +88,15 @@ target_include_directories(test_page_config PRIVATE
 )
 add_test(NAME test_page_config COMMAND $<TARGET_FILE:test_page_config>)
 
+add_executable(test_panels_geom
+    ${PROJECT_SOURCE_DIR}/tests/icon_replace_2/test_panels_geom.c
+    ${PROJECT_SOURCE_DIR}/main/icon_replace_2/icon_replace_2_panels_geom.c
+)
+target_include_directories(test_panels_geom PRIVATE
+    ${PROJECT_SOURCE_DIR}/main/icon_replace_2
+)
+add_test(NAME test_panels_geom COMMAND $<TARGET_FILE:test_panels_geom>)
+
 # Create the main executable, depending on the FreeRTOS option
 if(USE_FREERTOS)
     add_executable(main
