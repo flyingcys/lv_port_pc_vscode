@@ -15,6 +15,8 @@ lv_obj_t * ir2_widget_toggle(lv_obj_t * parent, const char * glyph, bool on);/* 
 lv_obj_t * ir2_widget_slider(lv_obj_t * parent, const char * glyph, int32_t val);
 lv_obj_t * ir2_widget_dots(lv_obj_t * parent, uint32_t count, uint32_t active);
 void       ir2_widget_dots_set_active(lv_obj_t * dots, uint32_t active);
+/* 面板把手：满宽透明命中条（承载拖拽收起）+ 居中可见小药丸。返回命中条对象。 */
+lv_obj_t * ir2_widget_panel_handle(lv_obj_t * parent);
 #ifdef __cplusplus
 }
 #endif

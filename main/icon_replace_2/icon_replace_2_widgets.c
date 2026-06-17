@@ -122,3 +122,30 @@ void ir2_widget_dots_set_active(lv_obj_t * dots, uint32_t active){
     for(uint32_t i=0;i<n;i++){ lv_obj_t*d=lv_obj_get_child(dots,i); bool a=(i==active);
         lv_obj_set_width(d, a?18:8); lv_obj_set_style_bg_opa(d, a?LV_OPA_COVER:IR2_DOT_INACTIVE_OPA, 0); }
 }
+
+lv_obj_t * ir2_widget_panel_handle(lv_obj_t * parent){
+    const ir2_metrics_t * m = ir2_metrics();
+    const ir2_theme_t * th = ir2_theme();
+    int32_t strip_h = (m->screen_h <= 272) ? 20 : 30;
+    int32_t pill_w  = (m->screen_h <= 272) ? 40 : 60;
+    int32_t pill_h  = (m->screen_h <= 272) ? 4  : 6;
+
+    /* 命中条：满宽固定高，可点击不可滚动（拖拽收起回调挂这里） */
+    lv_obj_t * strip = lv_obj_create(parent);
+    lv_obj_remove_style_all(strip);
+    lv_obj_set_size(strip, LV_PCT(100), strip_h);
+    lv_obj_set_style_bg_opa(strip, LV_OPA_TRANSP, 0);
+    lv_obj_add_flag(strip, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_remove_flag(strip, LV_OBJ_FLAG_SCROLLABLE);
+
+    /* 可见小药丸：居中 */
+    lv_obj_t * pill = lv_obj_create(strip);
+    lv_obj_remove_style_all(pill);
+    lv_obj_set_size(pill, pill_w, pill_h);
+    lv_obj_set_style_radius(pill, pill_h / 2, 0);
+    lv_obj_set_style_bg_color(pill, th->text_primary, 0);
+    lv_obj_set_style_bg_opa(pill, 76, 0);   /* ~rgba(255,255,255,0.3) */
+    lv_obj_center(pill);
+    ir2_make_decorative(pill);
+    return strip;
+}
