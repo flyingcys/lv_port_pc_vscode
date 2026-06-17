@@ -90,30 +90,26 @@ static int which_of_panel(icon_replace_2_panels_t * p, lv_obj_t * obj){
 static void panel_pressed_cb(lv_event_t * e){
     icon_replace_2_panels_t * p = lv_event_get_user_data(e);
     int which = which_of_panel(p, lv_event_get_target(e));
-    if(which == 0) return;
+    if(which == 0 || p->active != which) return;
     lv_point_t pt; lv_indev_get_point(lv_indev_get_act(), &pt);
     p->handle_press_y = pt.y;
-    drag_begin_internal(p, which, panel_h_of(p, which));   /* 起点=全开 */
 }
 static void panel_pressing_cb(lv_event_t * e){
     icon_replace_2_panels_t * p = lv_event_get_user_data(e);
     int which = which_of_panel(p, lv_event_get_target(e));
-    if(which == 0 || p->dragging != which) return;
-    int32_t H = panel_h_of(p, which);
+    if(which == 0 || p->active != which) return;
     lv_point_t pt; lv_indev_get_point(lv_indev_get_act(), &pt);
     int32_t dy = pt.y - p->handle_press_y;
-    /* 收起方向：control 向上(dy<0)收起；notify 向下(dy>0)收起。反向拖拽不展开（钳到全开） */
     int32_t close_amount = (which == IR2_PANEL_CONTROL) ? -dy : dy;
-    if(close_amount < 0) close_amount = 0;
-    int32_t reveal = H - close_amount;
-    if(reveal < 0) reveal = 0;
-    drag_update_internal(p, which, reveal);
+    if(close_amount > 50) {
+        const ir2_metrics_t * m = ir2_metrics();
+        int32_t H = panel_h_of(p, which);
+        slide_to(obj_of(p, which), closed_y_of(which, H, m->screen_h), true);
+        p->active = 0;
+    }
 }
 static void panel_released_cb(lv_event_t * e){
-    icon_replace_2_panels_t * p = lv_event_get_user_data(e);
-    int which = which_of_panel(p, lv_event_get_target(e));
-    if(which == 0 || p->dragging != which) return;
-    snap_release(p, which);
+    LV_UNUSED(e);
 }
 
 static lv_obj_t * make_title(lv_obj_t * parent, const char * txt){
