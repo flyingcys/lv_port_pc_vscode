@@ -135,9 +135,9 @@ icon_replace_2_panels_t * ir2_panels_create(lv_obj_t * parent){
     icon_replace_2_panels_t * p = lv_malloc_zeroed(sizeof(*p));
     if(!p) return NULL;
 
-    /* ---------- 控制中心（顶部下滑，内容自适应高度） ---------- */
-    p->control = ir2_widget_glass_panel(parent, m->screen_w, LV_SIZE_CONTENT);
-    lv_obj_set_style_max_height(p->control, m->screen_h, 0);
+    /* ---------- 控制中心（顶部下滑，全屏铺满） ---------- */
+    p->control = ir2_widget_glass_panel(parent, m->screen_w, m->screen_h);
+    lv_obj_set_style_radius(p->control, 0, 0);   /* 全屏铺满，去圆角防露壁纸 */
     lv_obj_set_flex_flow(p->control, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(p->control, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
     lv_obj_set_style_pad_all(p->control, 16, 0);
@@ -158,13 +158,21 @@ icon_replace_2_panels_t * ir2_panels_create(lv_obj_t * parent){
     ir2_widget_slider(p->control, IR2_GLYPH_SUN, 70);
     ir2_widget_slider(p->control, IR2_GLYPH_SPEAKER, 45);
 
-    /* 控制中心把手在底部（内容之后） */
+    /* 弹性占位：把把手顶到全屏面板底部 */
+    lv_obj_t * ctrl_spacer = lv_obj_create(p->control);
+    lv_obj_remove_style_all(ctrl_spacer);
+    lv_obj_set_width(ctrl_spacer, LV_PCT(100));
+    lv_obj_set_height(ctrl_spacer, 0);
+    lv_obj_set_flex_grow(ctrl_spacer, 1);
+    ir2_make_decorative(ctrl_spacer);
+
+    /* 控制中心把手在底部 */
     lv_obj_t * ctrl_handle = ir2_widget_panel_handle(p->control);
     attach_handle(p, ctrl_handle);
 
-    /* ---------- 通知中心（底部上滑，内容自适应高度） ---------- */
-    p->notify = ir2_widget_glass_panel(parent, m->screen_w, LV_SIZE_CONTENT);
-    lv_obj_set_style_max_height(p->notify, m->screen_h, 0);
+    /* ---------- 通知中心（底部上滑，全屏铺满） ---------- */
+    p->notify = ir2_widget_glass_panel(parent, m->screen_w, m->screen_h);
+    lv_obj_set_style_radius(p->notify, 0, 0);   /* 全屏铺满，去圆角防露壁纸 */
     lv_obj_set_flex_flow(p->notify, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(p->notify, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
     lv_obj_set_style_pad_all(p->notify, 16, 0);
@@ -214,15 +222,11 @@ icon_replace_2_panels_t * ir2_panels_create(lv_obj_t * parent){
         ir2_make_decorative(tm);
     }
 
-    /* ---------- 实测内容高，置初始全关位 ---------- */
-    lv_obj_update_layout(p->control);
-    lv_obj_update_layout(p->notify);
-    p->h_control = lv_obj_get_height(p->control);
-    p->h_notify  = lv_obj_get_height(p->notify);
-    lv_obj_set_y(p->control, closed_y_of(IR2_PANEL_CONTROL, p->h_control, m->screen_h));
-    lv_obj_set_y(p->notify,  closed_y_of(IR2_PANEL_NOTIFY,  p->h_notify,  m->screen_h));
-    lv_obj_set_x(p->control, 0);
-    lv_obj_set_x(p->notify, 0);
+    /* ---------- 全屏高度，置初始全关位 ---------- */
+    p->h_control = m->screen_h;
+    p->h_notify  = m->screen_h;
+    lv_obj_set_pos(p->control, 0, closed_y_of(IR2_PANEL_CONTROL, p->h_control, m->screen_h));
+    lv_obj_set_pos(p->notify,  0, closed_y_of(IR2_PANEL_NOTIFY,  p->h_notify,  m->screen_h));
 
     p->active = 0;
     p->dragging = 0;
@@ -283,4 +287,11 @@ void ir2_panels_drag_end(icon_replace_2_panels_t * p, int which){
 
 int ir2_panels_active(icon_replace_2_panels_t * p){
     return p ? p->active : 0;
+}
+
+void ir2_panels_bring_to_front(icon_replace_2_panels_t * p){
+    if(!p) return;
+    /* 置于边缘感应带之上：全屏展开时把手才点得到（关闭时面板在屏外，不挡感应带） */
+    if(p->control) lv_obj_move_foreground(p->control);
+    if(p->notify)  lv_obj_move_foreground(p->notify);
 }

@@ -271,6 +271,9 @@ void icon_replace_demo_2(void)
         lv_obj_add_event_cb(edge_bot, edge_bot_pressed_cb,  LV_EVENT_PRESSED,  NULL);
         lv_obj_add_event_cb(edge_bot, edge_bot_pressing_cb, LV_EVENT_PRESSING, NULL);
         lv_obj_add_event_cb(edge_bot, edge_bot_released_cb, LV_EVENT_RELEASED, NULL);
+
+        /* 面板置于感应带之上：全屏展开时把手才点得到（关闭时面板在屏外不挡感应带） */
+        ir2_panels_bring_to_front(panels);
     }
 }
 

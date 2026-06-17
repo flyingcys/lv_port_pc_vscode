@@ -30,6 +30,10 @@ void ir2_panels_drag_end(icon_replace_2_panels_t * p, int which);
 /* 当前展开态：0=无 1=控制中心 2=通知中心。供边缘条门控（展开时忽略边缘按下）。 */
 int  ir2_panels_active(icon_replace_2_panels_t * p);
 
+/* 把两个面板置于边缘感应带之上：全屏展开时把手才点得到。
+ * 需在边缘感应带创建完成后调用一次。 */
+void ir2_panels_bring_to_front(icon_replace_2_panels_t * p);
+
 #ifdef __cplusplus
 }
 #endif
