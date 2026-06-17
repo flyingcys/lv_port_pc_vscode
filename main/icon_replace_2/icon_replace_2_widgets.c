@@ -130,13 +130,12 @@ lv_obj_t * ir2_widget_panel_handle(lv_obj_t * parent){
     int32_t pill_w  = (m->screen_h <= 272) ? 40 : 60;
     int32_t pill_h  = (m->screen_h <= 272) ? 4  : 6;
 
-    /* 命中条：满宽固定高，可点击不可滚动（拖拽收起回调挂这里） */
+    /* 视觉条：满宽固定高、纯装饰（不可点击，按压穿透到面板由面板统一处理收起） */
     lv_obj_t * strip = lv_obj_create(parent);
     lv_obj_remove_style_all(strip);
     lv_obj_set_size(strip, LV_PCT(100), strip_h);
     lv_obj_set_style_bg_opa(strip, LV_OPA_TRANSP, 0);
-    lv_obj_add_flag(strip, LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_remove_flag(strip, LV_OBJ_FLAG_SCROLLABLE);
+    ir2_make_decorative(strip);
 
     /* 可见小药丸：居中 */
     lv_obj_t * pill = lv_obj_create(strip);

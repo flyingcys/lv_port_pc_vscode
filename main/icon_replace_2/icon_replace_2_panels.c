@@ -75,41 +75,41 @@ static void drag_update_internal(icon_replace_2_panels_t * p, int which, int32_t
     apply_reveal(p, which, reveal);
 }
 
-/* ---- 把手收起拖拽回调（内聚于 panels） ---- */
-static int which_of_handle(icon_replace_2_panels_t * p, lv_obj_t * handle){
-    lv_obj_t * parent = lv_obj_get_parent(handle);
-    if(parent == p->control) return IR2_PANEL_CONTROL;
-    if(parent == p->notify)  return IR2_PANEL_NOTIFY;
+/* ---- 收起拖拽回调（绑在整个面板上：空白处任意反向滑动都能收起） ---- */
+/* 沿祖先链判定按压所属面板（装饰子对象的按压会穿透到面板，target 即面板本身） */
+static int which_of_panel(icon_replace_2_panels_t * p, lv_obj_t * obj){
+    while(obj){
+        if(obj == p->control) return IR2_PANEL_CONTROL;
+        if(obj == p->notify)  return IR2_PANEL_NOTIFY;
+        obj = lv_obj_get_parent(obj);
+    }
     return 0;
 }
-static void handle_pressed_cb(lv_event_t * e){
+static void panel_pressed_cb(lv_event_t * e){
     icon_replace_2_panels_t * p = lv_event_get_user_data(e);
-    lv_obj_t * handle = lv_event_get_target(e);
-    int which = which_of_handle(p, handle);
+    int which = which_of_panel(p, lv_event_get_target(e));
     if(which == 0) return;
     lv_point_t pt; lv_indev_get_point(lv_indev_get_act(), &pt);
     p->handle_press_y = pt.y;
     drag_begin_internal(p, which, panel_h_of(p, which));   /* 起点=全开 */
 }
-static void handle_pressing_cb(lv_event_t * e){
+static void panel_pressing_cb(lv_event_t * e){
     icon_replace_2_panels_t * p = lv_event_get_user_data(e);
-    lv_obj_t * handle = lv_event_get_target(e);
-    int which = which_of_handle(p, handle);
+    int which = which_of_panel(p, lv_event_get_target(e));
     if(which == 0 || p->dragging != which) return;
     int32_t H = panel_h_of(p, which);
     lv_point_t pt; lv_indev_get_point(lv_indev_get_act(), &pt);
     int32_t dy = pt.y - p->handle_press_y;
-    /* 收起方向：control 向上(dy<0)收起；notify 向下(dy>0)收起 */
+    /* 收起方向：control 向上(dy<0)收起；notify 向下(dy>0)收起。反向拖拽不展开（钳到全开） */
     int32_t close_amount = (which == IR2_PANEL_CONTROL) ? -dy : dy;
     if(close_amount < 0) close_amount = 0;
     int32_t reveal = H - close_amount;
     if(reveal < 0) reveal = 0;
     drag_update_internal(p, which, reveal);
 }
-static void handle_released_cb(lv_event_t * e){
+static void panel_released_cb(lv_event_t * e){
     icon_replace_2_panels_t * p = lv_event_get_user_data(e);
-    lv_obj_t * handle = lv_event_get_target(e);
-    int which = which_of_handle(p, handle);
+    int which = which_of_panel(p, lv_event_get_target(e));
     if(which == 0 || p->dragging != which) return;
     snap_release(p, which);
 }
@@ -123,11 +123,12 @@ static lv_obj_t * make_title(lv_obj_t * parent, const char * txt){
     return t;
 }
 
-/* 给把手挂收起拖拽回调 */
-static void attach_handle(icon_replace_2_panels_t * p, lv_obj_t * handle){
-    lv_obj_add_event_cb(handle, handle_pressed_cb,  LV_EVENT_PRESSED,  p);
-    lv_obj_add_event_cb(handle, handle_pressing_cb, LV_EVENT_PRESSING, p);
-    lv_obj_add_event_cb(handle, handle_released_cb, LV_EVENT_RELEASED, p);
+/* 把收起拖拽回调挂到面板本身（整块面板都是收起手势面，按压不再穿透到感应带/桌面） */
+static void attach_drag(icon_replace_2_panels_t * p, lv_obj_t * panel){
+    lv_obj_add_flag(panel, LV_OBJ_FLAG_CLICKABLE);   /* glass_panel 默认装饰性，这里恢复可点击 */
+    lv_obj_add_event_cb(panel, panel_pressed_cb,  LV_EVENT_PRESSED,  p);
+    lv_obj_add_event_cb(panel, panel_pressing_cb, LV_EVENT_PRESSING, p);
+    lv_obj_add_event_cb(panel, panel_released_cb, LV_EVENT_RELEASED, p);
 }
 
 icon_replace_2_panels_t * ir2_panels_create(lv_obj_t * parent){
@@ -166,9 +167,9 @@ icon_replace_2_panels_t * ir2_panels_create(lv_obj_t * parent){
     lv_obj_set_flex_grow(ctrl_spacer, 1);
     ir2_make_decorative(ctrl_spacer);
 
-    /* 控制中心把手在底部 */
-    lv_obj_t * ctrl_handle = ir2_widget_panel_handle(p->control);
-    attach_handle(p, ctrl_handle);
+    /* 控制中心把手在底部（纯视觉，收起手势绑在整块面板） */
+    ir2_widget_panel_handle(p->control);
+    attach_drag(p, p->control);
 
     /* ---------- 通知中心（底部上滑，全屏铺满） ---------- */
     p->notify = ir2_widget_glass_panel(parent, m->screen_w, m->screen_h);
@@ -178,9 +179,9 @@ icon_replace_2_panels_t * ir2_panels_create(lv_obj_t * parent){
     lv_obj_set_style_pad_all(p->notify, 16, 0);
     lv_obj_set_style_pad_row(p->notify, 10, 0);
 
-    /* 通知中心把手在顶部（内容之前） */
-    lv_obj_t * ntfy_handle = ir2_widget_panel_handle(p->notify);
-    attach_handle(p, ntfy_handle);
+    /* 通知中心把手在顶部（纯视觉，收起手势绑在整块面板） */
+    ir2_widget_panel_handle(p->notify);
+    attach_drag(p, p->notify);
 
     make_title(p->notify, "\xe9\x80\x9a\xe7\x9f\xa5\xe4\xb8\xad\xe5\xbf\x83");  /* 通知中心 */
 
