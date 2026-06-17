@@ -1,5 +1,4 @@
 #include "icon_replace_2_panels.h"
-#include "icon_replace_2_panels_geom.h"
 #include "icon_replace_2_widgets.h"
 #include "icon_replace_2_metrics.h"
 #include "icon_replace_2_theme.h"
@@ -177,10 +176,10 @@ icon_replace_2_panels_t * ir2_panels_create(lv_obj_t * parent){
 
     make_title(p->notify, "\xe9\x80\x9a\xe7\x9f\xa5\xe4\xb8\xad\xe5\xbf\x83");  /* 通知中心 */
 
+    const ir2_metrics_t * mm = ir2_metrics();
+    const ir2_theme_t * th = ir2_theme();
     for(uint32_t i = 0; i < ir2_notify_count; i++) {
         const ir2_notify_t * n = &ir2_notifies[i];
-        const ir2_metrics_t * mm = ir2_metrics();
-        const ir2_theme_t * th = ir2_theme();
         lv_obj_t * card = lv_obj_create(p->notify);
         lv_obj_remove_style_all(card);
         lv_obj_set_size(card, LV_PCT(100), LV_SIZE_CONTENT);
@@ -244,6 +243,7 @@ void ir2_panels_show_control(icon_replace_2_panels_t * p, bool show){
              show ? open_y_of(IR2_PANEL_CONTROL, p->h_control, m->screen_h)
                   : closed_y_of(IR2_PANEL_CONTROL, p->h_control, m->screen_h), true);
     p->active = show ? IR2_PANEL_CONTROL : 0;
+    p->dragging = 0;
 }
 void ir2_panels_show_notify(icon_replace_2_panels_t * p, bool show){
     const ir2_metrics_t * m = ir2_metrics();
@@ -252,6 +252,7 @@ void ir2_panels_show_notify(icon_replace_2_panels_t * p, bool show){
              show ? open_y_of(IR2_PANEL_NOTIFY, p->h_notify, m->screen_h)
                   : closed_y_of(IR2_PANEL_NOTIFY, p->h_notify, m->screen_h), true);
     p->active = show ? IR2_PANEL_NOTIFY : 0;
+    p->dragging = 0;
 }
 
 void ir2_panels_apply_initial(icon_replace_2_panels_t * p, const char * which){
@@ -268,6 +269,7 @@ void ir2_panels_apply_initial(icon_replace_2_panels_t * p, const char * which){
 
 void ir2_panels_drag_begin(icon_replace_2_panels_t * p, int which){
     if(!p) return;
+    if(which != IR2_PANEL_CONTROL && which != IR2_PANEL_NOTIFY) return;
     drag_begin_internal(p, which, 0);   /* 从全关起拖 */
 }
 void ir2_panels_drag_update(icon_replace_2_panels_t * p, int which, int32_t reveal){
