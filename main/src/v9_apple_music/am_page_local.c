@@ -59,6 +59,8 @@ typedef struct {
 typedef struct {
     local_page_ctx_t *page;
     size_t            index;
+    /* 注意：page 的生命周期必须长于 row；row 只应通过删除 page 来触发，
+     * page 的 DELETE 回调先于子对象 DELETE 执行，不要在 page 之外单独删除 row。 */
 } local_item_ctx_t;
 
 static void local_page_delete_cb(lv_event_t *e)
@@ -67,6 +69,8 @@ static void local_page_delete_cb(lv_event_t *e)
     size_t i;
     for(i = 0; i < ctx->count; i++) free(ctx->urls[i]);
     free(ctx->urls);
+    /* urls[i] 由 strdup(malloc) 分配用 free 释放；ctx 由 lv_malloc 分配用 lv_free 释放。
+     * PC 模拟器下 lv_malloc == malloc，混用安全；移植到自定义堆目标时需重新评估。 */
     lv_free(ctx);
 }
 
@@ -125,7 +129,8 @@ lv_obj_t *am_page_local_create(lv_obj_t *content_parent, const am_config_t *cfg)
             file_cap  = new_cap;
         }
         file_urls[file_count] = strdup(full);
-        if(file_urls[file_count]) file_count++;
+        if(!file_urls[file_count]) break;  /* OOM 时中止，避免 NULL 空洞 */
+        file_count++;
     }
     closedir(d);
 
