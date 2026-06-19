@@ -78,9 +78,6 @@ int main(int argc, char **argv)
   hal_init(W, H);
   am_metrics_init(W, H);
 
-  // music_player_init((const char **)(argc > 1 ? argv + 1 : NULL),
-  //                   (size_t)(argc > 1 ? argc - 1 : 0));
-
   #if LV_USE_OS == LV_OS_NONE
  
   // fruit_ninja_start();
@@ -108,7 +105,6 @@ int main(int argc, char **argv)
 
   #endif
 
-  // music_player_deinit();
   return 0;
 }
 
