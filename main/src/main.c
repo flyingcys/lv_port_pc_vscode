@@ -19,6 +19,7 @@
 #include "v9_apple_music/apple_music.h"
 #include "v9_apple_music/am_screenshot.h"
 #include "v9_apple_music/am_metrics.h"
+#include "desktop.h"
 
 /*********************
  *      DEFINES
@@ -82,7 +83,8 @@ int main(int argc, char **argv)
  
   // fruit_ninja_start();
   // lv_demo_music();
-  apple_music_create();
+  // apple_music_create();
+  desktop_create();   /* 应用桌面：图标进入 音乐 / 切水果 */
 
   const char *am_shot = getenv("AM_SHOT");
   if (am_shot) {
