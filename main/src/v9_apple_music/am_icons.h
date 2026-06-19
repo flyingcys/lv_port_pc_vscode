@@ -14,6 +14,7 @@
 #define AM_ICON_PLAY      "▶"  /* U+25B6  播放 / item-action */
 #define AM_ICON_PREV      "⏮"  /* U+23EE  上一首 */
 #define AM_ICON_NEXT      "⏭"  /* U+23ED  下一首 */
+#define AM_ICON_PAUSE     "||"  /* ASCII 竖线对，暂停图标（字体子集含全 ASCII）*/
 #define AM_ICON_REPLAY    "↺"  /* U+21BA  最近播放 item-action */
 
 #endif /* AM_ICONS_H */
