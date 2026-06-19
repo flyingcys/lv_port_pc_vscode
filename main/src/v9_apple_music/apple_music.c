@@ -9,9 +9,7 @@
 #include "am_page_list.h"
 #include "am_page_settings.h"
 #include "am_widgets.h"
-#include "am_config.h"
 #include "am_player.h"
-#include "am_page_local.h"
 #include <stdlib.h>   /* getenv */
 #include <string.h>
 
@@ -22,7 +20,6 @@ static int32_t row_dsc[3];
 typedef enum { AM_PAGE_HOME, AM_PAGE_RADIO, AM_PAGE_LOCAL, AM_PAGE_PLAYLIST, AM_PAGE_SETTINGS } am_page_e;
 static am_page_e s_page         = AM_PAGE_HOME;
 static int       s_settings_tab = 0;
-static am_config_t s_config;
 static lv_obj_t *s_root, *s_sidebar, *s_content, *s_player;
 
 static void on_nav(int idx, void *u);
@@ -37,8 +34,8 @@ static void rebuild_content(void)
     lv_obj_clean(s_content);
     switch(s_page){
         case AM_PAGE_HOME:     am_page_home_create(s_content);                                                break;
-        case AM_PAGE_RADIO:    am_page_radio_create(s_content, &s_config);                                    break;
-        case AM_PAGE_LOCAL:    am_page_local_create(s_content, &s_config);                                   break;
+        case AM_PAGE_RADIO:    am_page_list_create(s_content, &am_page_radio);                                break;
+        case AM_PAGE_LOCAL:    am_page_list_create(s_content, &am_page_local);                                break;
         case AM_PAGE_PLAYLIST: am_page_list_create(s_content, &am_page_playlist);                             break;
         case AM_PAGE_SETTINGS: am_page_settings_create(s_content, s_settings_tab, on_theme_pick, on_tab_pick, NULL); break;
     }
@@ -143,8 +140,7 @@ static void apply_env_initial_state(void)
 
 void apple_music_create(void)
 {
-    am_config_load(&s_config);   /* 失败时 s_config 保持全零，页面显示占位 */
-    am_player_init();
+    am_player_init();   /* 播放列表与广播源暂写死在 am_data.c，无需加载配置 */
     apply_env_initial_state();
     build_all();
 }

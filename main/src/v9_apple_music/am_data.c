@@ -1,5 +1,11 @@
 #include "am_data.h"
 
+/* 本地试听文件目录：由 CMake 注入绝对路径（${PROJECT_SOURCE_DIR}/.../test_file），
+ * 保证不依赖运行时工作目录。未注入时（如单元测试目标）退化为相对路径。 */
+#ifndef AM_TEST_FILE_DIR
+#define AM_TEST_FILE_DIR "third-party/hls_player_demo/test_file"
+#endif
+
 const am_nav_item_t am_nav_items[5] = {
     {"home",     "主页", "\xE2\x8C\x82"},
     {"radio",    "广播", "\xE2\x97\x89"},
@@ -62,17 +68,23 @@ const am_list_page_t am_page_radio = {
     .banner_desc  = "从编辑推荐、DJ 专栏到 mood station，全部先做静态视觉确认，再迁回 LVGL 结构。",
     .badges       = {"24h Live", "Editor Picks", "Trending"},
     .queue_label  = "正在预排 4 个节目",
+    /* 点击切流：URL 暂写死为已知可用的公开广播/音频地址（见 hls_player_demo 文档）*/
     .list = {
-        {"radio", "The New Music Station", "全球新歌 / 每小时刷新", "现在开始", "LIVE"},
-        {"radio", "Chill Sunday",          "低压氛围 / 柔和女声",   "42 分钟",  "Mix"},
-        {"radio", "After Midnight Jazz",   "夜色铜管 / 慢速鼓刷",   "28 分钟",  "HD"},
-        {"radio", "Electro Run Club",      "高 BPM / 晨跑编排",     "56 分钟",  "New"},
+        {"radio", "The New Music Station", "全球新歌 / 每小时刷新", "现在开始", "LIVE",
+         "http://ngcdn001.cnr.cn/live/zgzs/index.m3u8"},
+        {"radio", "Chill Sunday",          "低压氛围 / 柔和女声",   "42 分钟",  "Mix",
+         "https://live.ximalaya.com/radio-first-page-app/live/2265/64.m3u8"},
+        {"radio", "After Midnight Jazz",   "夜色铜管 / 慢速鼓刷",   "28 分钟",  "HD",
+         "https://dl.espressif.cn/dl/audio/ff-16b-2c-44100hz.mp3"},
+        {"radio", "Electro Run Club",      "高 BPM / 晨跑编排",     "56 分钟",  "New",
+         "http://downsc.chinaz.net/files/download/sound1/201206/1638.mp3"},
     },
     .queue = {
         {"主持人开场", "02:14 后切到主节目"},
         {"新歌连播",   "含 3 首首发曲目"},
         {"DJ 访谈",    "片段预留"},
     },
+    .play_mode = AM_LIST_PLAY_STREAM,
 };
 
 const am_list_page_t am_page_local = {
@@ -83,17 +95,23 @@ const am_list_page_t am_page_local = {
     .banner_desc  = "不接真实扫描逻辑，只用静态假数据模拟专辑、单曲和收藏混合视图。",
     .badges       = {"Albums", "Lossless", "Recently Added"},
     .queue_label  = "资料库总量 148 项",
+    /* 点击播放：URL 暂写死为 test_file 目录下的真实音频文件（绝对路径由 CMake 注入）*/
     .list = {
-        {"album", "In Rainbows",         "Radiohead / 专辑",         "10 tracks", "Album"},
-        {"album", "Souvlaki",            "Slowdive / 专辑",           "9 tracks",  "Album"},
-        {"song",  "Nights",              "Frank Ocean / 单曲",        "5:07",      "Song"},
-        {"song",  "Sunset Rollercoaster","My Jinji / 单曲",           "4:26",      "Fav"},
+        {"album", "In Rainbows",         "Radiohead / 专辑",         "10 tracks", "Album",
+         AM_TEST_FILE_DIR "/ff-16b-2c-44100hz.mp3"},
+        {"album", "Souvlaki",            "Slowdive / 专辑",           "9 tracks",  "Album",
+         AM_TEST_FILE_DIR "/ff-16b-2c-44100hz.flac"},
+        {"song",  "Nights",              "Frank Ocean / 单曲",        "5:07",      "Song",
+         AM_TEST_FILE_DIR "/ff-16b-2c-44100hz.wav"},
+        {"song",  "Sunset Rollercoaster","My Jinji / 单曲",           "4:26",      "Fav",
+         AM_TEST_FILE_DIR "/153149-movers-sample-listening-test-vol2.mp3"},
     },
     .queue = {
         {"下载完成", "3 张专辑可离线播放"},
         {"上次播放", "昨晚 22:14 停在 track 07"},
         {"同步状态", "iCloud 占位 UI"},
     },
+    .play_mode = AM_LIST_PLAY_LOCAL,
 };
 
 const am_list_page_t am_page_playlist = {

@@ -21,6 +21,8 @@
 #include "am_fonts.h"
 #include "am_icons.h"
 #include "am_metrics.h"
+#include "am_player.h"
+#include <stddef.h>  /* size_t  */
 #include <stdio.h>   /* snprintf */
 #include <string.h>  /* strcmp  */
 
@@ -446,6 +448,35 @@ static lv_obj_t *build_media_item(lv_obj_t *parent, const am_media_item_t *item)
     return row;
 }
 
+/* ──────────────────── 3a-bis. 列表项点击播放 ──────────────────── */
+
+typedef struct {
+    const am_list_page_t *page;   /* 指向静态页面数据（生命周期 = 整个程序）*/
+    int                   index;  /* 被点击项在 list[] 中的下标 */
+} media_click_ctx_t;
+
+static void media_click_ctx_free_cb(lv_event_t *e)
+{
+    lv_free(lv_event_get_user_data(e));
+}
+
+static void media_item_click_cb(lv_event_t *e)
+{
+    const media_click_ctx_t *c  = (const media_click_ctx_t *)lv_event_get_user_data(e);
+    const am_list_page_t    *p  = c->page;
+    const am_media_item_t   *it = &p->list[c->index];
+
+    if(p->play_mode == AM_LIST_PLAY_LOCAL) {
+        /* 整列表交给播放器，从被点击项开始（4 项均带 URL，索引直接对应）*/
+        const char *urls[4] = {
+            p->list[0].url, p->list[1].url, p->list[2].url, p->list[3].url,
+        };
+        am_player_load_local(urls, 4, (size_t)c->index);
+    } else if(p->play_mode == AM_LIST_PLAY_STREAM) {
+        am_player_play_stream(it->url, it->title);
+    }
+}
+
 /* ──────────────────── 3b. catalog-panel（col0）──────────────────── */
 static lv_obj_t *build_catalog_panel(lv_obj_t *parent, const am_list_page_t *data)
 {
@@ -489,7 +520,17 @@ static lv_obj_t *build_catalog_panel(lv_obj_t *parent, const am_list_page_t *dat
     lv_obj_clear_flag(list, LV_OBJ_FLAG_CLICKABLE | LV_OBJ_FLAG_SCROLLABLE);
 
     for(int i = 0; i < 4; i++){
-        build_media_item(list, &data->list[i]);
+        lv_obj_t *row = build_media_item(list, &data->list[i]);
+        /* 可播放页（本地/广播）的条目挂点击回调；歌单页 play_mode=NONE 保持纯展示 */
+        if(data->play_mode != AM_LIST_PLAY_NONE &&
+           data->list[i].url && data->list[i].url[0]) {
+            media_click_ctx_t *c = (media_click_ctx_t *)lv_malloc(sizeof(*c));
+            c->page  = data;
+            c->index = i;
+            lv_obj_add_flag(row, LV_OBJ_FLAG_CLICKABLE);
+            lv_obj_add_event_cb(row, media_item_click_cb,     LV_EVENT_CLICKED, c);
+            lv_obj_add_event_cb(row, media_click_ctx_free_cb, LV_EVENT_DELETE,  c);
+        }
     }
 
     return panel;

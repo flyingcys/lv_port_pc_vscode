@@ -17,8 +17,16 @@ typedef struct {
 typedef struct {
     const char *kind;    /* album/radio/playlist/song -> 封面渐变色 */
     const char *title; const char *subtitle; const char *meta; const char *aux;
+    const char *url;     /* 播放地址：本地文件路径或流 URL；NULL = 不可点击播放 */
 } am_media_item_t;
 typedef struct { const char *title; const char *subtitle; } am_queue_item_t;
+
+/* 列表项点击播放语义 */
+typedef enum {
+    AM_LIST_PLAY_NONE = 0,   /* 条目仅展示，不可点击播放（如歌单页）*/
+    AM_LIST_PLAY_LOCAL,      /* 点击 -> am_player_load_local（整列表 + 起始索引）*/
+    AM_LIST_PLAY_STREAM,     /* 点击 -> am_player_play_stream（单条流）*/
+} am_list_play_mode_t;
 
 typedef struct {
     const char *eyebrow, *title, *subtitle;
@@ -27,6 +35,7 @@ typedef struct {
     const char *queue_label;
     am_media_item_t list[4];
     am_queue_item_t queue[3];
+    am_list_play_mode_t play_mode;   /* 列表项点击播放语义，默认 NONE */
 } am_list_page_t;
 
 typedef struct { const char *title, *subtitle, *current, *total; int progress_pct; } am_mini_player_t;

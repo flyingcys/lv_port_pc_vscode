@@ -163,6 +163,9 @@ target_sources(main PRIVATE ${APPLE_MUSIC_SOURCES} ${APPLE_MUSIC_FONTS})
 
 # Define LVGL configuration as a simple include
 target_compile_definitions(main PRIVATE LV_CONF_INCLUDE_SIMPLE)
+# 本地试听文件目录绝对路径（apple_music 本地页写死的播放文件，见 am_data.c）
+target_compile_definitions(main PRIVATE
+    AM_TEST_FILE_DIR="${PROJECT_SOURCE_DIR}/third-party/hls_player_demo/test_file")
 target_link_libraries(main lvgl lvgl::examples lvgl::demos lvgl::thorvg ${SDL2_LIBRARIES} m pthread
     player_controller
     stream_player_module_linux

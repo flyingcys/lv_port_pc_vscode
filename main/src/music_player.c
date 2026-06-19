@@ -26,18 +26,8 @@ static _Atomic uint32_t g_audio_sample_rate = 0U;
 static _Atomic uint8_t  g_audio_channels    = 0U;
 static _Atomic uint8_t  g_audio_bps         = 16U;
 static uint32_t g_current_duration_ms = 0;
+static size_t   g_poll_last_index = 0;   /* 主线程 poll 中检测曲目切换用 */
 
-typedef struct {
-    player_controller_event_t  event;
-    size_t                     track_index;
-    player_controller_state_t  state;
-} music_player_async_arg_t;
-
-static void on_player_event(player_controller_t *controller,
-                            player_controller_event_t event,
-                            const void *event_data,
-                            void *user_data);
-static void music_player_async_handler(void *data);
 static void poll_timer_cb(lv_timer_t *t);
 
 /* ── directory expansion helpers ─────────────────────────────────────── */
@@ -146,8 +136,12 @@ void music_player_init(const char **urls, size_t count) {
 
     stream_player_reset_interrupt_state();
 
-    g_controller = player_controller_create(on_player_event, NULL);
+    /* 不注册用户事件回调：事件可能在 stream_player 的工作线程触发，
+     * 而 LVGL（含 lv_async_call）在本工程 LV_OS_NONE 下非线程安全。
+     * 改由主线程的 poll_timer_cb 轮询状态/切歌，所有 LVGL 操作只在主线程发生。 */
+    g_controller = player_controller_create(NULL, NULL);
     if(!g_controller) goto cleanup;
+    g_poll_last_index = 0U;
 
     stream_player_get_default_config(&config);
     stream_player_apply_profile(&config, STREAM_PROFILE_BALANCED);
@@ -176,7 +170,6 @@ cleanup:
 
 void music_player_deinit(void) {
     size_t i;
-    lv_async_call_cancel(music_player_async_handler, NULL);
     if(g_poll_timer) { lv_timer_delete(g_poll_timer); g_poll_timer = NULL; }
     if(g_controller) { player_controller_destroy(g_controller); g_controller = NULL; }
     for(i = 0U; i < g_url_count; i++) { free(g_urls[i]); g_urls[i] = NULL; }
@@ -207,62 +200,22 @@ bool music_player_is_playing(void) {
 
 static void poll_timer_cb(lv_timer_t *t) {
     (void)t;
-    if(g_controller) player_controller_poll(g_controller);
-}
+    if(!g_controller) return;
 
-/* ── cross-thread event handling ─────────────────────────────────────── */
+    player_controller_poll(g_controller);
 
-static void music_player_async_handler(void *data) {
-    music_player_async_arg_t *arg = (music_player_async_arg_t *)data;
-    if(!arg) return;
-
-    switch(arg->event) {
-        case PLAYER_CONTROLLER_EVENT_TRACK_CHANGED: {
-            const player_playlist_item_t *item =
-                player_controller_get_playlist_item(g_controller, arg->track_index);
-            g_audio_sample_rate   = 0U;
-            g_audio_channels      = 0U;
-            g_current_duration_ms = (item && !item->is_live)
-                                    ? audio_probe_duration_ms(item->url) : 0U;
-            break;
-        }
-        case PLAYER_CONTROLLER_EVENT_STATE_CHANGED:
-        case PLAYER_CONTROLLER_EVENT_PLAYLIST_END:
-        case PLAYER_CONTROLLER_EVENT_ERROR:
-            break;
-        default:
-            break;
+    /* 主线程检测曲目切换并重算时长（取代原跨线程 lv_async_call 路径）。
+     * 切歌可能由 poll 内部的播放完成处理、或用户 select/next/prev 触发。 */
+    size_t idx = player_controller_get_current_index(g_controller);
+    if(idx != g_poll_last_index) {
+        g_poll_last_index = idx;
+        const player_playlist_item_t *item =
+            player_controller_get_playlist_item(g_controller, idx);
+        g_audio_sample_rate   = 0U;
+        g_audio_channels      = 0U;
+        g_current_duration_ms = (item && !item->is_live)
+                                ? audio_probe_duration_ms(item->url) : 0U;
     }
-    free(arg);
-}
-
-static void on_player_event(player_controller_t *controller,
-                            player_controller_event_t event,
-                            const void *event_data,
-                            void *user_data) {
-    music_player_async_arg_t *arg;
-    (void)user_data;
-
-    switch(event) {
-        case PLAYER_CONTROLLER_EVENT_TRACK_CHANGED:
-        case PLAYER_CONTROLLER_EVENT_STATE_CHANGED:
-        case PLAYER_CONTROLLER_EVENT_PLAYLIST_END:
-        case PLAYER_CONTROLLER_EVENT_ERROR:
-            break;
-        default:
-            return;
-    }
-
-    arg = (music_player_async_arg_t *)malloc(sizeof(*arg));
-    if(!arg) return;
-
-    arg->event       = event;
-    arg->track_index = player_controller_get_current_index(controller);
-    arg->state       = (event == PLAYER_CONTROLLER_EVENT_STATE_CHANGED && event_data)
-                       ? *(const player_controller_state_t *)event_data
-                       : PLAYER_CONTROLLER_STATE_IDLE;
-
-    lv_async_call(music_player_async_handler, arg);
 }
 
 /* ── hls observer: capture actual audio output format ───────────────── */
