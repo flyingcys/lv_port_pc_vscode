@@ -10,6 +10,30 @@
 #define FRUIT_NINJA_MAX_FRAGMENTS 32
 #define FRUIT_NINJA_MAX_TRAIL_POINTS 24
 #define FRUIT_NINJA_SEGMENT_MIN_DIST 12.0f
+#define FRUIT_NINJA_MAX_BLADE_SEGMENTS 48
+#define FRUIT_NINJA_MAX_JUICE 80
+#define FRUIT_NINJA_MAX_FLAMES 32
+
+typedef struct {
+    bool     active;
+    float    x, y;        /* 逻辑坐标 */
+    uint32_t age_ms, life_ms;
+    float    seed;        /* 用于横向轻摆/大小变化 */
+} fruit_ninja_flame_t;
+
+typedef struct {
+    bool     active;
+    float    sx, sy, ex, ey;   /* 逻辑坐标 */
+    uint32_t age_ms;
+} fruit_ninja_blade_seg_t;
+
+typedef struct {
+    bool     active;
+    float    origin_x, origin_y;  /* 逻辑 */
+    float    angle_rad, distance; /* 径向方向与最大距离 */
+    uint32_t age_ms, life_ms;
+    uint8_t  cr, cg, cb;          /* 果色 */
+} fruit_ninja_juice_t;
 #define FRUIT_NINJA_SCREEN_WIDTH 640
 #define FRUIT_NINJA_SCREEN_HEIGHT 480
 
@@ -31,6 +55,8 @@ typedef struct {
     int16_t base_rotation_deg;
     bool reverse_spin;
     bool is_bomb;
+    bool has_juice;
+    uint8_t juice_r, juice_g, juice_b;
 } fruit_ninja_fruit_def_t;
 
 typedef struct {
@@ -134,10 +160,19 @@ typedef struct {
     float y2;
 } fruit_ninja_segment_t;
 
+typedef struct {
+    bool     active;
+    float    cx, cy;        /* 爆心,逻辑 */
+    uint32_t age_ms;        /* 整个爆炸已进行时间 */
+} fruit_ninja_blast_t;
+
 typedef struct fruit_ninja_game {
     fruit_ninja_state_t state;
     bool resources_ready;
     bool audio_ready;
+    /* 逻辑画面尺寸,恒为 640x480(FRUIT_NINJA_SCREEN_WIDTH/HEIGHT)。
+     * 物理屏尺寸不存于此:显示经 fruit_ninja_viewport_* 等比 letterbox 映射,
+     * 输入物理坐标经 viewport_to_logic_* 反映射后再喂给游戏逻辑。 */
     uint32_t screen_width;
     uint32_t screen_height;
     uint32_t tick_count;
@@ -151,15 +186,29 @@ typedef struct fruit_ninja_game {
     uint32_t spawn_index;
     uint32_t volley_num;
     uint32_t volley_multiple;
+    uint32_t shake_accum_ms;
+
+    /* miss 图标弹出动画:-1=无,0-2=正在弹出的图标下标 */
+    int32_t  miss_pop_index;
+    uint32_t miss_pop_ms;
 
     lv_obj_t * screen;
     lv_obj_t * background;
     lv_obj_t * home_layer;
     lv_obj_t * fruit_layer;
     lv_obj_t * effect_layer;
+    lv_obj_t * effect_canvas;
     lv_obj_t * hud_layer;
     lv_obj_t * overlay_layer;
     lv_obj_t * input_layer;
+
+    fruit_ninja_blade_seg_t blades[FRUIT_NINJA_MAX_BLADE_SEGMENTS];
+    fruit_ninja_juice_t juice[FRUIT_NINJA_MAX_JUICE];
+    fruit_ninja_blast_t blast;
+    fruit_ninja_flame_t flames[FRUIT_NINJA_MAX_FLAMES];
+    uint32_t flame_accum_ms;
+    bool bomb_alive;
+    float bomb_x, bomb_y;
 
     lv_obj_t * logo_image;
     lv_obj_t * home_mask_image;
@@ -192,5 +241,6 @@ fruit_ninja_segment_t fruit_ninja_input_begin(fruit_ninja_game_t * game, float x
 fruit_ninja_segment_t fruit_ninja_input_push_point(fruit_ninja_game_t * game, float x, float y);
 void fruit_ninja_input_end(fruit_ninja_game_t * game);
 void fruit_ninja_input_tick(fruit_ninja_game_t * game, uint32_t delta_ms);
+void fruit_ninja_input_attach(fruit_ninja_game_t * game);
 
 #endif

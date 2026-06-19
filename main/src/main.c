@@ -86,7 +86,7 @@ int main(int argc, char **argv)
 
   const char *am_shot = getenv("AM_SHOT");
   if (am_shot) {
-      for (int i = 0; i < 200; i++) { lv_timer_handler(); usleep(10 * 1000); }
+      for (int i = 0; i < 300; i++) { lv_timer_handler(); usleep(10 * 1000); }
       am_screenshot_take(am_shot);
       return 0;
   }
