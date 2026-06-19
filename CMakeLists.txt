@@ -76,6 +76,10 @@ add_subdirectory(${HLS_PROJECT_ROOT_DIR}/src/http_client)
 add_subdirectory(${HLS_PROJECT_ROOT_DIR}/src/player_controller)
 add_subdirectory(${HLS_PROJECT_ROOT_DIR}/src/stream_player)
 
+# cJSON single-file JSON library
+add_library(cjson STATIC third-party/cjson/cJSON.c)
+target_include_directories(cjson PUBLIC ${PROJECT_SOURCE_DIR}/third-party/cjson)
+
 # Find and include SDL2 library
 find_package(SDL2 REQUIRED)
 find_package(SDL2_mixer QUIET)
@@ -144,6 +148,7 @@ else()
         ${HLS_PROJECT_ROOT_DIR}/src/player_controller
         ${HLS_PROJECT_ROOT_DIR}/src/http_client
         ${ALSA_INCLUDE_DIRS}
+        ${PROJECT_SOURCE_DIR}/third-party/cjson
     )
 
     target_compile_definitions(main PRIVATE
@@ -162,6 +167,7 @@ target_link_libraries(main lvgl lvgl::examples lvgl::demos lvgl::thorvg ${SDL2_L
     player_controller
     stream_player_module_linux
     ${ALSA_LIBRARIES}
+    cjson
 )
 
 if(TARGET SDL2_mixer::SDL2_mixer)
