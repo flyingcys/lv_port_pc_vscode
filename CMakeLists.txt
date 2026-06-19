@@ -52,6 +52,10 @@ file(GLOB FRUIT_NINJA_SOURCES CONFIGURE_DEPENDS
     "${PROJECT_SOURCE_DIR}/main/src/v9-fruit_ninja/*.c"
 )
 
+file(GLOB TETRIS_SOURCES CONFIGURE_DEPENDS
+    "${PROJECT_SOURCE_DIR}/main/src/v9-tetris/*.c"
+)
+
 file(GLOB APPLE_MUSIC_SOURCES CONFIGURE_DEPENDS
     "${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/*.c")
 file(GLOB APPLE_MUSIC_FONTS CONFIGURE_DEPENDS
@@ -163,6 +167,7 @@ else()
 endif()
 
 target_sources(main PRIVATE ${FRUIT_NINJA_SOURCES})
+target_sources(main PRIVATE ${TETRIS_SOURCES})
 target_sources(main PRIVATE ${APPLE_MUSIC_SOURCES} ${APPLE_MUSIC_FONTS})
 
 # Define LVGL configuration as a simple include

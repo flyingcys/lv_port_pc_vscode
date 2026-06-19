@@ -11,6 +11,7 @@
 #include "desktop.h"
 #include "v9_apple_music/apple_music.h"
 #include "v9-fruit_ninja/fruit_ninja.h"
+#include "v9-tetris/tetris.h"
 #include "music_player.h"
 
 /* 桌面中文标签字体（SourceHanSansSC 子集，见 desktop_font_18.c）*/
@@ -29,9 +30,10 @@ LV_FONT_DECLARE(desktop_font_18);
 static lv_obj_t *s_scr_desktop;   /* 桌面屏（= 初始活动屏）*/
 static lv_obj_t *s_scr_music;     /* 音乐 app 屏，懒构建 */
 static lv_obj_t *s_scr_fruit;     /* 切水果 app 屏，懒构建 */
+static lv_obj_t *s_scr_tetris;    /* 俄罗斯方块 app 屏(竖屏),懒构建 */
 static lv_obj_t *s_home_btn;      /* lv_layer_top 上的全局返回按钮 */
 
-typedef enum { APP_NONE, APP_MUSIC, APP_FRUIT } cur_app_t;
+typedef enum { APP_NONE, APP_MUSIC, APP_FRUIT, APP_TETRIS } cur_app_t;
 static cur_app_t s_current = APP_NONE;   /* 当前所在 app（用于离开时暂停）*/
 
 /* ── 返回桌面 ─────────────────────────────────────────────────────────── */
@@ -39,14 +41,18 @@ static cur_app_t s_current = APP_NONE;   /* 当前所在 app（用于离开时�
 /* 离开当前 app 时暂停其后台活动（音乐播放 / 切水果主循环）*/
 static void pause_current(void)
 {
-    if(s_current == APP_MUSIC)      music_player_pause();
-    else if(s_current == APP_FRUIT) fruit_ninja_set_active(false);
+    if(s_current == APP_MUSIC)       music_player_pause();
+    else if(s_current == APP_FRUIT)  fruit_ninja_set_active(false);
+    else if(s_current == APP_TETRIS) tetris_set_active(false);
 }
 
 static void go_desktop(void)
 {
+    bool from_tetris = (s_current == APP_TETRIS);
     pause_current();
     s_current = APP_NONE;
+    /* 俄罗斯方块为竖屏:返回桌面前转回横屏 */
+    if(from_tetris) lv_display_set_rotation(lv_display_get_default(), LV_DISPLAY_ROTATION_0);
     lv_screen_load(s_scr_desktop);
     if(s_home_btn) lv_obj_add_flag(s_home_btn, LV_OBJ_FLAG_HIDDEN);
 }
@@ -91,6 +97,23 @@ static void open_fruit_cb(lv_event_t *e)
         fruit_ninja_set_active(true);   /* 恢复主循环 */
     }
     s_current = APP_FRUIT;
+    enter_app();
+}
+
+static void open_tetris_cb(lv_event_t *e)
+{
+    (void)e;
+    /* 俄罗斯方块为竖屏:进入时把显示旋转 90°(玩时把设备转成竖屏)*/
+    lv_display_set_rotation(lv_display_get_default(), LV_DISPLAY_ROTATION_90);
+    if(!s_scr_tetris) {
+        s_scr_tetris = lv_obj_create(NULL);
+        lv_screen_load(s_scr_tetris);
+        tetris_start();                 /* 在竖屏活动屏(s_scr_tetris)上构建 */
+    } else {
+        lv_screen_load(s_scr_tetris);
+        tetris_set_active(true);
+    }
+    s_current = APP_TETRIS;
     enter_app();
 }
 
@@ -184,8 +207,9 @@ void desktop_create(void)
     lv_obj_set_flex_align(grid, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
 
     /* 两个真实可用 app */
-    make_icon(grid, LV_SYMBOL_AUDIO, "音乐",   open_music_cb, NULL);
-    make_icon(grid, LV_SYMBOL_CUT,   "切水果", open_fruit_cb, NULL);
+    make_icon(grid, LV_SYMBOL_AUDIO, "音乐",     open_music_cb,  NULL);
+    make_icon(grid, LV_SYMBOL_CUT,   "切水果",   open_fruit_cb,  NULL);
+    make_icon(grid, LV_SYMBOL_PLAY,  "俄罗斯方块", open_tetris_cb, NULL);
     /* 占位图标（点击提示开发中）*/
     make_icon(grid, LV_SYMBOL_DIRECTORY, "有道",   placeholder_cb, "有道");
     make_icon(grid, LV_SYMBOL_LIST,      "网易云", placeholder_cb, "网易云");
