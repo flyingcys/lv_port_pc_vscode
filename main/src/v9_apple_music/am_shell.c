@@ -1,5 +1,6 @@
 /* main/src/v9_apple_music/am_shell.c */
 #include "am_shell.h"
+#include "am_player.h"
 #include "am_widgets.h"
 #include "am_theme.h"
 #include "am_fonts.h"
@@ -7,6 +8,7 @@
 #include "am_icons.h"
 #include "am_data.h"
 #include <stdint.h>
+#include <string.h>
 
 /* ------------------------------------------------------------------ */
 /*  文件级 nav 回调存储                                               */
@@ -203,8 +205,10 @@ static int32_t s_mrows[] = {LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};
 /* ------------------------------------------------------------------ */
 /*  迷你播放条构建                                                    */
 /* ------------------------------------------------------------------ */
-void am_shell_build_miniplayer(lv_obj_t *player)
+am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player)
 {
+    am_miniplayer_handles_t h;
+    memset(&h, 0, sizeof(h));
     const am_metrics_t *m = am_metrics();
     const am_theme_t   *t = am_theme_get(am_theme_current());
 
@@ -280,10 +284,12 @@ void am_shell_build_miniplayer(lv_obj_t *player)
     lv_obj_t *copy_title = am_text(copy, am_mini.title, m->f_body, AM_TEXT);
     lv_label_set_long_mode(copy_title, LV_LABEL_LONG_DOT);
     lv_obj_set_width(copy_title, LV_PCT(100));
+    h.title_label = copy_title;
 
     lv_obj_t *copy_sub = am_text(copy, am_mini.subtitle, m->f_label, AM_MUTED);
     lv_label_set_long_mode(copy_sub, LV_LABEL_LONG_DOT);
     lv_obj_set_width(copy_sub, LV_PCT(100));
+    h.subtitle_label = copy_sub;
 
     /* ---- col1: player-controls (CONTENT 宽, CENTER 对齐) ---- */
     lv_obj_t *ctrls = lv_obj_create(player);
@@ -295,12 +301,18 @@ void am_shell_build_miniplayer(lv_obj_t *player)
     lv_obj_set_style_pad_column(ctrls, 8, 0);
     lv_obj_clear_flag(ctrls, LV_OBJ_FLAG_SCROLLABLE);
 
-    ctrl_btn(ctrls, btn_skip, 184, m->f_icon, AM_ICON_PREV, AM_MUTED_STRONG,
-             false, t->hero_a, t->hero_b, t->hero_c);
-    ctrl_btn(ctrls, btn_play, LV_OPA_COVER, m->f_icon, AM_ICON_PLAY, AM_WHITE,
-             true, t->hero_a, t->hero_b, t->hero_c);
-    ctrl_btn(ctrls, btn_skip, 184, m->f_icon, AM_ICON_NEXT, AM_MUTED_STRONG,
-             false, t->hero_a, t->hero_b, t->hero_c);
+    lv_obj_t *prev_btn = ctrl_btn(ctrls, btn_skip, 184, m->f_icon, AM_ICON_PREV, AM_MUTED_STRONG,
+                                   false, t->hero_a, t->hero_b, t->hero_c);
+    lv_obj_add_event_cb(prev_btn, am_player_on_prev, LV_EVENT_CLICKED, NULL);
+
+    lv_obj_t *play_btn = ctrl_btn(ctrls, btn_play, LV_OPA_COVER, m->f_icon, AM_ICON_PLAY, AM_WHITE,
+                                   true, t->hero_a, t->hero_b, t->hero_c);
+    lv_obj_add_event_cb(play_btn, am_player_on_play_pause, LV_EVENT_CLICKED, NULL);
+    h.play_icon = lv_obj_get_child(play_btn, 0);
+
+    lv_obj_t *next_btn = ctrl_btn(ctrls, btn_skip, 184, m->f_icon, AM_ICON_NEXT, AM_MUTED_STRONG,
+                                   false, t->hero_a, t->hero_b, t->hero_c);
+    lv_obj_add_event_cb(next_btn, am_player_on_next, LV_EVENT_CLICKED, NULL);
 
     /* ---- col2: progress-cluster (STRETCH 宽由 FR(20) 决定) ---- */
     lv_obj_t *cluster = lv_obj_create(player);
@@ -320,9 +332,11 @@ void am_shell_build_miniplayer(lv_obj_t *player)
     lv_obj_set_flex_align(meta, LV_FLEX_ALIGN_SPACE_BETWEEN, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_clear_flag(meta, LV_OBJ_FLAG_SCROLLABLE);
 
-    am_text(meta, am_mini.current, m->f_label, AM_MUTED);
+    lv_obj_t *lbl_cur = am_text(meta, am_mini.current, m->f_label, AM_MUTED);
+    h.time_cur = lbl_cur;
     am_text(meta, "Now Playing",   m->f_label, AM_MUTED);
-    am_text(meta, am_mini.total,   m->f_label, AM_MUTED);
+    lv_obj_t *lbl_total = am_text(meta, am_mini.total, m->f_label, AM_MUTED);
+    h.time_total = lbl_total;
 
     /* progress-bar rail:6px 高,宽度 100% 跟随 cluster */
     lv_obj_t *rail = lv_obj_create(cluster);
@@ -343,4 +357,7 @@ void am_shell_build_miniplayer(lv_obj_t *player)
     am_fill_grad2(fill, t->accent, t->accent_soft);
     lv_obj_clear_flag(fill, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_align(fill, LV_ALIGN_LEFT_MID, 0, 0);
+    h.progress_fill = fill;
+
+    return h;
 }
