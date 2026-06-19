@@ -11,6 +11,7 @@
 #include "desktop.h"
 #include "v9_apple_music/apple_music.h"
 #include "v9-fruit_ninja/fruit_ninja.h"
+#include "music_player.h"
 
 /* 桌面中文标签字体（SourceHanSansSC 子集，见 desktop_font_18.c）*/
 LV_FONT_DECLARE(desktop_font_18);
@@ -30,10 +31,22 @@ static lv_obj_t *s_scr_music;     /* 音乐 app 屏，懒构建 */
 static lv_obj_t *s_scr_fruit;     /* 切水果 app 屏，懒构建 */
 static lv_obj_t *s_home_btn;      /* lv_layer_top 上的全局返回按钮 */
 
+typedef enum { APP_NONE, APP_MUSIC, APP_FRUIT } cur_app_t;
+static cur_app_t s_current = APP_NONE;   /* 当前所在 app（用于离开时暂停）*/
+
 /* ── 返回桌面 ─────────────────────────────────────────────────────────── */
+
+/* 离开当前 app 时暂停其后台活动（音乐播放 / 切水果主循环）*/
+static void pause_current(void)
+{
+    if(s_current == APP_MUSIC)      music_player_pause();
+    else if(s_current == APP_FRUIT) fruit_ninja_set_active(false);
+}
 
 static void go_desktop(void)
 {
+    pause_current();
+    s_current = APP_NONE;
     lv_screen_load(s_scr_desktop);
     if(s_home_btn) lv_obj_add_flag(s_home_btn, LV_OBJ_FLAG_HIDDEN);
 }
@@ -60,7 +73,9 @@ static void open_music_cb(lv_event_t *e)
         apple_music_create();          /* 在当前活动屏(s_scr_music)上构建 */
     } else {
         lv_screen_load(s_scr_music);
+        music_player_resume();         /* 恢复离开时暂停的播放 */
     }
+    s_current = APP_MUSIC;
     enter_app();
 }
 
@@ -68,12 +83,14 @@ static void open_fruit_cb(lv_event_t *e)
 {
     (void)e;
     if(!s_scr_fruit) {
-        s_scr_fruit = lv_obj_create(NULL);
-        lv_screen_load(s_scr_fruit);
-        fruit_ninja_start();           /* 在当前活动屏(s_scr_fruit)上构建 */
+        /* fruit_ninja_start 自行创建并加载 g_game.screen，构建后记录该屏 */
+        fruit_ninja_start();
+        s_scr_fruit = lv_screen_active();
     } else {
         lv_screen_load(s_scr_fruit);
+        fruit_ninja_set_active(true);   /* 恢复主循环 */
     }
+    s_current = APP_FRUIT;
     enter_app();
 }
 

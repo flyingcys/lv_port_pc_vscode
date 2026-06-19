@@ -366,3 +366,10 @@ void fruit_ninja_start(void)
     lv_screen_load(g_game.screen);
     fruit_ninja_state_enter_home(&g_game);
 }
+
+void fruit_ninja_set_active(bool active)
+{
+    if(!g_game.update_timer) return;
+    if(active) lv_timer_resume(g_game.update_timer);
+    else       lv_timer_pause(g_game.update_timer);
+}
