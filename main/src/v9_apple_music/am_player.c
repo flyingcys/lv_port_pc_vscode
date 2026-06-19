@@ -69,7 +69,7 @@ static void refresh_progress(void) {
         } else if(dur == 0) {
             lv_label_set_text(g_h.time_cur, "--:--");
         } else {
-            char buf[8];
+            char buf[10];
             snprintf(buf, sizeof(buf), "%u:%02u", pos / 60000u, (pos / 1000u) % 60u);
             lv_label_set_text(g_h.time_cur, buf);
         }
@@ -80,7 +80,7 @@ static void refresh_progress(void) {
         if(dur == 0) {
             lv_label_set_text(g_h.time_total, "--:--");
         } else {
-            char buf[8];
+            char buf[10];
             snprintf(buf, sizeof(buf), "%u:%02u", dur / 60000u, (dur / 1000u) % 60u);
             lv_label_set_text(g_h.time_total, buf);
         }
@@ -120,6 +120,9 @@ static void am_player_timer_cb(lv_timer_t *t) {
 /* ── public API ───────────────────────────────────────────────────────── */
 
 void am_player_init(void) {
+    size_t i;
+    for(i = 0; i < g_local_count; i++) { free(g_local_urls[i]); g_local_urls[i] = NULL; }
+    g_local_count = 0;
     memset(&g_h, 0, sizeof(g_h));
     g_mode         = AM_PLAYER_MODE_IDLE;
     g_stream_title[0] = '\0';
@@ -153,7 +156,8 @@ void am_player_load_local(const char **urls, size_t count, size_t start_index) {
     g_local_count = 0;
     for(i = 0; i < count && i < AM_PLAYER_LOCAL_MAX; i++) {
         g_local_urls[i] = strdup(urls[i]);
-        if(g_local_urls[i]) g_local_count++;
+        if(!g_local_urls[i]) break;  /* 内存不足时中止，避免 NULL 空洞 */
+        g_local_count++;
     }
     g_mode     = AM_PLAYER_MODE_LOCAL;
     g_last_idx = (size_t)-1;
@@ -168,6 +172,7 @@ void am_player_load_local(const char **urls, size_t count, size_t start_index) {
 
 void am_player_play_stream(const char *url, const char *title) {
     const char *one[1];
+    if(!url || !url[0]) return;  /* 防御空 URL */
     strncpy(g_stream_title, title ? title : "", sizeof(g_stream_title) - 1);
     g_stream_title[sizeof(g_stream_title) - 1] = '\0';
     g_mode     = AM_PLAYER_MODE_STREAM;
