@@ -273,7 +273,7 @@ add_executable(apple_music_theme_test
 )
 target_include_directories(apple_music_theme_test PRIVATE ${PROJECT_SOURCE_DIR})
 target_compile_definitions(apple_music_theme_test PRIVATE LV_CONF_INCLUDE_SIMPLE)
-target_link_libraries(apple_music_theme_test lvgl)
+target_link_libraries(apple_music_theme_test lvgl ${PNG_LIBRARIES})
 add_test(NAME apple_music_theme_test COMMAND $<TARGET_FILE:apple_music_theme_test>)
 set_tests_properties(apple_music_theme_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
