@@ -24,4 +24,7 @@ void     music_player_seek(uint32_t position_ms);
 uint32_t music_player_get_duration_ms(void);
 uint32_t music_player_get_position_ms(void);
 
+/* 返回当前播放项的 URL（本地路径或流地址）。无播放项时返回空字符串。*/
+const char *music_player_get_current_url(void);
+
 #endif /* MUSIC_PLAYER_H */

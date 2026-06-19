@@ -224,20 +224,11 @@ static void music_player_async_handler(void *data) {
             g_audio_channels      = 0U;
             g_current_duration_ms = (item && !item->is_live)
                                     ? audio_probe_duration_ms(item->url) : 0U;
-            _lv_demo_music_play((uint32_t)arg->track_index);
             break;
         }
         case PLAYER_CONTROLLER_EVENT_STATE_CHANGED:
-            if(arg->state == PLAYER_CONTROLLER_STATE_PAUSED ||
-               arg->state == PLAYER_CONTROLLER_STATE_STOPPED) {
-                _lv_demo_music_pause();
-            } else if(arg->state == PLAYER_CONTROLLER_STATE_PLAYING) {
-                _lv_demo_music_resume();
-            }
-            break;
         case PLAYER_CONTROLLER_EVENT_PLAYLIST_END:
         case PLAYER_CONTROLLER_EVENT_ERROR:
-            _lv_demo_music_pause();
             break;
         default:
             break;
@@ -391,4 +382,11 @@ uint32_t music_player_get_duration_ms(void) {
 /* ── seek (Task S3) ──────────────────────────────────────────────────── */
 void music_player_seek(uint32_t position_ms) {
     if(g_controller) player_controller_seek(g_controller, position_ms);
+}
+
+const char *music_player_get_current_url(void) {
+    if(!g_controller) return "";
+    const player_playlist_item_t *item =
+        player_controller_get_current_item(g_controller);
+    return (item && item->url[0]) ? item->url : "";
 }
