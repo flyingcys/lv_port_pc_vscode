@@ -128,6 +128,9 @@ add_compile_definitions($<$<BOOL:${LV_USE_FFMPEG}>:LV_USE_FFMPEG=1>)
 # Add LVGL subdirectory
 add_subdirectory(lvgl)
 target_include_directories(lvgl PUBLIC ${PROJECT_SOURCE_DIR} ${SDL2_INCLUDE_DIRS})
+if(TARGET lvgl_demos)
+    target_include_directories(lvgl_demos PRIVATE ${PROJECT_SOURCE_DIR}/main/inc)
+endif()
 
 # Create the main executable, depending on the FreeRTOS option
 if(USE_FREERTOS)

@@ -2,7 +2,6 @@
 #include "music_player.h"
 #include <dirent.h>
 #include <stdatomic.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -14,10 +13,8 @@
 
 #define MUSIC_PLAYER_MAX_TRACKS 64U
 
-/* forward declaration */
-static uint32_t audio_probe_duration_ms(const char *url);
-
 static char               *g_urls[MUSIC_PLAYER_MAX_TRACKS];
+static uint32_t            g_url_duration_ms[MUSIC_PLAYER_MAX_TRACKS];
 static size_t              g_url_count  = 0;
 static player_controller_t *g_controller = NULL;
 static lv_timer_t          *g_poll_timer = NULL;
@@ -113,6 +110,7 @@ static void mp_expand_directory(const char *dir_path) {
 
     for(i = 0U; i < entry_count; i++) {
         if(g_url_count < MUSIC_PLAYER_MAX_TRACKS) {
+            g_url_duration_ms[g_url_count] = 0U;
             g_urls[g_url_count++] = entries[i];
         } else {
             free(entries[i]);
@@ -129,7 +127,20 @@ static void mp_add_url(const char *url) {
         return;
     }
     g_urls[g_url_count] = strdup(url);
-    if(g_urls[g_url_count]) g_url_count++;
+    if(g_urls[g_url_count]) {
+        g_url_duration_ms[g_url_count] = 0U;
+        g_url_count++;
+    }
+}
+
+static void mp_refresh_duration_cache(void) {
+    size_t i;
+    if(!g_controller) return;
+    for(i = 0U; i < g_url_count; i++) {
+        const player_playlist_item_t *item =
+            player_controller_get_playlist_item(g_controller, i);
+        g_url_duration_ms[i] = (item && !item->is_live) ? stream_player_probe_file_duration_ms(item->url) : 0U;
+    }
 }
 
 /* ── lifecycle ────────────────────────────────────────────────────────── */
@@ -159,18 +170,18 @@ void music_player_init(const char **urls, size_t count) {
 
     g_poll_timer = lv_timer_create(poll_timer_cb, 100, NULL);
     if(!g_poll_timer) goto cleanup;
-    {
-        const player_playlist_item_t *first =
-            player_controller_get_playlist_item(g_controller, 0U);
-        g_current_duration_ms = (first && !first->is_live)
-                                ? audio_probe_duration_ms(first->url) : 0U;
-    }
+    mp_refresh_duration_cache();
+    g_current_duration_ms = g_url_duration_ms[0];
     player_controller_play(g_controller);
     return;
 
 cleanup:
     if(g_controller) { player_controller_destroy(g_controller); g_controller = NULL; }
-    for(i = 0U; i < g_url_count; i++) { free(g_urls[i]); g_urls[i] = NULL; }
+    for(i = 0U; i < g_url_count; i++) {
+        free(g_urls[i]);
+        g_urls[i] = NULL;
+        g_url_duration_ms[i] = 0U;
+    }
     g_url_count = 0U;
 }
 
@@ -198,6 +209,16 @@ size_t music_player_get_count(void) {
 size_t music_player_get_current_index(void) {
     return g_controller ? player_controller_get_current_index(g_controller) : 0U;
 }
+const char *music_player_get_title(size_t index) {
+    const player_playlist_item_t *item =
+        g_controller ? player_controller_get_playlist_item(g_controller, index) : NULL;
+    return item ? item->title : NULL;
+}
+bool music_player_is_live(size_t index) {
+    const player_playlist_item_t *item =
+        g_controller ? player_controller_get_playlist_item(g_controller, index) : NULL;
+    return item ? item->is_live : false;
+}
 bool music_player_is_playing(void) {
     return g_controller &&
            (player_controller_get_state(g_controller) == PLAYER_CONTROLLER_STATE_PLAYING);
@@ -222,8 +243,12 @@ static void music_player_async_handler(void *data) {
                 player_controller_get_playlist_item(g_controller, arg->track_index);
             g_audio_sample_rate   = 0U;
             g_audio_channels      = 0U;
-            g_current_duration_ms = (item && !item->is_live)
-                                    ? audio_probe_duration_ms(item->url) : 0U;
+            if(item && !item->is_live && arg->track_index < MUSIC_PLAYER_MAX_TRACKS &&
+               g_url_duration_ms[arg->track_index] == 0U) {
+                g_url_duration_ms[arg->track_index] = stream_player_probe_file_duration_ms(item->url);
+            }
+            g_current_duration_ms = (arg->track_index < MUSIC_PLAYER_MAX_TRACKS)
+                                    ? g_url_duration_ms[arg->track_index] : 0U;
             _lv_demo_music_play((uint32_t)arg->track_index);
             break;
         }
@@ -289,103 +314,28 @@ uint32_t music_player_get_position_ms(void) {
     uint32_t denom;
 
     if(!g_controller) return 0U;
+    if(player_controller_get_stats(g_controller, &stats) == 0 && stats.position_ms > 0U) {
+        return (uint32_t)stats.position_ms;
+    }
     if(g_audio_sample_rate == 0U || g_audio_channels == 0U) return 0U;
-    if(player_controller_get_stats(g_controller, &stats) != 0) return 0U;
 
     denom = g_audio_sample_rate * (uint32_t)g_audio_channels * ((uint32_t)g_audio_bps / 8U);
     if(denom == 0U) return 0U;
     return (uint32_t)(stats.pcm_bytes_written * 1000ULL / denom);
 }
 
-/* ── audio file duration probe ───────────────────────────────────────── */
-static uint32_t audio_probe_duration_ms(const char *url) {
-    FILE   *f;
-    uint8_t buf[48];
-    size_t  n;
-    long    file_size;
-
-    if(!url) return 0U;
-    if(strstr(url, "://") && strncmp(url, "file://", 7) != 0) return 0U;
-    {
-        const char *path = (strncmp(url, "file://", 7) == 0) ? url + 7 : url;
-        f = fopen(path, "rb");
-        if(!f) return 0U;
-        fseek(f, 0, SEEK_END);
-        file_size = ftell(f);
-        rewind(f);
-        if(file_size <= 0L) { fclose(f); return 0U; }
-        n = fread(buf, 1, sizeof(buf), f);
-        fclose(f);
+uint32_t music_player_get_duration_ms(void) {
+    stream_player_stats_t stats;
+    if(g_controller && player_controller_get_stats(g_controller, &stats) == 0 &&
+       stats.duration_ms > 0U) {
+        return (uint32_t)stats.duration_ms;
     }
-    if(n < 12U) return 0U;
-
-    /* WAV (standard PCM only: fmt chunk size = 16, AudioFormat = 1) */
-    if(n >= 44U &&
-       buf[0]=='R' && buf[1]=='I' && buf[2]=='F' && buf[3]=='F' &&
-       buf[8]=='W' && buf[9]=='A' && buf[10]=='V' && buf[11]=='E' &&
-       buf[16]==16U && buf[17]==0U &&          /* fmt chunk size == 16 */
-       buf[20]==1U  && buf[21]==0U) {          /* AudioFormat == PCM */
-        uint32_t byte_rate = (uint32_t)buf[28] | ((uint32_t)buf[29]<<8)
-                           | ((uint32_t)buf[30]<<16) | ((uint32_t)buf[31]<<24);
-        uint32_t data_size = (uint32_t)buf[40] | ((uint32_t)buf[41]<<8)
-                           | ((uint32_t)buf[42]<<16) | ((uint32_t)buf[43]<<24);
-        if(byte_rate == 0U) return 0U;
-        return data_size / byte_rate * 1000U + (data_size % byte_rate) * 1000U / byte_rate;
-    }
-
-    /* FLAC */
-    if(n >= 42U &&
-       buf[0]=='f' && buf[1]=='L' && buf[2]=='a' && buf[3]=='C') {
-        uint32_t sr = ((uint32_t)buf[18] << 12) | ((uint32_t)buf[19] << 4)
-                    | ((uint32_t)buf[20] >> 4);
-        uint64_t total = ((uint64_t)(buf[21] & 0x0FU) << 32)
-                       | ((uint64_t)buf[22] << 24) | ((uint64_t)buf[23] << 16)
-                       | ((uint64_t)buf[24] << 8)  |  (uint64_t)buf[25];
-        if(sr == 0U) return 0U;
-        return (uint32_t)(total * 1000ULL / sr);
-    }
-
-    /* MP3 CBR estimate */
-    {
-        static const uint32_t kbps_mpeg1_l3[16] = {
-            0,32,40,48,56,64,80,96,112,128,160,192,224,256,320,0
-        };
-        uint32_t id3v2_size = 0U;
-        uint32_t i;
-
-        /* skip ID3v2 tag if present */
-        if(n >= 10U && buf[0]=='I' && buf[1]=='D' && buf[2]=='3') {
-            id3v2_size = 10U
-                + (((uint32_t)(buf[6] & 0x7FU)) << 21)
-                + (((uint32_t)(buf[7] & 0x7FU)) << 14)
-                + (((uint32_t)(buf[8] & 0x7FU)) <<  7)
-                +  ((uint32_t)(buf[9] & 0x7FU));
-        }
-
-        for(i = 0U; i + 3U < (uint32_t)n; i++) {
-            if(buf[i] == 0xFFU && (buf[i+1U] & 0xE0U) == 0xE0U) {
-                uint8_t version = (buf[i+1U] >> 3) & 0x03U;
-                uint8_t layer   = (buf[i+1U] >> 1) & 0x03U;
-                uint8_t br_idx  = (buf[i+2U] >> 4) & 0x0FU;
-                if(version == 3U && layer == 1U && br_idx > 0U && br_idx < 15U) {
-                    uint32_t bps2 = kbps_mpeg1_l3[br_idx] * 1000U;
-                    if(bps2 == 0U) break;
-                    /* subtract ID3v2 header and ID3v1 trailer from file_size */
-                    uint32_t id3v1_size = (file_size > 128L) ? 128U : 0U;
-                    uint32_t audio_bytes = (uint32_t)file_size
-                                           - (id3v2_size < (uint32_t)file_size ? id3v2_size : 0U)
-                                           - id3v1_size;
-                    return audio_bytes * 8U / (bps2 / 1000U);
-                }
-                break;
-            }
-        }
-    }
-    return 0U;
+    return g_current_duration_ms;
 }
 
-uint32_t music_player_get_duration_ms(void) {
-    return g_current_duration_ms;
+uint32_t music_player_get_track_duration_ms(size_t index) {
+    if(index >= MUSIC_PLAYER_MAX_TRACKS) return 0U;
+    return g_url_duration_ms[index];
 }
 
 /* ── seek (Task S3) ──────────────────────────────────────────────────── */
