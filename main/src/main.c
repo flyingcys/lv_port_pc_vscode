@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include "lvgl/lvgl.h"
+#include "lvgl/demos/music/lv_demo_music.h"
 #include "v9-fruit_ninja/fruit_ninja.h"
 #include "glob.h"
 #include "music_player.h"

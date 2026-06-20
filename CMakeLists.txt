@@ -63,7 +63,21 @@ set(WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 find_package(OpenSSL REQUIRED)
 find_package(Threads REQUIRED)
-find_package(ALSA REQUIRED)
+
+set(HLS_AUDIO_INCLUDE_DIRS "")
+set(HLS_AUDIO_LIBRARIES "")
+set(HLS_AUDIO_COMPILE_DEFINITIONS OPUS_BUILD VAR_ARRAYS)
+set(HLS_STREAM_PLAYER_TARGET stream_player_module_linux)
+
+if(APPLE)
+    set(HLS_PLATFORM_LIBRARIES "")
+else()
+    find_package(ALSA REQUIRED)
+    set(HLS_AUDIO_INCLUDE_DIRS ${ALSA_INCLUDE_DIRS})
+    set(HLS_AUDIO_LIBRARIES ${ALSA_LIBRARIES})
+    list(APPEND HLS_AUDIO_COMPILE_DEFINITIONS PLATFORM_LINUX)
+    set(HLS_PLATFORM_LIBRARIES m)
+endif()
 
 set(HLS_PROJECT_ROOT_DIR ${PROJECT_SOURCE_DIR}/third-party/hls_player_demo)
 
@@ -138,13 +152,11 @@ else()
         ${HLS_PROJECT_ROOT_DIR}/src/stream_player/include
         ${HLS_PROJECT_ROOT_DIR}/src/player_controller
         ${HLS_PROJECT_ROOT_DIR}/src/http_client
-        ${ALSA_INCLUDE_DIRS}
+        ${HLS_AUDIO_INCLUDE_DIRS}
     )
 
     target_compile_definitions(main PRIVATE
-        PLATFORM_LINUX
-        OPUS_BUILD
-        VAR_ARRAYS
+        ${HLS_AUDIO_COMPILE_DEFINITIONS}
     )
 endif()
 
@@ -152,10 +164,12 @@ target_sources(main PRIVATE ${FRUIT_NINJA_SOURCES})
 
 # Define LVGL configuration as a simple include
 target_compile_definitions(main PRIVATE LV_CONF_INCLUDE_SIMPLE)
-target_link_libraries(main lvgl lvgl::examples lvgl::demos lvgl::thorvg ${SDL2_LIBRARIES} m pthread
+target_link_libraries(main lvgl lvgl::examples lvgl::demos lvgl::thorvg ${SDL2_LIBRARIES}
+    ${HLS_PLATFORM_LIBRARIES}
+    Threads::Threads
     player_controller
-    stream_player_module_linux
-    ${ALSA_LIBRARIES}
+    ${HLS_STREAM_PLAYER_TARGET}
+    ${HLS_AUDIO_LIBRARIES}
 )
 
 if(TARGET SDL2_mixer::SDL2_mixer)

@@ -224,20 +224,20 @@ static void music_player_async_handler(void *data) {
             g_audio_channels      = 0U;
             g_current_duration_ms = (item && !item->is_live)
                                     ? audio_probe_duration_ms(item->url) : 0U;
-            lv_demo_music_play((uint32_t)arg->track_index);
+            _lv_demo_music_play((uint32_t)arg->track_index);
             break;
         }
         case PLAYER_CONTROLLER_EVENT_STATE_CHANGED:
             if(arg->state == PLAYER_CONTROLLER_STATE_PAUSED ||
                arg->state == PLAYER_CONTROLLER_STATE_STOPPED) {
-                lv_demo_music_pause();
+                _lv_demo_music_pause();
             } else if(arg->state == PLAYER_CONTROLLER_STATE_PLAYING) {
-                lv_demo_music_resume();
+                _lv_demo_music_resume();
             }
             break;
         case PLAYER_CONTROLLER_EVENT_PLAYLIST_END:
         case PLAYER_CONTROLLER_EVENT_ERROR:
-            lv_demo_music_pause();
+            _lv_demo_music_pause();
             break;
         default:
             break;
