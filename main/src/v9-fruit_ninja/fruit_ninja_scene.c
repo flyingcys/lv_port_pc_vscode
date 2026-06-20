@@ -606,14 +606,14 @@ static void build_home_menu_fruits(fruit_ninja_game_t * game)
 
 static void start_running_timer_cb(lv_timer_t * timer)
 {
-    fruit_ninja_game_t * game = timer->user_data;
+    fruit_ninja_game_t * game = lv_timer_get_user_data(timer);
     lv_timer_delete(timer);
     enter_running(game);
 }
 
 static void restore_home_fruit_timer_cb(lv_timer_t * timer)
 {
-    fruit_ninja_fruit_t * fruit = timer->user_data;
+    fruit_ninja_fruit_t * fruit = lv_timer_get_user_data(timer);
     fruit->sliced = false;
     show_obj(fruit->whole_image);
     show_obj(fruit->shadow_image);
@@ -936,7 +936,7 @@ static void update_fragments(fruit_ninja_game_t * game)
 
 static void update_timer_cb(lv_timer_t * timer)
 {
-    fruit_ninja_game_t * game = timer->user_data;
+    fruit_ninja_game_t * game = lv_timer_get_user_data(timer);
     uint32_t spawn_count;
     uint32_t target_count;
 
