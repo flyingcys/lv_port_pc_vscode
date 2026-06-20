@@ -24,6 +24,10 @@ static _Atomic uint8_t  g_audio_channels    = 0U;
 static _Atomic uint8_t  g_audio_bps         = 16U;
 static uint32_t g_current_duration_ms = 0;
 
+static music_play_mode_t g_play_mode = MP_MODE_SEQ;
+static uint8_t  g_volume  = 100U;
+static bool     g_muted   = false;
+
 typedef struct {
     player_controller_event_t  event;
     size_t                     track_index;
@@ -36,6 +40,8 @@ static void on_player_event(player_controller_t *controller,
                             void *user_data);
 static void music_player_async_handler(void *data);
 static void poll_timer_cb(lv_timer_t *t);
+static void mp_apply_play_mode(music_play_mode_t mode);
+static void mp_apply_volume(void);
 
 /* ── directory expansion helpers ─────────────────────────────────────── */
 
@@ -171,6 +177,8 @@ void music_player_init(const char **urls, size_t count) {
     g_poll_timer = lv_timer_create(poll_timer_cb, 100, NULL);
     if(!g_poll_timer) goto cleanup;
     mp_refresh_duration_cache();
+    mp_apply_play_mode(g_play_mode);
+    mp_apply_volume();
     g_current_duration_ms = g_url_duration_ms[0];
     player_controller_play(g_controller);
     return;
@@ -341,4 +349,71 @@ uint32_t music_player_get_track_duration_ms(size_t index) {
 /* ── seek (Task S3) ──────────────────────────────────────────────────── */
 void music_player_seek(uint32_t position_ms) {
     if(g_controller) player_controller_seek(g_controller, position_ms);
+}
+
+/* ── play mode + volume ──────────────────────────────────────────────── */
+
+static void mp_apply_play_mode(music_play_mode_t mode) {
+    if(!g_controller) return;
+    switch(mode) {
+        case MP_MODE_SEQ:
+            player_controller_set_repeat_mode(g_controller, PLAYER_REPEAT_OFF);
+            player_controller_set_shuffle(g_controller, false);
+            break;
+        case MP_MODE_REPEAT_ONE:
+            player_controller_set_repeat_mode(g_controller, PLAYER_REPEAT_ONE);
+            player_controller_set_shuffle(g_controller, false);
+            break;
+        case MP_MODE_REPEAT_ALL:
+            player_controller_set_repeat_mode(g_controller, PLAYER_REPEAT_ALL);
+            player_controller_set_shuffle(g_controller, false);
+            break;
+        case MP_MODE_SHUFFLE:
+            player_controller_set_repeat_mode(g_controller, PLAYER_REPEAT_OFF);
+            player_controller_set_shuffle(g_controller, true);
+            break;
+        default:
+            break;
+    }
+}
+
+static void mp_apply_volume(void) {
+    if(!g_controller) return;
+    float v = g_muted ? 0.0f : (float)g_volume / 100.0f;
+    player_controller_set_volume(g_controller, v);
+}
+
+void music_player_set_play_mode(music_play_mode_t mode) {
+    g_play_mode = mode;
+    mp_apply_play_mode(mode);
+}
+
+music_play_mode_t music_player_get_play_mode(void) {
+    return g_play_mode;
+}
+
+music_play_mode_t music_player_cycle_play_mode(void) {
+    music_play_mode_t next = (music_play_mode_t)((g_play_mode + 1) % 4);
+    music_player_set_play_mode(next);
+    return next;
+}
+
+void music_player_set_volume(uint8_t percent) {
+    if(percent > 100U) percent = 100U;
+    g_volume = percent;
+    if(g_muted && percent > 0U) g_muted = false; /* raising volume unmutes */
+    mp_apply_volume();
+}
+
+uint8_t music_player_get_volume(void) {
+    return g_volume;
+}
+
+void music_player_mute_toggle(void) {
+    g_muted = !g_muted;
+    mp_apply_volume();
+}
+
+bool music_player_is_muted(void) {
+    return g_muted;
 }
