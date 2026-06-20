@@ -52,6 +52,15 @@ file(GLOB MUSIC_PLAYER_SOURCES CONFIGURE_DEPENDS
     "${PROJECT_SOURCE_DIR}/main/src/v9_music_player/*.c"
 )
 
+file(GLOB TETRIS_SOURCES CONFIGURE_DEPENDS
+    "${PROJECT_SOURCE_DIR}/main/src/v9-tetris/*.c"
+)
+
+file(GLOB APPLE_MUSIC_SOURCES CONFIGURE_DEPENDS
+    "${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/*.c")
+file(GLOB APPLE_MUSIC_FONTS CONFIGURE_DEPENDS
+    "${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/fonts/*.c")
+
 # Set C and C++ standards
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_CXX_STANDARD 17)
@@ -60,6 +69,20 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Set the output path for the executable
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+find_package(OpenSSL REQUIRED)
+find_package(Threads REQUIRED)
+find_package(ALSA REQUIRED)
+
+set(HLS_PROJECT_ROOT_DIR ${PROJECT_SOURCE_DIR}/third-party/hls_player_demo)
+
+add_subdirectory(${HLS_PROJECT_ROOT_DIR}/src/http_client)
+add_subdirectory(${HLS_PROJECT_ROOT_DIR}/src/player_controller)
+add_subdirectory(${HLS_PROJECT_ROOT_DIR}/src/stream_player)
+
+# cJSON single-file JSON library
+add_library(cjson STATIC third-party/cjson/cJSON.c)
+target_include_directories(cjson PUBLIC ${PROJECT_SOURCE_DIR}/third-party/cjson)
 
 # Find and include SDL2 library
 find_package(SDL2 REQUIRED)
@@ -82,6 +105,8 @@ target_include_directories(lvgl PUBLIC ${PROJECT_SOURCE_DIR} ${SDL2_INCLUDE_DIRS
 if(USE_FREERTOS)
     add_executable(main
         ${PROJECT_SOURCE_DIR}/main/src/main.c
+        ${PROJECT_SOURCE_DIR}/main/src/desktop.c
+        ${PROJECT_SOURCE_DIR}/main/src/desktop_font_18.c
         ${PROJECT_SOURCE_DIR}/main/src/freertos_main.cpp
         ${PROJECT_SOURCE_DIR}/main/src/mouse_cursor_icon.c
         ${PROJECT_SOURCE_DIR}/main/src/FreeRTOS_Posix_Port.c
@@ -92,15 +117,47 @@ if(USE_FREERTOS)
 else()
     add_executable(main
         ${PROJECT_SOURCE_DIR}/main/src/main.c
+        ${PROJECT_SOURCE_DIR}/main/src/desktop.c
+        ${PROJECT_SOURCE_DIR}/main/src/desktop_font_18.c
+        ${PROJECT_SOURCE_DIR}/main/src/music_player.c
         ${PROJECT_SOURCE_DIR}/main/src/mouse_cursor_icon.c
+    )
+
+    target_include_directories(main PRIVATE
+        ${HLS_PROJECT_ROOT_DIR}/src
+        ${HLS_PROJECT_ROOT_DIR}/src/stream_player/include
+        ${HLS_PROJECT_ROOT_DIR}/src/player_controller
+        ${HLS_PROJECT_ROOT_DIR}/src/http_client
+        ${ALSA_INCLUDE_DIRS}
+        ${PROJECT_SOURCE_DIR}/third-party/cjson
+    )
+
+    target_compile_definitions(main PRIVATE
+        PLATFORM_LINUX
+        OPUS_BUILD
+        VAR_ARRAYS
     )
 endif()
 
+<<<<<<< HEAD
 target_sources(main PRIVATE ${MUSIC_PLAYER_SOURCES})
+=======
+target_sources(main PRIVATE ${FRUIT_NINJA_SOURCES})
+target_sources(main PRIVATE ${TETRIS_SOURCES})
+target_sources(main PRIVATE ${APPLE_MUSIC_SOURCES} ${APPLE_MUSIC_FONTS})
+>>>>>>> f2a3f98aaf71a2b895101de3ee45108b7ea269eb
 
 # Define LVGL configuration as a simple include
 target_compile_definitions(main PRIVATE LV_CONF_INCLUDE_SIMPLE)
-target_link_libraries(main lvgl lvgl::examples lvgl::demos lvgl::thorvg ${SDL2_LIBRARIES} m pthread)
+# 本地试听文件目录绝对路径（apple_music 本地页写死的播放文件，见 am_data.c）
+target_compile_definitions(main PRIVATE
+    AM_TEST_FILE_DIR="${PROJECT_SOURCE_DIR}/third-party/hls_player_demo/test_file")
+target_link_libraries(main lvgl lvgl::examples lvgl::demos lvgl::thorvg ${SDL2_LIBRARIES} m pthread
+    player_controller
+    stream_player_module_linux
+    ${ALSA_LIBRARIES}
+    cjson
+)
 
 # Only link freertos_config if the FreeRTOS directory exists
 if(USE_FREERTOS)
@@ -223,6 +280,7 @@ add_test(
 )
 set_tests_properties(fruit_ninja_model_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
+<<<<<<< HEAD
 add_test(
     NAME music_player_theme_test
     COMMAND $<TARGET_FILE:music_player_theme_test>
@@ -252,6 +310,81 @@ add_test(
     COMMAND $<TARGET_FILE:music_player_shell_lvgl_test>
 )
 set_tests_properties(music_player_shell_lvgl_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+=======
+add_executable(fruit_ninja_easing_test
+    ${PROJECT_SOURCE_DIR}/main/tests/fruit_ninja_easing_test.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9-fruit_ninja/fruit_ninja_easing.c
+)
+target_include_directories(fruit_ninja_easing_test PRIVATE ${PROJECT_SOURCE_DIR})
+target_link_libraries(fruit_ninja_easing_test m)
+add_test(NAME fruit_ninja_easing_test COMMAND $<TARGET_FILE:fruit_ninja_easing_test>)
+set_tests_properties(fruit_ninja_easing_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_executable(fruit_ninja_viewport_test
+    ${PROJECT_SOURCE_DIR}/main/tests/fruit_ninja_viewport_test.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9-fruit_ninja/fruit_ninja_viewport.c
+)
+target_include_directories(fruit_ninja_viewport_test PRIVATE ${PROJECT_SOURCE_DIR})
+target_link_libraries(fruit_ninja_viewport_test m)
+add_test(NAME fruit_ninja_viewport_test COMMAND $<TARGET_FILE:fruit_ninja_viewport_test>)
+set_tests_properties(fruit_ninja_viewport_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_executable(fruit_ninja_blade_test
+    ${PROJECT_SOURCE_DIR}/main/tests/fruit_ninja_blade_test.c
+    ${PROJECT_SOURCE_DIR}/main/tests/fruit_ninja_effects_stub.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9-fruit_ninja/fruit_ninja_effects.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9-fruit_ninja/fruit_ninja_easing.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9-fruit_ninja/fruit_ninja_viewport.c)
+target_include_directories(fruit_ninja_blade_test PRIVATE ${PROJECT_SOURCE_DIR})
+target_compile_definitions(fruit_ninja_blade_test PRIVATE LV_CONF_INCLUDE_SIMPLE)
+target_link_libraries(fruit_ninja_blade_test lvgl lvgl::thorvg m)
+if(LV_USE_LIBPNG)
+    target_link_libraries(fruit_ninja_blade_test ${PNG_LIBRARIES})
+endif()
+add_test(NAME fruit_ninja_blade_test COMMAND $<TARGET_FILE:fruit_ninja_blade_test>)
+set_tests_properties(fruit_ninja_blade_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_executable(apple_music_data_test
+    ${PROJECT_SOURCE_DIR}/main/tests/apple_music_data_test.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_data.c
+)
+target_include_directories(apple_music_data_test PRIVATE ${PROJECT_SOURCE_DIR})
+add_test(NAME apple_music_data_test COMMAND $<TARGET_FILE:apple_music_data_test>)
+set_tests_properties(apple_music_data_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_executable(apple_music_theme_test
+    ${PROJECT_SOURCE_DIR}/main/tests/apple_music_theme_test.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_theme.c
+)
+target_include_directories(apple_music_theme_test PRIVATE ${PROJECT_SOURCE_DIR})
+target_compile_definitions(apple_music_theme_test PRIVATE LV_CONF_INCLUDE_SIMPLE)
+target_link_libraries(apple_music_theme_test lvgl ${PNG_LIBRARIES})
+add_test(NAME apple_music_theme_test COMMAND $<TARGET_FILE:apple_music_theme_test>)
+set_tests_properties(apple_music_theme_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_executable(apple_music_metrics_test
+    ${PROJECT_SOURCE_DIR}/main/tests/apple_music_metrics_test.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_metrics.c
+    ${PROJECT_SOURCE_DIR}/main/tests/am_fonts_stub.c)
+target_include_directories(apple_music_metrics_test PRIVATE ${PROJECT_SOURCE_DIR})
+target_compile_definitions(apple_music_metrics_test PRIVATE LV_CONF_INCLUDE_SIMPLE)
+target_link_libraries(apple_music_metrics_test lvgl)
+add_test(NAME apple_music_metrics_test COMMAND $<TARGET_FILE:apple_music_metrics_test>)
+set_tests_properties(apple_music_metrics_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_executable(am_config_test
+    ${PROJECT_SOURCE_DIR}/main/tests/am_config_test.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_config.c
+)
+target_include_directories(am_config_test PRIVATE
+    ${PROJECT_SOURCE_DIR}
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music
+    ${PROJECT_SOURCE_DIR}/third-party/cjson
+)
+target_link_libraries(am_config_test cjson)
+add_test(NAME am_config_test COMMAND $<TARGET_FILE:am_config_test>)
+set_tests_properties(am_config_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+>>>>>>> f2a3f98aaf71a2b895101de3ee45108b7ea269eb
 
 add_custom_target(fruit_ninja_tests
     COMMAND $<TARGET_FILE:fruit_ninja_assets_test>

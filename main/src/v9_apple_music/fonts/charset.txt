@@ -1,0 +1,19 @@
+# Font regeneration record
+# Command (replace SIZE with 11,12,13,14,16,18,24,34):
+#   lv_font_conv --no-compress --format lvgl --bpp 4 --size SIZE \
+#     --font lvgl/demos/multilang/assets/fonts/Montserrat-SemiBold.ttf -r 0x20-0x7F \
+#     --font lvgl/demos/multilang/assets/fonts/NotoSansSC-Medium.otf --symbols "$CJK" \
+#     --font main/src/v9_apple_music/fonts/src/DejaVuSansMono.ttf --symbols "⌂◉♫≣⚙♪⌕◌▶↺" \
+#     --font main/src/v9_apple_music/fonts/src/NotoSansSymbols2-Regular.ttf --symbols "⏮⏭" \
+#     --lv-font-name am_font_SIZE -o main/src/v9_apple_music/fonts/am_font_SIZE.c --force-fast-kern-format
+#
+# Symbol fonts in fonts/src/:
+#   DejaVuSansMono.ttf         - covers ⌂◉♫≣⚙♪⌕◌▶↺ (10/12 icons, incl. U+2315 ⌕)
+#   NotoSansSymbols2-Regular.ttf - covers ⏮⏭ (U+23EE U+23ED, media skip glyphs)
+#
+# Required icon set (all 12 embedded via symbol fonts):
+#   ⌂(2302) ◉(25C9) ♫(266B) ≣(2263) ⚙(2699) ♪(266A)
+#   ⌕(2315) ◌(25CC) ▶(25B6) ↺(21BA) ⏮(23EE) ⏭(23ED)
+#
+# CJK+punctuation glyphs (for NotoSansSC-Medium, icon chars excluded):
+·—、。一上下不与专东个中为主争二于享京亮人今从以优会但位低作你侧保信候假偏做停先光克入全公共关内再决冷分切列到制刷刻前功动区单占卡压及发变口只可台右合同后含听和器回围固图圆在地场型域境声备复外多夜天失奏女好始安完定实容密察导封小尽局层展工左已布常广序库底度开式张强当录心快态性总息想感慢成打扫把拟持按挑换据排探接控推描搜播收改放数整料新方日早时明昨是晚晨景智暖曲更替最本机杂条构架柔查标栏样案模次歌正步段毁每气氛流浅淡深混清渐渡点片版状独率环现玻班球璃用电界留略白的目看真确示离移稍稳稿立竞策管精系索级线经结统继续维编缩置耗联背能自航色节荐藏行表要观视觉角认让设访证识译说调谈质贴资跑跟路轮轻载辑辨边达迁过运近还这进连迷适选透速逻道部里重量金钟钮铜销长间队阶降随集雾青静面页项顺预频题颜风首驻验高黄默鼓，：；

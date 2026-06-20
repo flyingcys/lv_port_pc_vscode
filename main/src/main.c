@@ -15,6 +15,11 @@
 #include "lvgl/lvgl.h"
 #include "v9_music_player/music_player.h"
 #include "glob.h"
+#include "music_player.h"
+#include "v9_apple_music/apple_music.h"
+#include "v9_apple_music/am_screenshot.h"
+#include "v9_apple_music/am_metrics.h"
+#include "desktop.h"
 
 /*********************
  *      DEFINES
@@ -65,18 +70,36 @@ extern void freertos_main(void);
 
 int main(int argc, char **argv)
 {
-  (void)argc; /*Unused*/
-  (void)argv; /*Unused*/
-
   /*Initialize LVGL*/
   lv_init();
 
   /*Initialize the HAL (display, input devices, tick) for LVGL*/
+<<<<<<< HEAD
   hal_init(800, 480);
 
   #if LV_USE_OS == LV_OS_NONE
  
   music_player_start();
+=======
+  int W = (argc >= 3) ? atoi(argv[1]) : 800;
+  int H = (argc >= 3) ? atoi(argv[2]) : 480;
+  hal_init(W, H);
+  am_metrics_init(W, H);
+
+  #if LV_USE_OS == LV_OS_NONE
+ 
+  // fruit_ninja_start();
+  // lv_demo_music();
+  // apple_music_create();
+  desktop_create();   /* 应用桌面：图标进入 音乐 / 切水果 / 俄罗斯方块 */
+
+  const char *am_shot = getenv("AM_SHOT");
+  if (am_shot) {
+      for (int i = 0; i < 300; i++) { lv_timer_handler(); usleep(10 * 1000); }
+      am_screenshot_take(am_shot);
+      return 0;
+  }
+>>>>>>> f2a3f98aaf71a2b895101de3ee45108b7ea269eb
 
   while(1) {
     /* Periodically call the lv_task handler.
