@@ -982,7 +982,7 @@
 #define LV_USE_LODEPNG 1
 
 /** PNG decoder(libpng) library */
-#define LV_USE_LIBPNG 0
+#define LV_USE_LIBPNG 1
 
 /** BMP decoder library */
 #define LV_USE_BMP 1
@@ -1054,7 +1054,7 @@
 
 /** Enable ThorVG (vector graphics library) from the src/libs folder.
  *  Requires LV_USE_VECTOR_GRAPHIC */
-#define LV_USE_THORVG_INTERNAL 1 
+#define LV_USE_THORVG_INTERNAL 1
 
 /** Enable ThorVG by assuming that its installed and linked to the project
  *  Requires LV_USE_VECTOR_GRAPHIC */
@@ -1481,7 +1481,7 @@
     #define LV_USE_DEMO_STRESS 1
 
     /** Music player demo */
-    #define LV_USE_DEMO_MUSIC 1
+    #define LV_USE_DEMO_MUSIC 0
     #if LV_USE_DEMO_MUSIC
         #define LV_DEMO_MUSIC_SQUARE    0
         #define LV_DEMO_MUSIC_LANDSCAPE 0

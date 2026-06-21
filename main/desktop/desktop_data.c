@@ -1,5 +1,6 @@
 #include "desktop_data.h"
 #include "calc/calc_app.h"
+#include "fruit_ninja_app.h"
 LV_IMAGE_DECLARE(img_app_clock);   LV_IMAGE_DECLARE(img_app_photos);
 LV_IMAGE_DECLARE(img_app_calc);    LV_IMAGE_DECLARE(img_app_calc_plus);
 LV_IMAGE_DECLARE(img_app_files);   LV_IMAGE_DECLARE(img_app_netease);
@@ -19,7 +20,7 @@ const desktop_app_t desktop_apps[] = {
     { &img_app_2048,       "2048",        1, NULL },
     { &img_app_blockpuzzle,"方块拼图",    1, NULL },
     { &img_app_blockblast, "方块爆炸",    2, NULL },
-    { &img_app_fruitninja, "水果忍者",    2, NULL },
+    { &img_app_fruitninja, "水果忍者",    2, fruit_ninja_app_launch },
 };
 const uint32_t desktop_app_count = sizeof(desktop_apps)/sizeof(desktop_apps[0]);
 

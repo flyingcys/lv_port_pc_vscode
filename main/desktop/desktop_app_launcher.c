@@ -1,9 +1,18 @@
 #include "desktop_app_launcher.h"
 
 static lv_obj_t * s_overlay = NULL;
+static void (*s_close_cb)(void) = NULL;
 
 lv_obj_t * desktop_app_launcher_open(lv_obj_t *(*builder)(lv_obj_t *, int32_t, int32_t),
                                      int32_t screen_w, int32_t screen_h)
+{
+    return desktop_app_launcher_open_with_close(builder, NULL, screen_w, screen_h);
+}
+
+lv_obj_t * desktop_app_launcher_open_with_close(lv_obj_t *(*builder)(lv_obj_t *, int32_t, int32_t),
+                                                void (*close_cb)(void),
+                                                int32_t screen_w,
+                                                int32_t screen_h)
 {
     if(s_overlay != NULL) {
         return s_overlay;
@@ -18,6 +27,7 @@ lv_obj_t * desktop_app_launcher_open(lv_obj_t *(*builder)(lv_obj_t *, int32_t, i
     lv_obj_clear_flag(s_overlay, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_add_flag(s_overlay, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_move_foreground(s_overlay);
+    s_close_cb = close_cb;
     if(builder != NULL) {
         lv_obj_t * app = builder(s_overlay, screen_w, screen_h);
         (void)app;
@@ -28,6 +38,10 @@ lv_obj_t * desktop_app_launcher_open(lv_obj_t *(*builder)(lv_obj_t *, int32_t, i
 void desktop_app_launcher_close(void)
 {
     if(s_overlay == NULL) return;
+    if(s_close_cb != NULL) {
+        s_close_cb();
+        s_close_cb = NULL;
+    }
     lv_obj_delete(s_overlay);
     s_overlay = NULL;
 }

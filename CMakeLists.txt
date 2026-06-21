@@ -37,14 +37,24 @@ endif()
 
 # Main include files of the project
 include_directories(${PROJECT_SOURCE_DIR}/main/inc)
-include_directories(${PROJECT_SOURCE_DIR}/main/desktop)
 
 # Define options for LVGL with default values (OFF)
 option(LV_USE_DRAW_SDL "Use SDL draw unit" OFF)
-option(LV_USE_LIBPNG "Use libpng to decode PNG" OFF)
+option(LV_USE_LIBPNG "Use libpng to decode PNG" ON)
 option(LV_USE_LIBJPEG_TURBO "Use libjpeg turbo to decode JPEG" OFF)
 option(LV_USE_FFMPEG "Use libffmpeg to display video using lv_ffmpeg" OFF)
 option(LV_USE_FREETYPE "Use freetype library" OFF)
+
+set(LV_USE_LIBPNG ON CACHE BOOL "Use libpng to decode PNG" FORCE)
+set(LV_USE_LIBJPEG_TURBO OFF CACHE BOOL "Use libjpeg turbo to decode JPEG" FORCE)
+
+file(GLOB FRUIT_NINJA_SOURCES CONFIGURE_DEPENDS
+    "${PROJECT_SOURCE_DIR}/main/src/v9-fruit_ninja/*.c"
+)
+file(GLOB LOCAL_MUSIC_DEMO_SOURCES CONFIGURE_DEPENDS
+    "${PROJECT_SOURCE_DIR}/main/src/local_music_demo/*.c"
+    "${PROJECT_SOURCE_DIR}/main/src/local_music_demo/assets/*.c"
+)
 
 # Set C and C++ standards
 set(CMAKE_C_STANDARD 99)
@@ -55,8 +65,59 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
+find_package(OpenSSL REQUIRED)
+find_package(Threads REQUIRED)
+
+set(HLS_AUDIO_INCLUDE_DIRS "")
+set(HLS_AUDIO_LIBRARIES "")
+set(HLS_AUDIO_COMPILE_DEFINITIONS OPUS_BUILD VAR_ARRAYS)
+set(HLS_STREAM_PLAYER_TARGET stream_player_module_linux)
+
+if(APPLE)
+    set(HLS_PLATFORM_LIBRARIES "")
+else()
+    find_package(ALSA REQUIRED)
+    set(HLS_AUDIO_INCLUDE_DIRS ${ALSA_INCLUDE_DIRS})
+    set(HLS_AUDIO_LIBRARIES ${ALSA_LIBRARIES})
+    list(APPEND HLS_AUDIO_COMPILE_DEFINITIONS PLATFORM_LINUX)
+    set(HLS_PLATFORM_LIBRARIES m)
+endif()
+
+set(HLS_PROJECT_ROOT_DIR ${PROJECT_SOURCE_DIR}/third-party/hls_player_demo)
+
+add_subdirectory(${HLS_PROJECT_ROOT_DIR}/src/http_client)
+add_subdirectory(${HLS_PROJECT_ROOT_DIR}/src/player_controller)
+add_subdirectory(${HLS_PROJECT_ROOT_DIR}/src/stream_player)
+
 # Find and include SDL2 library
 find_package(SDL2 REQUIRED)
+find_package(SDL2_mixer QUIET)
+
+if(NOT SDL2_mixer_FOUND AND NOT TARGET SDL2_mixer::SDL2_mixer AND NOT TARGET SDL2_mixer::SDL2_mixer-static)
+    find_package(PkgConfig QUIET)
+    if(PkgConfig_FOUND)
+        pkg_check_modules(SDL2_MIXER QUIET SDL2_mixer)
+    endif()
+
+    find_path(SDL2_MIXER_INCLUDE_DIR
+        NAMES SDL_mixer.h
+        PATH_SUFFIXES SDL2
+        HINTS ${SDL2_MIXER_INCLUDE_DIRS}
+    )
+    find_library(SDL2_MIXER_LIBRARY
+        NAMES SDL2_mixer
+        HINTS ${SDL2_MIXER_LIBRARY_DIRS}
+    )
+
+    if(SDL2_MIXER_INCLUDE_DIR AND SDL2_MIXER_LIBRARY)
+        set(SDL2_MIXER_INCLUDE_DIRS ${SDL2_MIXER_INCLUDE_DIR})
+        set(SDL2_MIXER_LIBRARIES ${SDL2_MIXER_LIBRARY})
+    endif()
+endif()
+
+if(NOT SDL2_mixer_FOUND AND NOT TARGET SDL2_mixer::SDL2_mixer AND NOT TARGET SDL2_mixer::SDL2_mixer-static AND NOT SDL2_MIXER_LIBRARIES)
+    message(FATAL_ERROR "SDL2_mixer is required to play Fruit Ninja audio. Install SDL2_mixer and retry.")
+endif()
 
 # Remove ARM-specific compile and linker options
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=native")
@@ -69,6 +130,7 @@ add_compile_definitions($<$<BOOL:${LV_USE_LIBJPEG_TURBO}>:LV_USE_LIBJPEG_TURBO=1
 add_compile_definitions($<$<BOOL:${LV_USE_FFMPEG}>:LV_USE_FFMPEG=1>)
 
 # Add LVGL subdirectory
+set(CONFIG_LV_BUILD_DEMOS OFF CACHE BOOL "Build LVGL demos" FORCE)
 add_subdirectory(lvgl)
 target_include_directories(lvgl PUBLIC ${PROJECT_SOURCE_DIR} ${SDL2_INCLUDE_DIRS})
 
@@ -87,30 +149,43 @@ else()
     add_executable(main
         ${PROJECT_SOURCE_DIR}/main/src/main.c
         ${PROJECT_SOURCE_DIR}/main/src/mouse_cursor_icon.c
+        ${LOCAL_MUSIC_DEMO_SOURCES}
+    )
+
+    target_include_directories(main PRIVATE
+        ${HLS_PROJECT_ROOT_DIR}/src
+        ${HLS_PROJECT_ROOT_DIR}/src/stream_player/include
+        ${HLS_PROJECT_ROOT_DIR}/src/player_controller
+        ${HLS_PROJECT_ROOT_DIR}/src/http_client
+        ${HLS_AUDIO_INCLUDE_DIRS}
+        ${PROJECT_SOURCE_DIR}/main/src
+    )
+
+    target_compile_definitions(main PRIVATE
+        ${HLS_AUDIO_COMPILE_DEFINITIONS}
     )
 endif()
 
-# desktop module sources (main home screen, merged from release/v9.3-replace2)
-file(GLOB DESKTOP_SOURCES
-    "${PROJECT_SOURCE_DIR}/main/desktop/*.c"
-    "${PROJECT_SOURCE_DIR}/main/desktop/calc/*.c"
-    "${PROJECT_SOURCE_DIR}/main/desktop/assets/*.c"
-    "${PROJECT_SOURCE_DIR}/main/desktop/assets/fonts/*.c"
-)
-target_sources(main PRIVATE ${DESKTOP_SOURCES})
+target_sources(main PRIVATE ${FRUIT_NINJA_SOURCES})
 
 # Define LVGL configuration as a simple include
 target_compile_definitions(main PRIVATE LV_CONF_INCLUDE_SIMPLE)
-target_link_libraries(main lvgl lvgl::examples lvgl::demos lvgl::thorvg ${SDL2_LIBRARIES} m pthread)
-
-enable_testing()
-
-add_executable(test_gesture
-    ${PROJECT_SOURCE_DIR}/tests/desktop/test_gesture.c
-    ${PROJECT_SOURCE_DIR}/main/desktop/desktop_gesture.c
+target_link_libraries(main lvgl lvgl::examples lvgl::thorvg ${SDL2_LIBRARIES}
+    ${HLS_PLATFORM_LIBRARIES}
+    Threads::Threads
+    player_controller
+    ${HLS_STREAM_PLAYER_TARGET}
+    ${HLS_AUDIO_LIBRARIES}
 )
-target_include_directories(test_gesture PRIVATE ${PROJECT_SOURCE_DIR}/main/desktop)
-add_test(NAME test_gesture COMMAND test_gesture)
+
+if(TARGET SDL2_mixer::SDL2_mixer)
+    target_link_libraries(main SDL2_mixer::SDL2_mixer)
+elseif(TARGET SDL2_mixer::SDL2_mixer-static)
+    target_link_libraries(main SDL2_mixer::SDL2_mixer-static)
+else()
+    target_include_directories(main PRIVATE ${SDL2_MIXER_INCLUDE_DIRS})
+    target_link_libraries(main ${SDL2_MIXER_LIBRARIES})
+endif()
 
 # Only link freertos_config if the FreeRTOS directory exists
 if(USE_FREERTOS)
@@ -153,6 +228,52 @@ if(LV_USE_FREETYPE)
     target_include_directories(lvgl PUBLIC ${FREETYPE_INCLUDE_DIRS})
     target_link_libraries(main ${FREETYPE_LIBRARIES})
 endif()
+
+enable_testing()
+
+add_executable(fruit_ninja_assets_test
+    ${PROJECT_SOURCE_DIR}/main/tests/fruit_ninja_assets_test.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9-fruit_ninja/fruit_ninja_assets.c
+)
+target_include_directories(fruit_ninja_assets_test PRIVATE ${PROJECT_SOURCE_DIR})
+
+add_executable(fruit_ninja_collision_test
+    ${PROJECT_SOURCE_DIR}/main/tests/fruit_ninja_collision_test.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9-fruit_ninja/fruit_ninja_collision.c
+)
+target_include_directories(fruit_ninja_collision_test PRIVATE ${PROJECT_SOURCE_DIR})
+target_link_libraries(fruit_ninja_collision_test m)
+
+add_executable(fruit_ninja_model_test
+    ${PROJECT_SOURCE_DIR}/main/tests/fruit_ninja_model_test.c
+)
+target_include_directories(fruit_ninja_model_test PRIVATE ${PROJECT_SOURCE_DIR})
+
+add_test(
+    NAME fruit_ninja_assets_test
+    COMMAND $<TARGET_FILE:fruit_ninja_assets_test>
+)
+set_tests_properties(fruit_ninja_assets_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_test(
+    NAME fruit_ninja_collision_test
+    COMMAND $<TARGET_FILE:fruit_ninja_collision_test>
+)
+set_tests_properties(fruit_ninja_collision_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_test(
+    NAME fruit_ninja_model_test
+    COMMAND $<TARGET_FILE:fruit_ninja_model_test>
+)
+set_tests_properties(fruit_ninja_model_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_custom_target(fruit_ninja_tests
+    COMMAND $<TARGET_FILE:fruit_ninja_assets_test>
+    COMMAND $<TARGET_FILE:fruit_ninja_collision_test>
+    COMMAND $<TARGET_FILE:fruit_ninja_model_test>
+    DEPENDS fruit_ninja_assets_test fruit_ninja_collision_test fruit_ninja_model_test
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+)
 
 # Apply additional compile options if the build type is Debug
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
