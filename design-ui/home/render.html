@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8">
+<link rel="stylesheet" href="style.css">
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<style>
+  html,body{margin:0;padding:0;background:#000;overflow:hidden;}
+  .device-container{margin:0!important;border-radius:0!important;box-shadow:none!important;
+    width:100vw!important;height:100vh!important;}
+  body.show-control .top-panel{transform:none!important;}
+  body.show-notify  .bottom-panel{transform:none!important;}
+</style></head>
+<body>
+    <div class="device-container">
+        <!-- 状态栏 -->
+        <div class="status-bar">
+            <div class="status-left">
+                <span id="clock">12:00</span>
+            </div>
+            <div class="status-right">
+                <i class="ph-fill ph-cell-signal-full"></i>
+                <i class="ph-bold ph-wifi-high"></i>
+                <div class="battery-container">
+                    <span id="battery-text">100%</span>
+                    <i class="ph-fill ph-battery-full"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- 桌面主区域 -->
+        <div class="home-screen" id="home-screen">
+            <!-- 第一页 -->
+            <div class="app-page">
+                <div class="app-item" tabindex="0">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #FF6B6B, #FF8E53);"><i class="ph-fill ph-phone"></i></div>
+                    <span class="app-name">电话</span>
+                </div>
+                <div class="app-item" tabindex="0">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #4D96FF, #6FB1FC);"><i class="ph-fill ph-chat-circle"></i></div>
+                    <span class="app-name">信息</span>
+                </div>
+                <div class="app-item" tabindex="0">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #6BCB77, #85E08F);"><i class="ph-fill ph-browser"></i></div>
+                    <span class="app-name">浏览器</span>
+                </div>
+                <div class="app-item" tabindex="0">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #FFD93D, #FFE670);"><i class="ph-fill ph-camera"></i></div>
+                    <span class="app-name">相机</span>
+                </div>
+                <div class="app-item" tabindex="0">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #9D4EDD, #B678EB);"><i class="ph-fill ph-image"></i></div>
+                    <span class="app-name">相册</span>
+                </div>
+                <div class="app-item" tabindex="0">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #F0A500, #F4C150);"><i class="ph-fill ph-calendar-blank"></i></div>
+                    <span class="app-name">日历</span>
+                </div>
+                <div class="app-item" tabindex="0">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #00A8CC, #33C1E0);"><i class="ph-fill ph-clock"></i></div>
+                    <span class="app-name">时钟</span>
+                </div>
+                <div class="app-item" tabindex="0">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #E63946, #F0717B);"><i class="ph-fill ph-music-note"></i></div>
+                    <span class="app-name">音乐</span>
+                </div>
+                <div class="app-item" tabindex="0">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #2A9D8F, #4DBEA0);"><i class="ph-fill ph-map-pin"></i></div>
+                    <span class="app-name">地图</span>
+                </div>
+                <div class="app-item" tabindex="0">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #7A86B6, #9BA5CC);"><i class="ph-fill ph-gear"></i></div>
+                    <span class="app-name">设置</span>
+                </div>
+            </div>
+
+            <!-- 第二页 -->
+            <div class="app-page">
+                <div class="app-item" tabindex="0">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #118AB2, #3DAEE0);"><i class="ph-fill ph-cloud-sun"></i></div>
+                    <span class="app-name">天气</span>
+                </div>
+                <div class="app-item" tabindex="0">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #EF476F, #F4829E);"><i class="ph-fill ph-calculator"></i></div>
+                    <span class="app-name">计算器</span>
+                </div>
+                <div class="app-item" tabindex="0">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #06D6A0, #42E6B8);"><i class="ph-fill ph-storefront"></i></div>
+                    <span class="app-name">应用商店</span>
+                </div>
+                <div class="app-item" tabindex="0">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #118AB2, #3DAEE0);"><i class="ph-fill ph-video-camera"></i></div>
+                    <span class="app-name">视频</span>
+                </div>
+                <div class="app-item" tabindex="0">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #FF9F1C, #FFBB5C);"><i class="ph-fill ph-note"></i></div>
+                    <span class="app-name">备忘录</span>
+                </div>
+            </div>
+
+            <!-- 第三页 -->
+            <div class="app-page">
+                <div class="app-item" tabindex="0">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #8E2DE2, #4A00E0);"><i class="ph-fill ph-game-controller"></i></div>
+                    <span class="app-name">游戏中心</span>
+                </div>
+                <div class="app-item" tabindex="0">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #fc4a1a, #f7b733);"><i class="ph-fill ph-headphones"></i></div>
+                    <span class="app-name">云音乐</span>
+                </div>
+                <div class="app-item" tabindex="0">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #00b09b, #96c93d);"><i class="ph-fill ph-wallet"></i></div>
+                    <span class="app-name">钱包</span>
+                </div>
+                <div class="app-item" tabindex="0">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #FF416C, #FF4B2B);"><i class="ph-fill ph-heartbeat"></i></div>
+                    <span class="app-name">健康</span>
+                </div>
+                <div class="app-item" tabindex="0">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #36D1DC, #5B86E5);"><i class="ph-fill ph-folder"></i></div>
+                    <span class="app-name">文件管理</span>
+                </div>
+                <div class="app-item" tabindex="0">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #f12711, #f5af19);"><i class="ph-fill ph-book-open"></i></div>
+                    <span class="app-name">阅读</span>
+                </div>
+                <div class="app-item" tabindex="0">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #654ea3, #eaafc8);"><i class="ph-fill ph-newspaper"></i></div>
+                    <span class="app-name">新闻</span>
+                </div>
+                <div class="app-item" tabindex="0">
+                    <div class="app-icon" style="background: linear-gradient(135deg, #11998e, #38ef7d);"><i class="ph-fill ph-house-line"></i></div>
+                    <span class="app-name">智能家居</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 分页指示器 -->
+        <div class="pagination">
+            <div class="dot active"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+
+        <!-- 下拉控制中心 -->
+        <div class="panel top-panel" id="top-panel">
+            <div class="panel-content">
+                <div class="panel-header">控制中心</div>
+                <div class="control-grid">
+                    <div class="control-btn active"><i class="ph-bold ph-wifi-high"></i></div>
+                    <div class="control-btn"><i class="ph-bold ph-bluetooth"></i></div>
+                    <div class="control-btn active"><i class="ph-bold ph-airplane-tilt"></i></div>
+                    <div class="control-btn"><i class="ph-bold ph-moon"></i></div>
+                </div>
+                <div class="slider-container">
+                    <i class="ph-bold ph-sun"></i>
+                    <div class="slider-track"><div class="slider-fill" style="width: 70%"></div></div>
+                </div>
+                <div class="slider-container">
+                    <i class="ph-bold ph-speaker-high"></i>
+                    <div class="slider-track"><div class="slider-fill" style="width: 40%"></div></div>
+                </div>
+            </div>
+            <div class="panel-handle-container">
+                <div class="panel-handle"></div>
+            </div>
+        </div>
+
+        <!-- 上拉通知中心 -->
+        <div class="panel bottom-panel" id="bottom-panel">
+            <div class="panel-handle-container top-handle">
+                <div class="panel-handle"></div>
+            </div>
+            <div class="panel-content">
+                <div class="panel-header">通知中心</div>
+                <div class="notification-list">
+                    <div class="notification-item">
+                        <div class="notif-icon" style="background: linear-gradient(135deg, #4D96FF, #6FB1FC);"><i class="ph-fill ph-chat-circle"></i></div>
+                        <div class="notif-text">
+                            <h4>系统消息</h4>
+                            <p>欢迎使用全新横屏系统UI！左右滑动切换应用，上下滑动调出面板。</p>
+                        </div>
+                        <span class="notif-time">刚刚</span>
+                    </div>
+                    <div class="notification-item">
+                        <div class="notif-icon" style="background: linear-gradient(135deg, #F0A500, #F4C150);"><i class="ph-fill ph-calendar-blank"></i></div>
+                        <div class="notif-text">
+                            <h4>日程提醒</h4>
+                            <p>下午 2:00 有一个产品设计评审会议。</p>
+                        </div>
+                        <span class="notif-time">1小时前</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+  const q = new URLSearchParams(location.search);
+  const page = parseInt(q.get('page') || '0', 10);
+  const panel = q.get('panel');
+  window.addEventListener('load', () => {
+    const hs = document.querySelector('.home-screen');
+    if(hs){ hs.style.scrollBehavior='auto'; hs.scrollLeft = page * hs.clientWidth; }
+    if(panel === 'control') document.body.classList.add('show-control');
+    if(panel === 'notify')  document.body.classList.add('show-notify');
+  });
+</script>
+</body></html>

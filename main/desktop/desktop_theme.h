@@ -1,0 +1,23 @@
+#ifndef DESKTOP_THEME_H
+#define DESKTOP_THEME_H
+#include "lvgl.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+typedef struct {
+    lv_color_t accent;        /* #007AFF */
+    lv_color_t text_primary;  /* #FFFFFF */
+    lv_color_t panel_bg;      /* rgba(20,25,40,.75) */
+    lv_opa_t   panel_opa;     /* 191 */
+    lv_color_t glass_border;  /* rgba(255,255,255,.1) */
+    lv_opa_t   glass_border_opa;
+    lv_color_t glass_hi;      /* 顶部高光 rgba(255,255,255,.25) */
+    lv_opa_t   glass_hi_opa;
+    lv_color_t overlay_dark;  /* 暗化遮罩黑 */
+    lv_opa_t   overlay_opa;
+} desktop_theme_t;
+const desktop_theme_t * desktop_theme(void);
+#ifdef __cplusplus
+}
+#endif
+#endif

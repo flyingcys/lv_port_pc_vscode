@@ -37,6 +37,7 @@ endif()
 
 # Main include files of the project
 include_directories(${PROJECT_SOURCE_DIR}/main/inc)
+include_directories(${PROJECT_SOURCE_DIR}/main/desktop)
 
 # Define options for LVGL with default values (OFF)
 option(LV_USE_DRAW_SDL "Use SDL draw unit" OFF)
@@ -88,6 +89,14 @@ else()
         ${PROJECT_SOURCE_DIR}/main/src/mouse_cursor_icon.c
     )
 endif()
+
+# desktop module sources (main home screen, merged from release/v9.3-replace2)
+file(GLOB DESKTOP_SOURCES
+    "${PROJECT_SOURCE_DIR}/main/desktop/*.c"
+    "${PROJECT_SOURCE_DIR}/main/desktop/assets/*.c"
+    "${PROJECT_SOURCE_DIR}/main/desktop/assets/fonts/*.c"
+)
+target_sources(main PRIVATE ${DESKTOP_SOURCES})
 
 # Define LVGL configuration as a simple include
 target_compile_definitions(main PRIVATE LV_CONF_INCLUDE_SIMPLE)

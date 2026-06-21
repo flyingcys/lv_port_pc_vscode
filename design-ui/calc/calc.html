@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>macOS 标准布局计算器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .calculator {
+            background-color: #1c1c1e;
+            padding: 20px 20px 25px 20px;
+            border-radius: 20px;
+            width: 360px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .window-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            height: 30px;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background-color: #ff5f56; }
+        .dot-yellow { background-color: #ffbd2e; }
+        .dot-gray { background-color: #444446; }
+
+        .expand-btn {
+            background: #2a2a2c;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            color: #a0a0a0;
+            transition: all 0.2s ease;
+        }
+        .expand-btn:hover {
+            background: #3a3a3c;
+            color: #ffffff;
+        }
+        .expand-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        .display {
+            color: #ffffff;
+            text-align: right;
+            padding: 5px 5px 15px 5px;
+            height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #333;
+        }
+
+        .expression {
+            color: #8e8e93;
+            font-size: 1.2rem;
+            min-height: 24px;
+            margin-bottom: 5px;
+        }
+
+        .current-input {
+            font-size: 4rem;
+            font-weight: 300;
+            line-height: 1;
+            transition: font-size 0.1s;
+        }
+
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .btn {
+            border: none;
+            outline: none;
+            border-radius: 50%;
+            padding: 0;
+            height: 65px;
+            font-size: 1.6rem;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn:active {
+            transform: scale(0.92);
+        }
+
+        .btn-number {
+            background-color: #333333;
+            color: #ffffff;
+        }
+        .btn-number:hover {
+            background-color: #3d3d3d;
+        }
+
+        .btn-action {
+            background-color: #a5a5a5;
+            color: #000000;
+        }
+        .btn-action:hover {
+            background-color: #d4d4d2;
+        }
+
+        .btn-operator {
+            background-color: #ff9f0a;
+            color: #ffffff;
+        }
+        .btn-operator:hover {
+            background-color: #fca138;
+        }
+
+        .advanced-panel {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, margin 0.3s ease;
+            opacity: 0;
+            border-bottom: 1px solid transparent;
+        }
+
+        .advanced-panel.open {
+            max-height: 300px;
+            opacity: 1;
+            margin-top: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
+        }
+
+        .btn-adv {
+            background-color: #3a3a3c;
+            color: #ffffff;
+            border-radius: 12px;
+            height: 40px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+        .btn-adv:hover {
+            background-color: #4a4a4c;
+        }
+
+        @media (max-width: 420px) {
+            .calculator {
+                width: 92vw;
+                padding: 15px 12px 20px 12px;
+            }
+            .btn {
+                height: 55px;
+                font-size: 1.4rem;
+            }
+            .current-input {
+                font-size: 3.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator">
+        <!-- 1. 顶部窗口控制与扩展按钮 -->
+        <div class="window-header">
+            <div class="window-controls">
+                <div class="dot dot-red"></div>
+                <div class="dot dot-yellow"></div>
+                <div class="dot dot-gray"></div>
+            </div>
+            <button class="expand-btn" id="expandBtn" title="切换科学模式">
+                <svg viewBox="0 0 24 24"><path d="M4 4h16v2H4V4zm0 12h16v2H4v-2zm0-6h10v2H4v-2z"/><path d="M20 4h-4v2h4V4zm-4 6h4v2h-4v-2zm4 6h-4v2h4v-2z"/></svg>
+            </button>
+        </div>
+
+        <!-- 2. 显示屏 -->
+        <div class="display">
+            <div class="expression" id="expression"></div>
+            <div class="current-input" id="display">0</div>
+        </div>
+
+        <!-- 3. 高级科学扩展面板 -->
+        <div class="advanced-panel" id="advancedPanel">
+            <button class="btn-adv" data-action="sin">sin</button>
+            <button class="btn-adv" data-action="cos">cos</button>
+            <button class="btn-adv" data-action="tan">tan</button>
+            <button class="btn-adv" data-action="log">log</button>
+            <button class="btn-adv" data-action="ln">ln</button>
+            <button class="btn-adv" data-action="sqrt">√x</button>
+            <button class="btn-adv" data-action="square">x²</button>
+            <button class="btn-adv" data-action="cube">x³</button>
+            <button class="btn-adv" data-action="lparen">(</button>
+            <button class="btn-adv" data-action="rparen">)</button>
+            <button class="btn-adv" data-action="power">x^y</button>
+            <button class="btn-adv" data-action="factorial">n!</button>
+        </div>
+
+        <!-- 4. 核心键盘区 (AC 和 DEL 位置已互换) -->
+        <div class="keypad">
+            <!-- 第一排：DEL 现在在最前面，AC 在第二位 -->
+            <button class="btn btn-action" data-action="delete">DEL</button>
+            <button class="btn btn-action" data-action="clear">AC</button>
+            <button class="btn btn-action" data-action="percent">%</button>
+            <button class="btn btn-operator" data-value="÷">÷</button>
+
+            <!-- 第二排 -->
+            <button class="btn btn-number" data-value="7">7</button>
+            <button class="btn btn-number" data-value="8">8</button>
+            <button class="btn btn-number" data-value="9">9</button>
+            <button class="btn btn-operator" data-value="×">×</button>
+
+            <!-- 第三排 -->
+            <button class="btn btn-number" data-value="4">4</button>
+            <button class="btn btn-number" data-value="5">5</button>
+            <button class="btn btn-number" data-value="6">6</button>
+            <button class="btn btn-operator" data-value="-">-</button>
+
+            <!-- 第四排 -->
+            <button class="btn btn-number" data-value="1">1</button>
+            <button class="btn btn-number" data-value="2">2</button>
+            <button class="btn btn-number" data-value="3">3</button>
+            <button class="btn btn-operator" data-value="+">+</button>
+
+            <!-- 第五排 -->
+            <button class="btn btn-action" data-action="toggleSign">+/-</button>
+            <button class="btn btn-number" data-value="0">0</button>
+            <button class="btn btn-number" data-value=".">.</button>
+            <button class="btn btn-operator" data-value="=">=</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const display = document.getElementById('display');
+            const expressionDisplay = document.getElementById('expression');
+            const buttons = document.querySelectorAll('.keypad .btn, .advanced-panel .btn-adv');
+            const expandBtn = document.getElementById('expandBtn');
+            const advancedPanel = document.getElementById('advancedPanel');
+
+            let currentInput = '0';
+            let previousInput = '';
+            let operator = null;
+            let shouldResetDisplay = false;
+            let isResultDisplayed = false;
+
+            expandBtn.addEventListener('click', () => {
+                const isOpen = advancedPanel.classList.toggle('open');
+                expandBtn.innerHTML = isOpen 
+                    ? `<svg viewBox="0 0 24 24"><path d="M4 4h16v2H4V4zm0 12h16v2H4v-2zm0-6h10v2H4v-2z"/><path d="M20 14h-4v2h4v-2zm-4-8h4v2h-4V6zm4 4h-4v2h4v-2z"/></svg>`
+                    : `<svg viewBox="0 0 24 24"><path d="M4 4h16v2H4V4zm0 12h16v2H4v-2zm0-6h10v2H4v-2z"/><path d="M20 4h-4v2h4V4zm-4 6h4v2h-4v-2zm4 6h-4v2h4v-2z"/></svg>`;
+            });
+
+            function updateDisplay() {
+                if (currentInput.length > 12) {
+                    display.style.fontSize = '2.5rem';
+                } else if (currentInput.length > 8) {
+                    display.style.fontSize = '3.2rem';
+                } else {
+                    display.style.fontSize = '4rem';
+                }
+                display.textContent = currentInput;
+            }
+
+            function handleNumber(value) {
+                if (currentInput === '0' || shouldResetDisplay) {
+                    currentInput = value;
+                    shouldResetDisplay = false;
+                } else {
+                    currentInput += value;
+                }
+                isResultDisplayed = false;
+                updateDisplay();
+            }
+
+            function handleOperator(value) {
+                if (operator !== null && !shouldResetDisplay) {
+                    calculate();
+                }
+                previousInput = currentInput;
+                operator = value;
+                expressionDisplay.textContent = `${previousInput} ${operator}`;
+                shouldResetDisplay = true;
+            }
+
+            function calculate() {
+                if (operator === null || previousInput === '') return;
+                
+                let result;
+                const prev = parseFloat(previousInput);
+                const curr = parseFloat(currentInput);
+                if (isNaN(prev) || isNaN(curr)) return;
+                
+                switch (operator) {
+                    case '+': result = prev + curr; break;
+                    case '-': result = prev - curr; break;
+                    case '×': result = prev * curr; break;
+                    case '÷': 
+                        if (curr === 0) {
+                            currentInput = 'Error';
+                            updateDisplay();
+                            operator = null;
+                            previousInput = '';
+                            expressionDisplay.textContent = '';
+                            return;
+                        }
+                        result = prev / curr; 
+                        break;
+                    default: return;
+                }
+                
+                currentInput = String(parseFloat(result.toPrecision(12)));
+                operator = null;
+                previousInput = '';
+                shouldResetDisplay = true;
+                isResultDisplayed = true;
+                expressionDisplay.textContent = '';
+                updateDisplay();
+            }
+
+            function handleAdvanced(action) {
+                let num = parseFloat(currentInput);
+                if (isNaN(num)) return;
+                
+                let result;
+                switch(action) {
+                    case 'sin': result = Math.sin(num); break;
+                    case 'cos': result = Math.cos(num); break;
+                    case 'tan': result = Math.tan(num); break;
+                    case 'log': result = Math.log10(num); break;
+                    case 'ln': result = Math.log(num); break;
+                    case 'sqrt': result = Math.sqrt(num); break;
+                    case 'square': result = Math.pow(num, 2); break;
+                    case 'cube': result = Math.pow(num, 3); break;
+                    case 'lparen': currentInput += '('; updateDisplay(); return;
+                    case 'rparen': currentInput += ')'; updateDisplay(); return;
+                    case 'power': handleOperator('^'); return;
+                    case 'factorial': 
+                        if(num < 0 || !Number.isInteger(num)) { currentInput = 'Error'; updateDisplay(); return; }
+                        result = 1;
+                        for(let i=2; i<=num; i++) result *= i;
+                        break;
+                    default: return;
+                }
+                if(!isNaN(result) && isFinite(result)) {
+                    currentInput = String(parseFloat(result.toPrecision(12)));
+                } else {
+                    currentInput = 'Error';
+                }
+                shouldResetDisplay = true;
+                isResultDisplayed = true;
+                updateDisplay();
+            }
+
+            buttons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const action = button.dataset.action;
+                    const value = button.dataset.value;
+
+                    if (button.classList.contains('btn-adv')) {
+                        handleAdvanced(action);
+                        return;
+                    }
+
+                    if (action === 'clear') {
+                        currentInput = '0';
+                        previousInput = '';
+                        operator = null;
+                        shouldResetDisplay = false;
+                        expressionDisplay.textContent = '';
+                        updateDisplay();
+                    } else if (action === 'delete') {
+                        if (currentInput.length > 1) {
+                            currentInput = currentInput.slice(0, -1);
+                        } else {
+                            currentInput = '0';
+                        }
+                        updateDisplay();
+                    } else if (action === 'toggleSign') {
+                        if (currentInput !== '0') {
+                            currentInput = currentInput.startsWith('-') ? currentInput.slice(1) : '-' + currentInput;
+                            updateDisplay();
+                        }
+                    } else if (action === 'percent') {
+                        currentInput = String(parseFloat(currentInput) / 100);
+                        shouldResetDisplay = true;
+                        updateDisplay();
+                    } else if (value === '=') {
+                        calculate();
+                    } else if (['+', '-', '×', '÷'].includes(value)) {
+                        handleOperator(value);
+                    } else {
+                        if (value === '.' && currentInput.includes('.')) {
+                            return;
+                        }
+                        handleNumber(value);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
