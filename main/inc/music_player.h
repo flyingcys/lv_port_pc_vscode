@@ -43,4 +43,7 @@ uint8_t music_player_get_volume(void);
 void    music_player_mute_toggle(void);
 bool    music_player_is_muted(void);
 
+void local_music_demo_launch(void);
+void local_music_demo_close(void);
+
 #endif /* MUSIC_PLAYER_H */

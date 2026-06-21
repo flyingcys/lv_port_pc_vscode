@@ -7,6 +7,9 @@
 #include <sys/stat.h>
 
 #include "lvgl/lvgl.h"
+#include "desktop_app_launcher.h"
+#include "desktop_metrics.h"
+#include "local_music_demo/lv_demo_music.h"
 #include "local_music_demo/lv_demo_music_main.h"
 #include "player_controller.h"
 #include "stream_player.h"
@@ -42,6 +45,11 @@ static void music_player_async_handler(void *data);
 static void poll_timer_cb(lv_timer_t *t);
 static void mp_apply_play_mode(music_play_mode_t mode);
 static void mp_apply_volume(void);
+static lv_obj_t * local_music_demo_builder(lv_obj_t *overlay, int32_t screen_w, int32_t screen_h);
+
+static const char *s_local_music_demo_paths[] = {
+    "third-party/hls_player_demo/test_file",
+};
 
 /* ── directory expansion helpers ─────────────────────────────────────── */
 
@@ -416,4 +424,33 @@ void music_player_mute_toggle(void) {
 
 bool music_player_is_muted(void) {
     return g_muted;
+}
+
+/* ── desktop app entry ───────────────────────────────────────────────── */
+
+static lv_obj_t * local_music_demo_builder(lv_obj_t *overlay, int32_t screen_w, int32_t screen_h) {
+    (void)screen_w;
+    (void)screen_h;
+
+    music_player_init(s_local_music_demo_paths,
+                      sizeof(s_local_music_demo_paths) / sizeof(s_local_music_demo_paths[0]));
+
+    lv_demo_args_t args;
+    lv_demo_args_init(&args);
+    args.parent = overlay;
+    lv_demo_music_with_args(&args);
+
+    return overlay;
+}
+
+void local_music_demo_launch(void) {
+    const desktop_metrics_t *m = desktop_metrics();
+    desktop_app_launcher_open_with_close(local_music_demo_builder,
+                                         local_music_demo_close,
+                                         m->screen_w,
+                                         m->screen_h);
+}
+
+void local_music_demo_close(void) {
+    music_player_deinit();
 }

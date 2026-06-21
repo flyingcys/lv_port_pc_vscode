@@ -1,6 +1,7 @@
 #include "desktop_data.h"
 #include "calc/calc_app.h"
 #include "fruit_ninja_app.h"
+#include "music_player.h"
 LV_IMAGE_DECLARE(img_app_clock);   LV_IMAGE_DECLARE(img_app_photos);
 LV_IMAGE_DECLARE(img_app_calc);    LV_IMAGE_DECLARE(img_app_calc_plus);
 LV_IMAGE_DECLARE(img_app_files);   LV_IMAGE_DECLARE(img_app_netease);
@@ -14,7 +15,7 @@ const desktop_app_t desktop_apps[] = {
     { &img_app_calc,       "计算器",      1, calc_app_launch },
     { &img_app_calc_plus,  "计算器+",     1, NULL },
     { &img_app_files,      "文件管理",    1, NULL },
-    { &img_app_netease,    "网易云音乐",  1, NULL },
+    { &img_app_netease,    "网易云音乐",  1, local_music_demo_launch },
     { &img_app_qqmusic,    "QQ音乐",      1, NULL },
     { &img_app_applemusic, "Apple Music", 1, NULL },
     { &img_app_2048,       "2048",        1, NULL },

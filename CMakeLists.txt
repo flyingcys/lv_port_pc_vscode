@@ -37,6 +37,7 @@ endif()
 
 # Main include files of the project
 include_directories(${PROJECT_SOURCE_DIR}/main/inc)
+include_directories(${PROJECT_SOURCE_DIR}/main/desktop)
 
 # Define options for LVGL with default values (OFF)
 option(LV_USE_DRAW_SDL "Use SDL draw unit" OFF)
@@ -54,6 +55,12 @@ file(GLOB FRUIT_NINJA_SOURCES CONFIGURE_DEPENDS
 file(GLOB LOCAL_MUSIC_DEMO_SOURCES CONFIGURE_DEPENDS
     "${PROJECT_SOURCE_DIR}/main/src/local_music_demo/*.c"
     "${PROJECT_SOURCE_DIR}/main/src/local_music_demo/assets/*.c"
+)
+file(GLOB DESKTOP_SOURCES CONFIGURE_DEPENDS
+    "${PROJECT_SOURCE_DIR}/main/desktop/*.c"
+    "${PROJECT_SOURCE_DIR}/main/desktop/calc/*.c"
+    "${PROJECT_SOURCE_DIR}/main/desktop/assets/*.c"
+    "${PROJECT_SOURCE_DIR}/main/desktop/assets/fonts/*.c"
 )
 
 # Set C and C++ standards
@@ -167,6 +174,7 @@ else()
 endif()
 
 target_sources(main PRIVATE ${FRUIT_NINJA_SOURCES})
+target_sources(main PRIVATE ${DESKTOP_SOURCES})
 
 # Define LVGL configuration as a simple include
 target_compile_definitions(main PRIVATE LV_CONF_INCLUDE_SIMPLE)
