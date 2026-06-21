@@ -1,10 +1,14 @@
 #include "calc.h"
 #include "calc_engine.h"
 #include <math.h>
+#include <stdlib.h>
 #include <string.h>
 
 LV_FONT_DECLARE(desktop_font_calc_20);
+LV_FONT_DECLARE(desktop_font_calc_40);
+LV_FONT_DECLARE(desktop_font_calc_52);
 LV_FONT_DECLARE(desktop_font_calc_48);
+LV_FONT_DECLARE(desktop_font_calc_64);
 LV_FONT_DECLARE(desktop_font_calc_18);
 LV_FONT_DECLARE(desktop_font_calc_16);
 
@@ -18,6 +22,7 @@ typedef struct {
     lv_obj_t * lbl_expr;
     lv_obj_t * panel_adv;
     lv_obj_t * btn_expand;
+    lv_obj_t * expand_bars[6];
     bool adv_open;
     int32_t adv_h;          /* 科学面板展开高度 */
     int32_t screen_w;
@@ -38,13 +43,67 @@ typedef struct {
 #define COL_EXPR     0x8e8e93
 #define COL_BORDER   0x333333
 
+static bool calc_html_parity_enabled(void)
+{
+    const char * v = getenv("AM_CALC_HTML_PARITY");
+    return v != NULL && strcmp(v, "1") == 0;
+}
+
+static void apply_card_layout(calc_ui_t * ui)
+{
+    lv_obj_update_layout(ui->root);
+    int32_t card_h = lv_obj_get_height(ui->root);
+    int32_t target_h = (int32_t)(ui->screen_h * 0.95);
+    int32_t scale_w = (int32_t)((int64_t)ui->screen_w * 256 / 360);
+    int32_t scale_h = card_h > 0 ? (int32_t)((int64_t)target_h * 256 / card_h) : 256;
+    int32_t scale = scale_w < scale_h ? scale_w : scale_h;
+    if(scale > 256) scale = 256;
+    lv_obj_set_style_transform_pivot_x(ui->root, 0, 0);
+    lv_obj_set_style_transform_pivot_y(ui->root, 0, 0);
+    lv_obj_set_style_transform_scale(ui->root, (uint32_t)scale, 0);
+    int32_t visual_w = (int32_t)((int64_t)360 * scale / 256);
+    int32_t visual_h = (int32_t)((int64_t)card_h * scale / 256);
+    int32_t x = (ui->screen_w - visual_w) / 2;
+    int32_t y = (ui->screen_h - visual_h) / 2;
+    if(x < 0) x = 0;
+    if(y < 0) y = 0;
+    lv_obj_set_pos(ui->root, x, y);
+}
+
+static void set_adv_open_state(calc_ui_t * ui, bool open)
+{
+    ui->adv_open = open;
+    if(open) {
+        lv_obj_set_height(ui->panel_adv, ui->adv_h);
+        lv_obj_set_style_opa(ui->panel_adv, LV_OPA_COVER, 0);
+        lv_obj_set_style_margin_top(ui->panel_adv, 15, 0);
+        lv_obj_set_style_pad_bottom(ui->panel_adv, 15, 0);
+        lv_obj_set_style_border_width(ui->panel_adv, 1, 0);
+    } else {
+        lv_obj_set_height(ui->panel_adv, 0);
+        lv_obj_set_style_opa(ui->panel_adv, LV_OPA_TRANSP, 0);
+        lv_obj_set_style_margin_top(ui->panel_adv, 0, 0);
+        lv_obj_set_style_pad_bottom(ui->panel_adv, 0, 0);
+        lv_obj_set_style_border_width(ui->panel_adv, 0, 0);
+    }
+    for(int i = 3; i < 6; i++) {
+        lv_obj_set_x(ui->expand_bars[i], open ? 21 : 21);
+    }
+}
+
 static void update_display(calc_ui_t * ui) {
     const char * s = ui->engine.current;
     size_t len = strlen(s);
     const lv_font_t * f;
-    if(len > 12)      f = &desktop_font_calc_16;   /* 超长 → 更小 */
-    else if(len > 8)  f = &desktop_font_calc_20;
-    else              f = &desktop_font_calc_48;
+    if(calc_html_parity_enabled()) {
+        if(len > 12)      f = &desktop_font_calc_40;
+        else if(len > 8)  f = &desktop_font_calc_52;
+        else              f = &desktop_font_calc_64;
+    } else {
+        if(len > 12)      f = &desktop_font_calc_16;
+        else if(len > 8)  f = &desktop_font_calc_20;
+        else              f = &desktop_font_calc_48;
+    }
     lv_obj_set_style_text_font(ui->lbl_current, f, 0);
     lv_label_set_text(ui->lbl_current, s);
     lv_label_set_text(ui->lbl_expr, ui->engine.expression);
@@ -65,15 +124,8 @@ static void btn_event_cb(lv_event_t * e) {
 static void expand_cb(lv_event_t * e) {
     LV_UNUSED(e);
     calc_ui_t * ui = lv_event_get_user_data(e);
-    ui->adv_open = !ui->adv_open;
-    /* 简化：直接 set height/opa，动画可选 */
-    if(ui->adv_open) {
-        lv_obj_set_height(ui->panel_adv, ui->adv_h);
-        lv_obj_set_style_opa(ui->panel_adv, LV_OPA_COVER, 0);
-    } else {
-        lv_obj_set_height(ui->panel_adv, 0);
-        lv_obj_set_style_opa(ui->panel_adv, LV_OPA_TRANSP, 0);
-    }
+    set_adv_open_state(ui, !ui->adv_open);
+    apply_card_layout(ui);
 }
 
 static void close_cb(lv_event_t * e) {
@@ -99,7 +151,9 @@ static lv_obj_t * make_btn(lv_obj_t * parent, uint32_t color, const char * txt,
     lv_obj_set_style_text_font(b, font, 0);
     lv_obj_set_style_text_color(b,
         color == COL_ACTION ? lv_color_black() : lv_color_white(), 0);
-    lv_label_set_text(lv_label_create(b), txt);
+    lv_obj_t * label = lv_label_create(b);
+    lv_label_set_text(label, txt);
+    lv_obj_center(label);
     lv_obj_set_user_data(b, ui);
     lv_obj_add_event_cb(b, btn_event_cb, LV_EVENT_CLICKED, (void *)(intptr_t)btn);
     return b;
@@ -147,7 +201,7 @@ lv_obj_t * calc_create(lv_obj_t * parent, int32_t screen_w, int32_t screen_h)
     lv_obj_set_style_pad_right(card, 20, 0);
     lv_obj_set_style_pad_top(card, 20, 0);
     lv_obj_set_style_pad_bottom(card, 25, 0);
-    lv_obj_set_style_pad_row(card, 10, 0);
+    lv_obj_set_style_pad_row(card, 0, 0);
     lv_obj_set_style_pad_column(card, 0, 0);
     lv_obj_set_style_layout(card, LV_LAYOUT_FLEX, 0);
     lv_obj_set_flex_flow(card, LV_FLEX_FLOW_COLUMN);
@@ -160,6 +214,7 @@ lv_obj_t * calc_create(lv_obj_t * parent, int32_t screen_w, int32_t screen_h)
     lv_obj_set_width(header, 320);
     lv_obj_set_height(header, 30);
     lv_obj_set_style_pad_all(header, 0, 0);
+    lv_obj_set_style_margin_bottom(header, 10, 0);
     lv_obj_clear_flag(header, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
     lv_obj_set_style_layout(header, LV_LAYOUT_FLEX, 0);
     lv_obj_set_flex_flow(header, LV_FLEX_FLOW_ROW);
@@ -195,9 +250,32 @@ lv_obj_t * calc_create(lv_obj_t * parent, int32_t screen_w, int32_t screen_h)
     lv_obj_set_style_border_width(expand, 0, 0);
     lv_obj_set_style_shadow_width(expand, 0, 0);
     lv_obj_set_style_pad_all(expand, 0, 0);
-    lv_obj_set_style_text_font(expand, &desktop_font_calc_18, 0);
-    lv_obj_set_style_text_color(expand, lv_color_hex(0xa0a0a0), 0);
-    lv_label_set_text(lv_label_create(expand), "\xE2\x89\xA1");  /* ≡ U+2261 */
+    lv_color_t expand_icon = lv_color_hex(0xa0a0a0);
+    const int bar_y[3] = {9, 15, 21};
+    for(int i = 0; i < 3; i++) {
+        lv_obj_t * bar = lv_obj_create(expand);
+        ui->expand_bars[i] = bar;
+        lv_obj_remove_style_all(bar);
+        lv_obj_set_size(bar, i == 1 ? 13 : 18, 2);
+        lv_obj_set_style_radius(bar, 1, 0);
+        lv_obj_set_style_bg_color(bar, expand_icon, 0);
+        lv_obj_set_style_bg_opa(bar, LV_OPA_COVER, 0);
+        lv_obj_clear_flag(bar, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_add_flag(bar, LV_OBJ_FLAG_EVENT_BUBBLE);
+        lv_obj_set_pos(bar, 7, bar_y[i]);
+    }
+    for(int i = 0; i < 3; i++) {
+        lv_obj_t * bar = lv_obj_create(expand);
+        ui->expand_bars[i + 3] = bar;
+        lv_obj_remove_style_all(bar);
+        lv_obj_set_size(bar, 4, 2);
+        lv_obj_set_style_radius(bar, 1, 0);
+        lv_obj_set_style_bg_color(bar, expand_icon, 0);
+        lv_obj_set_style_bg_opa(bar, LV_OPA_COVER, 0);
+        lv_obj_clear_flag(bar, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_add_flag(bar, LV_OBJ_FLAG_EVENT_BUBBLE);
+        lv_obj_set_pos(bar, 21, bar_y[i]);
+    }
     lv_obj_add_event_cb(expand, expand_cb, LV_EVENT_CLICKED, ui);
 
     /* 显示屏 */
@@ -221,9 +299,12 @@ lv_obj_t * calc_create(lv_obj_t * parent, int32_t screen_w, int32_t screen_h)
     lv_label_set_text(ui->lbl_expr, "");
 
     ui->lbl_current = lv_label_create(display);
-    lv_obj_set_style_text_font(ui->lbl_current, &desktop_font_calc_48, 0);
+    lv_obj_set_style_text_font(ui->lbl_current,
+                               calc_html_parity_enabled() ? &desktop_font_calc_64 : &desktop_font_calc_48,
+                               0);
     lv_obj_set_style_text_color(ui->lbl_current, lv_color_white(), 0);
     lv_label_set_text(ui->lbl_current, "0");
+    lv_obj_set_style_margin_bottom(display, 10, 0);
 
     /* 科学面板（默认折叠） */
     lv_obj_t * adv = lv_obj_create(card);
@@ -233,12 +314,16 @@ lv_obj_t * calc_create(lv_obj_t * parent, int32_t screen_w, int32_t screen_h)
     lv_obj_set_height(adv, 0);
     lv_obj_set_style_bg_opa(adv, LV_OPA_TRANSP, 0);
     lv_obj_set_style_pad_all(adv, 0, 0);
+    lv_obj_set_style_pad_bottom(adv, 0, 0);
     lv_obj_set_style_pad_row(adv, 12, 0);
     lv_obj_set_style_pad_column(adv, 12, 0);
+    lv_obj_set_style_border_side(adv, LV_BORDER_SIDE_BOTTOM, 0);
+    lv_obj_set_style_border_width(adv, 0, 0);
+    lv_obj_set_style_border_color(adv, lv_color_hex(COL_BORDER), 0);
     lv_obj_clear_flag(adv, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
     lv_obj_set_style_layout(adv, LV_LAYOUT_GRID, 0);
-    static int32_t adv_col[4] = {LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1)};
-    static int32_t adv_row[3] = {LV_GRID_CONTENT, LV_GRID_CONTENT, LV_GRID_CONTENT};
+    static int32_t adv_col[5] = {LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};
+    static int32_t adv_row[4] = {LV_GRID_CONTENT, LV_GRID_CONTENT, LV_GRID_CONTENT, LV_GRID_TEMPLATE_LAST};
     lv_obj_set_grid_dsc_array(adv, adv_col, adv_row);
     for(int i = 0; i < 12; i++) {
         lv_obj_t * b = lv_button_create(adv);
@@ -251,13 +336,20 @@ lv_obj_t * calc_create(lv_obj_t * parent, int32_t screen_w, int32_t screen_h)
         lv_obj_set_style_pad_all(b, 0, 0);
         lv_obj_set_style_text_font(b, &desktop_font_calc_16, 0);
         lv_obj_set_style_text_color(b, lv_color_white(), 0);
-        lv_label_set_text(lv_label_create(b), adv_keys[i].txt);
+        lv_obj_t * label = lv_label_create(b);
+        lv_label_set_text(label, adv_keys[i].txt);
+        lv_obj_center(label);
         lv_obj_set_user_data(b, ui);
         lv_obj_add_event_cb(b, btn_event_cb, LV_EVENT_CLICKED, (void *)(intptr_t)adv_keys[i].btn);
         lv_obj_set_grid_cell(b, LV_GRID_ALIGN_STRETCH, i % 4, 1,
                                  LV_GRID_ALIGN_START, i / 4, 1);
     }
-    ui->adv_h = 3 * 40 + 2 * 12;   /* 3行 高40 + 2 gap12 = 144 */
+    ui->adv_h = 160;
+    set_adv_open_state(ui, false);
+    const char * adv_open = getenv("AM_CALC_ADV_OPEN");
+    if(adv_open != NULL && strcmp(adv_open, "1") == 0) {
+        set_adv_open_state(ui, true);
+    }
 
     /* 主键盘 grid */
     lv_obj_t * keypad_grid = lv_obj_create(card);
@@ -269,8 +361,8 @@ lv_obj_t * calc_create(lv_obj_t * parent, int32_t screen_w, int32_t screen_h)
     lv_obj_set_style_pad_column(keypad_grid, 15, 0);
     lv_obj_clear_flag(keypad_grid, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
     lv_obj_set_style_layout(keypad_grid, LV_LAYOUT_GRID, 0);
-    static int32_t kp_col[4] = {LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1)};
-    static int32_t kp_row[5] = {LV_GRID_CONTENT, LV_GRID_CONTENT, LV_GRID_CONTENT, LV_GRID_CONTENT, LV_GRID_CONTENT};
+    static int32_t kp_col[5] = {LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};
+    static int32_t kp_row[6] = {LV_GRID_CONTENT, LV_GRID_CONTENT, LV_GRID_CONTENT, LV_GRID_CONTENT, LV_GRID_CONTENT, LV_GRID_TEMPLATE_LAST};
     lv_obj_set_grid_dsc_array(keypad_grid, kp_col, kp_row);
     for(int i = 0; i < 20; i++) {
         lv_obj_t * b = make_btn(keypad_grid, keypad[i].color, keypad[i].txt,
@@ -281,20 +373,7 @@ lv_obj_t * calc_create(lv_obj_t * parent, int32_t screen_w, int32_t screen_h)
 
     update_display(ui);
 
-    /* 自适应缩放：取实际高，transform_scale 整体缩 */
-    lv_obj_update_layout(card);
-    int32_t card_h = lv_obj_get_height(card);
-    int32_t target_h = (int32_t)(screen_h * 0.95);
-    int32_t scale_w = (int32_t)((int64_t)screen_w * 256 / 360);
-    int32_t scale_h = (int32_t)((int64_t)target_h * 256 / card_h);
-    int32_t scale = scale_w < scale_h ? scale_w : scale_h;
-    if(scale > 256) scale = 256;   /* 不放大 */
-    if(scale < 60 * 256 / 100) {
-        /* 小屏档命中区对策：缩按钮尺寸（见 spec §8） */
-        /* 简化首版：保持 transform_scale，按钮命中区重叠风险留实测 */
-    }
-    lv_obj_set_style_transform_scale(card, (uint32_t)scale, 0);
-    lv_obj_center(card);
+    apply_card_layout(ui);
 
     /* 回收 ui：launcher close 销毁 card 时触发，防止泄漏 */
     lv_obj_add_event_cb(card, calc_delete_cb, LV_EVENT_DELETE, ui);

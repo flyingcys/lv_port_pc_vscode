@@ -16,6 +16,8 @@
 #include "lvgl/lvgl.h"
 #include "lvgl/src/draw/snapshot/lv_snapshot.h"
 #include "desktop.h"
+#include "calc/calc.h"
+#include "calc/calc_app.h"
 
 /*********************
  *      DEFINES
@@ -33,6 +35,7 @@
 static lv_display_t * hal_init(int32_t w, int32_t h);
 static void resolve_resolution(int32_t * w, int32_t * h);
 static void maybe_take_snapshot(void);
+static void maybe_run_calc_standalone(int32_t w, int32_t h);
 
 /**********************
  *  STATIC VARIABLES
@@ -83,8 +86,21 @@ int main(int argc, char **argv)
   hal_init(scr_w, scr_h);
 
   #if LV_USE_OS == LV_OS_NONE
- 
+
+  maybe_run_calc_standalone(scr_w, scr_h);
+
   desktop_run();
+
+  /* AM_APP=calc：直接打开 calc 用于无头截图比对（见 docs html-to-lvgl skill） */
+  {
+    const char * app = getenv("AM_APP");
+    if(app && strcmp(app, "calc") == 0) {
+      fprintf(stderr, "DBG: launching calc\n"); fflush(stderr);
+      calc_app_launch();
+      fprintf(stderr, "DBG: calc launched\n"); fflush(stderr);
+    }
+  }
+
   maybe_take_snapshot();   /* �� AM_SHOT ��λ���ͼ���˳���������� */
 
   while(1) {
@@ -150,10 +166,36 @@ static void resolve_resolution(int32_t * w, int32_t * h)
     else                                        { *w = 800; *h = 480; }
 }
 
+static void maybe_run_calc_standalone(int32_t w, int32_t h)
+{
+    const char * app = getenv("AM_APP");
+    if(app == NULL || strcmp(app, "calc_standalone") != 0) return;
+
+    setenv("AM_CALC_HTML_PARITY", "1", 1);
+
+    lv_obj_t * screen = lv_screen_active();
+    lv_obj_set_style_bg_color(screen, lv_color_hex(0x667eea), 0);
+    lv_obj_set_style_bg_grad_color(screen, lv_color_hex(0x764ba2), 0);
+    lv_obj_set_style_bg_grad_dir(screen, LV_GRAD_DIR_VER, 0);
+    lv_obj_set_style_bg_opa(screen, LV_OPA_COVER, 0);
+    lv_obj_clear_flag(screen, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_scrollbar_mode(screen, LV_SCROLLBAR_MODE_OFF);
+
+    calc_create(screen, w, h);
+    maybe_take_snapshot();
+
+    while(1) {
+        lv_timer_handler();
+        usleep(5 * 1000);
+    }
+}
+
 static void maybe_take_snapshot(void)
 {
     const char * out = getenv("AM_SHOT");
     if(out == NULL) return;
+
+    fprintf(stderr, "DBG: snapshot warmup start\n"); fflush(stderr);
 
     /* ����֡�ò���/������֡��� */
     for(int i = 0; i < SNAPSHOT_WARMUP_FRAMES; i++) { lv_timer_handler(); usleep(2 * 1000); }

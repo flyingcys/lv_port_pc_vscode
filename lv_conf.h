@@ -69,7 +69,7 @@
 #if LV_USE_STDLIB_MALLOC == LV_STDLIB_BUILTIN
     /** Size of memory available for `lv_malloc()` in bytes (>= 2kB)
      *  800x480@32bpp 全屏 snapshot 需 ~1.46MiB，原 1MiB 不足，扩到 2MiB */
-    #define LV_MEM_SIZE (2 * 1024 * 1024)
+    #define LV_MEM_SIZE (8 * 1024 * 1024)
 
     /** Size of the memory expand for `lv_malloc()` in bytes */
     #define LV_MEM_POOL_EXPAND_SIZE 0
