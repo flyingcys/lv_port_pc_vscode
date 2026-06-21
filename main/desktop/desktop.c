@@ -4,6 +4,7 @@
 #include "desktop_home.h"
 #include "desktop_metrics.h"
 #include "desktop_page_config.h"
+#include "desktop_gesture.h"
 #include "desktop_theme.h"
 #include "desktop_top_bar.h"
 #include "desktop_widgets.h"
@@ -52,6 +53,9 @@ static int old_index;
 static int new_index;
 static int icon_shake;
 static int did_drag;             /* 本次按下是否发生过拖拽/抖动；0=纯短按可启动 app */
+static int32_t icon_press_x;
+static int32_t icon_press_y;
+static int icon_press_active;
 static int border_lefttest_count;
 static int border_righttest_count;
 static lv_obj_t * page[DESKTOP_PAGE_COUNT];
@@ -81,6 +85,8 @@ static void icon_set_meta(lv_obj_t * obj, icon_type * meta);
 static int index_by_xy(const lv_point_t * click_point);
 static int x_by_index(int index);
 static int y_by_index(int index);
+static void pressed_cb(lv_event_t * e);
+static void note_icon_motion(const lv_point_t * screen_point);
 static void touching_cb(lv_event_t * e);
 static void released_cb(lv_event_t * e);
 static void set_x_cb(void * var, int32_t v);
@@ -111,6 +117,9 @@ void desktop_run(void)
     new_index = 0;
     icon_shake = 0;
     did_drag = 0;
+    icon_press_x = 0;
+    icon_press_y = 0;
+    icon_press_active = 0;
     border_lefttest_count = 0;
     border_righttest_count = 0;
     drag_page = 0;
@@ -184,6 +193,7 @@ void desktop_run(void)
             lv_obj_t * tile = desktop_widget_app_tile(page[pg_idx], &desktop_apps[i]);
             lv_obj_set_size(tile, desktop_grid_col_w(), row_h);
             lv_obj_set_pos(tile, x_by_index(k), y_by_index(k));
+            lv_obj_add_event_cb(tile, pressed_cb, LV_EVENT_PRESSED, NULL);
             lv_obj_add_event_cb(tile, released_cb, LV_EVENT_RELEASED, NULL);
             lv_obj_add_event_cb(tile, touching_cb, LV_EVENT_PRESSING, NULL);
 
@@ -296,6 +306,9 @@ static void clear_runtime_object_refs(void)
     edge_bot_press_y = 0;
     edge_top_dragging = 0;
     edge_bot_dragging = 0;
+    icon_press_x = 0;
+    icon_press_y = 0;
+    icon_press_active = 0;
 
     for(page_index = 0; page_index < DESKTOP_PAGE_COUNT; page_index++) {
         page[page_index] = NULL;
@@ -373,6 +386,27 @@ static int index_by_xy(const lv_point_t * click_point)
     return clamp_index(row * DESKTOP_GRID_COLS + col);
 }
 
+static void pressed_cb(lv_event_t * e)
+{
+    LV_UNUSED(e);
+    lv_point_t pt;
+
+    lv_indev_get_point(lv_indev_get_act(), &pt);
+    icon_press_x = pt.x;
+    icon_press_y = pt.y;
+    icon_press_active = 1;
+    did_drag = 0;
+}
+
+static void note_icon_motion(const lv_point_t * screen_point)
+{
+    if(icon_press_active &&
+       desktop_gesture_cancels_tap(screen_point->x - icon_press_x,
+                                   screen_point->y - icon_press_y)) {
+        did_drag = 1;
+    }
+}
+
 static void touching_cb(lv_event_t * e)
 {
     int i;
@@ -388,8 +422,10 @@ static void touching_cb(lv_event_t * e)
 
     lv_obj_move_foreground(target);
 
+    lv_indev_get_point(lv_indev_get_act(), &screen_point);
+    note_icon_motion(&screen_point);
+
     if(touching == 0) {
-        lv_indev_get_point(lv_indev_get_act(), &screen_point);
         if(!desktop_home_screen_to_local(desktop, &screen_point, &local_point)) {
             return;
         }
@@ -402,7 +438,6 @@ static void touching_cb(lv_event_t * e)
     }
 
     if(icon_shake) {
-        lv_indev_get_point(lv_indev_get_act(), &screen_point);
         if(!desktop_home_screen_to_local(desktop, &screen_point, &local_point)) {
             return;
         }
@@ -491,6 +526,7 @@ static void released_cb(lv_event_t * e)
      * 拖拽分支均提前 return，若延迟到末尾复位会漏掉，导致后续短按失效。 */
     short_tap = (!did_drag && !icon_shake);
     did_drag = 0;
+    icon_press_active = 0;
 
     touch_time_count = 0;
     touching = 0;

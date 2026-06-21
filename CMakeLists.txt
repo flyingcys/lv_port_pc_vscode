@@ -103,6 +103,15 @@ target_sources(main PRIVATE ${DESKTOP_SOURCES})
 target_compile_definitions(main PRIVATE LV_CONF_INCLUDE_SIMPLE)
 target_link_libraries(main lvgl lvgl::examples lvgl::demos lvgl::thorvg ${SDL2_LIBRARIES} m pthread)
 
+enable_testing()
+
+add_executable(test_gesture
+    ${PROJECT_SOURCE_DIR}/tests/desktop/test_gesture.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/desktop_gesture.c
+)
+target_include_directories(test_gesture PRIVATE ${PROJECT_SOURCE_DIR}/main/desktop)
+add_test(NAME test_gesture COMMAND test_gesture)
+
 # Only link freertos_config if the FreeRTOS directory exists
 if(USE_FREERTOS)
     target_link_libraries(main freertos_config)
