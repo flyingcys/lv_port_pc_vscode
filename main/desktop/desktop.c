@@ -50,6 +50,7 @@ static int touch_time_count;
 static int old_index;
 static int new_index;
 static int icon_shake;
+static int did_drag;             /* 本次按下是否发生过拖拽/抖动；0=纯短按可启动 app */
 static int border_lefttest_count;
 static int border_righttest_count;
 static lv_obj_t * page[DESKTOP_PAGE_COUNT];
@@ -108,6 +109,7 @@ void desktop_run(void)
     old_index = 0;
     new_index = 0;
     icon_shake = 0;
+    did_drag = 0;
     border_lefttest_count = 0;
     border_righttest_count = 0;
     drag_page = 0;
@@ -403,6 +405,7 @@ static void touching_cb(lv_event_t * e)
         }
 
         lv_obj_set_pos(target, local_point.x - offsetx, local_point.y - offsety);
+        did_drag = 1;   /* 抖动模式下拖动图标 = 非短按 */
 
         {
             const desktop_metrics_t * mb = desktop_metrics();
@@ -448,6 +451,7 @@ static void touching_cb(lv_event_t * e)
     }
 
     icon_shake = 1;
+    did_drag = 1;       /* 长按进入抖动编辑模式 = 非短按 */
 
     for(j = 0; j < DESKTOP_PAGE_COUNT; j++) {
         for(i = 0; i < page_icon_count[j]; i++) {
@@ -469,6 +473,10 @@ static void released_cb(lv_event_t * e)
 {
     int i;
     int j;
+    int a;
+    int seen;
+    int app_idx;
+    int short_tap;
     lv_obj_t * target = lv_event_get_target(e);
     icon_type * meta = icon_get_meta(target);
 
@@ -477,6 +485,11 @@ static void released_cb(lv_event_t * e)
     }
 
     old_index = meta->index;
+
+    /* 短按启动判定：在状态复位前快照；did_drag 立即复位供下次按下使用。
+     * 拖拽分支均提前 return，若延迟到末尾复位会漏掉，导致后续短按失效。 */
+    short_tap = (!did_drag && !icon_shake);
+    did_drag = 0;
 
     touch_time_count = 0;
     touching = 0;
@@ -640,6 +653,23 @@ static void released_cb(lv_event_t * e)
             icon_set_meta(target, &icons[drag_page][new_index]);
             lv_obj_set_pos(target, x_by_index(new_index), y_by_index(new_index));
             return;
+        }
+    }
+
+    /* 纯短按（未拖拽未抖动）：所有拖拽分支均提前 return，落到此处即启动 app。
+     * meta->page/index 是图标在页内的位置，遍历 desktop_apps 按 page 分组
+     * 取第 index 项即为当前图标对应的 app。 */
+    if(short_tap) {
+        app_idx = -1;
+        seen = 0;
+        for(a = 0; a < (int)desktop_app_count; a++) {
+            if(desktop_apps[a].page == (uint8_t)meta->page) {
+                if(seen == meta->index) { app_idx = a; break; }
+                seen++;
+            }
+        }
+        if(app_idx >= 0 && desktop_apps[app_idx].launch != NULL) {
+            desktop_apps[app_idx].launch();
         }
     }
 }
