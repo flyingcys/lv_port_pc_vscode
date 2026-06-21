@@ -93,6 +93,7 @@ endif()
 # desktop module sources (main home screen, merged from release/v9.3-replace2)
 file(GLOB DESKTOP_SOURCES
     "${PROJECT_SOURCE_DIR}/main/desktop/*.c"
+    "${PROJECT_SOURCE_DIR}/main/desktop/calc/*.c"
     "${PROJECT_SOURCE_DIR}/main/desktop/assets/*.c"
     "${PROJECT_SOURCE_DIR}/main/desktop/assets/fonts/*.c"
 )
