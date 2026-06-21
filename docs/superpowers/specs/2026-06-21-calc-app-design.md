@@ -81,6 +81,7 @@ void calc_app_launch(void) {
 - `scale = min(screen_w/360, screen_h*0.95/card_h) * 256`，转 `uint32_t`。
 - `lv_obj_set_style_transform_scale(root, scale, 0)` + `lv_obj_center(root)`（transform 锚点 = 对象中心，居中正确）。
 - 三档预期：800×480 ≈256（1:1 或微缩）；640×480 ≈227；480×272 含科学面板展开会超高→大幅缩，仍可显示。
+- **命中区对策**：`transform_scale` 不缩放命中区（见 §8）。scale < 0.6（小屏档）时，卡片内按钮改按比例 `lv_obj_set_size` 缩小，使命中区与视觉一致；大屏档保持纯 transform_scale。阈值与实际缩减比在实现阶段实测确定。
 
 ## 4. 计算引擎（移植 calc.html JS → C）
 
@@ -165,4 +166,4 @@ calc 计算引擎抽成可测函数（输入字符串序列 → 输出字符串�
 - **装饰对象吞点击**：窗口头圆点、expression 容器等非交互对象去 `LV_OBJ_FLAG_CLICKABLE`。
 - **截图全黑**：snapshot 前跑 200 帧 `lv_timer_handler()`；`LV_MEM_SIZE` 已扩至 2MiB（本次会话已改）。
 - **grid 行轴撑高**：键盘 grid 行轴用 `LV_GRID_ALIGN_START`，避免按钮被撑大。
-- **transform_scale 点击区**：v9 transform_scale 会缩放命中区，按钮事件不受影响（仍按逻辑尺寸命中，缩放仅视觉）——需实测确认。
+- **transform_scale 命中区**：v9 `transform_scale` 仅视觉缩放，**不缩放命中区**——按钮事件仍按逻辑尺寸（Ø65）判定。小屏大幅缩放后，按钮视觉变小但命中区仍 65px，相邻按钮命中区会重叠导致误触。**对策**：缩放系数较小时（如 480×272 档），改用「每档独立缩减按钮基准尺寸」而非纯 transform_scale——即 scale 仍用于整体居中缩放，但小屏档直接按比例缩小卡片内按钮 `lv_obj_set_size`，使命中区与视觉一致。实现时以 scale < 0.6 为阈值切换。详见实现阶段实测。
