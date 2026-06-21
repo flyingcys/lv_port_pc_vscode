@@ -26,7 +26,7 @@ static void on_nav(int idx, void *u);
 static void on_theme_pick(int idx, void *u);
 static void on_tab_pick(int idx, void *u);
 static void rebuild_content(void);
-static void build_all(void);
+static void build_all(lv_obj_t *parent);
 
 /* 用当前激活页填充内容区,并将滚动位置重置到顶部 */
 static void rebuild_content(void)
@@ -43,13 +43,23 @@ static void rebuild_content(void)
 }
 
 /* 全量重建 shell(首次构建 + 主题切换) */
-static void build_all(void)
+static void build_all(lv_obj_t *parent)
 {
     const am_metrics_t *m = am_metrics();
     const am_theme_t *t = am_theme_get(am_theme_current());
-    s_root = lv_screen_active();
+    int32_t root_w;
+    int32_t root_h;
+    s_root = parent ? parent : lv_screen_active();
+    root_w = lv_obj_get_width(s_root);
+    root_h = lv_obj_get_height(s_root);
     lv_obj_clean(s_root);
     lv_obj_remove_style_all(s_root);
+    lv_obj_set_pos(s_root, 0, 0);
+    if(root_w > 0 && root_h > 0) {
+        lv_obj_set_size(s_root, root_w, root_h);
+    } else {
+        lv_obj_set_size(s_root, LV_PCT(100), LV_PCT(100));
+    }
     lv_obj_set_scrollbar_mode(s_root, LV_SCROLLBAR_MODE_OFF);
     am_fill_grad2(s_root, t->bg_top, t->bg_bottom);
 
@@ -101,7 +111,7 @@ static void on_theme_pick(int idx, void *u)
 {
     LV_UNUSED(u);
     am_theme_set((am_theme_id_t)idx);
-    build_all();
+    build_all(s_root);
 }
 
 /* 切换设置 tab:仅重建内容区 */
@@ -142,5 +152,12 @@ void apple_music_create(void)
 {
     am_player_init();   /* 播放列表与广播源暂写死在 am_data.c，无需加载配置 */
     apply_env_initial_state();
-    build_all();
+    build_all(lv_screen_active());
+}
+
+void apple_music_create_in(lv_obj_t *parent)
+{
+    am_player_init();   /* 播放列表与广播源暂写死在 am_data.c，无需加载配置 */
+    apply_env_initial_state();
+    build_all(parent);
 }

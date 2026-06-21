@@ -1,4 +1,5 @@
 #include "desktop_data.h"
+#include "apple_music_app.h"
 #include "calc/calc_app.h"
 #include "fruit_ninja_app.h"
 #include "music_player.h"
@@ -17,7 +18,7 @@ const desktop_app_t desktop_apps[] = {
     { &img_app_files,      "文件管理",    1, NULL },
     { &img_app_netease,    "网易云音乐",  1, local_music_demo_launch },
     { &img_app_qqmusic,    "QQ音乐",      1, NULL },
-    { &img_app_applemusic, "Apple Music", 1, NULL },
+    { &img_app_applemusic, "Apple Music", 1, apple_music_app_launch },
     { &img_app_2048,       "2048",        1, NULL },
     { &img_app_blockpuzzle,"方块拼图",    1, NULL },
     { &img_app_blockblast, "方块爆炸",    2, NULL },

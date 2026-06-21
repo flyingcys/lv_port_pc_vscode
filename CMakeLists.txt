@@ -56,6 +56,23 @@ file(GLOB LOCAL_MUSIC_DEMO_SOURCES CONFIGURE_DEPENDS
     "${PROJECT_SOURCE_DIR}/main/src/local_music_demo/*.c"
     "${PROJECT_SOURCE_DIR}/main/src/local_music_demo/assets/*.c"
 )
+file(GLOB V9_APPLE_MUSIC_FONT_SOURCES CONFIGURE_DEPENDS
+    "${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/fonts/*.c"
+)
+set(V9_APPLE_MUSIC_SOURCES
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_data.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_metrics.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_page_home.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_page_list.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_page_settings.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_player.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_screenshot.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_shell.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_theme.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_widgets.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/apple_music.c
+    ${V9_APPLE_MUSIC_FONT_SOURCES}
+)
 file(GLOB DESKTOP_SOURCES CONFIGURE_DEPENDS
     "${PROJECT_SOURCE_DIR}/main/desktop/*.c"
     "${PROJECT_SOURCE_DIR}/main/desktop/calc/*.c"
@@ -147,6 +164,7 @@ else()
 endif()
 
 target_sources(main PRIVATE ${FRUIT_NINJA_SOURCES})
+target_sources(main PRIVATE ${V9_APPLE_MUSIC_SOURCES})
 target_sources(main PRIVATE ${DESKTOP_SOURCES})
 
 # Define LVGL configuration as a simple include
@@ -221,6 +239,61 @@ add_executable(fruit_ninja_model_test
 )
 target_include_directories(fruit_ninja_model_test PRIVATE ${PROJECT_SOURCE_DIR})
 
+add_executable(desktop_apple_music_test
+    ${PROJECT_SOURCE_DIR}/main/tests/desktop_apple_music_test.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/desktop_data.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/img_app_applemusic.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/img_app_calc.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/img_app_calc_plus.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/img_app_clock.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/img_app_files.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/img_app_fruitninja.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/img_app_netease.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/img_app_photos.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/img_app_qqmusic.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/img_app_2048.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/img_app_blockblast.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/img_app_blockpuzzle.c
+)
+target_include_directories(desktop_apple_music_test PRIVATE ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/main/desktop)
+target_link_libraries(desktop_apple_music_test lvgl ${PNG_LIBRARIES})
+
+add_executable(desktop_apple_music_launcher_test
+    ${PROJECT_SOURCE_DIR}/main/tests/desktop_apple_music_launcher_test.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/apple_music_app.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/desktop_app_launcher.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/desktop_metrics.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/fonts/desktop_font_phosphor_14.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/fonts/desktop_font_phosphor_20.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/fonts/desktop_font_simsun_12.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/fonts/desktop_font_simsun_16.c
+)
+target_include_directories(desktop_apple_music_launcher_test PRIVATE
+    ${PROJECT_SOURCE_DIR}
+    ${PROJECT_SOURCE_DIR}/main/desktop
+    ${PROJECT_SOURCE_DIR}/main/src
+)
+target_link_libraries(desktop_apple_music_launcher_test lvgl ${PNG_LIBRARIES})
+
+add_executable(apple_music_parent_size_test
+    ${PROJECT_SOURCE_DIR}/main/tests/apple_music_parent_size_test.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_data.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_metrics.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_page_home.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_page_list.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_page_settings.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_shell.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_theme.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_widgets.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/apple_music.c
+    ${V9_APPLE_MUSIC_FONT_SOURCES}
+)
+target_include_directories(apple_music_parent_size_test PRIVATE
+    ${PROJECT_SOURCE_DIR}
+    ${PROJECT_SOURCE_DIR}/main/src
+)
+target_link_libraries(apple_music_parent_size_test lvgl ${PNG_LIBRARIES})
+
 add_test(
     NAME fruit_ninja_assets_test
     COMMAND $<TARGET_FILE:fruit_ninja_assets_test>
@@ -238,6 +311,24 @@ add_test(
     COMMAND $<TARGET_FILE:fruit_ninja_model_test>
 )
 set_tests_properties(fruit_ninja_model_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_test(
+    NAME desktop_apple_music_test
+    COMMAND $<TARGET_FILE:desktop_apple_music_test>
+)
+set_tests_properties(desktop_apple_music_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_test(
+    NAME desktop_apple_music_launcher_test
+    COMMAND $<TARGET_FILE:desktop_apple_music_launcher_test>
+)
+set_tests_properties(desktop_apple_music_launcher_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_test(
+    NAME apple_music_parent_size_test
+    COMMAND $<TARGET_FILE:apple_music_parent_size_test>
+)
+set_tests_properties(apple_music_parent_size_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 add_custom_target(fruit_ninja_tests
     COMMAND $<TARGET_FILE:fruit_ninja_assets_test>

@@ -35,9 +35,29 @@ static void create_back_button(lv_obj_t * overlay)
     lv_obj_center(icon);
 }
 
+static void create_overlay_background(lv_obj_t * overlay, int32_t screen_w, int32_t screen_h)
+{
+    lv_obj_t * bg = lv_image_create(overlay);
+    char bg_path[512];
+
+    lv_obj_set_size(bg, screen_w, screen_h);
+    lv_obj_set_pos(bg, 0, 0);
+    lv_obj_clear_flag(bg, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_clear_flag(bg, LV_OBJ_FLAG_SCROLLABLE);
+
+    if(fruit_ninja_assets_build_image_path(bg_path, sizeof(bg_path), "images/background.jpg")) {
+        lv_image_set_src(bg, bg_path);
+        lv_image_set_inner_align(bg, LV_IMAGE_ALIGN_STRETCH);
+    }
+    lv_obj_move_background(bg);
+}
+
 static lv_obj_t * fruit_ninja_builder(lv_obj_t * overlay, int32_t screen_w, int32_t screen_h)
 {
+    lv_obj_set_style_bg_opa(overlay, LV_OPA_COVER, 0);
     lv_obj_t * game = fruit_ninja_create(overlay, screen_w, screen_h);
+    create_overlay_background(overlay, screen_w, screen_h);
+    lv_obj_move_foreground(game);
     create_back_button(overlay);
     return game;
 }

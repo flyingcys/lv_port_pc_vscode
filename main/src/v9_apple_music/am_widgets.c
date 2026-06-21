@@ -17,6 +17,10 @@ void am_fill_grad2(lv_obj_t *o, lv_color_t top, lv_color_t bottom)
 static void am_free_grad_cb(lv_event_t *e){ lv_free(lv_event_get_user_data(e)); }
 void am_fill_grad3(lv_obj_t *o, lv_color_t c1, lv_color_t c2, lv_color_t c3)
 {
+#if LV_GRADIENT_MAX_STOPS < 3
+    LV_UNUSED(c2);
+    am_fill_grad2(o, c1, c3);
+#else
     lv_grad_dsc_t *d = lv_malloc(sizeof(lv_grad_dsc_t));
     if(!d) { am_fill_grad2(o, c1, c3); return; }   /* heap exhausted -> graceful 2-stop fallback */
     lv_memzero(d, sizeof(*d));
@@ -27,6 +31,7 @@ void am_fill_grad3(lv_obj_t *o, lv_color_t c1, lv_color_t c2, lv_color_t c3)
     lv_obj_set_style_bg_grad(o, d, 0);
     lv_obj_set_style_bg_opa(o, LV_OPA_COVER, 0);
     lv_obj_add_event_cb(o, am_free_grad_cb, LV_EVENT_DELETE, d);
+#endif
 }
 
 /* 装饰圆辅助:创建纯白半透明圆形,清除交互标志 */
