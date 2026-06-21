@@ -36,6 +36,7 @@ typedef struct {
     lv_obj_t * icon;
     int page;
     int index;
+    int app_idx;   /* desktop_apps[] 全局索引；-1=无 app/锁屏占位/空槽 */
 } icon_type;
 
 /* page_0: 锁屏 (0 个 app); page_1: 10 个 app; page_2: 2 个 app */
@@ -146,6 +147,7 @@ void desktop_run(void)
             icons[j][i].icon = NULL;
             icons[j][i].page = j;
             icons[j][i].index = i;
+            icons[j][i].app_idx = -1;
         }
     }
 
@@ -186,6 +188,7 @@ void desktop_run(void)
             lv_obj_add_event_cb(tile, touching_cb, LV_EVENT_PRESSING, NULL);
 
             icons[pg_idx][k].icon = tile;
+            icons[pg_idx][k].app_idx = i;
             icon_set_meta(tile, &icons[pg_idx][k]);
 
             slot_k[pg_idx]++;
@@ -473,8 +476,6 @@ static void released_cb(lv_event_t * e)
 {
     int i;
     int j;
-    int a;
-    int seen;
     int app_idx;
     int short_tap;
     lv_obj_t * target = lv_event_get_target(e);
@@ -516,6 +517,9 @@ static void released_cb(lv_event_t * e)
 
         icon_shake = 0;
 
+        /* target 原槽位的 app_idx；下方循环搬运会覆盖 meta->app_idx，先保存 */
+        int target_app_idx = meta->app_idx;
+
         meta->icon = NULL;
         new_index = index_by_xy(&local_point);
         if(new_index > page_icon_count[drag_page] - 1) {
@@ -526,6 +530,7 @@ static void released_cb(lv_event_t * e)
         if(new_index < old_index) {
             for(i = old_index; i > new_index; i--) {
                 icons[j][i].icon = icons[j][i - 1].icon;
+                icons[j][i].app_idx = icons[j][i - 1].app_idx;
                 icon_set_meta(icons[j][i].icon, &icons[j][i]);
 
                 lv_anim_t a;
@@ -547,6 +552,7 @@ static void released_cb(lv_event_t * e)
             }
 
             icons[j][new_index].icon = target;
+            icons[j][new_index].app_idx = target_app_idx;
             icon_set_meta(target, &icons[j][new_index]);
             lv_obj_set_pos(target, x_by_index(new_index), y_by_index(new_index));
             return;
@@ -554,6 +560,7 @@ static void released_cb(lv_event_t * e)
 
         for(i = old_index; i < new_index; i++) {
             icons[j][i].icon = icons[j][i + 1].icon;
+            icons[j][i].app_idx = icons[j][i + 1].app_idx;
             icon_set_meta(icons[j][i].icon, &icons[j][i]);
 
             lv_anim_t a;
@@ -575,6 +582,7 @@ static void released_cb(lv_event_t * e)
         }
 
         icons[j][new_index].icon = target;
+        icons[j][new_index].app_idx = target_app_idx;
         icon_set_meta(target, &icons[j][new_index]);
         lv_obj_set_pos(target, x_by_index(new_index), y_by_index(new_index));
         return;
@@ -590,6 +598,8 @@ static void released_cb(lv_event_t * e)
         }
 
         icon_shake = 0;
+        /* target 原槽位 app_idx；下方搬运会覆盖 meta->app_idx，先保存 */
+        int target_app_idx = meta->app_idx;
         new_index = index_by_xy(&local_point);
 
         if(icons[drag_page][DESKTOP_SLOT_COUNT - 1].icon == NULL) {
@@ -600,6 +610,7 @@ static void released_cb(lv_event_t * e)
             j = drag_page;
             for(i = page_icon_count[drag_page]; i > new_index; i--) {
                 icons[j][i].icon = icons[j][i - 1].icon;
+                icons[j][i].app_idx = icons[j][i - 1].app_idx;
                 icon_set_meta(icons[j][i].icon, &icons[j][i]);
 
                 lv_anim_t a;
@@ -623,15 +634,18 @@ static void released_cb(lv_event_t * e)
             j = meta->page;
             for(i = old_index; i < page_icon_count[j] - 1; i++) {
                 icons[j][i].icon = icons[j][i + 1].icon;
+                icons[j][i].app_idx = icons[j][i + 1].app_idx;
                 icon_set_meta(icons[j][i].icon, &icons[j][i]);
                 lv_obj_set_pos(icons[j][i].icon, x_by_index(i), y_by_index(i));
             }
 
             icons[j][page_icon_count[j] - 1].icon = NULL;
+            icons[j][page_icon_count[j] - 1].app_idx = -1;
 
             page_icon_count[drag_page]++;
             page_icon_count[meta->page]--;
             icons[drag_page][new_index].icon = target;
+            icons[drag_page][new_index].app_idx = target_app_idx;
             icon_set_meta(target, &icons[drag_page][new_index]);
             lv_obj_set_pos(target, x_by_index(new_index), y_by_index(new_index));
             return;
@@ -642,6 +656,7 @@ static void released_cb(lv_event_t * e)
             int old_page_index = meta->index;
 
             icons[old_page][old_page_index].icon = icons[drag_page][new_index].icon;
+            icons[old_page][old_page_index].app_idx = icons[drag_page][new_index].app_idx;
 
             lv_obj_set_parent(icons[old_page][old_page_index].icon, page[old_page]);
             lv_obj_set_pos(icons[old_page][old_page_index].icon,
@@ -650,6 +665,7 @@ static void released_cb(lv_event_t * e)
             icon_set_meta(icons[old_page][old_page_index].icon, &icons[old_page][old_page_index]);
 
             icons[drag_page][new_index].icon = target;
+            icons[drag_page][new_index].app_idx = target_app_idx;
             icon_set_meta(target, &icons[drag_page][new_index]);
             lv_obj_set_pos(target, x_by_index(new_index), y_by_index(new_index));
             return;
@@ -657,18 +673,12 @@ static void released_cb(lv_event_t * e)
     }
 
     /* 纯短按（未拖拽未抖动）：所有拖拽分支均提前 return，落到此处即启动 app。
-     * meta->page/index 是图标在页内的位置，遍历 desktop_apps 按 page 分组
-     * 取第 index 项即为当前图标对应的 app。 */
+     * meta->app_idx 直接存 desktop_apps[] 全局索引，重排时随图标换位，
+     * 无需再按 page/index 反查（原方式重排后会错位）。 */
     if(short_tap) {
-        app_idx = -1;
-        seen = 0;
-        for(a = 0; a < (int)desktop_app_count; a++) {
-            if(desktop_apps[a].page == (uint8_t)meta->page) {
-                if(seen == meta->index) { app_idx = a; break; }
-                seen++;
-            }
-        }
-        if(app_idx >= 0 && desktop_apps[app_idx].launch != NULL) {
+        app_idx = meta->app_idx;
+        if(app_idx >= 0 && app_idx < (int)desktop_app_count
+           && desktop_apps[app_idx].launch != NULL) {
             desktop_apps[app_idx].launch();
         }
     }
