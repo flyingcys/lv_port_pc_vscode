@@ -237,8 +237,16 @@ lv_obj_t * calc_create(lv_obj_t * parent, int32_t screen_w, int32_t screen_h)
         lv_obj_set_style_bg_color(d, lv_color_hex(dot_cols[i]), 0);
         lv_obj_set_style_bg_opa(d, LV_OPA_COVER, 0);
         lv_obj_clear_flag(d, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
-        if(i == 0) lv_obj_add_event_cb(d, close_cb, LV_EVENT_CLICKED, ui);  /* 红点=关闭 */
-        else lv_obj_add_flag(d, LV_OBJ_FLAG_CLICKABLE);  /* 黄灰点吞点击不关 */
+        lv_obj_add_flag(d, LV_OBJ_FLAG_CLICKABLE);
+        if(i == 0) {
+            lv_obj_t * x = lv_label_create(d);
+            lv_label_set_text(x, "X");
+            lv_obj_set_style_text_font(x, &desktop_font_calc_16, 0);
+            lv_obj_set_style_text_color(x, lv_color_hex(0x7a1f1b), 0);
+            lv_obj_center(x);
+            lv_obj_clear_flag(x, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
+            lv_obj_add_event_cb(d, close_cb, LV_EVENT_CLICKED, ui);
+        }
     }
 
     lv_obj_t * expand = lv_button_create(header);
