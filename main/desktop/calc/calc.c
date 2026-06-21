@@ -42,7 +42,7 @@ static void update_display(calc_ui_t * ui) {
     const char * s = ui->engine.current;
     size_t len = strlen(s);
     const lv_font_t * f;
-    if(len > 12)      f = &desktop_font_calc_20;   /* 缩小 */
+    if(len > 12)      f = &desktop_font_calc_16;   /* 超长 → 更小 */
     else if(len > 8)  f = &desktop_font_calc_20;
     else              f = &desktop_font_calc_48;
     lv_obj_set_style_text_font(ui->lbl_current, f, 0);
@@ -79,6 +79,11 @@ static void expand_cb(lv_event_t * e) {
 static void close_cb(lv_event_t * e) {
     calc_ui_t * ui = lv_event_get_user_data(e);
     if(ui->close_cb) ui->close_cb();
+}
+
+static void calc_delete_cb(lv_event_t * e) {
+    calc_ui_t * ui = lv_event_get_user_data(e);
+    if(ui) lv_free(ui);
 }
 
 static lv_obj_t * make_btn(lv_obj_t * parent, uint32_t color, const char * txt,
@@ -290,6 +295,9 @@ lv_obj_t * calc_create(lv_obj_t * parent, int32_t screen_w, int32_t screen_h)
     }
     lv_obj_set_style_transform_scale(card, (uint32_t)scale, 0);
     lv_obj_center(card);
+
+    /* 回收 ui：launcher close 销毁 card 时触发，防止泄漏 */
+    lv_obj_add_event_cb(card, calc_delete_cb, LV_EVENT_DELETE, ui);
 
     return card;
 }
