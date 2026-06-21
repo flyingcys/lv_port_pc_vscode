@@ -9,6 +9,8 @@
  *   2. 初始/clear 态按 SUB 输入负号前缀（JS 总当减法，无法输入负数）。
  *   3. Error 态按数字键替换（JS 会追加成 "Error7"）。
  *   4. sqrt 负数直接判 Error（JS 靠 Math.sqrt 产生 NaN 后统一转 Error，等价）。
+ *   5. 括号键 LPAREN/RPAREN 仅追加字符（与 calc.html JS 一致，no-op 占位），
+ *      引擎不做括号表达式求值（YAGNI，超出范围）。
  *
  * JS 的 String(parseFloat(x.toPrecision(12))) 用 %.12g 近似（%g 自动去尾零）。
  */
@@ -138,6 +140,10 @@ static void calc_calculate(calc_engine_t * e)
 /* ------------------------------------------------------------------ */
 static void calc_handle_operator(calc_engine_t * e, char op)
 {
+    /* Error 态操作符当作新输入 0 op：先清 current 为 "0"，避免 previous 存 "Error" */
+    if (calc_is_error(e)) {
+        calc_set_current(e, "0");
+    }
     /* 先算挂起的运算（op!=0 且非 reset 态） */
     if (e->op != 0 && !e->should_reset) {
         calc_calculate(e);
@@ -266,6 +272,12 @@ static void calc_percent(calc_engine_t * e)
 
 static void calc_delete(calc_engine_t * e)
 {
+    /* Error 态 DELETE 回到 "0"（与 CLEAR 等价语义；不判则 strlen("Error")==5 走删字符分支 → "Erro"） */
+    if (calc_is_error(e)) {
+        calc_set_current(e, "0");
+        e->should_reset = false;
+        return;
+    }
     if (strlen(e->current) > 1) {
         e->current[strlen(e->current) - 1] = '\0';
     } else {

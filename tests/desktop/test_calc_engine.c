@@ -84,6 +84,24 @@ int main(void)
     calc_engine_press(&e, CALC_BTN_DOT);
     r = calc_engine_press(&e, CALC_BTN_DOT); check("1..", r, "1.");
 
+    /* Bug I2: Error 态按 DELETE 回到 "0"（不产 "Erro"） */
+    calc_engine_init(&e);
+    calc_engine_press(&e, CALC_BTN_5);
+    calc_engine_press(&e, CALC_BTN_DIV);
+    calc_engine_press(&e, CALC_BTN_0);
+    r = calc_engine_press(&e, CALC_BTN_EQ); check("err 5/0", r, "Error");
+    r = calc_engine_press(&e, CALC_BTN_DELETE); check("err del", r, "0");
+
+    /* Bug M1: Error 态按操作符当作新输入 0 op（previous 不存 "Error"） */
+    calc_engine_init(&e);
+    calc_engine_press(&e, CALC_BTN_5);
+    calc_engine_press(&e, CALC_BTN_DIV);
+    calc_engine_press(&e, CALC_BTN_0);
+    r = calc_engine_press(&e, CALC_BTN_EQ); check("m1 5/0", r, "Error");
+    r = calc_engine_press(&e, CALC_BTN_ADD); check("m1 err+", r, "0");
+    r = calc_engine_press(&e, CALC_BTN_7); check("m1 7", r, "7");
+    r = calc_engine_press(&e, CALC_BTN_EQ); check("m1 0+7=", r, "7");
+
     if(failures == 0) { printf("test_calc_engine: PASS\n"); return 0; }
     printf("test_calc_engine: %d FAILURES\n", failures);
     return 1;
