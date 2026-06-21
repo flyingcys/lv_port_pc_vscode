@@ -10,7 +10,8 @@
 |---|---|
 | 背景 | 打开 calc 时保留桌面壁纸 + 半透明暗化遮罩 + calc 卡片居中 |
 | 自适应 | 卡片按 360 宽基准绘制，用 `transform_scale` 整体缩放至各档 |
-| 字体 | 复用现有 Montserrat（显示数字）+ SimSun（按钮含 `÷ × √ ² ³ ^ !`） |
+| 字体 | calc 新建 DejaVuSans 子集字体（含 `÷ × √ ² ³` 及 ASCII），不碰桌面 SimSun/Montserrat |
+| 字体源 | SimSun 是微软版权字体且本地缺失；calc 无中文，改用 lvgl 仓库自带 `DejaVuSans.ttf`（已验证含全部所需码点）|
 | 科学面板 | 完整实现运算（`<math.h>` 三角/对数/幂/阶乘） |
 | 接入 | 通用 launcher 框架，calc 图标点击打开 |
 
@@ -56,14 +57,14 @@ void calc_app_launch(void) {
 ### 基准画布（360 宽，1:1 模拟 mockup）
 
 - **卡片根**：宽 360，高 = 内容自适应。圆角 20，bg `#1c1c1e`，pad `20/20/25/20`。
-- **窗口头**：高 30。左三圆点（红 `#ff5f56` / 黄 `#ffbd2e` / 灰 `#444446`，Ø12）。红点点击 = 关闭。右展开钮（Ø32，bg `#2a2a2c`，phosphor 图标）。
+- **窗口头**：高 30。左三圆点（红 `#ff5f56` / 黄 `#ffbd2e` / 灰 `#444446`，Ø12）。红点点击 = 关闭。右展开钮（Ø32，bg `#2a2a2c`，DejaVuSans 字符 `≡` U+2261，切换展开/收起态文字不变只换颜色）。
 - **显示屏**：高 100，右对齐。
-  - expression 行：`#8e8e93`，SimSun ~18px。
-  - current_input 行：Montserrat 64px 细，白。
+  - expression 行：`#8e8e93`，`desktop_font_calc_18`（DejaVuSans 18px）。
+  - current_input 行：`desktop_font_calc_48`（DejaVuSans 48px 细近似），白。
   - `#333` 下边框分隔。
   - 字号按位数自适应：`len>12`→40px，`len>8`→51px，否则 64px（对应 mockup 2.5/3.2/4rem）。
-- **科学面板**：4 列 grid，gap 12，按钮高 40，圆角 12，bg `#3a3a3c`，白字。默认折叠（height 0 / opa 0）；展开切换 `lv_anim` 改 height 0↔内容高 + opa 0↔255，同步换展开钮图标 glyph。12 键：sin/cos/tan/log/ln/√x/x²/x³/(/)/x^y/n!。
-- **主键盘**：4 列 grid，gap 15，按钮 Ø65 圆形。
+- **科学面板**：4 列 grid，gap 12，按钮高 40，圆角 12，bg `#3a3a3c`，白字，字体 `desktop_font_calc_16`。默认折叠（height 0 / opa 0）；展开切换 `lv_anim` 改 height 0↔内容高 + opa 0↔255，同步换展开钮图标 glyph。12 键：sin/cos/tan/log/ln/√x/x²/x³/(/)/x^y/n!。
+- **主键盘**：4 列 grid，gap 15，按钮 Ø65 圆形，字体 `desktop_font_calc_20`。
   - 数字 `#333333` / 白字
   - 功能 `#a5a5a5` / 黑字（DEL/AC/%/+/-）
   - 运算符 `#ff9f0a` / 白字（÷ × − + =）
