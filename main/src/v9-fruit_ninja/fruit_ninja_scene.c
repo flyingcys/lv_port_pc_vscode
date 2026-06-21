@@ -21,6 +21,7 @@ typedef struct {
     const char * ninja;
     const char * dojo;
     const char * new_game;
+    const char * quit;
     const char * new_sign;
     const char * score;
     const char * lose_full[3];
@@ -114,6 +115,7 @@ static void init_ui_asset_paths(void)
     g_ui_assets.ninja = "images/ninja.png";
     g_ui_assets.dojo = "images/dojo.png";
     g_ui_assets.new_game = "images/new-game.png";
+    g_ui_assets.quit = "images/quit.png";
     g_ui_assets.new_sign = "images/new.png";
     g_ui_assets.score = "images/score.png";
     g_ui_assets.lose_empty[0] = "images/x.png";
@@ -226,22 +228,19 @@ static void update_timer_cb(lv_timer_t * timer)
 
 static void create_static_scene(fruit_ninja_game_t * game, lv_obj_t * parent, int32_t phys_w, int32_t phys_h)
 {
+    int32_t canvas_w = FRUIT_NINJA_SCREEN_WIDTH;
+    int32_t canvas_h = FRUIT_NINJA_SCREEN_HEIGHT;
+
     game->screen = lv_obj_create(parent);
     lv_obj_remove_style_all(game->screen);
-    lv_obj_set_pos(game->screen, 0, 0);
-    lv_obj_set_size(game->screen, phys_w, phys_h);
+    lv_obj_set_pos(game->screen, (phys_w - canvas_w) / 2, (phys_h - canvas_h) / 2);
+    lv_obj_set_size(game->screen, canvas_w, canvas_h);
     lv_obj_set_style_bg_color(game->screen, lv_color_hex(FRUIT_NINJA_HOME_BG_COLOR), 0);
     lv_obj_set_style_bg_opa(game->screen, LV_OPA_COVER, 0);
     lv_obj_clear_flag(game->screen, LV_OBJ_FLAG_SCROLLABLE);
 
     game->background = fruit_ninja_create_file_image(game->screen, g_ui_assets.background);
-    /* 背景铺满物理屏(允许非等比拉伸,不做 letterbox):obj 铺满物理屏,
-     * inner_align=STRETCH 自动把位图缩放到 obj 尺寸(scale_x/scale_y 各自计算)。 */
-    {
-        lv_obj_set_pos(game->background, 0, 0);
-        lv_obj_set_size(game->background, phys_w, phys_h);
-        lv_image_set_inner_align(game->background, LV_IMAGE_ALIGN_STRETCH);
-    }
+    fruit_ninja_set_image_geometry(game->background, 0, 0, 640, 480);
 
     game->home_layer = fruit_ninja_create_layer(game->screen);
     game->fruit_layer = fruit_ninja_create_layer(game->screen);
@@ -255,36 +254,33 @@ static void create_static_scene(fruit_ninja_game_t * game, lv_obj_t * parent, in
     fruit_ninja_set_image_geometry(game->home_mask_image, 0, 0, 640, 183);
 
     game->logo_image = fruit_ninja_create_file_image(game->home_layer, g_ui_assets.logo);
-    fruit_ninja_set_image_geometry(game->logo_image, 180, 32, 288, 135);
+    fruit_ninja_set_image_geometry(game->logo_image, 17, 1, 288, 135);
 
     game->home_desc_image = fruit_ninja_create_file_image(game->home_layer, g_ui_assets.home_desc);
-    fruit_ninja_set_image_geometry(game->home_desc_image, 376, 206, 161, 91);
+    fruit_ninja_set_image_geometry(game->home_desc_image, 7, 127, 161, 91);
 
     game->ninja_image = fruit_ninja_create_file_image(game->home_layer, g_ui_assets.ninja);
-    fruit_ninja_set_image_geometry(game->ninja_image, 200, 162, 244, 81);
+    fruit_ninja_set_image_geometry(game->ninja_image, 315, 43, 244, 81);
 
     game->new_game_image = fruit_ninja_create_file_image(game->home_layer, g_ui_assets.new_game);
-    fruit_ninja_set_image_geometry(game->new_game_image, 222, 280, 190, 112);
+    fruit_ninja_set_image_geometry(game->new_game_image, 244, 231, 195, 195);
 
     game->dojo_image = fruit_ninja_create_file_image(game->home_layer, g_ui_assets.dojo);
-    fruit_ninja_set_image_geometry(game->dojo_image, 44, 278, 141, 141);
+    fruit_ninja_set_image_geometry(game->dojo_image, 41, 240, 175, 175);
+
+    game->quit_image = fruit_ninja_create_file_image(game->home_layer, g_ui_assets.quit);
+    fruit_ninja_set_image_geometry(game->quit_image, 493, 311, 141, 141);
 
     game->new_sign_image = fruit_ninja_create_file_image(game->home_layer, g_ui_assets.new_sign);
-    fruit_ninja_set_image_geometry(game->new_sign_image, 388, 252, 70, 42);
+    fruit_ninja_set_image_geometry(game->new_sign_image, 170, 221, 70, 42);
 
     fruit_ninja_hide_obj(game->home_desc_image);
     fruit_ninja_hide_obj(game->dojo_image);
     fruit_ninja_hide_obj(game->new_game_image);
+    fruit_ninja_hide_obj(game->quit_image);
     fruit_ninja_hide_obj(game->new_sign_image);
 
     fruit_ninja_state_build_home_menu_fruits(game);
-
-    game->hint_label = lv_label_create(game->home_layer);
-    lv_label_set_text(game->hint_label, "Slice the middle fruit to start");
-    lv_obj_set_style_text_color(game->hint_label, lv_color_hex(0xffffff), 0);
-    /* 逻辑底部居中(y≈460):用 viewport center + 等比纵向偏移,落在 letterbox 内容区内。 */
-    lv_obj_align(game->hint_label, LV_ALIGN_CENTER, 0,
-                 (int32_t)lroundf(fruit_ninja_viewport_len(220.0f)));
 
     game->score_image = fruit_ninja_create_file_image(game->hud_layer, g_ui_assets.score);
     fruit_ninja_set_image_geometry(game->score_image, 6, 8, 29, 31);
@@ -305,20 +301,12 @@ static void create_static_scene(fruit_ninja_game_t * game, lv_obj_t * parent, in
     fruit_ninja_set_image_geometry(game->game_over_image, 75, 188, 490, 85);
     fruit_ninja_hide_obj(game->game_over_image);
 
-    game->restart_label = lv_label_create(game->overlay_layer);
-    lv_label_set_text(game->restart_label, "Click to return home");
-    lv_obj_set_style_text_color(game->restart_label, lv_color_hex(0xffffff), 0);
-    /* 逻辑中心 +80:viewport center + 等比纵向偏移。 */
-    lv_obj_align(game->restart_label, LV_ALIGN_CENTER, 0,
-                 (int32_t)lroundf(fruit_ninja_viewport_len(80.0f)));
-    fruit_ninja_hide_obj(game->restart_label);
-
     fruit_ninja_input_init(game);
     fruit_ninja_input_attach(game);
 
     /* 创建 canvas 特效层(effect_layer 已建,canvas 透明覆盖全物理屏) */
     {
-        fruit_ninja_effects_init_canvas(game, phys_w, phys_h);
+        fruit_ninja_effects_init_canvas(game, canvas_w, canvas_h);
     }
 }
 
@@ -335,7 +323,7 @@ static lv_obj_t * fruit_ninja_create_internal(lv_obj_t * parent, int32_t phys_w,
     /* miss 弹出动画初始无效 */
     g_game.miss_pop_index = -1;
 
-    fruit_ninja_viewport_init(phys_w, phys_h);
+    fruit_ninja_viewport_init(FRUIT_NINJA_SCREEN_WIDTH, FRUIT_NINJA_SCREEN_HEIGHT);
 
     if(!g_seeded_random) {
         srand((unsigned int)time(NULL));

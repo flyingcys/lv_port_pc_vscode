@@ -70,6 +70,13 @@ static void set_home_image_logic_y(lv_obj_t * obj, int32_t logic_top_y)
     lv_obj_set_y(obj, (int32_t)lroundf(fruit_ninja_viewport_y(cy) - nh * 0.5f));
 }
 
+static void set_home_image_logic_x(lv_obj_t * obj, int32_t logic_left_x)
+{
+    float nw = (float)lv_obj_get_width(obj);
+    float cx = (float)logic_left_x + nw * 0.5f;
+    lv_obj_set_x(obj, (int32_t)lroundf(fruit_ninja_viewport_x(cx) - nw * 0.5f));
+}
+
 static void stage_home_object(lv_obj_t * obj, bool visible, lv_opa_t opa, int32_t y)
 {
     if(obj == NULL) return;
@@ -77,6 +84,28 @@ static void stage_home_object(lv_obj_t * obj, bool visible, lv_opa_t opa, int32_
     else fruit_ninja_hide_obj(obj);
     lv_obj_set_style_opa(obj, opa, 0);
     set_home_image_logic_y(obj, y);
+}
+
+static void stage_home_rotor(lv_obj_t * obj, bool visible, uint32_t elapsed_ms, uint32_t start_ms, int32_t x, int32_t y)
+{
+    float p;
+
+    if(obj == NULL) return;
+    if(!visible) {
+        fruit_ninja_hide_obj(obj);
+        return;
+    }
+
+    fruit_ninja_show_obj(obj);
+    set_home_image_logic_x(obj, x);
+    set_home_image_logic_y(obj, y);
+
+    p = elapsed_ms <= start_ms ? 0.0f : (float)(elapsed_ms - start_ms) / 500.0f;
+    if(p > 1.0f) p = 1.0f;
+    if(p < 0.001f) p = 0.001f;
+    lv_image_set_scale(obj, (uint32_t)(p * fruit_ninja_viewport_scale() * 256.0f));
+    lv_image_set_pivot(obj, lv_obj_get_width(obj) / 2, lv_obj_get_height(obj) / 2);
+    lv_image_set_rotation(obj, (int32_t)((elapsed_ms - start_ms) / 8U));
 }
 
 void fruit_ninja_state_start_running_timer_cb(lv_timer_t * timer)
@@ -199,7 +228,6 @@ void fruit_ninja_state_update_home_animation(fruit_ninja_game_t * game)
 {
     uint32_t i;
     float t = (float)game->state_elapsed_ms;
-    float bob = sinf(t / 260.0f) * FRUIT_NINJA_HOME_FLOAT_AMPLITUDE;
     bool stage0 = game->state_elapsed_ms >= 0U;
     bool stage1 = game->state_elapsed_ms >= 500U;
     bool stage2 = game->state_elapsed_ms >= 1500U;
@@ -209,23 +237,21 @@ void fruit_ninja_state_update_home_animation(fruit_ninja_game_t * game)
         stage_home_object(game->home_mask_image, stage0, LV_OPA_COVER, 0);
     }
     if(game->logo_image != NULL) {
-        stage_home_object(game->logo_image, stage0, LV_OPA_COVER, 32 + (int32_t)(sinf(t / 380.0f) * 6.0f));
+        stage_home_object(game->logo_image, stage0, LV_OPA_COVER, 1);
     }
     if(game->ninja_image != NULL) {
-        stage_home_object(game->ninja_image, stage1, LV_OPA_COVER, 162 + (int32_t)bob);
+        stage_home_object(game->ninja_image, stage1, LV_OPA_COVER, 43);
     }
     if(game->home_desc_image != NULL) {
-        stage_home_object(game->home_desc_image, stage2, LV_OPA_COVER, 206);
+        stage_home_object(game->home_desc_image, stage2, LV_OPA_COVER, 127);
     }
-    if(game->dojo_image != NULL) {
-        stage_home_object(game->dojo_image, stage3, LV_OPA_COVER, 278 + (int32_t)(sinf(t / 220.0f) * 3.0f));
-    }
-    if(game->new_game_image != NULL) {
-        stage_home_object(game->new_game_image, stage3, LV_OPA_COVER, 280 + (int32_t)(sinf(t / 210.0f) * 2.0f));
-    }
+    stage_home_rotor(game->dojo_image, stage3, game->state_elapsed_ms, 2000U, 41, 240);
+    stage_home_rotor(game->new_game_image, stage3, game->state_elapsed_ms, 2000U, 244, 231);
+    stage_home_rotor(game->quit_image, stage3, game->state_elapsed_ms, 2000U, 493, 311);
     if(game->new_sign_image != NULL && stage3) {
         fruit_ninja_show_obj(game->new_sign_image);
-        set_home_image_logic_y(game->new_sign_image, 252 + (int32_t)(sinf(t / 180.0f) * 4.0f));
+        set_home_image_logic_x(game->new_sign_image, 170);
+        set_home_image_logic_y(game->new_sign_image, 221 + (int32_t)(sinf(t / 95.0f) * 8.0f));
         lv_obj_set_style_opa(game->new_sign_image, LV_OPA_COVER, 0);
     }
     else if(game->new_sign_image != NULL) {

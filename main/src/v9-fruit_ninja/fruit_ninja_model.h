@@ -216,6 +216,7 @@ typedef struct fruit_ninja_game {
     lv_obj_t * ninja_image;
     lv_obj_t * dojo_image;
     lv_obj_t * new_game_image;
+    lv_obj_t * quit_image;
     lv_obj_t * new_sign_image;
     lv_obj_t * score_image;
     lv_obj_t * score_label;

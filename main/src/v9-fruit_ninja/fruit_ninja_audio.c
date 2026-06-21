@@ -2,6 +2,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "fruit_ninja_assets.h"
@@ -83,8 +84,10 @@ static void play_track(fruit_ninja_audio_track_t track, player_repeat_mode_t rep
 bool fruit_ninja_audio_init(void)
 {
     stream_player_config_t config;
+    const char * disabled = getenv("FRUIT_NINJA_AUDIO_DISABLED");
 
     if(g_audio.initialized) return true;
+    if(disabled != NULL && strcmp(disabled, "1") == 0) return false;
 
     if(!build_audio_playlist()) return false;
 

@@ -203,12 +203,18 @@ static void maybe_run_calc_standalone(int32_t w, int32_t h)
 static void maybe_take_snapshot(void)
 {
     const char * out = getenv("AM_SHOT");
+    const char * frames_env = getenv("AM_SHOT_FRAMES");
+    int frames = SNAPSHOT_WARMUP_FRAMES;
     if(out == NULL) return;
+    if(frames_env != NULL) {
+        int parsed = atoi(frames_env);
+        if(parsed > 0 && parsed < 10000) frames = parsed;
+    }
 
     fprintf(stderr, "DBG: snapshot warmup start\n"); fflush(stderr);
 
     /* ����֡�ò���/������֡��� */
-    for(int i = 0; i < SNAPSHOT_WARMUP_FRAMES; i++) { lv_timer_handler(); usleep(2 * 1000); }
+    for(int i = 0; i < frames; i++) { lv_timer_handler(); usleep(2 * 1000); }
 
     lv_draw_buf_t * snap = lv_snapshot_take(lv_screen_active(), LV_COLOR_FORMAT_ARGB8888);
     if(snap == NULL) { fprintf(stderr, "snapshot failed\n"); exit(2); }   /* 2 = ����ʧ�� */

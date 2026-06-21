@@ -211,14 +211,16 @@ static void input_event_cb(lv_event_t * e)
     lv_event_code_t code = lv_event_get_code(e);
     lv_indev_t * indev = lv_indev_active();
     lv_point_t point;
+    lv_area_t screen_coords;
     fruit_ninja_segment_t segment;
 
     if(indev == NULL) return;
     lv_indev_get_point(indev, &point);
 
-    /* indev 给出物理坐标:先反映射到逻辑系(640x480),再喂给轨迹/碰撞。 */
-    float lx = fruit_ninja_viewport_to_logic_x((float)point.x);
-    float ly = fruit_ninja_viewport_to_logic_y((float)point.y);
+    /* indev 给出显示绝对坐标:先换成 640x480 画布内坐标,再喂给轨迹/碰撞。 */
+    lv_obj_get_coords(game->screen, &screen_coords);
+    float lx = fruit_ninja_viewport_to_logic_x((float)(point.x - screen_coords.x1));
+    float ly = fruit_ninja_viewport_to_logic_y((float)(point.y - screen_coords.y1));
 
     if(code == LV_EVENT_PRESSED) {
         if(game->state == FRUIT_NINJA_STATE_HOME) {
