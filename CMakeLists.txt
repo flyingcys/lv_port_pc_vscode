@@ -98,33 +98,6 @@ add_subdirectory(${HLS_PROJECT_ROOT_DIR}/src/stream_player)
 
 # Find and include SDL2 library
 find_package(SDL2 REQUIRED)
-find_package(SDL2_mixer QUIET)
-
-if(NOT SDL2_mixer_FOUND AND NOT TARGET SDL2_mixer::SDL2_mixer AND NOT TARGET SDL2_mixer::SDL2_mixer-static)
-    find_package(PkgConfig QUIET)
-    if(PkgConfig_FOUND)
-        pkg_check_modules(SDL2_MIXER QUIET SDL2_mixer)
-    endif()
-
-    find_path(SDL2_MIXER_INCLUDE_DIR
-        NAMES SDL_mixer.h
-        PATH_SUFFIXES SDL2
-        HINTS ${SDL2_MIXER_INCLUDE_DIRS}
-    )
-    find_library(SDL2_MIXER_LIBRARY
-        NAMES SDL2_mixer
-        HINTS ${SDL2_MIXER_LIBRARY_DIRS}
-    )
-
-    if(SDL2_MIXER_INCLUDE_DIR AND SDL2_MIXER_LIBRARY)
-        set(SDL2_MIXER_INCLUDE_DIRS ${SDL2_MIXER_INCLUDE_DIR})
-        set(SDL2_MIXER_LIBRARIES ${SDL2_MIXER_LIBRARY})
-    endif()
-endif()
-
-if(NOT SDL2_mixer_FOUND AND NOT TARGET SDL2_mixer::SDL2_mixer AND NOT TARGET SDL2_mixer::SDL2_mixer-static AND NOT SDL2_MIXER_LIBRARIES)
-    message(FATAL_ERROR "SDL2_mixer is required to play Fruit Ninja audio. Install SDL2_mixer and retry.")
-endif()
 
 # Remove ARM-specific compile and linker options
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=native")
@@ -185,15 +158,6 @@ target_link_libraries(main lvgl lvgl::examples lvgl::thorvg ${SDL2_LIBRARIES}
     ${HLS_STREAM_PLAYER_TARGET}
     ${HLS_AUDIO_LIBRARIES}
 )
-
-if(TARGET SDL2_mixer::SDL2_mixer)
-    target_link_libraries(main SDL2_mixer::SDL2_mixer)
-elseif(TARGET SDL2_mixer::SDL2_mixer-static)
-    target_link_libraries(main SDL2_mixer::SDL2_mixer-static)
-else()
-    target_include_directories(main PRIVATE ${SDL2_MIXER_INCLUDE_DIRS})
-    target_link_libraries(main ${SDL2_MIXER_LIBRARIES})
-endif()
 
 # Only link freertos_config if the FreeRTOS directory exists
 if(USE_FREERTOS)

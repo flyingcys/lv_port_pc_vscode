@@ -155,6 +155,8 @@ static void update_timer_cb(lv_timer_t * timer)
     uint32_t spawn_count;
     uint32_t target_count;
 
+    fruit_ninja_audio_poll();
+
     game->tick_count += FRUIT_NINJA_UPDATE_MS;
     game->state_elapsed_ms += FRUIT_NINJA_UPDATE_MS;
     if(game->flash_overlay != NULL) {

@@ -21,6 +21,7 @@ static void test_paths_with_explicit_root(void)
     assert(ok);
     assert(strcmp(audio_path,
                   "/tmp/fruit-ninja-root/main/assets/fruit_ninja/sound/menu.ogg") == 0);
+    assert(strstr(audio_path, "third-party/FruitNinja") == NULL);
 }
 
 static void test_project_root_inference_and_core_files(void)

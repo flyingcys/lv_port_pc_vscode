@@ -4,6 +4,7 @@
 #include <stdbool.h>
 
 bool fruit_ninja_audio_init(void);
+void fruit_ninja_audio_poll(void);
 void fruit_ninja_audio_shutdown(void);
 void fruit_ninja_audio_play_menu_music(void);
 void fruit_ninja_audio_play_start(void);

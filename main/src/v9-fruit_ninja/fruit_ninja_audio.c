@@ -1,157 +1,172 @@
 #include "fruit_ninja_audio.h"
 
-#include <stdint.h>
+#include <stdbool.h>
+#include <stddef.h>
 #include <string.h>
-
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_mixer.h>
 
 #include "fruit_ninja_assets.h"
 #include "lvgl/lvgl.h"
+#include "player_controller.h"
+#include "stream_player.h"
 
-#define FRUIT_NINJA_AUDIO_FLAGS (MIX_INIT_OGG | MIX_INIT_MP3)
+typedef enum {
+    FRUIT_NINJA_AUDIO_MENU = 0,
+    FRUIT_NINJA_AUDIO_START,
+    FRUIT_NINJA_AUDIO_THROW,
+    FRUIT_NINJA_AUDIO_SLICE,
+    FRUIT_NINJA_AUDIO_BOOM,
+    FRUIT_NINJA_AUDIO_GAME_OVER,
+    FRUIT_NINJA_AUDIO_COUNT,
+} fruit_ninja_audio_track_t;
 
 typedef struct {
     bool initialized;
-    Mix_Music * menu_music;
-    Mix_Chunk * start_sound;
-    Mix_Chunk * throw_sound;
-    Mix_Chunk * slice_sound;
-    Mix_Chunk * boom_sound;
-    Mix_Chunk * game_over_sound;
+    player_controller_t * controller;
+    size_t current_track;
 } fruit_ninja_audio_state_t;
 
-static fruit_ninja_audio_state_t g_audio;
+static const char * const g_audio_relative_paths[FRUIT_NINJA_AUDIO_COUNT] = {
+    "sound/menu.mp3",
+    "sound/start.mp3",
+    "sound/throw.mp3",
+    "sound/splatter.mp3",
+    "sound/boom.mp3",
+    "sound/over.mp3",
+};
 
-static bool load_music(Mix_Music ** music, const char * ogg_rel_path, const char * mp3_rel_path)
+static fruit_ninja_audio_state_t g_audio = {
+    .current_track = FRUIT_NINJA_AUDIO_COUNT,
+};
+
+static char g_audio_paths[FRUIT_NINJA_AUDIO_COUNT][512];
+static const char * g_audio_urls[FRUIT_NINJA_AUDIO_COUNT];
+
+static bool build_audio_playlist(void)
 {
-    char path[512];
-
-    fruit_ninja_assets_build_audio_path(path, sizeof(path), ogg_rel_path);
-    if(SDL_RWFromFile(path, "rb") != NULL) {
-        *music = Mix_LoadMUS(path);
-        if(*music != NULL) return true;
+    for(size_t i = 0; i < FRUIT_NINJA_AUDIO_COUNT; ++i) {
+        if(!fruit_ninja_assets_build_audio_path(g_audio_paths[i],
+                                                sizeof(g_audio_paths[i]),
+                                                g_audio_relative_paths[i])) {
+            LV_LOG_WARN("failed to build Fruit Ninja audio path: %s", g_audio_relative_paths[i]);
+            return false;
+        }
+        g_audio_urls[i] = g_audio_paths[i];
     }
 
-    fruit_ninja_assets_build_audio_path(path, sizeof(path), mp3_rel_path);
-    *music = Mix_LoadMUS(path);
-    return *music != NULL;
+    return true;
 }
 
-static bool load_chunk(Mix_Chunk ** chunk, const char * ogg_rel_path, const char * mp3_rel_path)
+static void play_track(fruit_ninja_audio_track_t track, player_repeat_mode_t repeat_mode)
 {
-    char path[512];
+    if(!g_audio.initialized || g_audio.controller == NULL) return;
 
-    fruit_ninja_assets_build_audio_path(path, sizeof(path), ogg_rel_path);
-    *chunk = Mix_LoadWAV(path);
-    if(*chunk != NULL) return true;
+    if(track == FRUIT_NINJA_AUDIO_MENU &&
+       g_audio.current_track == (size_t)track &&
+       player_controller_get_state(g_audio.controller) == PLAYER_CONTROLLER_STATE_PLAYING) {
+        return;
+    }
 
-    fruit_ninja_assets_build_audio_path(path, sizeof(path), mp3_rel_path);
-    *chunk = Mix_LoadWAV(path);
-    return *chunk != NULL;
+    player_controller_set_repeat_mode(g_audio.controller, repeat_mode);
+    (void)player_controller_stop(g_audio.controller);
+    if(player_controller_select(g_audio.controller, (size_t)track) != 0) {
+        LV_LOG_WARN("failed to select Fruit Ninja audio track: %u", (unsigned)track);
+        return;
+    }
+    if(player_controller_play(g_audio.controller) != 0) {
+        LV_LOG_WARN("failed to play Fruit Ninja audio track: %u", (unsigned)track);
+        return;
+    }
+
+    g_audio.current_track = (size_t)track;
 }
 
 bool fruit_ninja_audio_init(void)
 {
+    stream_player_config_t config;
+
     if(g_audio.initialized) return true;
 
-    if(Mix_Init(FRUIT_NINJA_AUDIO_FLAGS) == 0) {
-        LV_LOG_WARN("SDL_mixer codec init failed: %s", Mix_GetError());
-    }
+    if(!build_audio_playlist()) return false;
 
-    if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
-        LV_LOG_ERROR("Mix_OpenAudio failed: %s", Mix_GetError());
+    stream_player_reset_interrupt_state();
+    g_audio.controller = player_controller_create(NULL, NULL);
+    if(g_audio.controller == NULL) {
+        LV_LOG_WARN("failed to create Fruit Ninja audio controller");
         return false;
     }
 
-    Mix_AllocateChannels(8);
-    memset(&g_audio, 0, sizeof(g_audio));
+    stream_player_get_default_config(&config);
+    stream_player_apply_profile(&config, STREAM_PROFILE_BALANCED);
+    (void)strncpy(config.url, g_audio_urls[FRUIT_NINJA_AUDIO_MENU], sizeof(config.url) - 1U);
+    config.url[sizeof(config.url) - 1U] = '\0';
+
+    if(player_controller_set_stream_config(g_audio.controller, &config) != 0 ||
+       player_controller_load_urls(g_audio.controller, g_audio_urls, FRUIT_NINJA_AUDIO_COUNT) != 0) {
+        LV_LOG_WARN("failed to load Fruit Ninja audio playlist");
+        player_controller_destroy(g_audio.controller);
+        g_audio.controller = NULL;
+        return false;
+    }
+
+    player_controller_set_repeat_mode(g_audio.controller, PLAYER_REPEAT_OFF);
+    g_audio.current_track = FRUIT_NINJA_AUDIO_COUNT;
     g_audio.initialized = true;
-
-    if(!load_music(&g_audio.menu_music, "sound/menu.ogg", "sound/menu.mp3")) {
-        LV_LOG_WARN("failed to load menu music: %s", Mix_GetError());
-    }
-    if(!load_chunk(&g_audio.start_sound, "sound/start.ogg", "sound/start.mp3")) {
-        LV_LOG_WARN("failed to load start sound: %s", Mix_GetError());
-    }
-    if(!load_chunk(&g_audio.throw_sound, "sound/throw.ogg", "sound/throw.mp3")) {
-        LV_LOG_WARN("failed to load throw sound: %s", Mix_GetError());
-    }
-    if(!load_chunk(&g_audio.slice_sound, "sound/splatter.ogg", "sound/splatter.mp3")) {
-        LV_LOG_WARN("failed to load slice sound: %s", Mix_GetError());
-    }
-    if(!load_chunk(&g_audio.boom_sound, "sound/boom.ogg", "sound/boom.mp3")) {
-        LV_LOG_WARN("failed to load boom sound: %s", Mix_GetError());
-    }
-    if(!load_chunk(&g_audio.game_over_sound, "sound/over.ogg", "sound/over.mp3")) {
-        LV_LOG_WARN("failed to load game-over sound: %s", Mix_GetError());
-    }
-
     return true;
+}
+
+void fruit_ninja_audio_poll(void)
+{
+    if(g_audio.initialized && g_audio.controller != NULL) {
+        player_controller_poll(g_audio.controller);
+    }
 }
 
 void fruit_ninja_audio_shutdown(void)
 {
     if(!g_audio.initialized) return;
 
-    Mix_HaltMusic();
-    Mix_HaltChannel(-1);
-    Mix_FreeMusic(g_audio.menu_music);
-    Mix_FreeChunk(g_audio.start_sound);
-    Mix_FreeChunk(g_audio.throw_sound);
-    Mix_FreeChunk(g_audio.slice_sound);
-    Mix_FreeChunk(g_audio.boom_sound);
-    Mix_FreeChunk(g_audio.game_over_sound);
+    if(g_audio.controller != NULL) {
+        (void)player_controller_stop(g_audio.controller);
+        player_controller_destroy(g_audio.controller);
+    }
     memset(&g_audio, 0, sizeof(g_audio));
-    Mix_CloseAudio();
-    Mix_Quit();
+    g_audio.current_track = FRUIT_NINJA_AUDIO_COUNT;
 }
 
 void fruit_ninja_audio_play_menu_music(void)
 {
-    if(g_audio.initialized && g_audio.menu_music != NULL && Mix_PlayingMusic() == 0) {
-        Mix_PlayMusic(g_audio.menu_music, -1);
-    }
+    play_track(FRUIT_NINJA_AUDIO_MENU, PLAYER_REPEAT_ONE);
 }
 
 void fruit_ninja_audio_play_start(void)
 {
-    if(g_audio.initialized && g_audio.start_sound != NULL) {
-        Mix_PlayChannel(-1, g_audio.start_sound, 0);
-    }
+    play_track(FRUIT_NINJA_AUDIO_START, PLAYER_REPEAT_OFF);
 }
 
 void fruit_ninja_audio_play_throw(void)
 {
-    if(g_audio.initialized && g_audio.throw_sound != NULL) {
-        Mix_PlayChannel(-1, g_audio.throw_sound, 0);
-    }
+    play_track(FRUIT_NINJA_AUDIO_THROW, PLAYER_REPEAT_OFF);
 }
 
 void fruit_ninja_audio_play_slice(void)
 {
-    if(g_audio.initialized && g_audio.slice_sound != NULL) {
-        Mix_PlayChannel(-1, g_audio.slice_sound, 0);
-    }
+    play_track(FRUIT_NINJA_AUDIO_SLICE, PLAYER_REPEAT_OFF);
 }
 
 void fruit_ninja_audio_play_boom(void)
 {
-    if(g_audio.initialized && g_audio.boom_sound != NULL) {
-        Mix_PlayChannel(-1, g_audio.boom_sound, 0);
-    }
+    play_track(FRUIT_NINJA_AUDIO_BOOM, PLAYER_REPEAT_OFF);
 }
 
 void fruit_ninja_audio_play_game_over(void)
 {
-    if(g_audio.initialized && g_audio.game_over_sound != NULL) {
-        Mix_PlayChannel(-1, g_audio.game_over_sound, 0);
-    }
+    play_track(FRUIT_NINJA_AUDIO_GAME_OVER, PLAYER_REPEAT_OFF);
 }
 
 void fruit_ninja_audio_stop_music(void)
 {
-    if(g_audio.initialized) {
-        Mix_HaltMusic();
+    if(g_audio.initialized && g_audio.controller != NULL) {
+        (void)player_controller_stop(g_audio.controller);
+        g_audio.current_track = FRUIT_NINJA_AUDIO_COUNT;
     }
 }
