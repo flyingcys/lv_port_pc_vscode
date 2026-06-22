@@ -1,0 +1,1 @@
+/usr/bin/cc  -march=native -g -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/design_fruit_model_test.dir/main/tests/design_fruit_model_test.c.o CMakeFiles/design_fruit_model_test.dir/main/src/design_fruit/design_fruit_model.c.o -o /Users/cys/embedded/lv_port_pc_vscode/bin/design_fruit_model_test

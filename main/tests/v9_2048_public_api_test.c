@@ -30,8 +30,23 @@ int main(void)
     assert(root != NULL);
     assert(lv_obj_get_parent(root) == parent);
 
+    lv_group_t *group = lv_group_get_default();
+    if(group == NULL) {
+        group = lv_group_create();
+        lv_group_set_default(group);
+    }
+    lv_obj_t *dummy = lv_button_create(parent);
+    lv_group_add_obj(group, dummy);
+    lv_group_focus_obj(dummy);
+    game_2048_focus();
+    assert(lv_group_get_focused(group) != NULL);
+    assert(lv_group_get_focused(group) != dummy);
+
+    lv_group_focus_obj(dummy);
     game_2048_set_grid_size(5);
     assert(game_2048_get_grid_size() == 5);
+    assert(lv_group_get_focused(group) != NULL);
+    assert(lv_group_get_focused(group) != dummy);
     game_2048_set_grid_size(6);
     assert(game_2048_get_grid_size() == 6);
     game_2048_set_grid_size(7);

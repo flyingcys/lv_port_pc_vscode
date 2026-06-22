@@ -52,6 +52,10 @@ set(LV_USE_LIBJPEG_TURBO OFF CACHE BOOL "Use libjpeg turbo to decode JPEG" FORCE
 file(GLOB FRUIT_NINJA_SOURCES CONFIGURE_DEPENDS
     "${PROJECT_SOURCE_DIR}/main/src/v9-fruit_ninja/*.c"
 )
+file(GLOB DESIGN_FRUIT_SOURCES CONFIGURE_DEPENDS
+    "${PROJECT_SOURCE_DIR}/main/src/design_fruit/*.c"
+    "${PROJECT_SOURCE_DIR}/main/src/design_fruit/fonts/*.c"
+)
 file(GLOB LOCAL_MUSIC_DEMO_SOURCES CONFIGURE_DEPENDS
     "${PROJECT_SOURCE_DIR}/main/src/local_music_demo/*.c"
     "${PROJECT_SOURCE_DIR}/main/src/local_music_demo/assets/*.c"
@@ -170,6 +174,7 @@ else()
 endif()
 
 target_sources(main PRIVATE ${FRUIT_NINJA_SOURCES})
+target_sources(main PRIVATE ${DESIGN_FRUIT_SOURCES})
 target_sources(main PRIVATE ${V9_APPLE_MUSIC_SOURCES})
 target_sources(main PRIVATE ${V9_TETRIS_SOURCES})
 target_sources(main PRIVATE ${V9_2048_SOURCES})
@@ -246,6 +251,12 @@ add_executable(fruit_ninja_model_test
     ${PROJECT_SOURCE_DIR}/main/tests/fruit_ninja_model_test.c
 )
 target_include_directories(fruit_ninja_model_test PRIVATE ${PROJECT_SOURCE_DIR})
+
+add_executable(design_fruit_model_test
+    ${PROJECT_SOURCE_DIR}/main/tests/design_fruit_model_test.c
+    ${PROJECT_SOURCE_DIR}/main/src/design_fruit/design_fruit_model.c
+)
+target_include_directories(design_fruit_model_test PRIVATE ${PROJECT_SOURCE_DIR})
 
 add_executable(desktop_apple_music_test
     ${PROJECT_SOURCE_DIR}/main/tests/desktop_apple_music_test.c
@@ -351,6 +362,12 @@ add_test(
 set_tests_properties(fruit_ninja_model_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 add_test(
+    NAME design_fruit_model_test
+    COMMAND $<TARGET_FILE:design_fruit_model_test>
+)
+set_tests_properties(design_fruit_model_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_test(
     NAME desktop_apple_music_test
     COMMAND $<TARGET_FILE:desktop_apple_music_test>
 )
@@ -391,6 +408,12 @@ add_custom_target(fruit_ninja_tests
     COMMAND $<TARGET_FILE:fruit_ninja_collision_test>
     COMMAND $<TARGET_FILE:fruit_ninja_model_test>
     DEPENDS fruit_ninja_assets_test fruit_ninja_collision_test fruit_ninja_model_test
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+)
+
+add_custom_target(design_fruit_tests
+    COMMAND $<TARGET_FILE:design_fruit_model_test>
+    DEPENDS design_fruit_model_test
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
 )
 

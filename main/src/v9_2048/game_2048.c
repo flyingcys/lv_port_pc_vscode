@@ -68,6 +68,8 @@ static void update_status(game_2048_ui_t *ui);
 static void update_size_buttons(game_2048_ui_t *ui);
 static void apply_move_steps(game_2048_ui_t *ui, const game_2048_move_result_t *result);
 static void move_by_dir(game_2048_ui_t *ui, game_2048_dir_t dir);
+static void focus_board(game_2048_ui_t *ui);
+static void handle_swipe_point(game_2048_ui_t *ui, const lv_point_t *point);
 static lv_obj_t *create_tile(game_2048_ui_t *ui, uint8_t row, uint8_t col, uint32_t value);
 static void apply_tile_style(game_2048_ui_t *ui, lv_obj_t *tile, uint32_t value);
 static const lv_font_t *tile_font(game_2048_ui_t *ui, uint32_t value);
@@ -108,7 +110,10 @@ lv_obj_t * game_2048_create(lv_obj_t *parent, int32_t screen_w, int32_t screen_h
 
 void game_2048_start(void)
 {
-    if(s_ui.root != NULL) reset_game(&s_ui);
+    if(s_ui.root != NULL) {
+        reset_game(&s_ui);
+        focus_board(&s_ui);
+    }
 }
 
 void game_2048_stop(void)
@@ -134,6 +139,11 @@ uint8_t game_2048_get_grid_size(void)
     return s_ui.root != NULL ? s_ui.grid_size : s_preferred_grid_size;
 }
 
+void game_2048_focus(void)
+{
+    focus_board(&s_ui);
+}
+
 static void create_layout(game_2048_ui_t *ui, lv_obj_t *parent)
 {
     ui->root = lv_obj_create(parent);
@@ -149,11 +159,7 @@ static void create_layout(game_2048_ui_t *ui, lv_obj_t *parent)
     create_controls(ui);
     create_board(ui);
 
-    lv_group_t *group = lv_group_get_default();
-    if(group != NULL) {
-        lv_group_add_obj(group, ui->board);
-        lv_group_focus_obj(ui->board);
-    }
+    focus_board(ui);
 }
 
 static void create_header(game_2048_ui_t *ui)
@@ -263,7 +269,9 @@ static void create_board(game_2048_ui_t *ui)
     lv_obj_set_style_radius(ui->board, 8, 0);
     lv_obj_clear_flag(ui->board, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_add_flag(ui->board, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_flag(ui->board, LV_OBJ_FLAG_CLICK_FOCUSABLE);
     lv_obj_add_event_cb(ui->board, event_board_cb, LV_EVENT_PRESSED, ui);
+    lv_obj_add_event_cb(ui->board, event_board_cb, LV_EVENT_PRESSING, ui);
     lv_obj_add_event_cb(ui->board, event_board_cb, LV_EVENT_RELEASED, ui);
     lv_obj_add_event_cb(ui->board, event_key_cb, LV_EVENT_KEY, ui);
 
@@ -297,6 +305,8 @@ static void reset_game(game_2048_ui_t *ui)
     update_status(ui);
     update_size_buttons(ui);
     ui->animating = false;
+    ui->pressing = false;
+    focus_board(ui);
 }
 
 static void create_background_tiles(game_2048_ui_t *ui)
@@ -310,6 +320,9 @@ static void create_background_tiles(game_2048_ui_t *ui)
             lv_obj_set_style_bg_color(base, lv_color_hex(0xCDC1B4U), 0);
             lv_obj_set_style_bg_opa(base, LV_OPA_COVER, 0);
             lv_obj_set_style_radius(base, ui->radius, 0);
+            lv_obj_clear_flag(base, LV_OBJ_FLAG_SCROLLABLE);
+            lv_obj_clear_flag(base, LV_OBJ_FLAG_CLICKABLE);
+            lv_obj_add_flag(base, LV_OBJ_FLAG_EVENT_BUBBLE);
         }
     }
 }
@@ -336,9 +349,12 @@ static lv_obj_t *create_tile(game_2048_ui_t *ui, uint8_t row, uint8_t col, uint3
     lv_obj_set_style_bg_opa(tile, LV_OPA_COVER, 0);
     lv_obj_set_style_opa(tile, LV_OPA_COVER, 0);
     lv_obj_clear_flag(tile, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_clear_flag(tile, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_flag(tile, LV_OBJ_FLAG_EVENT_BUBBLE);
 
     lv_obj_t *label = lv_label_create(tile);
     lv_label_set_text_fmt(label, "%lu", (unsigned long)value);
+    lv_obj_add_flag(label, LV_OBJ_FLAG_EVENT_BUBBLE);
     lv_obj_center(label);
     apply_tile_style(ui, tile, value);
     return tile;
@@ -459,6 +475,7 @@ static void apply_move_steps(game_2048_ui_t *ui, const game_2048_move_result_t *
 static void move_by_dir(game_2048_ui_t *ui, game_2048_dir_t dir)
 {
     if(ui->animating) return;
+    focus_board(ui);
     game_2048_move_result_t result;
     if(!game_2048_core_move(&ui->game, dir, &result)) return;
 
@@ -469,12 +486,47 @@ static void move_by_dir(game_2048_ui_t *ui, game_2048_dir_t dir)
     ui->animating = false;
 }
 
+static void focus_board(game_2048_ui_t *ui)
+{
+    if(ui == NULL || ui->board == NULL) return;
+
+    lv_group_t *group = lv_group_get_default();
+    if(group == NULL) {
+        group = lv_group_create();
+        lv_group_set_default(group);
+    }
+
+    if(lv_obj_get_group(ui->board) != group) {
+        lv_group_add_obj(group, ui->board);
+    }
+    lv_group_focus_obj(ui->board);
+}
+
+static void handle_swipe_point(game_2048_ui_t *ui, const lv_point_t *point)
+{
+    if(ui == NULL || point == NULL || !ui->pressing) return;
+
+    int32_t dx = point->x - ui->press_point.x;
+    int32_t dy = point->y - ui->press_point.y;
+    int32_t threshold = ui->tile_size / 4;
+    if(threshold < 16) threshold = 16;
+    if(abs(dx) < threshold && abs(dy) < threshold) return;
+
+    ui->pressing = false;
+    if(abs(dx) >= abs(dy)) {
+        move_by_dir(ui, dx > 0 ? GAME_2048_DIR_RIGHT : GAME_2048_DIR_LEFT);
+    } else {
+        move_by_dir(ui, dy > 0 ? GAME_2048_DIR_DOWN : GAME_2048_DIR_UP);
+    }
+}
+
 static void event_board_cb(lv_event_t *e)
 {
     game_2048_ui_t *ui = (game_2048_ui_t *)lv_event_get_user_data(e);
     lv_event_code_t code = lv_event_get_code(e);
 
     if(code == LV_EVENT_PRESSED) {
+        focus_board(ui);
         lv_indev_t *indev = lv_event_get_indev(e);
         if(indev != NULL) {
             lv_indev_get_point(indev, &ui->press_point);
@@ -483,23 +535,15 @@ static void event_board_cb(lv_event_t *e)
         return;
     }
 
-    if(code != LV_EVENT_RELEASED || !ui->pressing) return;
-    ui->pressing = false;
-
     lv_point_t point = {0, 0};
     lv_indev_t *indev = lv_event_get_indev(e);
     if(indev != NULL) lv_indev_get_point(indev, &point);
 
-    int32_t dx = point.x - ui->press_point.x;
-    int32_t dy = point.y - ui->press_point.y;
-    int32_t threshold = ui->tile_size / 4;
-    if(threshold < 16) threshold = 16;
-    if(abs(dx) < threshold && abs(dy) < threshold) return;
-
-    if(abs(dx) >= abs(dy)) {
-        move_by_dir(ui, dx > 0 ? GAME_2048_DIR_RIGHT : GAME_2048_DIR_LEFT);
-    } else {
-        move_by_dir(ui, dy > 0 ? GAME_2048_DIR_DOWN : GAME_2048_DIR_UP);
+    if(code == LV_EVENT_PRESSING) {
+        handle_swipe_point(ui, &point);
+    } else if(code == LV_EVENT_RELEASED) {
+        handle_swipe_point(ui, &point);
+        ui->pressing = false;
     }
 }
 
@@ -529,7 +573,9 @@ static void event_key_cb(lv_event_t *e)
 static void event_reset_cb(lv_event_t *e)
 {
     if(lv_event_get_code(e) == LV_EVENT_CLICKED) {
-        reset_game((game_2048_ui_t *)lv_event_get_user_data(e));
+        game_2048_ui_t *ui = (game_2048_ui_t *)lv_event_get_user_data(e);
+        reset_game(ui);
+        focus_board(ui);
     }
 }
 
@@ -542,6 +588,7 @@ static void event_size_cb(lv_event_t *e)
     ui->grid_size = size;
     s_preferred_grid_size = size;
     reset_game(ui);
+    focus_board(ui);
 }
 
 static lv_coord_t cell_pos(game_2048_ui_t *ui, uint8_t index)

@@ -8,6 +8,7 @@
 
 void calc_app_launch(void) {}
 void fruit_ninja_app_launch(void) {}
+void design_fruit_app_launch(void) {}
 void local_music_demo_launch(void) {}
 void apple_music_app_launch(void) {}
 void tetris_app_launch(void) {}
@@ -36,5 +37,9 @@ int main(void)
     app = find_app("2048");
     assert(app != NULL);
     assert(app->launch == game_2048_app_launch);
+
+    app = find_app("水果对对碰");
+    assert(app != NULL);
+    assert(app->launch == design_fruit_app_launch);
     return 0;
 }

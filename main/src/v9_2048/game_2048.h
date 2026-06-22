@@ -12,6 +12,7 @@ void game_2048_start(void);
 void game_2048_stop(void);
 void game_2048_set_grid_size(uint8_t size);
 uint8_t game_2048_get_grid_size(void);
+void game_2048_focus(void);
 
 #ifdef __cplusplus
 } /* extern "C" */

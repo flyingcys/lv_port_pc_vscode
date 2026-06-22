@@ -1,6 +1,7 @@
 #include "desktop_data.h"
 #include "apple_music_app.h"
 #include "calc/calc_app.h"
+#include "design_fruit_app.h"
 #include "fruit_ninja_app.h"
 #include "game_2048_app.h"
 #include "music_player.h"
@@ -25,6 +26,7 @@ const desktop_app_t desktop_apps[] = {
     { &img_app_blockpuzzle,"俄罗斯方块",  1, tetris_app_launch },
     { &img_app_blockblast, "方块爆炸",    2, NULL },
     { &img_app_fruitninja, "水果忍者",    2, fruit_ninja_app_launch },
+    { &img_app_fruitninja, "水果对对碰",  2, design_fruit_app_launch },
 };
 const uint32_t desktop_app_count = sizeof(desktop_apps)/sizeof(desktop_apps[0]);
 
