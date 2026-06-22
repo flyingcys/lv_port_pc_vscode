@@ -1,16 +1,18 @@
-/* main/src/v9-tetris/tetris.h
- * 竖屏俄罗斯方块(复刻 ds1.html)。在当前活动屏上构建,自适应竖屏分辨率
- * (480×800 / 480×640 / 272×480)。
- */
 #ifndef TETRIS_H
 #define TETRIS_H
 
-#include <stdbool.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-/* 在当前活动屏上构建并启动俄罗斯方块。*/
+#include "lvgl/lvgl.h"
+
+lv_obj_t * tetris_create(lv_obj_t *parent, int32_t screen_w, int32_t screen_h);
 void tetris_start(void);
+void tetris_stop(void);
 
-/* 暂停/恢复(离开/返回桌面时调用)。未启动时为 no-op。*/
-void tetris_set_active(bool active);
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif /* TETRIS_H */

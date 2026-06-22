@@ -4,11 +4,13 @@
 
 #include "../desktop/apple_music_app.h"
 #include "../desktop/desktop_data.h"
+#include "../desktop/tetris_app.h"
 
 void calc_app_launch(void) {}
 void fruit_ninja_app_launch(void) {}
 void local_music_demo_launch(void) {}
 void apple_music_app_launch(void) {}
+void tetris_app_launch(void) {}
 
 static const desktop_app_t *find_app(const char *name)
 {
@@ -25,5 +27,9 @@ int main(void)
     const desktop_app_t *app = find_app("Apple Music");
     assert(app != NULL);
     assert(app->launch == apple_music_app_launch);
+
+    app = find_app("俄罗斯方块");
+    assert(app != NULL);
+    assert(app->launch == tetris_app_launch);
     return 0;
 }

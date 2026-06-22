@@ -8,6 +8,7 @@
  *********************/
 #include "tetris_ui.h"
 #include <stdio.h>
+#include <string.h>
 
 /*********************
  *      DEFINES
@@ -21,7 +22,7 @@
  **********************/
 static void draw_game_board(tetris_ui_t *ui);
 static void draw_next_piece(tetris_ui_t *ui);
-static void draw_cell(lv_draw_buf_t *draw_buf, int x, int y, uint8_t type);
+static void draw_cell(tetris_ui_t *ui, lv_draw_buf_t *draw_buf, int x, int y, uint8_t type);
 static void start_btn_event_cb(lv_event_t *e);
 static void pause_btn_event_cb(lv_event_t *e);
 static void reset_btn_event_cb(lv_event_t *e);
@@ -31,18 +32,29 @@ static void game_over_msgbox_event_cb(lv_event_t *e);
  *   GLOBAL FUNCTIONS
  **********************/
 
-void tetris_ui_init(tetris_ui_t *ui, tetris_game_t *game)
+void tetris_ui_init(tetris_ui_t *ui,
+                    tetris_game_t *game,
+                    lv_obj_t *parent,
+                    int32_t screen_w,
+                    int32_t screen_h)
 {
+    if(parent == NULL) {
+        parent = lv_screen_active();
+    }
+
     ui->game = game;
+    ui->block_style = TETRIS_BLOCK_STYLE_SOLID;
     
     /* Create main container */
-    ui->main_container = lv_obj_create(lv_screen_active());
-    lv_obj_set_size(ui->main_container, LV_PCT(100), LV_PCT(100));
+    ui->main_container = lv_obj_create(parent);
+    lv_obj_set_size(ui->main_container, screen_w, screen_h);
+    lv_obj_set_pos(ui->main_container, 0, 0);
     lv_obj_set_flex_flow(ui->main_container, LV_FLEX_FLOW_ROW);
     lv_obj_set_flex_align(ui->main_container, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_style_pad_all(ui->main_container, 10, 0);
     lv_obj_set_style_pad_gap(ui->main_container, 15, 0);
     lv_obj_set_style_bg_color(ui->main_container, lv_color_hex(0x1a1a1a), 0);
+    lv_obj_clear_flag(ui->main_container, LV_OBJ_FLAG_SCROLLABLE);
     
     /* Create game board canvas */
     ui->game_canvas = lv_canvas_create(ui->main_container);
@@ -165,7 +177,8 @@ void tetris_ui_update(tetris_ui_t *ui)
     
     /* Show game over dialog if needed */
     if (ui->game->state == GAME_STATE_GAME_OVER && ui->game_over_msgbox == NULL) {
-        ui->game_over_msgbox = lv_msgbox_create(lv_screen_active());
+        lv_obj_t *msg_parent = ui->main_container ? ui->main_container : lv_screen_active();
+        ui->game_over_msgbox = lv_msgbox_create(msg_parent);
         lv_msgbox_add_title(ui->game_over_msgbox, "GAME OVER");
         
         char msg[64];
@@ -184,12 +197,35 @@ void tetris_ui_update(tetris_ui_t *ui)
 
 void tetris_ui_cleanup(tetris_ui_t *ui)
 {
+    if(ui == NULL) return;
+
     if (ui->game_draw_buf) {
         lv_draw_buf_destroy(ui->game_draw_buf);
+        ui->game_draw_buf = NULL;
     }
     if (ui->next_draw_buf) {
         lv_draw_buf_destroy(ui->next_draw_buf);
+        ui->next_draw_buf = NULL;
     }
+    ui->main_container = NULL;
+    ui->game_canvas = NULL;
+    ui->next_canvas = NULL;
+    ui->score_label = NULL;
+    ui->lines_label = NULL;
+    ui->level_label = NULL;
+    ui->start_btn = NULL;
+    ui->pause_btn = NULL;
+    ui->reset_btn = NULL;
+    ui->game_over_msgbox = NULL;
+    ui->game = NULL;
+}
+
+void tetris_ui_next_block_style(tetris_ui_t *ui)
+{
+    if(ui == NULL) return;
+
+    ui->block_style = (tetris_block_style_t)((ui->block_style + 1) % TETRIS_BLOCK_STYLE_COUNT);
+    tetris_ui_update(ui);
 }
 
 /**********************
@@ -208,7 +244,7 @@ static void draw_game_board(tetris_ui_t *ui)
         for (int x = 0; x < BOARD_WIDTH; x++) {
             uint8_t cell = ui->game->board[y][x];
             if (cell != 0) {
-                draw_cell(draw_buf, x, y, cell);
+                draw_cell(ui, draw_buf, x, y, cell);
             }
         }
     }
@@ -229,7 +265,7 @@ static void draw_game_board(tetris_ui_t *ui)
                         
                         if (board_x >= 0 && board_x < BOARD_WIDTH &&
                             board_y >= 0 && board_y < BOARD_HEIGHT) {
-                            draw_cell(draw_buf, board_x, board_y, ui->game->current_piece.type + 1);
+                            draw_cell(ui, draw_buf, board_x, board_y, ui->game->current_piece.type + 1);
                         }
                     }
                 }
@@ -288,14 +324,14 @@ static void draw_next_piece(tetris_ui_t *ui)
         for (int y = 0; y < TETROMINO_SIZE; y++) {
             for (int x = 0; x < TETROMINO_SIZE; x++) {
                 if (shape[y][x]) {
-                    draw_cell(draw_buf, x, y, ui->game->next_piece.type + 1);
+                    draw_cell(ui, draw_buf, x, y, ui->game->next_piece.type + 1);
                 }
             }
         }
     }
 }
 
-static void draw_cell(lv_draw_buf_t *draw_buf, int x, int y, uint8_t type)
+static void draw_cell(tetris_ui_t *ui, lv_draw_buf_t *draw_buf, int x, int y, uint8_t type)
 {
     (void)draw_buf; /* Not used with canvas API */
     
@@ -318,10 +354,11 @@ static void draw_cell(lv_draw_buf_t *draw_buf, int x, int y, uint8_t type)
     uint16_t color_u16 = lv_color_to_u16(color);
     
     /* Draw cell with 1px border (leave edges empty for grid lines) */
-    int start_x = x * CELL_SIZE + 1;
-    int start_y = y * CELL_SIZE + 1;
-    int end_x = (x + 1) * CELL_SIZE - 1;
-    int end_y = (y + 1) * CELL_SIZE - 1;
+    int inset = (ui->block_style == TETRIS_BLOCK_STYLE_INSET) ? 4 : 1;
+    int start_x = x * CELL_SIZE + inset;
+    int start_y = y * CELL_SIZE + inset;
+    int end_x = (x + 1) * CELL_SIZE - inset;
+    int end_y = (y + 1) * CELL_SIZE - inset;
     
     /* Bounds checking */
     if (start_x < 0 || start_y < 0) return;
@@ -330,6 +367,14 @@ static void draw_cell(lv_draw_buf_t *draw_buf, int x, int y, uint8_t type)
     /* Fill the cell area */
     for (int py = start_y; py < end_y; py++) {
         for (int px = start_x; px < end_x; px++) {
+            if(ui->block_style == TETRIS_BLOCK_STYLE_OUTLINE) {
+                bool edge = (px - start_x < 3) ||
+                            (end_x - px <= 3) ||
+                            (py - start_y < 3) ||
+                            (end_y - py <= 3);
+                if(!edge) continue;
+            }
+
             uint32_t idx = py * (buf_w_stride / 2) + px;
             if (idx < (draw_buf->data_size / 2)) {
                 buf_data[idx] = color_u16;

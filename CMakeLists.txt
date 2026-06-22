@@ -73,6 +73,9 @@ set(V9_APPLE_MUSIC_SOURCES
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/apple_music.c
     ${V9_APPLE_MUSIC_FONT_SOURCES}
 )
+file(GLOB V9_TETRIS_SOURCES CONFIGURE_DEPENDS
+    "${PROJECT_SOURCE_DIR}/main/src/v9-tetris/*.c"
+)
 file(GLOB DESKTOP_SOURCES CONFIGURE_DEPENDS
     "${PROJECT_SOURCE_DIR}/main/desktop/*.c"
     "${PROJECT_SOURCE_DIR}/main/desktop/calc/*.c"
@@ -165,6 +168,7 @@ endif()
 
 target_sources(main PRIVATE ${FRUIT_NINJA_SOURCES})
 target_sources(main PRIVATE ${V9_APPLE_MUSIC_SOURCES})
+target_sources(main PRIVATE ${V9_TETRIS_SOURCES})
 target_sources(main PRIVATE ${DESKTOP_SOURCES})
 
 # Define LVGL configuration as a simple include
@@ -258,6 +262,16 @@ add_executable(desktop_apple_music_test
 target_include_directories(desktop_apple_music_test PRIVATE ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/main/desktop)
 target_link_libraries(desktop_apple_music_test lvgl ${PNG_LIBRARIES})
 
+add_executable(tetris_public_api_test
+    ${PROJECT_SOURCE_DIR}/main/tests/tetris_public_api_test.c
+    ${V9_TETRIS_SOURCES}
+)
+target_include_directories(tetris_public_api_test PRIVATE
+    ${PROJECT_SOURCE_DIR}
+    ${PROJECT_SOURCE_DIR}/main/src
+)
+target_link_libraries(tetris_public_api_test lvgl ${PNG_LIBRARIES})
+
 add_executable(desktop_apple_music_launcher_test
     ${PROJECT_SOURCE_DIR}/main/tests/desktop_apple_music_launcher_test.c
     ${PROJECT_SOURCE_DIR}/main/desktop/apple_music_app.c
@@ -317,6 +331,12 @@ add_test(
     COMMAND $<TARGET_FILE:desktop_apple_music_test>
 )
 set_tests_properties(desktop_apple_music_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_test(
+    NAME tetris_public_api_test
+    COMMAND $<TARGET_FILE:tetris_public_api_test>
+)
+set_tests_properties(tetris_public_api_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 add_test(
     NAME desktop_apple_music_launcher_test

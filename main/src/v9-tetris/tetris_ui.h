@@ -26,6 +26,16 @@ extern "C" {
  **********************/
 
 /**
+ * @brief Block rendering style
+ */
+typedef enum {
+    TETRIS_BLOCK_STYLE_SOLID = 0,
+    TETRIS_BLOCK_STYLE_INSET,
+    TETRIS_BLOCK_STYLE_OUTLINE,
+    TETRIS_BLOCK_STYLE_COUNT
+} tetris_block_style_t;
+
+/**
  * @brief UI structure containing all LVGL objects
  */
 typedef struct {
@@ -42,6 +52,7 @@ typedef struct {
     lv_draw_buf_t *game_draw_buf;   /* Draw buffer for game canvas */
     lv_draw_buf_t *next_draw_buf;   /* Draw buffer for next piece canvas */
     tetris_game_t *game;            /* Pointer to game instance */
+    tetris_block_style_t block_style; /* Current block drawing style */
 } tetris_ui_t;
 
 /**********************
@@ -53,13 +64,23 @@ typedef struct {
  * @param ui Pointer to UI structure
  * @param game Pointer to game structure
  */
-void tetris_ui_init(tetris_ui_t *ui, tetris_game_t *game);
+void tetris_ui_init(tetris_ui_t *ui,
+                    tetris_game_t *game,
+                    lv_obj_t *parent,
+                    int32_t screen_w,
+                    int32_t screen_h);
 
 /**
  * @brief Update the UI to reflect current game state
  * @param ui Pointer to UI structure
  */
 void tetris_ui_update(tetris_ui_t *ui);
+
+/**
+ * @brief Switch to the next block drawing style
+ * @param ui Pointer to UI structure
+ */
+void tetris_ui_next_block_style(tetris_ui_t *ui);
 
 /**
  * @brief Clean up UI resources

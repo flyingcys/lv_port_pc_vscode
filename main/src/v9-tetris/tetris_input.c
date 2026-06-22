@@ -7,6 +7,7 @@
  *      INCLUDES
  *********************/
 #include "tetris_input.h"
+#include <string.h>
 
 /*********************
  *      DEFINES
@@ -27,21 +28,45 @@ static bool s_key_pressed[256] = {false};
  **********************/
 static void keyboard_event_cb(lv_event_t *e);
 static bool should_process_key(uint32_t key, uint32_t current_time);
+static void focus_keyboard_target(lv_obj_t *target);
 
 /**********************
  *   GLOBAL FUNCTIONS
  **********************/
 
-void tetris_input_init(tetris_game_t *game, tetris_ui_t *ui)
+void tetris_input_init(tetris_game_t *game, tetris_ui_t *ui, lv_obj_t *target)
 {
     s_game = game;
     s_ui = ui;
+    memset(s_last_key_time, 0, sizeof(s_last_key_time));
+    memset(s_key_pressed, 0, sizeof(s_key_pressed));
+
+    if(target == NULL) {
+        target = lv_screen_active();
+    }
+
+    lv_obj_add_event_cb(target, keyboard_event_cb, LV_EVENT_KEY, NULL);
+    lv_obj_add_event_cb(target, keyboard_event_cb, LV_EVENT_RELEASED, NULL);
+    lv_obj_add_flag(target, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_flag(target, LV_OBJ_FLAG_CLICK_FOCUSABLE);
+    focus_keyboard_target(target);
+}
+
+static void focus_keyboard_target(lv_obj_t *target)
+{
+    lv_group_t *group = lv_group_get_default();
+    if(group == NULL) {
+        group = lv_group_create();
+        lv_group_set_default(group);
+    }
+
+    lv_group_add_obj(group, target);
+    lv_group_focus_obj(target);
     
-    /* Get keyboard input device and add event handler */
     lv_indev_t *kb = lv_indev_get_next(NULL);
     while (kb) {
         if (lv_indev_get_type(kb) == LV_INDEV_TYPE_KEYPAD) {
-            lv_obj_add_event_cb(lv_screen_active(), keyboard_event_cb, LV_EVENT_KEY, NULL);
+            lv_indev_set_group(kb, group);
             break;
         }
         kb = lv_indev_get_next(kb);
@@ -89,6 +114,8 @@ static void keyboard_event_cb(lv_event_t *e)
                     
                 case LV_KEY_DOWN:
                     tetris_game_set_soft_drop(s_game, true);
+                    tetris_game_update(s_game, lv_tick_get() + KEY_REPEAT_RATE);
+                    tetris_game_set_soft_drop(s_game, false);
                     key_handled = true;
                     break;
                     
@@ -96,6 +123,13 @@ static void keyboard_event_cb(lv_event_t *e)
                     tetris_game_toggle_pause(s_game);
                     key_handled = true;
                     s_key_pressed[key] = false; /* No repeat for pause */
+                    break;
+
+                case 's':
+                case 'S':
+                    tetris_ui_next_block_style(s_ui);
+                    key_handled = true;
+                    s_key_pressed[key] = false; /* No repeat for style switching */
                     break;
                     
                 default:
