@@ -165,6 +165,10 @@ static void create_layout(game_2048_ui_t *ui, lv_obj_t *parent)
 static void create_header(game_2048_ui_t *ui)
 {
     int32_t margin = ui->screen_w < 520 ? 24 : 48;
+    int32_t score_w = ui->screen_w < 520 ? 82 : 100;
+    int32_t score_h = ui->screen_w < 520 ? 54 : 64;
+    int32_t score_gap = 8;
+    int32_t score_y = ui->screen_w < 520 ? 32 : 36;
     lv_obj_t *title = lv_label_create(ui->root);
     lv_label_set_text(title, "2048");
     lv_obj_set_style_text_color(title, lv_color_hex(0x776E65U), 0);
@@ -172,53 +176,63 @@ static void create_header(game_2048_ui_t *ui)
     lv_obj_set_pos(title, margin, 30);
 
     lv_obj_t *score_box = lv_obj_create(ui->root);
-    lv_obj_set_size(score_box, 88, 58);
-    lv_obj_set_pos(score_box, ui->screen_w - margin - 190, 36);
+    lv_obj_set_size(score_box, score_w, score_h);
+    lv_obj_set_pos(score_box, ui->screen_w - margin - score_w * 2 - score_gap, score_y);
     lv_obj_set_style_bg_color(score_box, lv_color_hex(0xBBADA0U), 0);
     lv_obj_set_style_bg_opa(score_box, LV_OPA_COVER, 0);
     lv_obj_set_style_radius(score_box, 8, 0);
     lv_obj_set_style_border_width(score_box, 0, 0);
+    lv_obj_set_style_layout(score_box, LV_LAYOUT_FLEX, 0);
+    lv_obj_set_flex_flow(score_box, LV_FLEX_FLOW_COLUMN);
+    lv_obj_set_flex_align(score_box, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+    lv_obj_set_style_pad_top(score_box, 7, 0);
+    lv_obj_set_style_pad_bottom(score_box, 7, 0);
+    lv_obj_set_style_pad_row(score_box, 4, 0);
     lv_obj_clear_flag(score_box, LV_OBJ_FLAG_SCROLLABLE);
+
+    ui->score_label = lv_label_create(score_box);
+    lv_obj_set_style_text_color(ui->score_label, lv_color_hex(0xFFFFFFU), 0);
+    lv_obj_set_style_text_font(ui->score_label, &lv_font_montserrat_18, 0);
 
     lv_obj_t *score_title = lv_label_create(score_box);
     lv_label_set_text(score_title, "SCORE");
     lv_obj_set_style_text_color(score_title, lv_color_hex(0xEEE4DAU), 0);
     lv_obj_set_style_text_font(score_title, &lv_font_montserrat_12, 0);
-    lv_obj_align(score_title, LV_ALIGN_TOP_MID, 0, 5);
-
-    ui->score_label = lv_label_create(score_box);
-    lv_obj_set_style_text_color(ui->score_label, lv_color_hex(0xFFFFFFU), 0);
-    lv_obj_set_style_text_font(ui->score_label, &lv_font_montserrat_20, 0);
-    lv_obj_align(ui->score_label, LV_ALIGN_BOTTOM_MID, 0, -5);
 
     lv_obj_t *best_box = lv_obj_create(ui->root);
-    lv_obj_set_size(best_box, 96, 58);
-    lv_obj_set_pos(best_box, ui->screen_w - margin - 96, 36);
+    lv_obj_set_size(best_box, score_w, score_h);
+    lv_obj_set_pos(best_box, ui->screen_w - margin - score_w, score_y);
     lv_obj_set_style_bg_color(best_box, lv_color_hex(0xBBADA0U), 0);
     lv_obj_set_style_bg_opa(best_box, LV_OPA_COVER, 0);
     lv_obj_set_style_radius(best_box, 8, 0);
     lv_obj_set_style_border_width(best_box, 0, 0);
+    lv_obj_set_style_layout(best_box, LV_LAYOUT_FLEX, 0);
+    lv_obj_set_flex_flow(best_box, LV_FLEX_FLOW_COLUMN);
+    lv_obj_set_flex_align(best_box, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+    lv_obj_set_style_pad_top(best_box, 7, 0);
+    lv_obj_set_style_pad_bottom(best_box, 7, 0);
+    lv_obj_set_style_pad_row(best_box, 4, 0);
     lv_obj_clear_flag(best_box, LV_OBJ_FLAG_SCROLLABLE);
+
+    ui->best_label = lv_label_create(best_box);
+    lv_obj_set_style_text_color(ui->best_label, lv_color_hex(0xFFFFFFU), 0);
+    lv_obj_set_style_text_font(ui->best_label, &lv_font_montserrat_18, 0);
 
     lv_obj_t *best_title = lv_label_create(best_box);
     lv_label_set_text(best_title, "BEST");
     lv_obj_set_style_text_color(best_title, lv_color_hex(0xEEE4DAU), 0);
     lv_obj_set_style_text_font(best_title, &lv_font_montserrat_12, 0);
-    lv_obj_align(best_title, LV_ALIGN_TOP_MID, 0, 5);
-
-    ui->best_label = lv_label_create(best_box);
-    lv_obj_set_style_text_color(ui->best_label, lv_color_hex(0xFFFFFFU), 0);
-    lv_obj_set_style_text_font(ui->best_label, &lv_font_montserrat_20, 0);
-    lv_obj_align(ui->best_label, LV_ALIGN_BOTTOM_MID, 0, -5);
 }
 
 static void create_controls(game_2048_ui_t *ui)
 {
     const char *labels[] = {"4x4", "5x5", "6x6"};
+    int32_t row_w = ui->screen_w < 520 ? 220 : 250;
+    int32_t row_y = ui->screen_w < 520 ? 88 : 66;
     lv_obj_t *row = lv_obj_create(ui->root);
     lv_obj_remove_style_all(row);
-    lv_obj_set_size(row, 250, 44);
-    lv_obj_set_pos(row, (ui->screen_w - 250) / 2, 112);
+    lv_obj_set_size(row, row_w, 44);
+    lv_obj_set_pos(row, (ui->screen_w - row_w) / 2, row_y);
     lv_obj_set_flex_flow(row, LV_FLEX_FLOW_ROW);
     lv_obj_set_flex_align(row, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_style_pad_column(row, 8, 0);
@@ -254,7 +268,8 @@ static void create_controls(game_2048_ui_t *ui)
 static void create_board(game_2048_ui_t *ui)
 {
     int32_t usable_w = ui->screen_w - 72;
-    int32_t usable_h = ui->screen_h - 190;
+    int32_t board_y = ui->screen_w < 520 ? 142 : 130;
+    int32_t usable_h = ui->screen_h - board_y - 8;
     int32_t board_size = usable_w < usable_h ? usable_w : usable_h;
     if(board_size > 520) board_size = 520;
     if(board_size < 240) board_size = 240;
@@ -263,7 +278,7 @@ static void create_board(game_2048_ui_t *ui)
     ui->board = lv_obj_create(ui->root);
     lv_obj_remove_style_all(ui->board);
     lv_obj_set_size(ui->board, ui->board_size, ui->board_size);
-    lv_obj_set_pos(ui->board, (ui->screen_w - ui->board_size) / 2, 170);
+    lv_obj_set_pos(ui->board, (ui->screen_w - ui->board_size) / 2, board_y);
     lv_obj_set_style_bg_color(ui->board, lv_color_hex(0xBBADA0U), 0);
     lv_obj_set_style_bg_opa(ui->board, LV_OPA_COVER, 0);
     lv_obj_set_style_radius(ui->board, 8, 0);

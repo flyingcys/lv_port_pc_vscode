@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "design_fruit_assets.h"
 #include "design_fruit_model.h"
@@ -12,6 +13,9 @@
 #define SIDE_W 200
 #define BOARD_W 480
 #define CELL_SIZE 60
+#define SWAP_ANIM_MS 140
+#define BLAST_ANIM_MS 300
+#define DROP_MS_PER_CELL 60
 
 LV_FONT_DECLARE(design_fruit_font_12);
 LV_FONT_DECLARE(design_fruit_font_16);
@@ -29,6 +33,7 @@ typedef struct {
     bool has_selection;
     lv_point_t press_point;
     bool pressing;
+    bool animating;
     int32_t screen_w;
     int32_t screen_h;
 } design_fruit_ui_t;
@@ -50,15 +55,31 @@ static void create_layout(design_fruit_ui_t *ui, lv_obj_t *parent);
 static void create_left_panel(design_fruit_ui_t *ui);
 static void create_board(design_fruit_ui_t *ui);
 static void refresh_board(design_fruit_ui_t *ui);
+static void refresh_board_to_matrix(design_fruit_ui_t *ui,
+                                    const uint8_t board[DESIGN_FRUIT_ROWS][DESIGN_FRUIT_COLS]);
 static void refresh_score(design_fruit_ui_t *ui);
 static void reset_game(design_fruit_ui_t *ui);
 static void try_swap(design_fruit_ui_t *ui, uint8_t row_a, uint8_t col_a, uint8_t row_b, uint8_t col_b);
+static void play_swap_plan(design_fruit_ui_t *ui, const design_fruit_swap_plan_t *plan);
 static void set_selected(design_fruit_ui_t *ui, uint8_t row, uint8_t col);
 static void clear_selected(design_fruit_ui_t *ui);
 static uint32_t seed_from_tick(void);
 static void cell_event_cb(lv_event_t *e);
 static void reset_event_cb(lv_event_t *e);
 static void placeholder_event_cb(lv_event_t *e);
+static void anim_set_x(void *obj, int32_t value);
+static void anim_set_y(void *obj, int32_t value);
+static void anim_set_scale(void *obj, int32_t value);
+static void anim_set_blast_scale(void *obj, int32_t value);
+static void start_obj_anim(lv_obj_t *obj,
+                           lv_anim_exec_xcb_t exec_cb,
+                           int32_t from,
+                           int32_t to,
+                           uint32_t duration,
+                           uint32_t delay);
+static void pump_lvgl_for(uint32_t duration_ms);
+static uint32_t round_drop_duration(const design_fruit_round_plan_t *round);
+static void reset_image_visual(lv_obj_t *img);
 
 lv_obj_t *design_fruit_create(lv_obj_t *parent, int32_t screen_w, int32_t screen_h)
 {
@@ -255,15 +276,21 @@ static void create_board(design_fruit_ui_t *ui)
 
 static void refresh_board(design_fruit_ui_t *ui)
 {
+    refresh_board_to_matrix(ui, ui->model.board);
+}
+
+static void refresh_board_to_matrix(design_fruit_ui_t *ui, const uint8_t board[DESIGN_FRUIT_ROWS][DESIGN_FRUIT_COLS])
+{
     char path[512];
 
     for(uint8_t row = 0; row < DESIGN_FRUIT_ROWS; row++) {
         for(uint8_t col = 0; col < DESIGN_FRUIT_COLS; col++) {
-            uint8_t value = design_fruit_model_cell(&ui->model, row, col);
+            uint8_t value = board[row][col];
             if(value <= DESIGN_FRUIT_TYPES &&
                design_fruit_assets_build_image_path(path, sizeof(path), k_fruit_paths[value])) {
                 lv_image_set_src(ui->cell_images[row][col], path);
             }
+            reset_image_visual(ui->cell_images[row][col]);
             lv_obj_set_style_border_width(ui->cells[row][col],
                                           ui->has_selection && ui->selected_row == row && ui->selected_col == col ? 4 : 1,
                                           0);
@@ -274,6 +301,18 @@ static void refresh_board(design_fruit_ui_t *ui)
                                           0);
         }
     }
+}
+
+static void reset_image_visual(lv_obj_t *img)
+{
+    lv_anim_delete(img, anim_set_x);
+    lv_anim_delete(img, anim_set_y);
+    lv_anim_delete(img, anim_set_scale);
+    lv_anim_delete(img, anim_set_blast_scale);
+    lv_obj_set_pos(img, 0, 0);
+    lv_obj_center(img);
+    lv_image_set_scale(img, 256);
+    lv_obj_clear_flag(img, LV_OBJ_FLAG_HIDDEN);
 }
 
 static void refresh_score(design_fruit_ui_t *ui)
@@ -294,14 +333,80 @@ static void reset_game(design_fruit_ui_t *ui)
 
 static void try_swap(design_fruit_ui_t *ui, uint8_t row_a, uint8_t col_a, uint8_t row_b, uint8_t col_b)
 {
-    if(design_fruit_model_swap(&ui->model, row_a, col_a, row_b, col_b)) {
-        lv_label_set_text(ui->status_label, "消除成功");
-    } else {
-        lv_label_set_text(ui->status_label, "不能交换");
-    }
+    design_fruit_swap_plan_t plan;
+
+    if(ui->animating) return;
+    ui->animating = true;
     clear_selected(ui);
+
+    if(design_fruit_model_swap_with_plan(&ui->model, row_a, col_a, row_b, col_b, &plan)) {
+        lv_label_set_text(ui->status_label, "消除成功");
+        play_swap_plan(ui, &plan);
+    } else {
+        int32_t dx = ((int32_t)col_b - (int32_t)col_a) * CELL_SIZE;
+        int32_t dy = ((int32_t)row_b - (int32_t)row_a) * CELL_SIZE;
+        start_obj_anim(ui->cell_images[row_a][col_a], anim_set_x, 0, dx, SWAP_ANIM_MS / 2, 0);
+        start_obj_anim(ui->cell_images[row_a][col_a], anim_set_y, 0, dy, SWAP_ANIM_MS / 2, 0);
+        start_obj_anim(ui->cell_images[row_b][col_b], anim_set_x, 0, -dx, SWAP_ANIM_MS / 2, 0);
+        start_obj_anim(ui->cell_images[row_b][col_b], anim_set_y, 0, -dy, SWAP_ANIM_MS / 2, 0);
+        pump_lvgl_for(SWAP_ANIM_MS / 2 + 20);
+        start_obj_anim(ui->cell_images[row_a][col_a], anim_set_x, dx, 0, SWAP_ANIM_MS / 2, 0);
+        start_obj_anim(ui->cell_images[row_a][col_a], anim_set_y, dy, 0, SWAP_ANIM_MS / 2, 0);
+        start_obj_anim(ui->cell_images[row_b][col_b], anim_set_x, -dx, 0, SWAP_ANIM_MS / 2, 0);
+        start_obj_anim(ui->cell_images[row_b][col_b], anim_set_y, -dy, 0, SWAP_ANIM_MS / 2, 0);
+        pump_lvgl_for(SWAP_ANIM_MS / 2 + 20);
+        lv_label_set_text(ui->status_label, "不能交换");
+        refresh_board(ui);
+    }
     refresh_score(ui);
-    refresh_board(ui);
+    ui->animating = false;
+}
+
+static void play_swap_plan(design_fruit_ui_t *ui, const design_fruit_swap_plan_t *plan)
+{
+    int32_t dx = ((int32_t)plan->to_col - (int32_t)plan->from_col) * CELL_SIZE;
+    int32_t dy = ((int32_t)plan->to_row - (int32_t)plan->from_row) * CELL_SIZE;
+
+    start_obj_anim(ui->cell_images[plan->from_row][plan->from_col], anim_set_x, 0, dx, SWAP_ANIM_MS, 0);
+    start_obj_anim(ui->cell_images[plan->from_row][plan->from_col], anim_set_y, 0, dy, SWAP_ANIM_MS, 0);
+    start_obj_anim(ui->cell_images[plan->to_row][plan->to_col], anim_set_x, 0, -dx, SWAP_ANIM_MS, 0);
+    start_obj_anim(ui->cell_images[plan->to_row][plan->to_col], anim_set_y, 0, -dy, SWAP_ANIM_MS, 0);
+    pump_lvgl_for(SWAP_ANIM_MS + 20);
+
+    for(uint8_t round_i = 0; round_i < plan->round_count; round_i++) {
+        const design_fruit_round_plan_t *round = &plan->rounds[round_i];
+        uint32_t drop_duration = round_drop_duration(round);
+
+        refresh_board_to_matrix(ui, round->board_before);
+        for(uint8_t row = 0; row < DESIGN_FRUIT_ROWS; row++) {
+            for(uint8_t col = 0; col < DESIGN_FRUIT_COLS; col++) {
+                if(round->marks[row][col]) {
+                    start_obj_anim(ui->cell_images[row][col], anim_set_blast_scale, 0, (int32_t)BLAST_ANIM_MS,
+                                   BLAST_ANIM_MS, 0);
+                }
+            }
+        }
+        pump_lvgl_for(BLAST_ANIM_MS + 20);
+
+        refresh_board_to_matrix(ui, round->board_after);
+        for(uint16_t i = 0; i < round->move_count; i++) {
+            const design_fruit_move_t *move = &round->moves[i];
+            lv_obj_t *img = ui->cell_images[move->to_row][move->to_col];
+            int32_t start_y = ((int32_t)move->from_row - (int32_t)move->to_row) * CELL_SIZE;
+            reset_image_visual(img);
+            start_obj_anim(img, anim_set_y, start_y, 0, drop_duration, 0);
+        }
+        for(uint16_t i = 0; i < round->spawn_count; i++) {
+            const design_fruit_spawn_t *spawn = &round->spawns[i];
+            lv_obj_t *img = ui->cell_images[spawn->row][spawn->col];
+            int32_t start_y = -((int32_t)spawn->drop_cells * CELL_SIZE);
+            reset_image_visual(img);
+            start_obj_anim(img, anim_set_y, start_y, 0, drop_duration, 0);
+        }
+        pump_lvgl_for(drop_duration + 20);
+        refresh_board_to_matrix(ui, round->board_after);
+    }
+    refresh_board_to_matrix(ui, plan->final_board);
 }
 
 static void set_selected(design_fruit_ui_t *ui, uint8_t row, uint8_t col)
@@ -323,6 +428,79 @@ static uint32_t seed_from_tick(void)
     return tick != 0u ? tick : 1u;
 }
 
+static void anim_set_x(void *obj, int32_t value)
+{
+    lv_obj_set_x((lv_obj_t *)obj, value);
+}
+
+static void anim_set_y(void *obj, int32_t value)
+{
+    lv_obj_set_y((lv_obj_t *)obj, value);
+}
+
+static void anim_set_scale(void *obj, int32_t value)
+{
+    lv_image_set_scale((lv_obj_t *)obj, (uint16_t)value);
+}
+
+static void anim_set_blast_scale(void *obj, int32_t value)
+{
+    int32_t scale;
+    int32_t grow_ms = BLAST_ANIM_MS / 3;
+    if(value <= grow_ms) {
+        scale = 256 + ((294 - 256) * value) / grow_ms;
+    } else {
+        int32_t shrink_ms = BLAST_ANIM_MS - grow_ms;
+        int32_t elapsed = value - grow_ms;
+        scale = 294 - (294 * elapsed) / shrink_ms;
+    }
+    if(scale < 0) scale = 0;
+    lv_image_set_scale((lv_obj_t *)obj, (uint16_t)scale);
+}
+
+static void start_obj_anim(lv_obj_t *obj,
+                           lv_anim_exec_xcb_t exec_cb,
+                           int32_t from,
+                           int32_t to,
+                           uint32_t duration,
+                           uint32_t delay)
+{
+    lv_anim_t anim;
+    lv_anim_delete(obj, exec_cb);
+    lv_anim_init(&anim);
+    lv_anim_set_var(&anim, obj);
+    lv_anim_set_exec_cb(&anim, exec_cb);
+    lv_anim_set_values(&anim, from, to);
+    lv_anim_set_duration(&anim, duration);
+    lv_anim_set_delay(&anim, delay);
+    lv_anim_set_path_cb(&anim, lv_anim_path_linear);
+    lv_anim_start(&anim);
+}
+
+static void pump_lvgl_for(uint32_t duration_ms)
+{
+    uint32_t start = lv_tick_get();
+    while(lv_tick_elaps(start) < duration_ms) {
+        lv_timer_handler();
+        lv_tick_inc(5);
+        usleep(5 * 1000);
+    }
+    lv_timer_handler();
+}
+
+static uint32_t round_drop_duration(const design_fruit_round_plan_t *round)
+{
+    uint8_t max_cells = 1;
+    for(uint16_t i = 0; i < round->move_count; i++) {
+        uint8_t cells = (uint8_t)(round->moves[i].to_row - round->moves[i].from_row);
+        if(cells > max_cells) max_cells = cells;
+    }
+    for(uint16_t i = 0; i < round->spawn_count; i++) {
+        if(round->spawns[i].drop_cells > max_cells) max_cells = round->spawns[i].drop_cells;
+    }
+    return (uint32_t)max_cells * DROP_MS_PER_CELL;
+}
+
 static void cell_event_cb(lv_event_t *e)
 {
     design_fruit_ui_t *ui = (design_fruit_ui_t *)lv_event_get_user_data(e);
@@ -331,6 +509,8 @@ static void cell_event_cb(lv_event_t *e)
     uint8_t packed = (uint8_t)(uintptr_t)lv_obj_get_user_data(target);
     uint8_t row = packed >> 4;
     uint8_t col = packed & 0x0fu;
+
+    if(ui->animating) return;
 
     if(code == LV_EVENT_PRESSED) {
         lv_indev_t *indev = lv_event_get_indev(e);

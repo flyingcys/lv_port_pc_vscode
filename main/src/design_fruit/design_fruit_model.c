@@ -86,19 +86,55 @@ static bool mark_matches(const design_fruit_model_t *model,
     return found;
 }
 
+static uint8_t count_marks(const bool marks[DESIGN_FRUIT_ROWS][DESIGN_FRUIT_COLS])
+{
+    uint8_t count = 0;
+    for(uint8_t row = 0; row < DESIGN_FRUIT_ROWS; row++) {
+        for(uint8_t col = 0; col < DESIGN_FRUIT_COLS; col++) {
+            if(marks[row][col]) count++;
+        }
+    }
+    return count;
+}
+
+static void copy_board(uint8_t dest[DESIGN_FRUIT_ROWS][DESIGN_FRUIT_COLS],
+                       const uint8_t src[DESIGN_FRUIT_ROWS][DESIGN_FRUIT_COLS])
+{
+    memcpy(dest, src, sizeof(uint8_t) * DESIGN_FRUIT_ROWS * DESIGN_FRUIT_COLS);
+}
+
 static void collapse_and_refill(design_fruit_model_t *model,
-                                const bool marks[DESIGN_FRUIT_ROWS][DESIGN_FRUIT_COLS])
+                                const bool marks[DESIGN_FRUIT_ROWS][DESIGN_FRUIT_COLS],
+                                design_fruit_round_plan_t *round)
 {
     for(uint8_t col = 0; col < DESIGN_FRUIT_COLS; col++) {
         int write_row = DESIGN_FRUIT_ROWS - 1;
         for(int row = DESIGN_FRUIT_ROWS - 1; row >= 0; row--) {
             if(!marks[row][col]) {
+                uint8_t value = model->board[row][col];
+                if(round != NULL && row != write_row && round->move_count < DESIGN_FRUIT_MAX_MOVES) {
+                    design_fruit_move_t *move = &round->moves[round->move_count++];
+                    move->from_row = (uint8_t)row;
+                    move->from_col = col;
+                    move->to_row = (uint8_t)write_row;
+                    move->to_col = col;
+                    move->value = value;
+                }
                 model->board[write_row][col] = model->board[row][col];
                 write_row--;
             }
         }
+        uint8_t spawn_count = (uint8_t)(write_row + 1);
         while(write_row >= 0) {
-            model->board[write_row][col] = random_fruit(model);
+            uint8_t value = random_fruit(model);
+            model->board[write_row][col] = value;
+            if(round != NULL && round->spawn_count < DESIGN_FRUIT_MAX_SPAWNS) {
+                design_fruit_spawn_t *spawn = &round->spawns[round->spawn_count++];
+                spawn->row = (uint8_t)write_row;
+                spawn->col = col;
+                spawn->value = value;
+                spawn->drop_cells = spawn_count;
+            }
             write_row--;
         }
     }
@@ -116,7 +152,36 @@ static bool resolve_board(design_fruit_model_t *model, uint32_t *score_delta)
         if(!mark_matches(model, marks, &round_score)) break;
         resolved_any = true;
         if(score_delta != NULL) *score_delta += round_score;
-        collapse_and_refill(model, marks);
+        collapse_and_refill(model, marks, NULL);
+    }
+
+    return resolved_any;
+}
+
+static bool resolve_board_with_plan(design_fruit_model_t *model, design_fruit_swap_plan_t *plan)
+{
+    bool resolved_any = false;
+    bool marks[DESIGN_FRUIT_ROWS][DESIGN_FRUIT_COLS];
+
+    while(true) {
+        uint32_t round_score = 0;
+
+        if(!mark_matches(model, marks, &round_score)) break;
+
+        resolved_any = true;
+        plan->score_delta += round_score;
+        if(plan->round_count < DESIGN_FRUIT_MAX_ROUNDS) {
+            design_fruit_round_plan_t *round = &plan->rounds[plan->round_count++];
+            memset(round, 0, sizeof(*round));
+            copy_board(round->board_before, model->board);
+            memcpy(round->marks, marks, sizeof(round->marks));
+            round->match_count = count_marks(marks);
+            round->score_delta = round_score;
+            collapse_and_refill(model, marks, round);
+            copy_board(round->board_after, model->board);
+        } else {
+            collapse_and_refill(model, marks, NULL);
+        }
     }
 
     return resolved_any;
@@ -187,22 +252,54 @@ bool design_fruit_model_swap(design_fruit_model_t *model,
                              uint8_t row_b,
                              uint8_t col_b)
 {
+    design_fruit_swap_plan_t plan;
+
+    return design_fruit_model_swap_with_plan(model, row_a, col_a, row_b, col_b, &plan);
+}
+
+bool design_fruit_model_swap_with_plan(design_fruit_model_t *model,
+                                       uint8_t row_a,
+                                       uint8_t col_a,
+                                       uint8_t row_b,
+                                       uint8_t col_b,
+                                       design_fruit_swap_plan_t *plan)
+{
     uint8_t before[DESIGN_FRUIT_ROWS][DESIGN_FRUIT_COLS];
     uint8_t tmp;
-    uint32_t gained = 0;
+
+    if(plan != NULL) {
+        memset(plan, 0, sizeof(*plan));
+        plan->from_row = row_a;
+        plan->from_col = col_a;
+        plan->to_row = row_b;
+        plan->to_col = col_b;
+    }
 
     if(model == NULL) return false;
     if(!in_bounds(row_a, col_a) || !in_bounds(row_b, col_b)) return false;
     if(!are_adjacent(row_a, col_a, row_b, col_b)) return false;
 
-    memcpy(before, model->board, sizeof(before));
+    copy_board(before, model->board);
 
     tmp = model->board[row_a][col_a];
     model->board[row_a][col_a] = model->board[row_b][col_b];
     model->board[row_b][col_b] = tmp;
 
+    if(plan != NULL) {
+        if(!resolve_board_with_plan(model, plan)) {
+            copy_board(model->board, before);
+            memset(plan->final_board, 0, sizeof(plan->final_board));
+            return false;
+        }
+        plan->accepted = true;
+        copy_board(plan->final_board, model->board);
+        model->score += plan->score_delta;
+        return true;
+    }
+
+    uint32_t gained = 0;
     if(!resolve_board(model, &gained)) {
-        memcpy(model->board, before, sizeof(before));
+        copy_board(model->board, before);
         return false;
     }
 
