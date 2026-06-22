@@ -76,6 +76,9 @@ set(V9_APPLE_MUSIC_SOURCES
 file(GLOB V9_TETRIS_SOURCES CONFIGURE_DEPENDS
     "${PROJECT_SOURCE_DIR}/main/src/v9-tetris/*.c"
 )
+file(GLOB V9_2048_SOURCES CONFIGURE_DEPENDS
+    "${PROJECT_SOURCE_DIR}/main/src/v9_2048/*.c"
+)
 file(GLOB DESKTOP_SOURCES CONFIGURE_DEPENDS
     "${PROJECT_SOURCE_DIR}/main/desktop/*.c"
     "${PROJECT_SOURCE_DIR}/main/desktop/calc/*.c"
@@ -169,6 +172,7 @@ endif()
 target_sources(main PRIVATE ${FRUIT_NINJA_SOURCES})
 target_sources(main PRIVATE ${V9_APPLE_MUSIC_SOURCES})
 target_sources(main PRIVATE ${V9_TETRIS_SOURCES})
+target_sources(main PRIVATE ${V9_2048_SOURCES})
 target_sources(main PRIVATE ${DESKTOP_SOURCES})
 
 # Define LVGL configuration as a simple include
@@ -272,6 +276,26 @@ target_include_directories(tetris_public_api_test PRIVATE
 )
 target_link_libraries(tetris_public_api_test lvgl ${PNG_LIBRARIES})
 
+add_executable(v9_2048_core_test
+    ${PROJECT_SOURCE_DIR}/main/tests/v9_2048_core_test.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_2048/game_2048_core.c
+)
+target_include_directories(v9_2048_core_test PRIVATE
+    ${PROJECT_SOURCE_DIR}
+    ${PROJECT_SOURCE_DIR}/main/src
+)
+target_link_libraries(v9_2048_core_test lvgl ${PNG_LIBRARIES})
+
+add_executable(v9_2048_public_api_test
+    ${PROJECT_SOURCE_DIR}/main/tests/v9_2048_public_api_test.c
+    ${V9_2048_SOURCES}
+)
+target_include_directories(v9_2048_public_api_test PRIVATE
+    ${PROJECT_SOURCE_DIR}
+    ${PROJECT_SOURCE_DIR}/main/src
+)
+target_link_libraries(v9_2048_public_api_test lvgl ${PNG_LIBRARIES})
+
 add_executable(desktop_apple_music_launcher_test
     ${PROJECT_SOURCE_DIR}/main/tests/desktop_apple_music_launcher_test.c
     ${PROJECT_SOURCE_DIR}/main/desktop/apple_music_app.c
@@ -337,6 +361,18 @@ add_test(
     COMMAND $<TARGET_FILE:tetris_public_api_test>
 )
 set_tests_properties(tetris_public_api_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_test(
+    NAME v9_2048_core_test
+    COMMAND $<TARGET_FILE:v9_2048_core_test>
+)
+set_tests_properties(v9_2048_core_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_test(
+    NAME v9_2048_public_api_test
+    COMMAND $<TARGET_FILE:v9_2048_public_api_test>
+)
+set_tests_properties(v9_2048_public_api_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 add_test(
     NAME desktop_apple_music_launcher_test

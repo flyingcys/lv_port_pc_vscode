@@ -1,0 +1,1 @@
+/usr/bin/cc  -march=native -g -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/fruit_ninja_model_test.dir/main/tests/fruit_ninja_model_test.c.o -o /Users/cys/embedded/lv_port_pc_vscode/bin/fruit_ninja_model_test

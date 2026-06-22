@@ -1,0 +1,11 @@
+{
+	"InstallScripts" : 
+	[
+		"/Users/cys/embedded/lv_port_pc_vscode/build-cmake/cmake_install.cmake",
+		"/Users/cys/embedded/lv_port_pc_vscode/build-cmake/third-party/hls_player_demo/src/http_client/cmake_install.cmake",
+		"/Users/cys/embedded/lv_port_pc_vscode/build-cmake/third-party/hls_player_demo/src/player_controller/cmake_install.cmake",
+		"/Users/cys/embedded/lv_port_pc_vscode/build-cmake/third-party/hls_player_demo/src/stream_player/cmake_install.cmake",
+		"/Users/cys/embedded/lv_port_pc_vscode/build-cmake/lvgl/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

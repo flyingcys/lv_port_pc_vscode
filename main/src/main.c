@@ -19,6 +19,7 @@
 #include "calc/calc.h"
 #include "calc/calc_app.h"
 #include "fruit_ninja_app.h"
+#include "game_2048_app.h"
 #include "music_player.h"
 
 
@@ -94,13 +95,17 @@ int main(int argc, char **argv)
 
   desktop_run();
 
-  /* AM_APP=calc/fruit_ninja/netease_music/local_music：直接打开 app 用于无头截图比对 */
+  /* AM_APP=calc/2048/fruit_ninja/netease_music/local_music：直接打开 app 用于无头截图比对 */
   {
     const char * app = getenv("AM_APP");
     if(app && strcmp(app, "calc") == 0) {
       fprintf(stderr, "DBG: launching calc\n"); fflush(stderr);
       calc_app_launch();
       fprintf(stderr, "DBG: calc launched\n"); fflush(stderr);
+    } else if(app && strcmp(app, "2048") == 0) {
+      fprintf(stderr, "DBG: launching 2048\n"); fflush(stderr);
+      game_2048_app_launch();
+      fprintf(stderr, "DBG: 2048 launched\n"); fflush(stderr);
     } else if(app && strcmp(app, "fruit_ninja") == 0) {
       fprintf(stderr, "DBG: launching fruit_ninja\n"); fflush(stderr);
       fruit_ninja_app_launch();

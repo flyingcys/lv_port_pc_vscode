@@ -1,0 +1,10 @@
+desktop_apple_music_test 2 0.00309346
+v9_2048_core_test 2 0.00320119
+v9_2048_public_api_test 2 0.0138031
+fruit_ninja_assets_test 1 0.0282065
+fruit_ninja_collision_test 1 0.00490879
+fruit_ninja_model_test 1 0.00679583
+tetris_public_api_test 1 0.03168
+desktop_apple_music_launcher_test 1 0.038472
+apple_music_parent_size_test 1 0.103966
+---
