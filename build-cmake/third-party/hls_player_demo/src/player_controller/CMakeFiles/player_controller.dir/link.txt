@@ -1,2 +1,0 @@
-/usr/bin/ar qc libplayer_controller.a CMakeFiles/player_controller.dir/player_controller.c.o CMakeFiles/player_controller.dir/player_playlist.c.o
-/usr/bin/ranlib libplayer_controller.a

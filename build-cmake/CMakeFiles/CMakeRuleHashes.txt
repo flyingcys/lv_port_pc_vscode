@@ -1,3 +1,0 @@
-# Hashes of file build rules.
-103bac5ed4c5feeef1894aa62fc57b1d CMakeFiles/fruit_ninja_tests
-34a5cf09ca1332c2d8048205987d321d CMakeFiles/run
