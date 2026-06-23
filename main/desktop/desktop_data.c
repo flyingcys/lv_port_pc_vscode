@@ -30,6 +30,19 @@ const desktop_app_t desktop_apps[] = {
 };
 const uint32_t desktop_app_count = sizeof(desktop_apps)/sizeof(desktop_apps[0]);
 
+uint32_t desktop_app_page_count(uint8_t page)
+{
+    uint32_t count = 0;
+
+    for(uint32_t i = 0; i < desktop_app_count; i++) {
+        if(desktop_apps[i].page == page) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
 const desktop_notify_t desktop_notifies[] = {
     { "系统消息", "欢迎使用全新横屏系统UI！左右滑动切换应用，上下滑动调出面板。", "刚刚" },
     { "日程提醒", "下午 2:00 有一个产品设计评审会议。", "1小时前" },

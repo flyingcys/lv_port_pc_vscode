@@ -13,7 +13,8 @@ typedef struct {
 typedef struct { const char * title; const char * body; const char * time; } desktop_notify_t;
 
 extern const desktop_app_t    desktop_apps[];
-extern const uint32_t     desktop_app_count;      /* 12 */
+extern const uint32_t     desktop_app_count;
+uint32_t desktop_app_page_count(uint8_t page);
 extern const desktop_notify_t desktop_notifies[];
 extern const uint32_t     desktop_notify_count;
 #ifdef __cplusplus

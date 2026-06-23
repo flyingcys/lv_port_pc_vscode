@@ -40,9 +40,6 @@ typedef struct {
     int app_idx;   /* desktop_apps[] 全局索引；-1=无 app/锁屏占位/空槽 */
 } icon_type;
 
-/* page_0: 锁屏 (0 个 app); page_1: 10 个 app; page_2: 2 个 app */
-static const int page_icon_count_init[DESKTOP_PAGE_COUNT] = { 0, 10, 2 };
-
 static int page_icon_count[DESKTOP_PAGE_COUNT];
 static icon_type icons[DESKTOP_PAGE_COUNT][DESKTOP_SLOT_COUNT];
 static int offsetx;
@@ -105,7 +102,12 @@ void desktop_run(void)
     int i;
     int j;
 
-    memcpy(page_icon_count, page_icon_count_init, sizeof(page_icon_count));
+    for(j = 0; j < DESKTOP_PAGE_COUNT; j++) {
+        page_icon_count[j] = (int)desktop_app_page_count((uint8_t)j);
+        if(page_icon_count[j] > DESKTOP_SLOT_COUNT) {
+            page_icon_count[j] = DESKTOP_SLOT_COUNT;
+        }
+    }
     page_icon_count[0] = 0;   /* page_0 为锁屏页，不放 app 图标 */
     memset(icons, 0, sizeof(icons));
 
