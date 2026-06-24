@@ -108,6 +108,50 @@ static void test_non_adjacent_swap_is_rejected(void)
     assert(!design_fruit_model_swap(&model, 0, 0, 2, 2));
 }
 
+static void test_has_available_move_detects_playable_board(void)
+{
+    design_fruit_model_t model;
+    /* 交换 (0,2)<->(0,3) 可在第 0 列形成竖直三连 -> 存在可行步。*/
+    static const uint8_t board[8][8] = {
+        { 1, 1, 2, 1, 4, 5, 6, 7 },
+        { 2, 3, 4, 5, 6, 7, 1, 2 },
+        { 3, 4, 5, 6, 7, 1, 2, 3 },
+        { 4, 5, 6, 7, 1, 2, 3, 4 },
+        { 5, 6, 7, 1, 2, 3, 4, 5 },
+        { 6, 7, 1, 2, 3, 4, 5, 6 },
+        { 7, 1, 2, 3, 4, 5, 6, 7 },
+        { 1, 2, 3, 4, 5, 6, 7, 1 },
+    };
+
+    design_fruit_model_init(&model, 11u);
+    design_fruit_model_set_board(&model, board);
+
+    assert(!design_fruit_model_has_matches(&model));
+    assert(design_fruit_model_has_available_move(&model));
+}
+
+static void test_has_available_move_detects_dead_board(void)
+{
+    design_fruit_model_t model;
+    /* 无任何相邻交换能形成三连的棋盘（行/列均为 7 周期的对角拉丁方）-> 游戏结束。*/
+    static const uint8_t board[8][8] = {
+        { 1, 2, 3, 4, 5, 6, 7, 1 },
+        { 2, 3, 4, 5, 6, 7, 1, 2 },
+        { 3, 4, 5, 6, 7, 1, 2, 3 },
+        { 4, 5, 6, 7, 1, 2, 3, 4 },
+        { 5, 6, 7, 1, 2, 3, 4, 5 },
+        { 6, 7, 1, 2, 3, 4, 5, 6 },
+        { 7, 1, 2, 3, 4, 5, 6, 7 },
+        { 1, 2, 3, 4, 5, 6, 7, 1 },
+    };
+
+    design_fruit_model_init(&model, 11u);
+    design_fruit_model_set_board(&model, board);
+
+    assert(!design_fruit_model_has_matches(&model));
+    assert(!design_fruit_model_has_available_move(&model));
+}
+
 int main(void)
 {
     test_init_board_has_no_matches();
@@ -115,5 +159,7 @@ int main(void)
     test_swap_plan_describes_matches_moves_and_spawns();
     test_gap_pattern_without_post_swap_match_is_rejected();
     test_non_adjacent_swap_is_rejected();
+    test_has_available_move_detects_playable_board();
+    test_has_available_move_detects_dead_board();
     return 0;
 }

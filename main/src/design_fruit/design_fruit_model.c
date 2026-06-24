@@ -234,6 +234,42 @@ bool design_fruit_model_has_matches(const design_fruit_model_t *model)
     return mark_matches(model, marks, NULL);
 }
 
+static bool swap_creates_match(design_fruit_model_t *probe, uint8_t r1, uint8_t c1, uint8_t r2, uint8_t c2)
+{
+    bool marks[DESIGN_FRUIT_ROWS][DESIGN_FRUIT_COLS];
+    bool found;
+    uint8_t tmp = probe->board[r1][c1];
+    probe->board[r1][c1] = probe->board[r2][c2];
+    probe->board[r2][c2] = tmp;
+    found = mark_matches(probe, marks, NULL);
+    tmp = probe->board[r1][c1];
+    probe->board[r1][c1] = probe->board[r2][c2];
+    probe->board[r2][c2] = tmp;
+    return found;
+}
+
+bool design_fruit_model_has_available_move(const design_fruit_model_t *model)
+{
+    design_fruit_model_t probe;
+
+    if(model == NULL) return false;
+
+    /* 在副本上试探每一个相邻交换，命中任意消除即说明仍可走棋。
+     * 棋盘在两步之间始终是稳定无消除态，所以"交换后产生消除"等价于该步合法。*/
+    probe = *model;
+    for(uint8_t row = 0; row < DESIGN_FRUIT_ROWS; row++) {
+        for(uint8_t col = 0; col < DESIGN_FRUIT_COLS; col++) {
+            if(col + 1u < DESIGN_FRUIT_COLS && swap_creates_match(&probe, row, col, row, (uint8_t)(col + 1u))) {
+                return true;
+            }
+            if(row + 1u < DESIGN_FRUIT_ROWS && swap_creates_match(&probe, row, col, (uint8_t)(row + 1u), col)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 void design_fruit_model_set_board(design_fruit_model_t *model,
                                   const uint8_t board[DESIGN_FRUIT_ROWS][DESIGN_FRUIT_COLS])
 {

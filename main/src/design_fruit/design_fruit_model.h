@@ -66,6 +66,8 @@ uint8_t design_fruit_model_cols(const design_fruit_model_t *model);
 uint8_t design_fruit_model_cell(const design_fruit_model_t *model, uint8_t row, uint8_t col);
 uint32_t design_fruit_model_score(const design_fruit_model_t *model);
 bool design_fruit_model_has_matches(const design_fruit_model_t *model);
+/* 是否还存在任意一步合法交换能够形成消除（用于游戏结束判定）。*/
+bool design_fruit_model_has_available_move(const design_fruit_model_t *model);
 void design_fruit_model_set_board(design_fruit_model_t *model,
                                   const uint8_t board[DESIGN_FRUIT_ROWS][DESIGN_FRUIT_COLS]);
 bool design_fruit_model_swap(design_fruit_model_t *model,
