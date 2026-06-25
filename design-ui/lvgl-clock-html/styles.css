@@ -1,0 +1,279 @@
+/* ========================================================================
+   横屏电子时钟 800×480 复刻
+   素材来源：1.jpg / IMG_4025.mp4
+   ======================================================================== */
+
+:root {
+  /* 画布 */
+  --screen-w: 800px;
+  --screen-h: 480px;
+  --header-h: 72px;
+  --footer-h: 72px;
+
+  /* 颜色（取自 1.jpg 实测） */
+  --digit-color: #fb5a53;            /* 大号时间 / 时段文字 珊瑚红 */
+  --ink: #10405a;                    /* 顶栏文字 / 星期 深蓝墨色 */
+  --temp-color: #ccc87d;             /* 温度数值 暗金 */
+  --temp-label: rgba(255, 255, 255, 0.5);
+
+  /* 字体 */
+  --font-digit: "Rubik", "Arial", "Helvetica", sans-serif;
+  --font-serif: "Noto Serif", Georgia, "Times New Roman", serif;
+
+  /* 动画：缓慢平滑上移，旧数字移出、新数字补上后停留 */
+  --roll-dur: 520ms;
+  --roll-ease: ease-in-out;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: #0c0e11;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 居中舞台，自适应缩放（保持 800×480 比例） */
+.stage {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- 800×480 屏幕主体 ---- */
+.screen {
+  position: relative;
+  width: var(--screen-w);
+  height: var(--screen-h);
+  display: grid;
+  grid-template-rows: var(--header-h) 1fr var(--footer-h);
+  overflow: hidden;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 0 0 12px #15171b, 0 0 0 14px #2a2d33, 0 24px 60px rgba(0, 0, 0, 0.6);
+  transform-origin: center center;
+
+  /* 启动入场 */
+  opacity: 0;
+  animation: screen-in 620ms cubic-bezier(0.22, 0.61, 0.36, 1) 120ms forwards;
+}
+
+@keyframes screen-in {
+  from { opacity: 0; transform: scale(0.972); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ===================== 顶部日期栏 ===================== */
+.screen__header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0 34px;
+  background: linear-gradient(100deg, #7fdef3 0%, #5dcae6 46%, #46b6d4 100%);
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-weight: 700;
+}
+
+.hdr--year  { justify-self: start;  font-size: 30px; letter-spacing: 0.02em; }
+.hdr--month { justify-self: center; font-size: 35px; letter-spacing: 0.06em; }
+.hdr--day   { justify-self: end;    font-size: 32px; letter-spacing: 0.02em; }
+
+/* ===================== 中部主时钟区 ===================== */
+.screen__main {
+  position: relative;
+  background:
+    radial-gradient(120% 95% at 50% 30%, #eef6fe 0%, #d8ecfd 52%, #c4def9 100%);
+  overflow: hidden;
+}
+
+.period {
+  position: absolute;
+  top: 30px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: var(--digit-color);
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 28px;
+  letter-spacing: 0.34em;
+  text-indent: 0.34em;          /* 补偿尾部字间距，保持视觉居中 */
+}
+
+/* 装饰闹钟：位于秒钟左上方 */
+.alarm {
+  position: absolute;
+  top: 82px;
+  left: 50%;
+  transform: translateX(173px);
+  width: 30px;
+  height: 30px;
+  color: var(--digit-color);
+}
+
+/* ---- 大号时间 ---- */
+.clock {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin-top: 18px;            /* 整体略向下，给时段文字留白 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slot {
+  position: relative;
+  width: 90px;
+  height: 148px;
+  overflow: hidden;
+}
+
+.slot .digit-slot__current,
+.slot .digit-slot__incoming {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-digit);
+  font-weight: 600;
+  font-size: 148px;
+  line-height: 1;
+  color: var(--digit-color);
+  will-change: transform, opacity;
+}
+
+/* 新数字默认停在下方，等待滚入 */
+.slot .digit-slot__incoming { transform: translateY(100%); }
+
+/* 冒号 */
+.colon {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  width: 36px;
+  height: 148px;
+  animation: colon-breathe 1.8s ease-in-out infinite;
+}
+.colon span {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--digit-color);
+}
+
+@keyframes colon-breathe {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.62; }
+}
+
+/* 数字滚动动画（由 JS 添加 .digit-slot--rolling 触发） */
+.slot.digit-slot--rolling .digit-slot__current {
+  animation: roll-out var(--roll-dur) var(--roll-ease) forwards;
+}
+.slot.digit-slot--rolling .digit-slot__incoming {
+  animation: roll-in var(--roll-dur) var(--roll-ease) forwards;
+}
+
+/* 纯垂直位移：旧数字缓慢上移移出，新数字从下方上移补位（无淡入淡出） */
+@keyframes roll-out {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-100%); }
+}
+@keyframes roll-in {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+/* ===================== 底部状态栏 ===================== */
+.screen__footer {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0 30px;
+  background: linear-gradient(92deg, #6fb4fd 0%, #3a9cfc 34%, #2a86f2 100%);
+}
+
+.weekday {
+  justify-self: center;
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 33px;
+  letter-spacing: 0.05em;
+}
+
+/* 温度 / 湿度通用结构：上行（标签 + 角标）/ 下行（图标 + 数值[ + 单位]） */
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1;
+}
+.metric--temp     { justify-self: start; align-items: stretch; }
+.metric--humidity { justify-self: end;   align-items: stretch; }
+
+/* 上行：标签靠一端、角标（°C / 笑脸）顶到另一端 */
+.metric__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 0 2px;
+}
+
+.metric__label {
+  font-family: var(--font-digit);
+  font-weight: 500;
+  font-size: 12.5px;
+  letter-spacing: 0.14em;
+  white-space: nowrap;
+}
+.metric--temp .metric__label     { color: var(--temp-label); }
+.metric--humidity .metric__label { color: var(--ink); }
+
+/* 下行：图标 + 数值 */
+.metric__num {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.metric--humidity .metric__num { justify-content: flex-end; }
+
+.metric__icon {
+  width: 18px;
+  height: 26px;
+  flex: none;
+}
+.metric--temp .metric__icon       { color: rgba(255, 255, 255, 0.62); }
+.metric--humidity .metric__icon--drop { color: var(--ink); }
+
+.metric__smiley { width: 15px; height: 15px; flex: none; color: var(--ink); }
+
+.metric__value {
+  font-family: var(--font-digit);
+  font-weight: 700;
+  font-size: 34px;
+}
+.metric__unit {
+  font-family: var(--font-digit);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* 温度：数值暗金，单位 °C 与图标用不同色 */
+.metric--temp .metric__value { color: var(--temp-color); }
+.metric--temp .metric__unit  { color: var(--ink); }     /* °C 深蓝，置于右上 */
+
+/* 湿度：整体深蓝 */
+.metric--humidity .metric__value,
+.metric--humidity .metric__unit { color: var(--ink); }

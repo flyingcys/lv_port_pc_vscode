@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Music Player</title>
+<style>
+  /* ───────────────────────── Token table (LVGL theme tokens) ───────────────────────── */
+  :root {
+    --w: 800px; --h: 480px;
+
+    /* Screen background — warm orange gradient (default theme, sampled from 2.png) */
+    --bg-top:  #722a12;
+    --bg-mid:  #d2551d;
+    --bg-bot:  #e8814a;
+
+    /* Header — warm dark orange */
+    --hdr-l:   #5a2210;
+    --hdr-r:   #2c1006;
+
+    /* Bottom bar — warm amber band */
+    --bar-1:   #6a2d14;
+    --bar-2:   #b8501f;
+    --bar-3:   #e0732a;
+    --bar-4:   #b34c1c;
+
+    --text:    #f3f2ff;
+    --muted:   #b9b3d8;
+    --lyric:   rgba(255,255,255,0.55);
+    --lyric-hl:#ffffff;
+
+    --accent:  #f1702f;            /* accent: switch-on / current-track highlight */
+    --cyan:    #ffd76a;            /* progress played segment (themed) */
+    --gold:    #d8a23a;            /* vinyl centre ring */
+
+    --line:    rgba(255,255,255,0.85);   /* icon / outline stroke */
+    --line-dim:rgba(255,255,255,0.42);   /* progress track */
+
+    /* Font sizes — 4 fixed tiers (each tier = 1 LVGL bitmap font) */
+    --fs-xl: 30px;   /* song title              */
+    --fs-lg: 15px;   /* header title            */
+    --fs-md: 13px;   /* lyrics / artist         */
+    --fs-sm: 11px;   /* time / caption          */
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%; height: 100vh;
+    display: grid; place-items: center;
+    background: #05050c;
+  }
+
+  /* ── Fixed canvas = device screen ── */
+  .screen {
+    width: var(--w); height: var(--h);
+    overflow: hidden; position: relative;
+    background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-mid) 52%, var(--bg-bot) 100%);
+    color: var(--text);
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* faint decorative background art (downstream = one baked RGB888 image) */
+  .bg-art {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    z-index: 0; pointer-events: none; opacity: 0.13;
+  }
+  .hdr, .main, .bottombar { position: relative; z-index: 1; }
+
+  /* ───────────────────────── Header ───────────────────────── */
+  .hdr {
+    height: 44px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 18px;
+    background: linear-gradient(90deg, var(--hdr-l) 0%, var(--hdr-r) 100%);
+  }
+  .hdr-title { font-size: var(--fs-lg); font-weight: 600; letter-spacing: 0.4px; }
+  .hdr-time  { font-size: var(--fs-md); color: var(--text); letter-spacing: 0.5px; }
+
+  /* ───────────────────────── Main body row ───────────────────────── */
+  .main { flex: 1; display: flex; overflow: hidden; }
+
+  /* ── Left: vinyl + tonearm ── */
+  .left {
+    width: 330px; flex-shrink: 0;
+    position: relative;                 /* anchor for absolute tonearm */
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* Vinyl record */
+  .vinyl {
+    width: 250px; height: 250px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 50%, #2a2a2a 0 62%, #111 62% 100%);
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    /* glossy bluish rim + drop shadow */
+    box-shadow: 0 0 0 2px rgba(90,150,180,0.30), 0 12px 40px rgba(0,0,0,0.70);
+    flex-shrink: 0;
+  }
+  .groove {
+    position: absolute; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.045);
+    pointer-events: none;
+  }
+  /* Album art — large circular photo (placeholder; downstream = real image) */
+  .album {
+    width: 150px; height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.55);
+    background: linear-gradient(180deg, #c9962f 0%, #b6792a 40%, #6c4a2e 100%);
+    position: relative;
+  }
+  /* rough silhouettes suggesting a group photo */
+  .album::before {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 46%;
+    background:
+      radial-gradient(12px 26px at 28% 100%, #1c1c22 60%, transparent 62%),
+      radial-gradient(11px 22px at 46% 100%, #24202a 60%, transparent 62%),
+      radial-gradient(13px 30px at 62% 100%, #1a1a22 60%, transparent 62%),
+      radial-gradient(11px 20px at 78% 100%, #221d28 60%, transparent 62%);
+  }
+  .spindle {
+    position: absolute; z-index: 2;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #0c0c14;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.15);
+  }
+
+  /* Tonearm (decorative SVG overlay) — swings off the record when paused */
+  .tonearm {
+    position: absolute; top: 0; left: 0;
+    pointer-events: none; z-index: 5;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.45));
+    transform-origin: 130px 44px;                 /* pivot bearing */
+    transition: transform 0.6s cubic-bezier(0.34, 0, 0.2, 1);
+  }
+  .tonearm.lifted { transform: rotate(-46deg); }  /* arm parked off the record (paused) */
+
+  /* ── Centre: swappable content area (home / settings views) ── */
+  .content { flex: 1; min-width: 0; position: relative; }
+  .view {
+    position: absolute; inset: 0;
+    display: none; flex-direction: column;
+    padding: 20px 18px 14px; overflow: hidden;
+  }
+  .view.show { display: flex; }
+  .view.center { align-items: center; text-align: center; }
+
+  .song-title  { font-size: var(--fs-xl); font-weight: 700; line-height: 1.05; }
+  .song-artist { font-size: var(--fs-md); color: var(--muted); margin: 6px 0 16px; }
+  .lyrics { display: flex; flex-direction: column; gap: 3px; overflow: hidden; width: 100%; }
+  .lyr {
+    font-size: var(--fs-md); color: var(--lyric); line-height: 1.6;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .lyr.hl { color: var(--lyric-hl); font-weight: 700; }
+
+  /* settings view */
+  .set-title { font-size: var(--fs-xl); font-weight: 700; margin-bottom: 12px; }
+  .set-list  { width: 100%; max-width: 340px; }
+
+  /* ── Right sidebar (icon column) ── */
+  .sidebar {
+    width: 64px; flex-shrink: 0;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 26px;
+    padding-top: 26px;
+  }
+  .ic {
+    width: 34px; height: 34px;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--line);
+    flex-shrink: 0;
+  }
+  .ic svg { width: 22px; height: 22px; }
+  .ic.active { background: rgba(255,255,255,0.16); color: #fff; }    /* active tab (home/settings) */
+  .ic.fav { color: #ff5a6a; }                                       /* favourited */
+  .ic.fav svg path { fill: currentColor; }
+  .ic.live { color: #ff6b6b; }                                      /* broadcast live on air */
+
+  /* play ⟷ pause glyph toggle (sidebar #ic-play + bottom #pbtn-play) */
+  .i-play, .i-pause { display: flex; align-items: center; justify-content: center; }
+  .i-pause { display: none; }
+  .playing .i-play  { display: none; }
+  .playing .i-pause { display: flex; }
+
+  /* ───────────────────────── Bottom control bar ───────────────────────── */
+  .bottombar {
+    height: 60px; flex-shrink: 0;
+    display: flex; align-items: center; gap: 12px;
+    padding: 0 18px;
+    background: linear-gradient(90deg, var(--bar-1) 0%, var(--bar-2) 40%, var(--bar-3) 66%, var(--bar-4) 100%);
+  }
+  .pbtn {
+    border-radius: 50%;
+    border: 1.5px solid var(--line);
+    background: rgba(255,255,255,0.08);
+    color: var(--text);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0;
+  }
+  .pbtn-sm { width: 34px; height: 34px; }
+  .pbtn-lg { width: 42px; height: 42px; }
+
+  .bar-time { font-size: var(--fs-sm); color: var(--text); flex-shrink: 0; min-width: 34px; }
+
+  .prog {
+    flex: 1; height: 16px; position: relative;
+    display: flex; align-items: center;
+  }
+  .prog-track {
+    width: 100%; height: 2px; border-radius: 1px;
+    background: var(--line-dim);
+  }
+  .prog-fill {
+    position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+    width: 4%; height: 2px; border-radius: 1px; background: var(--cyan);
+  }
+  .prog-knob {
+    position: absolute; left: 4%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: 14px; height: 14px; border-radius: 50%;
+    background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  }
+  .bar-ic {
+    width: 26px; height: 26px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text); cursor: pointer; flex-shrink: 0;
+  }
+  .bar-ic svg { width: 22px; height: 22px; }
+
+  /* ── Settings view rows: switch + colour swatches ── */
+  .srow {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .srow-label { font-size: var(--fs-md); }
+  .switch {
+    width: 44px; height: 24px; border-radius: 12px;
+    background: rgba(255,255,255,0.18); position: relative;
+    cursor: pointer; flex-shrink: 0;
+  }
+  .switch.on { background: var(--accent); }
+  .switch i { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; }
+  .switch.on i { left: 23px; }
+  .swatches { display: flex; gap: 10px; }
+  .sw { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
+  .sw.on { border-color: #fff; }
+
+  /* broadcast view: station list */
+  .station { display: flex; align-items: center; gap: 10px; padding: 11px 8px; border-radius: 9px; cursor: pointer; }
+  .station.on { background: rgba(255,255,255,0.10); }
+  .station-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
+  .station.on .station-dot { background: #ff5a5a; }
+  .station-name { font-size: var(--fs-md); }
+  .station-sub  { font-size: var(--fs-sm); color: var(--muted); }
+  .live-tag { color: #ff6b6b; font-weight: 700; }
+
+  /* favourites view */
+  .fav-row    { display: flex; align-items: center; gap: 8px; padding: 7px 4px 7px 8px; border-radius: 9px; }
+  .fav-row.on { background: rgba(255,255,255,0.08); }
+  .fav-play   { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; cursor: pointer; }
+  .fav-heart  { width: 16px; height: 16px; color: #ff5a6a; flex-shrink: 0; }
+  .fav-del    { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--muted); flex-shrink: 0; }
+  .fav-del svg { width: 15px; height: 15px; }
+  .fav-empty  { text-align: center; color: var(--muted); font-size: var(--fs-md); padding: 46px 0 0; }
+  .fav-empty svg { width: 40px; height: 40px; opacity: 0.5; margin-bottom: 10px; }
+
+  /* ── Playlist popup (anchored above the playlist button) ── */
+  .pl-backdrop { position: absolute; inset: 0; z-index: 30; display: none; }
+  .pl-backdrop.show { display: block; }
+  .pl-pop {
+    position: absolute; right: 16px; bottom: 70px;
+    width: 300px; max-height: 304px;
+    background: linear-gradient(180deg, #1b2050 0%, #141832 100%);
+    border: 1px solid rgba(255,255,255,0.10); border-radius: 14px;
+    box-shadow: 0 18px 50px rgba(0,0,0,0.5);
+    z-index: 31; display: none; flex-direction: column; overflow: hidden;
+  }
+  .pl-pop.show { display: flex; }
+  .pl-head {
+    padding: 13px 16px; font-size: var(--fs-md); font-weight: 600;
+    display: flex; align-items: baseline; gap: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.08); flex-shrink: 0;
+  }
+  .pl-count { font-size: var(--fs-sm); color: var(--muted); font-weight: 400; }
+  .pl-list { overflow: auto; padding: 6px; }
+  .pl-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; cursor: pointer; }
+  .pl-item.on { background: rgba(255,255,255,0.10); }
+  .pl-idx  { width: 18px; font-size: var(--fs-sm); color: var(--muted); text-align: center; flex-shrink: 0; }
+  .pl-item.on .pl-idx { color: var(--accent); font-weight: 700; }
+  .pl-item.on .pl-name { color: var(--accent); }
+  .pl-info { flex: 1; min-width: 0; }
+  .pl-name { font-size: var(--fs-md); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pl-sub  { font-size: var(--fs-sm); color: var(--muted); }
+  .pl-dur  { font-size: var(--fs-sm); color: var(--muted); flex-shrink: 0; }
+
+  /* vinyl rotation — spins while playing, freezes (not snaps) when paused (maps to lv_anim) */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .vinyl { animation: spin 6s linear infinite; animation-play-state: paused; }
+  .vinyl.spinning { animation-play-state: running; }
+</style>
+</head>
+<body>
+<div class="screen">
+
+  <!-- faint decorative background art (soft bokeh + vinyl halo + music notes) -->
+  <svg class="bg-art" viewBox="0 0 800 480" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <radialGradient id="bk" cx="50%" cy="50%" r="50%">
+        <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.7"/>
+        <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <circle cx="120" cy="390" r="150" fill="url(#bk)"/>
+    <circle cx="660" cy="110" r="170" fill="url(#bk)"/>
+    <circle cx="540" cy="440" r="100" fill="url(#bk)"/>
+    <circle cx="745" cy="320" r="80"  fill="url(#bk)"/>
+    <!-- vinyl halo rings -->
+    <circle cx="175" cy="240" r="168" fill="none" stroke="#fff" stroke-width="2" opacity="0.6"/>
+    <circle cx="175" cy="240" r="120" fill="none" stroke="#fff" stroke-width="1.5" opacity="0.4"/>
+    <!-- faint music notes -->
+    <g fill="#fff" opacity="0.7">
+      <ellipse cx="588" cy="262" rx="14" ry="10" transform="rotate(-18 588 262)"/>
+      <rect x="600" y="206" width="4.5" height="58"/>
+      <path d="M600 206 q 26 7 20 30 q 3 -20 -20 -16 z"/>
+      <ellipse cx="690" cy="372" rx="11" ry="8" transform="rotate(-18 690 372)"/>
+      <rect x="699" y="328" width="3.5" height="46"/>
+      <path d="M699 328 q 20 5 15 23 q 2 -15 -15 -12 z"/>
+    </g>
+  </svg>
+
+  <!-- ── Header ── -->
+  <div class="hdr">
+    <span class="hdr-title">Music Player</span>
+    <span class="hdr-time">2019/07/31 10:07:18</span>
+  </div>
+
+  <!-- ── Main body ── -->
+  <div class="main">
+
+    <!-- Left: vinyl + tonearm -->
+    <div class="left">
+      <div class="vinyl" id="vinyl">
+        <!-- decorative concentric grooves -->
+        <div class="groove" style="width:242px;height:242px;"></div>
+        <div class="groove" style="width:228px;height:228px;"></div>
+        <div class="groove" style="width:214px;height:214px;"></div>
+        <div class="groove" style="width:200px;height:200px;"></div>
+        <div class="groove" style="width:186px;height:186px;"></div>
+        <div class="groove" style="width:172px;height:172px;"></div>
+        <!-- centre album art -->
+        <div class="album"></div>
+        <div class="spindle"></div>
+      </div>
+      <!-- tonearm (decorative): raised pivot ring → S-curved arm → headshell w/ finger-lift -->
+      <svg class="tonearm" viewBox="0 0 330 376" width="330" height="376">
+        <!-- arm tube: thick base stroke + thin highlight -->
+        <path d="M130 44 C 140 82, 150 104, 170 128" fill="none" stroke="#d7dbe4" stroke-width="7" stroke-linecap="round"/>
+        <path d="M130 44 C 140 82, 150 104, 170 128" fill="none" stroke="#fbfcff" stroke-width="3" stroke-linecap="round"/>
+        <!-- headshell / cartridge block at the arm end, angled to the record -->
+        <g transform="rotate(52 179 139)">
+          <rect x="165" y="132" width="30" height="14" rx="3.5" fill="#f4f6fa" stroke="#c7ccd8" stroke-width="0.8"/>
+        </g>
+        <!-- curved finger-lift on the head -->
+        <path d="M183 142 q 13 -3 10 -16" fill="none" stroke="#eef0f5" stroke-width="3.4" stroke-linecap="round"/>
+        <!-- pivot bearing: white ring with dark centre hole (raised higher) -->
+        <circle cx="130" cy="44" r="11.5" fill="#f4f6fa" stroke="#c7ccd8" stroke-width="1"/>
+        <circle cx="130" cy="44" r="5" fill="#1b2150"/>
+      </svg>
+    </div>
+
+    <!-- Centre: swappable content (home / settings) -->
+    <div class="content">
+
+      <!-- Home view: now-playing + lyrics -->
+      <div class="view center show" id="view-home">
+        <div class="song-title" id="song-title">Yellow</div>
+        <div class="song-artist" id="song-artist">by ColdPlay</div>
+        <div class="lyrics" id="lyrics">
+          <div class="lyr">Look at the stars</div>
+          <div class="lyr hl">look how they shine for you</div>
+          <div class="lyr">And everything you do</div>
+          <div class="lyr">Yeah, they were all yellow</div>
+          <div class="lyr">I came along, I wrote a song for you</div>
+          <div class="lyr">And all the things you do</div>
+          <div class="lyr">And it was called yellow</div>
+          <div class="lyr">So then I took my turn</div>
+          <div class="lyr">Oh what a thing to have done</div>
+          <div class="lyr">And it was all yellow</div>
+        </div>
+      </div>
+
+      <!-- Settings view -->
+      <div class="view center" id="view-settings">
+        <div class="set-title">设置</div>
+        <div class="set-list">
+          <div class="srow">
+            <span class="srow-label">显示歌词</span>
+            <div class="switch on" id="sw-lyrics"><i></i></div>
+          </div>
+          <div class="srow" style="border-bottom:none;">
+            <span class="srow-label">背景色</span>
+            <div class="swatches" id="swatches">
+              <div class="sw on" data-theme="orange" style="background:#d2551d"></div>
+              <div class="sw"    data-theme="purple" style="background:#6a57e0"></div>
+              <div class="sw"    data-theme="teal"   style="background:#1aa37a"></div>
+              <div class="sw"    data-theme="pink"   style="background:#c83f86"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Broadcast view: station list (tap a station to tune in, tap again to stop) -->
+      <div class="view center" id="view-broadcast">
+        <div class="set-title">广播电台</div>
+        <div class="set-list">
+          <div id="station-list" style="text-align:left;"></div>
+        </div>
+      </div>
+
+      <!-- Favourites view: collected songs (or empty state) -->
+      <div class="view center" id="view-favorites">
+        <div class="set-title">我的收藏</div>
+        <div class="set-list">
+          <div id="fav-list" style="text-align:left;"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right sidebar: home · settings · broadcast · favourite -->
+    <div class="sidebar">
+
+      <!-- Home -->
+      <div class="ic active" data-view="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 10.5 12 3l9 7.5"/>
+          <path d="M5.5 9.2V20h13V9.2"/>
+        </svg>
+      </div>
+
+      <!-- Settings -->
+      <div class="ic" data-view="settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33
+                   1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33
+                   l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3
+                   a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83
+                   l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09
+                   a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06
+                   A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09
+                   a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </div>
+
+      <!-- Broadcast -->
+      <div class="ic" id="ic-broadcast" data-view="broadcast">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/>
+          <path d="M8.6 8.6a4.8 4.8 0 0 0 0 6.8"/>
+          <path d="M15.4 8.6a4.8 4.8 0 0 1 0 6.8"/>
+          <path d="M6 6a9 9 0 0 0 0 12"/>
+          <path d="M18 6a9 9 0 0 1 0 12"/>
+        </svg>
+      </div>
+
+      <!-- Favourites (filled = has favourites; opens the 收藏 list) -->
+      <div class="ic fav" id="ic-fav" data-view="favorites">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+      </div>
+
+    </div>
+  </div><!-- .main -->
+
+  <!-- ── Bottom control bar ── -->
+  <div class="bottombar">
+    <!-- Previous -->
+    <div class="pbtn pbtn-sm" id="btn-prev">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+        <rect x="4" y="5" width="2.6" height="14" rx="1"/>
+        <polygon points="20,5 9,12 20,19"/>
+      </svg>
+    </div>
+    <!-- Play / Pause -->
+    <div class="pbtn pbtn-lg playing" id="pbtn-play" data-play>
+      <span class="i-play"><svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><polygon points="7 4 19 12 7 20"/></svg></span>
+      <span class="i-pause"><svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg></span>
+    </div>
+    <!-- Next -->
+    <div class="pbtn pbtn-sm" id="btn-next">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+        <polygon points="4,5 15,12 4,19"/>
+        <rect x="17.4" y="5" width="2.6" height="14" rx="1"/>
+      </svg>
+    </div>
+
+    <span class="bar-time">00:04</span>
+
+    <div class="prog">
+      <div class="prog-track"></div>
+      <div class="prog-fill"></div>
+      <div class="prog-knob"></div>
+    </div>
+
+    <span class="bar-time">04:25</span>
+
+    <!-- Play mode — click cycles: 随机 / 顺序 / 单曲 / 列表 (icon injected by JS) -->
+    <div class="bar-ic" id="ic-mode"></div>
+    <!-- Playlist -->
+    <div class="bar-ic" id="ic-playlist">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="6"  x2="15" y2="6"/>
+        <line x1="3" y1="12" x2="13" y2="12"/>
+        <line x1="3" y1="18" x2="11" y2="18"/>
+        <circle cx="18" cy="16" r="2.4"/>
+        <path d="M20.4 16V8l-1 0.4"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Playlist popup -->
+  <div class="pl-backdrop" id="pl-backdrop"></div>
+  <div class="pl-pop" id="playlist-pop">
+    <div class="pl-head">播放列表 <span class="pl-count" id="pl-count"></span></div>
+    <div class="pl-list" id="pl-list"></div>
+  </div>
+
+</div><!-- .screen -->
+
+<script>
+/* ───────── Data (mirror as C `static const` downstream) ───────── */
+const STATIONS = [
+  { name: '城市之声 FM93.4',   sub: '流行金曲' },
+  { name: '经典音乐台 FM97.7', sub: '古典交响' },
+  { name: '爵士现场 FM101.2',  sub: '现场爵士' },
+  { name: '新闻广播 FM106.1',  sub: '资讯快报' },
+];
+const FAVORITES = [
+  { name: 'Yellow',         sub: 'ColdPlay' },
+  { name: 'Viva La Vida',   sub: 'ColdPlay' },
+  { name: 'The Scientist',  sub: 'ColdPlay' },
+  { name: 'Fix You',        sub: 'ColdPlay' },
+];
+const PLAYLIST = [
+  { name: 'Yellow',         sub: 'ColdPlay', dur: '04:25' },
+  { name: 'Viva La Vida',   sub: 'ColdPlay', dur: '04:02' },
+  { name: 'The Scientist',  sub: 'ColdPlay', dur: '05:09' },
+  { name: 'Fix You',        sub: 'ColdPlay', dur: '04:55' },
+  { name: 'Paradise',       sub: 'ColdPlay', dur: '04:38' },
+  { name: 'Clocks',         sub: 'ColdPlay', dur: '05:07' },
+  { name: 'In My Place',    sub: 'ColdPlay', dur: '03:48' },
+];
+
+/* ───────── State ───────── */
+const state = { view: 'home', playing: true, showLyrics: true, station: -1, idx: 0, mode: 3 };
+
+const $  = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+
+/* ───────── 主页面 / 设置 / 广播 — swap the centre content in place ───────── */
+function showView(name) {
+  state.view = name;
+  $$('.view').forEach(v => v.classList.remove('show'));
+  $('#view-' + name).classList.add('show');
+  $$('.ic[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === name));
+}
+$$('.ic[data-view]').forEach(b => b.addEventListener('click', () => showView(b.dataset.view)));
+
+/* ───────── 播放 / 暂停 (bottom bar) — vinyl spins + tonearm swings on/off ───────── */
+const vinyl = $('#vinyl'), tonearm = $('.tonearm');
+function renderPlay() {
+  $$('[data-play]').forEach(b => b.classList.toggle('playing', state.playing));
+  vinyl.classList.toggle('spinning', state.playing);
+  tonearm.classList.toggle('lifted', !state.playing);   // arm off the record when paused
+}
+function togglePlay() { state.playing = !state.playing; renderPlay(); }
+$$('[data-play]').forEach(b => b.addEventListener('click', togglePlay));
+
+/* ───────── 收藏 — 列表视图：点项目播放，× 取消收藏 ───────── */
+const favList = $('#fav-list'), icFav = $('#ic-fav');
+const HEART = '<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>';
+
+function buildFavorites() {
+  icFav.classList.toggle('fav', FAVORITES.length > 0);   // filled red only when there are favourites
+  if (!FAVORITES.length) {
+    favList.innerHTML =
+      `<div class="fav-empty">
+         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">${HEART}</svg>
+         <div>暂无收藏歌曲</div>
+       </div>`;
+    return;
+  }
+  const curName = state.station < 0 ? PLAYLIST[state.idx].name : null;
+  favList.innerHTML = '';
+  FAVORITES.forEach((s, i) => {
+    const row = document.createElement('div');
+    row.className = 'fav-row' + (s.name === curName ? ' on' : '');
+    row.innerHTML =
+      `<div class="fav-play">
+         <svg class="fav-heart" viewBox="0 0 24 24" fill="currentColor">${HEART}</svg>
+         <div><div class="station-name">${s.name}</div><div class="station-sub">${s.sub}</div></div>
+       </div>
+       <div class="fav-del" title="取消收藏">
+         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+       </div>`;
+    $('.fav-play', row).addEventListener('click', () => playSong(s));
+    $('.fav-del',  row).addEventListener('click', () => removeFavorite(i));
+    favList.appendChild(row);
+  });
+}
+function removeFavorite(i) { FAVORITES.splice(i, 1); buildFavorites(); }
+function playIndex(i) {
+  state.station = -1; icBroadcast.classList.remove('live');   // stop radio if any
+  state.idx = i;
+  state.playing = true; renderPlay();                         // start playing → vinyl spins
+  renderStations(); renderNowPlaying(); buildFavorites(); buildPlaylist();
+}
+function playSong(s) {                                        // list row → resolve to playlist index
+  const i = PLAYLIST.findIndex(p => p.name === s.name);
+  if (i >= 0) playIndex(i);
+  showView('home');                                           // jump to home to show it playing
+}
+
+/* ───────── 播放列表 — 真实弹出列表 ───────── */
+const plPop = $('#playlist-pop'), plBackdrop = $('#pl-backdrop'), plList = $('#pl-list'), icPlaylist = $('#ic-playlist');
+$('#pl-count').textContent = PLAYLIST.length + ' 首';
+function buildPlaylist() {
+  const curName = state.station < 0 ? PLAYLIST[state.idx].name : null;
+  plList.innerHTML = '';
+  PLAYLIST.forEach((s, i) => {
+    const row = document.createElement('div');
+    row.className = 'pl-item' + (s.name === curName ? ' on' : '');
+    row.innerHTML =
+      `<div class="pl-idx">${i + 1}</div>
+       <div class="pl-info"><div class="pl-name">${s.name}</div><div class="pl-sub">${s.sub}</div></div>
+       <div class="pl-dur">${s.dur}</div>`;
+    row.addEventListener('click', () => { playSong(s); closePlaylist(); });
+    plList.appendChild(row);
+  });
+}
+function openPlaylist()  { buildPlaylist(); plPop.classList.add('show'); plBackdrop.classList.add('show'); }
+function closePlaylist() { plPop.classList.remove('show'); plBackdrop.classList.remove('show'); }
+function togglePlaylist(){ plPop.classList.contains('show') ? closePlaylist() : openPlaylist(); }
+icPlaylist.addEventListener('click', togglePlaylist);
+plBackdrop.addEventListener('click', closePlaylist);
+
+/* ───────── 播放模式 — 点击循环 随机 / 顺序 / 单曲 / 列表 ───────── */
+const SV = 'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
+const MODES = [
+  { key: 'shuffle', label: '随机播放', icon: `<svg ${SV}><path d="M3 17h2.5c1.4 0 2.7-.7 3.5-1.9l4-6.2c.8-1.2 2.1-1.9 3.5-1.9H21"/><polyline points="17 3 21 7 17 11"/><path d="M3 7h2.5c1.4 0 2.7.7 3.5 1.9l.6.9"/><path d="M21 17h-3.5c-1.4 0-2.7-.7-3.5-1.9l-.6-.9"/><polyline points="17 13 21 17 17 21"/></svg>` },
+  { key: 'order',   label: '顺序播放', icon: `<svg ${SV}><path d="M13 4 H15 A6 6 0 0 1 21 10 V14 A6 6 0 0 1 15 20 H9 A6 6 0 0 1 3 14 V10 A6 6 0 0 1 9 4 H11"/><polyline points="11 1.7 14 4 11 6.3"/></svg>` },
+  { key: 'one',     label: '单曲循环', icon: `<svg ${SV}><path d="M13 4 H15 A6 6 0 0 1 21 10 V14 A6 6 0 0 1 15 20 H9 A6 6 0 0 1 3 14 V10 A6 6 0 0 1 9 4 H11"/><polyline points="11 1.7 14 4 11 6.3"/><text x="12" y="12.3" font-size="12" font-weight="700" fill="currentColor" stroke="none" text-anchor="middle" dominant-baseline="central">1</text></svg>` },
+  { key: 'list',    label: '列表循环', icon: `<svg ${SV}><path d="M13 5 H15 A6 6 0 0 1 21 11 V13 A6 6 0 0 1 15 19 H13"/><polyline points="13 16.7 10 19 13 21.3"/><path d="M11 19 H9 A6 6 0 0 1 3 13 V11 A6 6 0 0 1 9 5 H11"/><polyline points="11 2.7 14 5 11 7.3"/></svg>` },
+];
+const icMode = $('#ic-mode');
+function renderMode() { icMode.innerHTML = MODES[state.mode].icon; icMode.title = MODES[state.mode].label; }
+icMode.addEventListener('click', () => { state.mode = (state.mode + 1) % MODES.length; renderMode(); });
+
+/* ───────── 上一首 / 下一首 — 行为随播放模式而变 ───────── */
+function randIdx() {
+  if (PLAYLIST.length <= 1) return state.idx;
+  let r; do { r = Math.floor(Math.random() * PLAYLIST.length); } while (r === state.idx);
+  return r;
+}
+function step(dir) {                                   // dir: +1 下一首 / -1 上一首
+  const n = PLAYLIST.length, key = MODES[state.mode].key;
+  let i;
+  if      (key === 'shuffle') i = randIdx();           // 随机：随机一首
+  else if (key === 'one')     i = state.idx;           // 单曲循环：重播当前
+  else if (key === 'list')    i = (state.idx + dir + n) % n;          // 列表循环：到底回头
+  else                        i = Math.min(Math.max(state.idx + dir, 0), n - 1); // 顺序：到头停住
+  playIndex(i);
+}
+$('#btn-prev').addEventListener('click', () => step(-1));
+$('#btn-next').addEventListener('click', () => step(1));
+
+/* ───────── 设置内容: 显示歌词开关 + 强调色 ───────── */
+const swLyrics = $('#sw-lyrics'), lyrics = $('#lyrics');
+const songTitle = $('#song-title'), songArtist = $('#song-artist');
+swLyrics.addEventListener('click', () => {
+  state.showLyrics = !state.showLyrics;
+  swLyrics.classList.toggle('on', state.showLyrics);
+  renderNowPlaying();
+});
+/* 背景色主题：整套背景渐变（屏幕 + 顶栏 + 底栏）+ 强调色一起切换 */
+const THEMES = {
+  orange: { bg:['#722a12','#d2551d','#e8814a'], hdr:['#5a2210','#2c1006'], bar:['#6a2d14','#b8501f','#e0732a','#b34c1c'], accent:'#f1702f', prog:'#ffd76a' },
+  purple: { bg:['#1b2168','#3a2a7a','#5e4488'], hdr:['#16465c','#15103f'], bar:['#2c3f60','#5b3c7c','#90508c','#7c3f6c'], accent:'#6a57e0', prog:'#29d3d3' },
+  teal:   { bg:['#0e3b39','#157068','#2aa58c'], hdr:['#0c3330','#06201f'], bar:['#14403c','#1d6b5e','#2a9c7a','#1f7a5e'], accent:'#1fb389', prog:'#ffd24a' },
+  pink:   { bg:['#5a1238','#a01e5e','#d24a86'], hdr:['#4a0f30','#28091c'], bar:['#5a1540','#962763','#c83f86','#a02e6a'], accent:'#ec4f93', prog:'#5ad0ff' },
+};
+function applyTheme(name) {
+  const t = THEMES[name]; if (!t) return;
+  const r = document.documentElement.style;
+  r.setProperty('--bg-top', t.bg[0]); r.setProperty('--bg-mid', t.bg[1]); r.setProperty('--bg-bot', t.bg[2]);
+  r.setProperty('--hdr-l', t.hdr[0]); r.setProperty('--hdr-r', t.hdr[1]);
+  r.setProperty('--bar-1', t.bar[0]); r.setProperty('--bar-2', t.bar[1]);
+  r.setProperty('--bar-3', t.bar[2]); r.setProperty('--bar-4', t.bar[3]);
+  r.setProperty('--accent', t.accent); r.setProperty('--cyan', t.prog);
+}
+$$('#swatches .sw').forEach(sw =>
+  sw.addEventListener('click', () => {
+    $$('#swatches .sw').forEach(s => s.classList.remove('on'));
+    sw.classList.add('on');
+    applyTheme(sw.dataset.theme);
+  }));
+
+/* ───────── 广播: 电台列表（点选即收听，再点同台停止） ───────── */
+const stationList = $('#station-list'), icBroadcast = $('#ic-broadcast');
+function buildStations() {
+  stationList.innerHTML = '';
+  STATIONS.forEach((st, i) => {
+    const row = document.createElement('div');
+    row.className = 'station';
+    row.innerHTML =
+      `<div class="station-dot"></div>
+       <div><div class="station-name">${st.name}</div><div class="station-sub">${st.sub}</div></div>`;
+    row.addEventListener('click', () => {
+      state.station = (state.station === i) ? -1 : i;   // tap to tune in / tap same to stop
+      icBroadcast.classList.toggle('live', state.station >= 0);
+      renderStations();
+      renderNowPlaying();
+    });
+    stationList.appendChild(row);
+  });
+}
+function renderStations() {
+  $$('.station', stationList).forEach((r, i) => r.classList.toggle('on', state.station === i));
+}
+
+/* now-playing on the home view: live radio / favourite song / default */
+function renderNowPlaying() {
+  if (state.station >= 0) {
+    const st = STATIONS[state.station];
+    songTitle.textContent = st.name;
+    songArtist.innerHTML  = `<span class="live-tag">● LIVE</span> · ${st.sub}`;
+    lyrics.style.display = 'none';
+  } else {
+    const t = PLAYLIST[state.idx];
+    songTitle.textContent = t.name;
+    songArtist.textContent = 'by ' + t.sub;
+    lyrics.style.display = (t.name === 'Yellow' && state.showLyrics) ? 'flex' : 'none';  // lyrics only for Yellow
+  }
+}
+
+/* ───────── Init ───────── */
+renderPlay();
+renderMode();
+buildStations();
+renderStations();
+buildFavorites();
+renderNowPlaying();
+
+/* URL-param hooks for headless screenshots (?view= / ?paused / ?live / ?favempty) */
+const qp = new URLSearchParams(location.search);
+if (qp.has('favempty')) { FAVORITES.length = 0; buildFavorites(); }   // preview empty state
+if (qp.has('paused'))   togglePlay();
+if (qp.has('live'))     $$('.station', stationList)[0]?.click();
+if (qp.has('playfav'))  { const f = FAVORITES[+qp.get('playfav')]; if (f) playSong(f); }
+if (qp.get('view'))     showView(qp.get('view'));
+if (qp.has('playlist')) openPlaylist();
+if (qp.has('mode'))     { state.mode = +qp.get('mode'); renderMode(); }
+if (qp.get('theme'))    { applyTheme(qp.get('theme')); const s = $(`#swatches .sw[data-theme="${qp.get('theme')}"]`); if (s) { $$('#swatches .sw').forEach(x=>x.classList.remove('on')); s.classList.add('on'); } }
+</script>
+</body>
+</html>

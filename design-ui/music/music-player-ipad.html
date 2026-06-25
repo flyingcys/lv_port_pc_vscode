@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Music Player · iPad (火力全开)</title>
+<style>
+  /* ───────────────────────── Token table (LVGL theme tokens) ─────────────────────────
+     Device: 800×480, capacitive touch (iPad), RGB888. Reproduction of 2.png.
+     CJK text → LVGL needs a subset CJK font (extract charset from the strings below). */
+  :root {
+    --w: 800px; --h: 480px;
+
+    --text:    #fff4ea;
+    --muted:   rgba(255,236,222,0.66);
+    --label:   rgba(255,236,222,0.5);
+    --lyric:   rgba(255,236,222,0.5);
+    --lyric-hl:#fff7ef;
+
+    --accent:  #ff7e36;
+    --line:    rgba(255,240,230,0.9);
+    --line-dim:rgba(255,240,230,0.28);
+
+    /* Font sizes — 4 fixed tiers (each tier = 1 LVGL bitmap font) */
+    --fs-xl: 26px;   /* song title         */
+    --fs-lg: 14px;   /* highlighted lyric  */
+    --fs-md: 13px;   /* lyrics / subtitle  */
+    --fs-sm: 11px;   /* credits / time     */
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%; height: 100vh;
+    display: grid; place-items: center;
+    background: #120804;
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", "Segoe UI", Arial, sans-serif;
+  }
+
+  /* ── Fixed canvas = device screen ──
+     warm orange with bright glow at the vinyl, darkening to the edges (radial → baked
+     into one RGB888 bg image downstream). */
+  .screen {
+    width: var(--w); height: var(--h);
+    overflow: hidden; position: relative;
+    background: radial-gradient(125% 120% at 32% 44%,
+                #f6862f 0%, #e3611f 30%, #b54a14 62%, #74300f 100%);
+    color: var(--text);
+    display: flex; flex-direction: column;
+  }
+
+  /* ───────────────────────── Top bar ───────────────────────── */
+  .topbar { height: 40px; flex-shrink: 0; display: flex; align-items: center; gap: 10px; padding: 0 18px; }
+  .chevron { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .chevron svg { width: 20px; height: 20px; }
+  .now { font-size: var(--fs-sm); color: var(--muted); letter-spacing: 2px; }
+
+  /* ───────────────────────── Stage ───────────────────────── */
+  .stage { flex: 1; display: flex; overflow: hidden; }
+
+  /* ── Left column: turntable (top) + controls (bottom) ── */
+  .left {
+    width: 372px; flex-shrink: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+    padding: 2px 18px 16px;
+  }
+  .turntable { position: relative; width: 300px; height: 258px; flex-shrink: 0; }
+  .vinyl {
+    position: absolute; left: 50%; top: 48px; transform: translateX(-50%);
+    width: 204px; height: 204px; border-radius: 50%;
+    background: radial-gradient(circle at 50% 50%, #2a2521 0 58%, #0e0d0c 58% 100%);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 0 2px rgba(255,190,130,0.22), 0 14px 36px rgba(50,16,0,0.55);
+  }
+  .groove { position: absolute; border-radius: 50%; border: 1px solid rgba(255,255,255,0.04); pointer-events: none; }
+  /* fiery / lava album (placeholder; downstream = real image) */
+  .album {
+    width: 128px; height: 128px; border-radius: 50%; overflow: hidden; position: relative;
+    box-shadow: 0 0 0 2px rgba(0,0,0,0.5);
+    background: radial-gradient(circle at 44% 40%, #ffe27a 0%, #ffb02f 18%, #ff7a18 38%, #e0440f 60%, #9a2407 82%, #4a1303 100%);
+  }
+  .album::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(20px 7px at 60% 58%, rgba(80,12,0,0.6) 60%, transparent 62%),
+      radial-gradient(26px 8px at 38% 70%, rgba(70,10,0,0.55) 60%, transparent 62%),
+      radial-gradient(16px 6px at 54% 82%, rgba(60,8,0,0.5) 60%, transparent 62%),
+      radial-gradient(10px 18px at 70% 44%, rgba(255,225,150,0.35) 55%, transparent 60%);
+  }
+  .spindle { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #0b0b0b; box-shadow: 0 0 0 1px rgba(255,255,255,0.18); }
+  .tonearm {
+    position: absolute; left: 0; top: 0; pointer-events: none; z-index: 5;
+    filter: drop-shadow(0 2px 3px rgba(50,16,0,0.5));
+    transform-origin: 121px 30px;                 /* pivot bearing */
+    transition: transform 0.6s cubic-bezier(0.34, 0, 0.2, 1);
+  }
+  .tonearm.lifted { transform: rotate(-46deg); }  /* arm parked off the record (paused) */
+
+  /* controls (3 rows): secondary icons · progress · transport */
+  .controls { width: 100%; max-width: 304px; }
+  .sec-row { display: flex; align-items: center; justify-content: space-between; padding: 0 6px; margin-bottom: 12px; }
+  .sec { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: rgba(255,240,230,0.82); }
+  .sec svg { width: 21px; height: 21px; }
+
+  .prog-row { display: flex; align-items: center; gap: 9px; }
+  .prog-time { font-size: var(--fs-sm); color: var(--muted); min-width: 30px; }
+  .prog-time.r { text-align: right; }
+  .prog-track { flex: 1; height: 3px; border-radius: 2px; background: var(--line-dim); position: relative; }
+  .prog-fill { position: absolute; left: 0; top: 0; height: 100%; width: 32%; border-radius: 2px; background: rgba(255,240,230,0.85); }
+  .prog-knob { position: absolute; left: 32%; top: 50%; transform: translate(-50%,-50%); width: 9px; height: 9px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px rgba(255,126,54,0.25); }
+
+  .trans-row { display: flex; align-items: center; justify-content: center; gap: 22px; margin-top: 14px; }
+  .tbtn { display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text); }
+  .tbtn svg { width: 22px; height: 22px; }
+  .tbtn.sm svg { width: 22px; height: 22px; }
+  .tbtn.play { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--line); background: rgba(255,255,255,0.10); }
+  .i-pause { display: none; }
+  .playing .i-play { display: none; }
+  .playing .i-pause { display: flex; }
+
+  /* ── Right column: title + subtitle + credits + lyrics ── */
+  .right {
+    flex: 1; min-width: 0; overflow: hidden;
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+    padding: 6px 26px 14px 8px;
+  }
+  .song-title { font-size: var(--fs-xl); font-weight: 700; color: #ffe7cf; line-height: 1.12; }
+  .song-sub   { font-size: var(--fs-md); color: var(--muted); margin: 4px 0 14px; }
+  .credits { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+  .cred { font-size: var(--fs-sm); color: var(--label); }
+  .cred b { color: var(--muted); font-weight: 400; }
+  .lyrics { display: flex; flex-direction: column; gap: 5px; overflow: hidden; }
+  .lyr { font-size: var(--fs-md); color: var(--lyric); line-height: 1.45; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lyr.hl { color: var(--lyric-hl); font-weight: 700; font-size: var(--fs-lg); }
+
+  /* vinyl rotation — spins while playing, freezes (not snaps) when paused (maps to lv_anim) */
+  @keyframes spin { to { transform: translateX(-50%) rotate(360deg); } }
+  .vinyl { animation: spin 9s linear infinite; animation-play-state: paused; }
+  .vinyl.spinning { animation-play-state: running; }
+
+  /* ── Playlist popup (pops up from the playlist button, bottom-left) ── */
+  .pl-backdrop { position: absolute; inset: 0; z-index: 30; display: none; }
+  .pl-backdrop.show { display: block; }
+  .pl-pop {
+    position: absolute; left: 36px; bottom: 22px;
+    width: 300px; max-height: 360px;
+    background: linear-gradient(180deg, #3a1d0f 0%, #24120a 100%);
+    border: 1px solid rgba(255,210,170,0.16); border-radius: 14px;
+    box-shadow: 0 18px 50px rgba(30,8,0,0.55);
+    z-index: 31; display: none; flex-direction: column; overflow: hidden;
+  }
+  .pl-pop.show { display: flex; }
+  .pl-head {
+    padding: 13px 16px; font-size: var(--fs-md); font-weight: 600;
+    display: flex; align-items: baseline; gap: 8px;
+    border-bottom: 1px solid rgba(255,210,170,0.12); flex-shrink: 0;
+  }
+  .pl-count { font-size: var(--fs-sm); color: var(--muted); font-weight: 400; }
+  .pl-list { overflow: auto; padding: 6px; }
+  .pl-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; cursor: pointer; }
+  .pl-item.on { background: rgba(255,255,255,0.08); }
+  .pl-idx  { width: 18px; font-size: var(--fs-sm); color: var(--muted); text-align: center; flex-shrink: 0; }
+  .pl-item.on .pl-idx { color: var(--accent); font-weight: 700; }
+  .pl-item.on .pl-name { color: var(--accent); }
+  .pl-info { flex: 1; min-width: 0; }
+  .pl-name { font-size: var(--fs-md); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pl-sub  { font-size: var(--fs-sm); color: var(--muted); }
+  .pl-dur  { font-size: var(--fs-sm); color: var(--muted); flex-shrink: 0; }
+</style>
+</head>
+<body>
+<div class="screen">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="chevron">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <span class="now">正在播放</span>
+  </div>
+
+  <!-- Stage -->
+  <div class="stage">
+
+    <!-- Left: turntable + controls -->
+    <div class="left">
+      <div class="turntable">
+        <div class="vinyl" id="vinyl">
+          <div class="groove" style="width:196px;height:196px;"></div>
+          <div class="groove" style="width:182px;height:182px;"></div>
+          <div class="groove" style="width:168px;height:168px;"></div>
+          <div class="groove" style="width:154px;height:154px;"></div>
+          <div class="album"></div>
+          <div class="spindle"></div>
+        </div>
+        <!-- tonearm: pivot ring (raised above the record) → S-curved arm → headshell -->
+        <svg class="tonearm" viewBox="0 0 300 258" width="300" height="258">
+          <path d="M121 30 C 129 61, 137 79, 154 99" fill="none" stroke="#f0d9c4" stroke-width="6.5" stroke-linecap="round"/>
+          <path d="M121 30 C 129 61, 137 79, 154 99" fill="none" stroke="#fff6ee" stroke-width="2.6" stroke-linecap="round"/>
+          <g transform="rotate(52 162 109)"><rect x="150" y="103" width="24" height="12" rx="3" fill="#fbeede" stroke="#dcae8e" stroke-width="0.8"/></g>
+          <path d="M168 112 q 11 -3 8 -14" fill="none" stroke="#f3e6d6" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="121" cy="30" r="10" fill="#fbeede" stroke="#dcae8e" stroke-width="1"/>
+          <circle cx="121" cy="30" r="4" fill="#74300f"/>
+        </svg>
+      </div>
+
+      <!-- controls -->
+      <div class="controls">
+        <!-- secondary icons row -->
+        <div class="sec-row">
+          <!-- equalizer -->
+          <div class="sec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="4" x2="6" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="18" y1="4" x2="18" y2="20"/><circle cx="6" cy="9" r="2.4" fill="currentColor" stroke="none"/><circle cx="12" cy="15" r="2.4" fill="currentColor" stroke="none"/><circle cx="18" cy="11" r="2.4" fill="currentColor" stroke="none"/></svg></div>
+          <!-- sleep timer -->
+          <div class="sec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13.5" r="7.5"/><polyline points="12 13.5 12 9.5"/><line x1="9" y1="3" x2="15" y2="3"/><line x1="12" y1="3" x2="12" y2="6"/></svg></div>
+          <!-- comment -->
+          <div class="sec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8 8 0 0 1-11.5 7.2L4 20l1.3-5A8 8 0 1 1 21 11.5z"/></svg></div>
+          <!-- download -->
+          <div class="sec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v10"/><polyline points="8 11 12 15 16 11"/><path d="M5 19h14"/></svg></div>
+          <!-- more -->
+          <div class="sec"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="5" cy="12" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="19" cy="12" r="1.9"/></svg></div>
+        </div>
+
+        <!-- progress -->
+        <div class="prog-row">
+          <span class="prog-time">01:28</span>
+          <div class="prog-track"><div class="prog-fill"></div><div class="prog-knob"></div></div>
+          <span class="prog-time r">04:12</span>
+        </div>
+
+        <!-- transport -->
+        <div class="trans-row">
+          <!-- play mode — click cycles 随机/顺序/单曲/列表 (icon injected by JS) -->
+          <div class="tbtn sm" id="ic-mode"></div>
+          <div class="tbtn" id="btn-prev"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5" width="2.6" height="14" rx="1"/><polygon points="20,5 9,12 20,19"/></svg></div>
+          <div class="tbtn play playing" id="btn-play">
+            <span class="i-play"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="8 5 19 12 8 19"/></svg></span>
+            <span class="i-pause"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg></span>
+          </div>
+          <div class="tbtn" id="btn-next"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="4,5 15,12 4,19"/><rect x="16.4" y="5" width="2.6" height="14" rx="1"/></svg></div>
+          <!-- playlist popup trigger -->
+          <div class="tbtn sm" id="ic-playlist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="15" y2="6"/><line x1="3" y1="12" x2="13" y2="12"/><line x1="3" y1="18" x2="11" y2="18"/><circle cx="18" cy="16" r="2.4"/><path d="M20.4 16V8l-1 0.4"/></svg></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: title + subtitle + credits + lyrics -->
+    <div class="right">
+      <div class="song-title" id="song-title">火力全开 (DJ版)</div>
+      <div class="song-sub"   id="song-sub">DJ阿智 Remix · 星后乐队</div>
+      <div class="credits" id="credits"><!-- built by JS --></div>
+      <div class="lyrics" id="lyrics"><!-- built by JS --></div>
+    </div>
+
+  </div><!-- .stage -->
+
+  <!-- Playlist popup -->
+  <div class="pl-backdrop" id="pl-backdrop"></div>
+  <div class="pl-pop" id="playlist-pop">
+    <div class="pl-head">播放列表 <span class="pl-count" id="pl-count"></span></div>
+    <div class="pl-list" id="pl-list"></div>
+  </div>
+
+</div><!-- .screen -->
+
+<script>
+/* ───────── Data (mirror as C `static const` downstream) ───────── */
+const SONG = { title: '火力全开 (DJ版)', sub: 'DJ阿智 Remix · 星后乐队' };
+const CREDITS = [
+  { k: '原唱', v: '张杰' },
+  { k: '编曲', v: 'DJ阿智' },
+  { k: '混音', v: '何曦 · 啸豆 Studio' },
+  { k: '监制', v: '高擎昂' },
+  { k: '出品', v: '疯了音乐 × 星后乐队' },
+];
+const LYRICS = [
+  { t: '燃烧每一寸的渴望' },
+  { t: '火力全开 势不可挡', hl: true },
+  { t: '让心跳点燃整个舞台' },
+  { t: '无所畏惧 一路向光' },
+];
+const PLAYLIST = [
+  { name: '火力全开 (DJ版)',   sub: 'DJ阿智 Remix · 星后乐队', dur: '04:12' },
+  { name: '光年之外 (Remix)',  sub: 'G.E.M. 邓紫棋',           dur: '03:55' },
+  { name: '起风了 (DJ版)',     sub: '吴青峰',                  dur: '05:21' },
+  { name: '海阔天空 (摇滚版)', sub: 'Beyond',                  dur: '05:25' },
+  { name: '夜曲 (Remix)',      sub: '周杰伦',                  dur: '03:46' },
+  { name: '稻香',              sub: '周杰伦',                  dur: '03:43' },
+];
+
+const $ = (s) => document.querySelector(s);
+
+/* credits */
+const cr = $('#credits');
+CREDITS.forEach(c => {
+  const d = document.createElement('div');
+  d.className = 'cred';
+  d.innerHTML = `${c.k}：<b>${c.v}</b>`;
+  cr.appendChild(d);
+});
+/* lyrics */
+const ly = $('#lyrics');
+LYRICS.forEach(l => {
+  const d = document.createElement('div');
+  d.className = 'lyr' + (l.hl ? ' hl' : '');
+  d.textContent = l.t;
+  ly.appendChild(d);
+});
+
+/* ───────── 播放 / 暂停 — vinyl spins + tonearm swings on/off ───────── */
+const btnPlay = $('#btn-play'), vinyl = $('#vinyl'), tonearm = $('.tonearm');
+let playing = true, idx = 0, mode = 3;          // mode 3 = 列表循环 (default)
+function render() {
+  btnPlay.classList.toggle('playing', playing);
+  vinyl.classList.toggle('spinning', playing);
+  tonearm.classList.toggle('lifted', !playing);   // arm off the record when paused
+}
+btnPlay.addEventListener('click', () => { playing = !playing; render(); });
+
+/* now-playing title / subtitle from the current track */
+const songTitle = $('#song-title'), songSub = $('#song-sub');
+function setNowPlaying(i) {
+  idx = i;
+  songTitle.textContent = PLAYLIST[i].name;
+  songSub.textContent   = PLAYLIST[i].sub;
+}
+
+/* ───────── 播放模式 — 点击循环 随机 / 顺序 / 单曲 / 列表 ───────── */
+const SV = 'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
+const MODES = [
+  { key: 'shuffle', label: '随机播放', icon: `<svg ${SV}><path d="M3 17h2.5c1.4 0 2.7-.7 3.5-1.9l4-6.2c.8-1.2 2.1-1.9 3.5-1.9H21"/><polyline points="17 3 21 7 17 11"/><path d="M3 7h2.5c1.4 0 2.7.7 3.5 1.9l.6.9"/><path d="M21 17h-3.5c-1.4 0-2.7-.7-3.5-1.9l-.6-.9"/><polyline points="17 13 21 17 17 21"/></svg>` },
+  { key: 'order',   label: '顺序播放', icon: `<svg ${SV}><path d="M13 4 H15 A6 6 0 0 1 21 10 V14 A6 6 0 0 1 15 20 H9 A6 6 0 0 1 3 14 V10 A6 6 0 0 1 9 4 H11"/><polyline points="11 1.7 14 4 11 6.3"/></svg>` },
+  { key: 'one',     label: '单曲循环', icon: `<svg ${SV}><path d="M13 4 H15 A6 6 0 0 1 21 10 V14 A6 6 0 0 1 15 20 H9 A6 6 0 0 1 3 14 V10 A6 6 0 0 1 9 4 H11"/><polyline points="11 1.7 14 4 11 6.3"/><text x="12" y="12.3" font-size="12" font-weight="700" fill="currentColor" stroke="none" text-anchor="middle" dominant-baseline="central">1</text></svg>` },
+  { key: 'list',    label: '列表循环', icon: `<svg ${SV}><path d="M13 5 H15 A6 6 0 0 1 21 11 V13 A6 6 0 0 1 15 19 H13"/><polyline points="13 16.7 10 19 13 21.3"/><path d="M11 19 H9 A6 6 0 0 1 3 13 V11 A6 6 0 0 1 9 5 H11"/><polyline points="11 2.7 14 5 11 7.3"/></svg>` },
+];
+const icMode = $('#ic-mode');
+function renderMode() { icMode.innerHTML = MODES[mode].icon; icMode.title = MODES[mode].label; }
+icMode.addEventListener('click', () => { mode = (mode + 1) % MODES.length; renderMode(); });
+
+/* ───────── 上一首 / 下一首 — 行为随播放模式而变 ───────── */
+function randIdx() { if (PLAYLIST.length <= 1) return idx; let r; do { r = Math.floor(Math.random() * PLAYLIST.length); } while (r === idx); return r; }
+function step(dir) {
+  const n = PLAYLIST.length, key = MODES[mode].key;
+  let i;
+  if      (key === 'shuffle') i = randIdx();                 // 随机
+  else if (key === 'one')     i = idx;                       // 单曲循环：重播当前
+  else if (key === 'list')    i = (idx + dir + n) % n;       // 列表循环：到底回头
+  else                        i = Math.min(Math.max(idx + dir, 0), n - 1); // 顺序：到头停住
+  setNowPlaying(i); playing = true; render(); buildPlaylist();
+}
+$('#btn-prev').addEventListener('click', () => step(-1));
+$('#btn-next').addEventListener('click', () => step(1));
+
+/* ───────── 播放列表 — 真实弹出列表 ───────── */
+const plPop = $('#playlist-pop'), plBackdrop = $('#pl-backdrop'), plList = $('#pl-list'), icPlaylist = $('#ic-playlist');
+$('#pl-count').textContent = PLAYLIST.length + ' 首';
+function buildPlaylist() {
+  plList.innerHTML = '';
+  PLAYLIST.forEach((s, i) => {
+    const row = document.createElement('div');
+    row.className = 'pl-item' + (i === idx ? ' on' : '');
+    row.innerHTML =
+      `<div class="pl-idx">${i + 1}</div>
+       <div class="pl-info"><div class="pl-name">${s.name}</div><div class="pl-sub">${s.sub}</div></div>
+       <div class="pl-dur">${s.dur}</div>`;
+    row.addEventListener('click', () => { setNowPlaying(i); playing = true; render(); buildPlaylist(); closePlaylist(); });
+    plList.appendChild(row);
+  });
+}
+function openPlaylist()  { buildPlaylist(); plPop.classList.add('show'); plBackdrop.classList.add('show'); }
+function closePlaylist() { plPop.classList.remove('show'); plBackdrop.classList.remove('show'); }
+function togglePlaylist(){ plPop.classList.contains('show') ? closePlaylist() : openPlaylist(); }
+icPlaylist.addEventListener('click', togglePlaylist);
+plBackdrop.addEventListener('click', closePlaylist);
+
+/* ───────── Init ───────── */
+renderMode();
+render();
+
+/* URL hooks for headless screenshots */
+const qp = new URLSearchParams(location.search);
+if (qp.has('paused'))   { playing = false; render(); }
+if (qp.has('playlist')) openPlaylist();
+if (qp.has('mode'))     { mode = +qp.get('mode'); renderMode(); }
+</script>
+</body>
+</html>

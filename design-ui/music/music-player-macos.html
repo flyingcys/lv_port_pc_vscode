@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Music · macOS style (火力全开)</title>
+<style>
+  /* ───────────────────────── Token table (LVGL theme tokens) ─────────────────────────
+     Device: 800×480, capacitive touch, RGB888. macOS "Music" (Apple Music) light style.
+     CJK text → LVGL needs a subset CJK font (extract charset from the strings below). */
+  :root {
+    --w: 800px; --h: 480px;
+
+    --win:      #ffffff;          /* main background          */
+    --sidebar:  #f0f0f3;          /* left sidebar             */
+    --text:     #1d1d1f;          /* primary text             */
+    --text2:    #86868b;          /* secondary text           */
+    --accent:   #fa2d48;          /* Apple-Music pink-red      */
+    --divider:  rgba(0,0,0,0.09);
+    --hover:    rgba(0,0,0,0.05);
+    --active:   rgba(0,0,0,0.08);
+    --track:    #d6d6db;          /* slider track             */
+    --ctrl:     #2a2a2e;          /* transport icon           */
+
+    --tl-r: #ff5f57; --tl-y: #febc2e; --tl-g: #28c840;   /* traffic lights */
+
+    /* Font sizes — 4 fixed tiers (each tier = 1 LVGL bitmap font) */
+    --fs-xl: 23px;   /* song title          */
+    --fs-lg: 14px;   /* sidebar / section   */
+    --fs-md: 13px;   /* artist / lyric/list */
+    --fs-sm: 11px;   /* time / caption      */
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%; height: 100vh;
+    display: grid; place-items: center;
+    background: #c9ccd2;
+    font-family: -apple-system, "SF Pro Text", "Helvetica Neue", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+    color: var(--text);
+  }
+
+  /* ── Fixed canvas = device screen (the app window) ── */
+  .window {
+    width: var(--w); height: var(--h);
+    overflow: hidden; position: relative;
+    background: var(--win);
+    display: flex;
+  }
+
+  /* ───────────────────────── Sidebar ───────────────────────── */
+  .sidebar {
+    width: 196px; flex-shrink: 0;
+    background: var(--sidebar);
+    border-right: 1px solid var(--divider);
+    display: flex; flex-direction: column;
+    padding: 0 12px 12px;
+  }
+  .traffic { display: flex; gap: 8px; height: 44px; align-items: center; padding-left: 4px; }
+  .tl { width: 12px; height: 12px; border-radius: 50%; }
+  .tl.r { background: var(--tl-r); } .tl.y { background: var(--tl-y); } .tl.g { background: var(--tl-g); }
+
+  .side-title { font-size: 18px; font-weight: 700; padding: 2px 6px 12px; }
+  .nav { display: flex; flex-direction: column; gap: 2px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 9px;
+    padding: 7px 8px; border-radius: 7px; cursor: pointer;
+    font-size: var(--fs-lg); color: var(--text);
+  }
+  .nav-item svg { width: 17px; height: 17px; flex-shrink: 0; color: var(--accent); }
+  .nav-item.active { background: var(--active); font-weight: 600; }
+
+  .side-sec { font-size: var(--fs-sm); color: var(--text2); font-weight: 600; letter-spacing: .5px; padding: 16px 8px 6px; }
+  .recent { font-size: var(--fs-md); color: var(--text2); padding: 5px 8px; border-radius: 6px; cursor: pointer;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* ───────────────────────── Main ───────────────────────── */
+  .main { flex: 1; min-width: 0; display: flex; flex-direction: column; position: relative; }
+  .main-bar {
+    height: 46px; flex-shrink: 0; display: flex; align-items: center;
+    padding: 0 22px; border-bottom: 1px solid var(--divider);
+  }
+  .crumb { font-size: var(--fs-lg); font-weight: 600; }
+
+  /* switchable content: 正在播放 / 广播电台 / 我的收藏 */
+  .content { flex: 1; min-width: 0; position: relative; overflow: hidden; }
+  .view { position: absolute; inset: 0; display: none; }
+  .view.show { display: flex; }
+  .view-now { align-items: center; gap: 26px; padding: 18px 26px; }
+  .list-view { flex-direction: column; padding: 14px 24px 10px; overflow: auto; }
+  .list-title { font-size: 24px; font-weight: 700; margin-bottom: 10px; flex-shrink: 0; }
+  .lrow { display: flex; align-items: center; gap: 12px; padding: 8px; border-radius: 8px; cursor: pointer; }
+  .lrow.on { background: var(--hover); }
+  .lart { width: 42px; height: 42px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #fff; }
+  .lart svg { width: 20px; height: 20px; }
+  .lrow-info { flex: 1; min-width: 0; }
+  .lrow-name { font-size: var(--fs-md); color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lrow.on .lrow-name { color: var(--accent); font-weight: 600; }
+  .lrow-sub { font-size: var(--fs-sm); color: var(--text2); }
+  .lrow-dur { font-size: var(--fs-sm); color: var(--text2); flex-shrink: 0; }
+  .lrow-heart { width: 15px; height: 15px; color: var(--accent); flex-shrink: 0; }
+  .lrow-live { font-size: var(--fs-sm); color: var(--accent); font-weight: 700; flex-shrink: 0; }
+
+  /* now-playing: square cover + info */
+  .cover {
+    width: 188px; height: 188px; border-radius: 14px; flex-shrink: 0; position: relative; overflow: hidden;
+    background: radial-gradient(circle at 44% 40%, #ffe27a 0%, #ffb02f 18%, #ff7a18 38%, #e0440f 60%, #9a2407 82%, #4a1303 100%);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.22);
+    transition: transform .45s cubic-bezier(.3,0,.2,1), box-shadow .45s ease;
+  }
+  .cover::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(26px 9px at 60% 58%, rgba(80,12,0,0.55) 60%, transparent 62%),
+      radial-gradient(32px 10px at 38% 70%, rgba(70,10,0,0.5) 60%, transparent 62%),
+      radial-gradient(20px 7px at 54% 82%, rgba(60,8,0,0.45) 60%, transparent 62%);
+  }
+  .main.paused .cover { transform: scale(0.9); box-shadow: 0 6px 16px rgba(0,0,0,0.16); }
+  .cover.no-fire::before { display: none; }     /* radio cover = solid colour, no lava */
+
+  .np-info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .np-title { font-size: var(--fs-xl); font-weight: 700; line-height: 1.15; }
+  .np-artist { font-size: var(--fs-md); color: var(--text2); margin: 5px 0 14px; }
+  .lyrics { display: flex; flex-direction: column; gap: 6px; overflow: hidden; }
+  .lyr { font-size: var(--fs-md); color: var(--text2); line-height: 1.45; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lyr.hl { color: var(--accent); font-weight: 700; font-size: 15px; }
+
+  /* ───────────────────────── Player bar ───────────────────────── */
+  .player { flex-shrink: 0; border-top: 1px solid var(--divider); padding: 10px 24px 14px; }
+  .scrub { display: flex; align-items: center; gap: 10px; }
+  .time { font-size: var(--fs-sm); color: var(--text2); min-width: 32px; }
+  .time.r { text-align: right; }
+  .strack { flex: 1; height: 4px; border-radius: 2px; background: var(--track); position: relative; }
+  .sfill { position: absolute; left: 0; top: 0; height: 100%; width: 34%; border-radius: 2px; background: var(--accent); }
+  .sknob { position: absolute; left: 34%; top: 50%; transform: translate(-50%,-50%); width: 12px; height: 12px; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.3); }
+
+  .pbar { display: flex; align-items: center; margin-top: 10px; }
+  .ctrls { flex: 1; display: flex; align-items: center; justify-content: center; gap: 26px; }
+  .cbtn { display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--ctrl); }
+  .cbtn svg { width: 22px; height: 22px; }
+  .cbtn.lg svg { width: 30px; height: 30px; }
+  .cbtn.mode { color: var(--accent); }          /* active play-mode tint */
+  .cbtn.mode svg { width: 20px; height: 20px; }
+  .cbtn.list svg { width: 21px; height: 21px; }
+  .i-pause { display: none; }
+  .playing .i-play { display: none; }
+  .playing .i-pause { display: flex; }
+
+  .vol { display: flex; align-items: center; gap: 7px; width: 110px; justify-content: flex-end; }
+  .vol svg { width: 17px; height: 17px; color: var(--text2); flex-shrink: 0; }
+  .vtrack { width: 70px; height: 4px; border-radius: 2px; background: var(--track); position: relative; }
+  .vfill { position: absolute; left: 0; top: 0; height: 100%; width: 65%; border-radius: 2px; background: var(--text2); }
+
+  /* ── Playlist popup (queue) ── */
+  .pl-backdrop { position: absolute; inset: 0; z-index: 30; display: none; }
+  .pl-backdrop.show { display: block; }
+  .pl-pop {
+    position: absolute; right: 18px; bottom: 96px; width: 300px; max-height: 300px;
+    background: #ffffff; border: 1px solid var(--divider); border-radius: 12px;
+    box-shadow: 0 16px 44px rgba(0,0,0,0.22);
+    z-index: 31; display: none; flex-direction: column; overflow: hidden;
+  }
+  .pl-pop.show { display: flex; }
+  .pl-head { padding: 12px 15px; font-size: var(--fs-md); font-weight: 700; display: flex; align-items: baseline; gap: 8px;
+             border-bottom: 1px solid var(--divider); flex-shrink: 0; }
+  .pl-count { font-size: var(--fs-sm); color: var(--text2); font-weight: 400; }
+  .pl-list { overflow: auto; padding: 6px; }
+  .pl-item { display: flex; align-items: center; gap: 10px; padding: 8px 9px; border-radius: 7px; cursor: pointer; }
+  .pl-item.on { background: var(--hover); }
+  .pl-idx { width: 18px; font-size: var(--fs-sm); color: var(--text2); text-align: center; flex-shrink: 0; }
+  .pl-item.on .pl-idx, .pl-item.on .pl-name { color: var(--accent); font-weight: 600; }
+  .pl-info { flex: 1; min-width: 0; }
+  .pl-name { font-size: var(--fs-md); color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pl-sub { font-size: var(--fs-sm); color: var(--text2); }
+  .pl-dur { font-size: var(--fs-sm); color: var(--text2); flex-shrink: 0; }
+</style>
+</head>
+<body>
+<div class="window">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="traffic"><span class="tl r"></span><span class="tl y"></span><span class="tl g"></span></div>
+    <div class="side-title">音乐</div>
+    <nav class="nav">
+      <div class="nav-item active" data-view="now">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polygon points="10 8 16 12 10 16" fill="currentColor" stroke="none"/></svg>
+        正在播放
+      </div>
+      <div class="nav-item" data-view="radio">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/><path d="M8.6 8.6a4.8 4.8 0 0 0 0 6.8"/><path d="M15.4 8.6a4.8 4.8 0 0 1 0 6.8"/><path d="M6 6a9 9 0 0 0 0 12"/><path d="M18 6a9 9 0 0 1 0 12"/></svg>
+        广播电台
+      </div>
+      <div class="nav-item" data-view="fav">
+        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        我的收藏
+      </div>
+    </nav>
+    <div class="side-sec">最近播放</div>
+    <div class="recent">火力全开 (DJ版)</div>
+    <div class="recent">光年之外 (Remix)</div>
+    <div class="recent">起风了 (DJ版)</div>
+    <div class="recent">海阔天空 (摇滚版)</div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main" id="main">
+    <div class="main-bar"><span class="crumb" id="crumb">正在播放</span></div>
+
+    <!-- switchable content -->
+    <div class="content">
+
+      <!-- 正在播放 -->
+      <div class="view view-now show" id="view-now">
+        <div class="cover" id="cover"></div>
+        <div class="np-info">
+          <div class="np-title" id="song-title">火力全开 (DJ版)</div>
+          <div class="np-artist" id="song-sub">张杰 — DJ阿智 Remix</div>
+          <div class="lyrics" id="lyrics"><!-- built by JS --></div>
+        </div>
+      </div>
+
+      <!-- 广播电台 -->
+      <div class="view list-view" id="view-radio">
+        <div class="list-title">广播电台</div>
+        <div id="radio-list"><!-- built by JS --></div>
+      </div>
+
+      <!-- 我的收藏 -->
+      <div class="view list-view" id="view-fav">
+        <div class="list-title">我的收藏</div>
+        <div id="fav-list"><!-- built by JS --></div>
+      </div>
+
+    </div>
+
+    <!-- player bar -->
+    <div class="player">
+      <div class="scrub">
+        <span class="time">01:28</span>
+        <div class="strack"><div class="sfill"></div><div class="sknob"></div></div>
+        <span class="time r">04:12</span>
+      </div>
+      <div class="pbar">
+        <div class="ctrls">
+          <!-- play mode (cycles 随机/顺序/单曲/列表; icon injected by JS) -->
+          <div class="cbtn mode" id="ic-mode"></div>
+          <div class="cbtn" id="btn-prev"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5" width="2.6" height="14" rx="1"/><polygon points="20,5 9,12 20,19"/></svg></div>
+          <div class="cbtn lg playing" id="btn-play">
+            <span class="i-play"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="7 4 19 12 7 20"/></svg></span>
+            <span class="i-pause"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4.2" height="16" rx="1"/><rect x="13.8" y="4" width="4.2" height="16" rx="1"/></svg></span>
+          </div>
+          <div class="cbtn" id="btn-next"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="4,5 15,12 4,19"/><rect x="16.4" y="5" width="2.6" height="14" rx="1"/></svg></div>
+          <!-- playlist / queue -->
+          <div class="cbtn list" id="ic-playlist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="15" y2="6"/><line x1="3" y1="12" x2="13" y2="12"/><line x1="3" y1="18" x2="11" y2="18"/><circle cx="18" cy="16" r="2.4"/><path d="M20.4 16V8l-1 0.4"/></svg></div>
+        </div>
+        <div class="vol">
+          <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.5a4 4 0 0 1 0 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <div class="vtrack"><div class="vfill"></div></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Playlist popup -->
+  <div class="pl-backdrop" id="pl-backdrop"></div>
+  <div class="pl-pop" id="playlist-pop">
+    <div class="pl-head">播放列表 <span class="pl-count" id="pl-count"></span></div>
+    <div class="pl-list" id="pl-list"></div>
+  </div>
+
+</div><!-- .window -->
+
+<script>
+/* ───────── Data (mirror as C `static const` downstream) ───────── */
+const PLAYLIST = [
+  { name: '火力全开 (DJ版)',   sub: '张杰 — DJ阿智 Remix', dur: '04:12' },
+  { name: '光年之外 (Remix)',  sub: 'G.E.M. 邓紫棋',        dur: '03:55' },
+  { name: '起风了 (DJ版)',     sub: '吴青峰',               dur: '05:21' },
+  { name: '海阔天空 (摇滚版)', sub: 'Beyond',               dur: '05:25' },
+  { name: '夜曲 (Remix)',      sub: '周杰伦',               dur: '03:46' },
+  { name: '稻香',              sub: '周杰伦',               dur: '03:43' },
+];
+const LYRICS = [
+  { t: '燃烧每一寸的渴望' },
+  { t: '火力全开 势不可挡', hl: true },
+  { t: '让心跳点燃整个舞台' },
+  { t: '无所畏惧 一路向光' },
+];
+const STATIONS = [
+  { name: '城市之声 FM93.4',   genre: '流行金曲', c1: '#ff9a5a', c2: '#e0531f' },
+  { name: '经典音乐台 FM97.7', genre: '古典交响', c1: '#7da0ff', c2: '#3f54c8' },
+  { name: '爵士现场 FM101.2',  genre: '现场爵士', c1: '#b98cff', c2: '#7a3fd0' },
+  { name: '新闻广播 FM106.1',  genre: '资讯快报', c1: '#4fd0a0', c2: '#1f8a5e' },
+];
+const FAVORITES = ['火力全开 (DJ版)', '光年之外 (Remix)', '海阔天空 (摇滚版)', '稻香'];   // names → resolve in PLAYLIST
+const RADIO_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/><path d="M8.5 8.5a5 5 0 0 0 0 7"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>';
+const FIRE_BG = 'radial-gradient(circle at 44% 40%, #ffd24a 0%, #ff7a18 45%, #9a2407 100%)';
+
+const $ = (s) => document.querySelector(s);
+
+/* lyrics */
+const ly = $('#lyrics');
+LYRICS.forEach(l => { const d = document.createElement('div'); d.className = 'lyr' + (l.hl ? ' hl' : ''); d.textContent = l.t; ly.appendChild(d); });
+
+/* ───────── Play / pause (cover scales up when playing, down when paused) ───────── */
+const btnPlay = $('#btn-play'), mainEl = $('#main');
+let playing = true, idx = 0, mode = 3, station = -1, view = 'now';   // mode 3 = 列表循环
+function render() {
+  btnPlay.classList.toggle('playing', playing);
+  mainEl.classList.toggle('paused', !playing);
+}
+btnPlay.addEventListener('click', () => { playing = !playing; render(); });
+
+/* now-playing area — song or live radio */
+const songTitle = $('#song-title'), songSub = $('#song-sub'), cover = $('#cover');
+const CRUMB = { now: '正在播放', radio: '广播电台', fav: '我的收藏' };
+function renderNowPlaying() {
+  if (station >= 0) {
+    const st = STATIONS[station];
+    songTitle.textContent = st.name;
+    songSub.innerHTML = `<span style="color:var(--accent);font-weight:700">● 正在直播</span> · ${st.genre}`;
+    ly.style.display = 'none';
+    cover.style.background = `linear-gradient(150deg, ${st.c1}, ${st.c2})`;
+    cover.classList.add('no-fire');
+  } else {
+    songTitle.textContent = PLAYLIST[idx].name;
+    songSub.textContent = PLAYLIST[idx].sub;
+    ly.style.display = 'flex';
+    cover.style.background = '';
+    cover.classList.remove('no-fire');
+  }
+}
+/* play a queue/favourite song, or a station */
+function play(i)        { station = -1; idx = i; playing = true; renderNowPlaying(); render(); buildPlaylist(); buildFavorites(); }
+function playStation(i) { station = i; playing = true; renderNowPlaying(); render(); buildStations(); buildFavorites(); showView('now'); }
+
+/* ───────── 视图切换：正在播放 / 广播电台 / 我的收藏 ───────── */
+function showView(name) {
+  view = name;
+  $('#crumb').textContent = CRUMB[name];
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('show'));
+  $('#view-' + name).classList.add('show');
+  document.querySelectorAll('.nav-item[data-view]').forEach(n => n.classList.toggle('active', n.dataset.view === name));
+}
+document.querySelectorAll('.nav-item[data-view]').forEach(n => n.addEventListener('click', () => showView(n.dataset.view)));
+
+/* 广播电台 list */
+function buildStations() {
+  const el = $('#radio-list'); el.innerHTML = '';
+  STATIONS.forEach((s, i) => {
+    const row = document.createElement('div');
+    row.className = 'lrow' + (station === i ? ' on' : '');
+    row.innerHTML =
+      `<div class="lart" style="background:linear-gradient(150deg,${s.c1},${s.c2})">${RADIO_SVG}</div>
+       <div class="lrow-info"><div class="lrow-name">${s.name}</div><div class="lrow-sub">${s.genre}</div></div>
+       ${station === i ? '<span class="lrow-live">正在播放</span>' : ''}`;
+    row.addEventListener('click', () => playStation(i));
+    el.appendChild(row);
+  });
+}
+
+/* 我的收藏 list */
+function buildFavorites() {
+  const el = $('#fav-list'); el.innerHTML = '';
+  FAVORITES.forEach(nm => {
+    const pi = PLAYLIST.findIndex(p => p.name === nm);
+    const s = PLAYLIST[pi] || { name: nm, sub: '', dur: '' };
+    const cur = station < 0 && pi === idx;
+    const row = document.createElement('div');
+    row.className = 'lrow' + (cur ? ' on' : '');
+    row.innerHTML =
+      `<div class="lart" style="background:${FIRE_BG}"></div>
+       <div class="lrow-info"><div class="lrow-name">${s.name}</div><div class="lrow-sub">${s.sub}</div></div>
+       <svg class="lrow-heart" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+       <span class="lrow-dur">${s.dur}</span>`;
+    row.addEventListener('click', () => { if (pi >= 0) { play(pi); showView('now'); } });
+    el.appendChild(row);
+  });
+}
+
+/* ───────── Play mode — click cycles 随机 / 顺序 / 单曲 / 列表 ───────── */
+const SV = 'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
+const MODES = [
+  { key: 'shuffle', label: '随机播放', icon: `<svg ${SV}><path d="M3 17h2.5c1.4 0 2.7-.7 3.5-1.9l4-6.2c.8-1.2 2.1-1.9 3.5-1.9H21"/><polyline points="17 3 21 7 17 11"/><path d="M3 7h2.5c1.4 0 2.7.7 3.5 1.9l.6.9"/><path d="M21 17h-3.5c-1.4 0-2.7-.7-3.5-1.9l-.6-.9"/><polyline points="17 13 21 17 17 21"/></svg>` },
+  { key: 'order',   label: '顺序播放', icon: `<svg ${SV}><path d="M13 4 H15 A6 6 0 0 1 21 10 V14 A6 6 0 0 1 15 20 H9 A6 6 0 0 1 3 14 V10 A6 6 0 0 1 9 4 H11"/><polyline points="11 1.7 14 4 11 6.3"/></svg>` },
+  { key: 'one',     label: '单曲循环', icon: `<svg ${SV}><path d="M13 4 H15 A6 6 0 0 1 21 10 V14 A6 6 0 0 1 15 20 H9 A6 6 0 0 1 3 14 V10 A6 6 0 0 1 9 4 H11"/><polyline points="11 1.7 14 4 11 6.3"/><text x="12" y="12.3" font-size="12" font-weight="700" fill="currentColor" stroke="none" text-anchor="middle" dominant-baseline="central">1</text></svg>` },
+  { key: 'list',    label: '列表循环', icon: `<svg ${SV}><path d="M13 5 H15 A6 6 0 0 1 21 11 V13 A6 6 0 0 1 15 19 H13"/><polyline points="13 16.7 10 19 13 21.3"/><path d="M11 19 H9 A6 6 0 0 1 3 13 V11 A6 6 0 0 1 9 5 H11"/><polyline points="11 2.7 14 5 11 7.3"/></svg>` },
+];
+const icMode = $('#ic-mode');
+function renderMode() { icMode.innerHTML = MODES[mode].icon; icMode.title = MODES[mode].label; }
+icMode.addEventListener('click', () => { mode = (mode + 1) % MODES.length; renderMode(); });
+
+/* ───────── Prev / next — follows play mode ───────── */
+function randIdx() { if (PLAYLIST.length <= 1) return idx; let r; do { r = Math.floor(Math.random() * PLAYLIST.length); } while (r === idx); return r; }
+function step(dir) {
+  const n = PLAYLIST.length, key = MODES[mode].key;
+  let i;
+  if      (key === 'shuffle') i = randIdx();
+  else if (key === 'one')     i = idx;
+  else if (key === 'list')    i = (idx + dir + n) % n;
+  else                        i = Math.min(Math.max(idx + dir, 0), n - 1);
+  play(i);
+}
+$('#btn-prev').addEventListener('click', () => step(-1));
+$('#btn-next').addEventListener('click', () => step(1));
+
+/* ───────── Playlist popup (queue) ───────── */
+const plPop = $('#playlist-pop'), plBackdrop = $('#pl-backdrop'), plList = $('#pl-list'), icPlaylist = $('#ic-playlist');
+$('#pl-count').textContent = PLAYLIST.length + ' 首';
+function buildPlaylist() {
+  plList.innerHTML = '';
+  PLAYLIST.forEach((s, i) => {
+    const row = document.createElement('div');
+    row.className = 'pl-item' + (i === idx ? ' on' : '');
+    row.innerHTML =
+      `<div class="pl-idx">${i + 1}</div>
+       <div class="pl-info"><div class="pl-name">${s.name}</div><div class="pl-sub">${s.sub}</div></div>
+       <div class="pl-dur">${s.dur}</div>`;
+    row.addEventListener('click', () => { play(i); showView('now'); closePlaylist(); });
+    plList.appendChild(row);
+  });
+}
+function openPlaylist()  { buildPlaylist(); plPop.classList.add('show'); plBackdrop.classList.add('show'); }
+function closePlaylist() { plPop.classList.remove('show'); plBackdrop.classList.remove('show'); }
+function togglePlaylist(){ plPop.classList.contains('show') ? closePlaylist() : openPlaylist(); }
+icPlaylist.addEventListener('click', togglePlaylist);
+plBackdrop.addEventListener('click', closePlaylist);
+
+/* ───────── Init ───────── */
+renderMode();
+buildStations();
+buildFavorites();
+renderNowPlaying();
+render();
+showView('now');
+
+/* URL hooks for headless screenshots */
+const qp = new URLSearchParams(location.search);
+if (qp.has('paused'))   { playing = false; render(); }
+if (qp.has('playlist')) openPlaylist();
+if (qp.has('mode'))     { mode = +qp.get('mode'); renderMode(); }
+if (qp.get('view'))     showView(qp.get('view'));
+if (qp.has('station'))  playStation(+qp.get('station'));
+</script>
+</body>
+</html>
