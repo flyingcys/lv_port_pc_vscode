@@ -1,18 +1,55 @@
 #include <assert.h>
+#include <stdbool.h>
+#include <stddef.h>
 #include <string.h>
-#include "../src/v9_apple_music/am_data.h"
 
-static void test_counts(void)
+#include "../src/v9_apple_music/am_local_scan.h"
+#include "../src/v9_apple_music/am_sources_csv.h"
+
+static void test_csv_loader(void)
 {
-    assert(sizeof(am_nav_items)/sizeof(am_nav_items[0]) == 5);
-    assert(sizeof(am_theme_presets)/sizeof(am_theme_presets[0]) == 4);
-    assert(sizeof(am_settings_tabs)/sizeof(am_settings_tabs[0]) == 3);
+    am_radio_item_t *radio = NULL;
+    size_t radio_count = 0;
+    int rc = am_sources_csv_load(
+        "third-party/hls_player_demo/qa/production_test/config/sources.csv",
+        &radio,
+        &radio_count
+    );
+
+    assert(rc == 0);
+    assert(radio != NULL);
+    assert(radio_count > 10);
+    assert(strcmp(radio[0].title, "中国之声") == 0);
+    assert(strstr(radio[0].url, "m3u8") != NULL);
+    assert(radio[0].duration_ms > 0);
+    assert(radio[0].network_cache_ms == 1000);
+
+    am_sources_csv_free(radio);
 }
-static void test_first_values(void)
+
+static void test_local_scan(void)
 {
-    assert(strcmp(am_nav_items[0].id, "home") == 0);
-    assert(strcmp(am_theme_presets[2].id, "mint") == 0);   /* 默认主题 */
-    assert(am_mini.progress_pct == 44);
-    assert(strcmp(am_page_radio.list[0].kind, "radio") == 0);
+    am_local_item_t *local = NULL;
+    size_t local_count = 0;
+    int rc = am_local_scan_dir(
+        "third-party/hls_player_demo/test_file",
+        &local,
+        &local_count
+    );
+
+    assert(rc == 0);
+    assert(local != NULL);
+    assert(local_count > 3);
+    assert(local[0].path[0] != '\0');
+    assert(local[0].title[0] != '\0');
+    assert(strstr(local[0].path, "third-party/hls_player_demo/test_file/") != NULL);
+
+    am_local_scan_free(local);
 }
-int main(void){ test_counts(); test_first_values(); return 0; }
+
+int main(void)
+{
+    test_csv_loader();
+    test_local_scan();
+    return 0;
+}

@@ -63,5 +63,5 @@ void apple_music_app_launch(void)
 
 void apple_music_app_close(void)
 {
-    am_player_deinit();
+    apple_music_destroy();
 }

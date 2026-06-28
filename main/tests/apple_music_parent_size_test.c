@@ -1,8 +1,10 @@
 #include <assert.h>
+#include <stdbool.h>
 #include <stdint.h>
 
 #include "lvgl.h"
 #include "../src/v9_apple_music/am_metrics.h"
+#include "../src/v9_apple_music/am_data.h"
 #include "../src/v9_apple_music/am_player.h"
 #include "../src/v9_apple_music/apple_music.h"
 
@@ -28,17 +30,83 @@ void am_player_bind_miniplayer(const am_miniplayer_handles_t *handles)
     LV_UNUSED(handles);
 }
 
-void am_player_load_local(const char **urls, size_t count, size_t start_index)
+void am_player_set_sources(const am_local_item_t *locals, size_t local_count,
+                           const am_radio_item_t *radios, size_t radio_count)
 {
-    LV_UNUSED(urls);
-    LV_UNUSED(count);
-    LV_UNUSED(start_index);
+    LV_UNUSED(locals);
+    LV_UNUSED(local_count);
+    LV_UNUSED(radios);
+    LV_UNUSED(radio_count);
 }
 
-void am_player_play_stream(const char *url, const char *title)
+void am_player_play_local_index(size_t index)
 {
-    LV_UNUSED(url);
-    LV_UNUSED(title);
+    LV_UNUSED(index);
+}
+
+void am_player_play_radio_index(size_t index)
+{
+    LV_UNUSED(index);
+}
+
+void am_player_toggle_playback(void)
+{
+}
+
+void am_player_prev(void)
+{
+}
+
+void am_player_next(void)
+{
+}
+
+void am_player_cycle_mode(void)
+{
+}
+
+void am_player_set_volume_percent(uint8_t percent)
+{
+    LV_UNUSED(percent);
+}
+
+void am_player_set_playlist_open(bool open)
+{
+    LV_UNUSED(open);
+}
+
+bool am_player_playlist_open(void)
+{
+    return false;
+}
+
+am_source_kind_t am_player_source_kind(void)
+{
+    return AM_SOURCE_NONE;
+}
+
+size_t am_player_current_local_index(void)
+{
+    return 0U;
+}
+
+size_t am_player_current_radio_index(void)
+{
+    return 0U;
+}
+
+bool am_player_is_playing(void)
+{
+    return false;
+}
+
+uint8_t am_player_volume_percent(void)
+{
+    return 65U;
+}
+
+void am_player_refresh_ui(void)
+{
 }
 
 void am_player_on_play_pause(lv_event_t *e)
@@ -52,6 +120,11 @@ void am_player_on_prev(lv_event_t *e)
 }
 
 void am_player_on_next(lv_event_t *e)
+{
+    LV_UNUSED(e);
+}
+
+void am_player_on_mode(lv_event_t *e)
 {
     LV_UNUSED(e);
 }
@@ -77,7 +150,10 @@ int main(void)
     assert(lv_obj_get_y(parent) == 0);
     assert(lv_obj_get_width(parent) == 800);
     assert(lv_obj_get_height(parent) == 480);
-    assert(lv_obj_get_child_count(parent) >= 3);
+    assert(lv_obj_get_child_count(parent) >= 2);
+    assert(lv_obj_get_child(parent, 0) != NULL);
+    assert(lv_obj_get_child(parent, 1) != NULL);
+    assert(lv_obj_get_child_count(lv_obj_get_child(parent, 1)) >= 3);
 
     lv_display_delete(disp);
     return 0;

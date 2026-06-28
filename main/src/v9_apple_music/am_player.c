@@ -1,192 +1,352 @@
-/* main/src/v9_apple_music/am_player.c */
 #include "am_player.h"
-#include "am_icons.h"
-#include "music_player.h"
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
+
 #include <stdbool.h>
 #include <stdint.h>
-#include <libgen.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#define AM_PLAYER_LOCAL_MAX 64
+#include "am_icons.h"
+#include "am_metrics.h"
+#include "am_theme.h"
+#include "am_widgets.h"
+#include "music_player.h"
 
-typedef enum {
-    AM_PLAYER_MODE_IDLE = 0,
-    AM_PLAYER_MODE_LOCAL,
-    AM_PLAYER_MODE_STREAM,
-} am_player_mode_t;
+#define AM_PLAYER_LOCAL_MAX 128
 
 static am_miniplayer_handles_t g_h;
-static am_player_mode_t        g_mode          = AM_PLAYER_MODE_IDLE;
-static char                    g_stream_title[128];
-static char                   *g_local_urls[AM_PLAYER_LOCAL_MAX];
-static size_t                  g_local_count   = 0;
-static size_t                  g_last_idx      = (size_t)-1;
-static bool                    g_last_playing  = false;
-static lv_timer_t             *g_timer         = NULL;
+static am_source_kind_t g_source_kind = AM_SOURCE_NONE;
+static const am_local_item_t *g_locals = NULL;
+static size_t g_local_count = 0U;
+static const am_radio_item_t *g_radios = NULL;
+static size_t g_radio_count = 0U;
+static size_t g_current_local = 0U;
+static size_t g_current_radio = 0U;
+static bool g_playlist_open = false;
+static uint8_t g_volume = 65U;
+static lv_timer_t *g_timer = NULL;
 
-/* ── helpers ──────────────────────────────────────────────────────────── */
-
-static const char *current_display_title(void) {
-    if(g_mode == AM_PLAYER_MODE_STREAM) return g_stream_title;
-    if(g_mode == AM_PLAYER_MODE_LOCAL && g_local_count > 0) {
-        size_t idx = music_player_get_current_index();
-        if(idx < g_local_count && g_local_urls[idx]) {
-            static char name_buf[128];
-            char copy[512];
-            strncpy(copy, g_local_urls[idx], sizeof(copy) - 1);
-            copy[sizeof(copy) - 1] = '\0';
-            char *b = basename(copy);
-            strncpy(name_buf, b, sizeof(name_buf) - 1);
-            name_buf[sizeof(name_buf) - 1] = '\0';
-            char *dot = strrchr(name_buf, '.');
-            if(dot) *dot = '\0';
-            return name_buf;
-        }
+static const char *am_current_title(void)
+{
+    if(g_source_kind == AM_SOURCE_RADIO && g_radios != NULL && g_current_radio < g_radio_count) {
+        return g_radios[g_current_radio].title;
     }
-    return "";
+    if(g_source_kind == AM_SOURCE_LOCAL && g_locals != NULL && g_current_local < g_local_count) {
+        return g_locals[g_current_local].title;
+    }
+    return "未播放";
 }
 
-static void refresh_title(void) {
-    if(!g_h.title_label) return;
-    lv_label_set_text(g_h.title_label, current_display_title());
+static const char *am_current_subtitle(void)
+{
+    if(g_source_kind == AM_SOURCE_RADIO) return "直播流";
+    if(g_source_kind == AM_SOURCE_LOCAL) return "本地资料库";
+    return "选择本地音乐或广播电台开始";
 }
 
-static void refresh_play_icon(bool playing) {
-    if(!g_h.play_icon) return;
-    lv_label_set_text(g_h.play_icon, playing ? AM_ICON_PAUSE : AM_ICON_PLAY);
+static void am_format_time(uint32_t ms, char *buf, size_t size)
+{
+    unsigned sec = ms / 1000U;
+    snprintf(buf, size, "%u:%02u", sec / 60U, sec % 60U);
 }
 
-static void refresh_progress(void) {
+static void am_refresh_playlist_popup(void)
+{
+    size_t i;
+
+    if(g_h.playlist_list == NULL) return;
+    lv_obj_clean(g_h.playlist_list);
+
+    if(g_source_kind == AM_SOURCE_RADIO) {
+        if(g_radios != NULL && g_current_radio < g_radio_count) {
+            lv_obj_t *item = lv_obj_create(g_h.playlist_list);
+            lv_obj_remove_style_all(item);
+            lv_obj_set_size(item, LV_PCT(100), LV_SIZE_CONTENT);
+            lv_obj_set_style_pad_all(item, 8, 0);
+            lv_obj_set_style_radius(item, 7, 0);
+            lv_obj_set_style_bg_color(item, lv_color_hex(0x000000), 0);
+            lv_obj_set_style_bg_opa(item, 12, 0);
+            lv_obj_set_flex_flow(item, LV_FLEX_FLOW_ROW);
+            lv_obj_set_style_pad_column(item, 10, 0);
+            am_text(item, "1", am_metrics()->f_label, AM_MUTED);
+            {
+                lv_obj_t *info = lv_obj_create(item);
+                lv_obj_remove_style_all(info);
+                lv_obj_set_flex_grow(info, 1);
+                lv_obj_set_height(info, LV_SIZE_CONTENT);
+                lv_obj_set_flex_flow(info, LV_FLEX_FLOW_COLUMN);
+                am_text(info, g_radios[g_current_radio].title, am_metrics()->f_body, lv_color_hex(0xfa2d48));
+                am_text(info, "LIVE", am_metrics()->f_label, AM_MUTED);
+            }
+        }
+        return;
+    }
+
+    for(i = 0U; i < g_local_count; i++) {
+        lv_obj_t *item = lv_obj_create(g_h.playlist_list);
+        lv_obj_t *info;
+        bool active = (i == g_current_local);
+        lv_obj_remove_style_all(item);
+        lv_obj_set_size(item, LV_PCT(100), LV_SIZE_CONTENT);
+        lv_obj_set_style_pad_all(item, 8, 0);
+        lv_obj_set_style_radius(item, 7, 0);
+        lv_obj_set_style_bg_color(item, lv_color_hex(0x000000), 0);
+        lv_obj_set_style_bg_opa(item, active ? 12 : LV_OPA_TRANSP, 0);
+        lv_obj_set_flex_flow(item, LV_FLEX_FLOW_ROW);
+        lv_obj_set_style_pad_column(item, 10, 0);
+
+        {
+            char idx_buf[8];
+            snprintf(idx_buf, sizeof(idx_buf), "%u", (unsigned)(i + 1U));
+            am_text(item, idx_buf, am_metrics()->f_label, active ? lv_color_hex(0xfa2d48) : AM_MUTED);
+        }
+
+        info = lv_obj_create(item);
+        lv_obj_remove_style_all(info);
+        lv_obj_set_flex_grow(info, 1);
+        lv_obj_set_height(info, LV_SIZE_CONTENT);
+        lv_obj_set_flex_flow(info, LV_FLEX_FLOW_COLUMN);
+        am_text(info, g_locals[i].title, am_metrics()->f_body, active ? lv_color_hex(0xfa2d48) : AM_TEXT);
+        am_text(info, "本地音频", am_metrics()->f_label, AM_MUTED);
+    }
+}
+
+void am_player_refresh_ui(void)
+{
+    char cur_buf[16];
+    char total_buf[16];
     uint32_t pos = music_player_get_position_ms();
     uint32_t dur = music_player_get_duration_ms();
 
-    /* time_cur */
-    if(g_h.time_cur) {
-        if(g_mode == AM_PLAYER_MODE_STREAM && dur == 0) {
-            lv_label_set_text(g_h.time_cur, "LIVE");
-        } else if(dur == 0) {
-            lv_label_set_text(g_h.time_cur, "--:--");
-        } else {
-            char buf[10];
-            snprintf(buf, sizeof(buf), "%u:%02u", pos / 60000u, (pos / 1000u) % 60u);
-            lv_label_set_text(g_h.time_cur, buf);
+    if(g_h.title_label != NULL) lv_label_set_text(g_h.title_label, am_current_title());
+    if(g_h.subtitle_label != NULL) lv_label_set_text(g_h.subtitle_label, am_current_subtitle());
+    if(g_h.play_icon != NULL) lv_label_set_text(g_h.play_icon, music_player_is_playing() ? AM_ICON_PAUSE : AM_ICON_PLAY);
+    if(g_h.time_cur != NULL) {
+        if(g_source_kind == AM_SOURCE_RADIO && dur == 0U) lv_label_set_text(g_h.time_cur, "LIVE");
+        else {
+            am_format_time(pos, cur_buf, sizeof(cur_buf));
+            lv_label_set_text(g_h.time_cur, cur_buf);
         }
     }
-
-    /* time_total */
-    if(g_h.time_total) {
-        if(dur == 0) {
-            lv_label_set_text(g_h.time_total, "--:--");
-        } else {
-            char buf[10];
-            snprintf(buf, sizeof(buf), "%u:%02u", dur / 60000u, (dur / 1000u) % 60u);
-            lv_label_set_text(g_h.time_total, buf);
+    if(g_h.time_total != NULL) {
+        if(g_source_kind == AM_SOURCE_RADIO && dur == 0U) lv_label_set_text(g_h.time_total, "--:--");
+        else {
+            am_format_time(dur, total_buf, sizeof(total_buf));
+            lv_label_set_text(g_h.time_total, total_buf);
         }
     }
-
-    /* progress fill: 仅在 dur > 0 时更新宽度 */
-    if(g_h.progress_fill && dur > 0) {
-        int pct = (int)((uint64_t)pos * 100ull / dur);
+    if(g_h.progress_fill != NULL) {
+        int pct = 0;
+        if(dur > 0U) pct = (int)((uint64_t)pos * 100ULL / dur);
+        if(pct < 0) pct = 0;
         if(pct > 100) pct = 100;
         lv_obj_set_width(g_h.progress_fill, LV_PCT(pct));
     }
-}
-
-/* ── timer callback (主线程，100ms) ──────────────────────────────────── */
-
-static void am_player_timer_cb(lv_timer_t *t) {
-    (void)t;
-    if(g_mode == AM_PLAYER_MODE_IDLE) return;
-
-    /* 检测曲目切换 */
-    size_t idx = music_player_get_current_index();
-    if(idx != g_last_idx) {
-        g_last_idx = idx;
-        refresh_title();
+    if(g_h.volume_fill != NULL) {
+        lv_coord_t width = (lv_coord_t)((70U * g_volume) / 100U);
+        lv_obj_set_width(g_h.volume_fill, width);
+    }
+    if(g_h.playlist_popup != NULL) {
+        if(g_playlist_open) lv_obj_clear_flag(g_h.playlist_popup, LV_OBJ_FLAG_HIDDEN);
+        else lv_obj_add_flag(g_h.playlist_popup, LV_OBJ_FLAG_HIDDEN);
     }
 
-    /* 检测播放状态变化 */
-    bool playing = music_player_is_playing();
-    if(playing != g_last_playing) {
-        g_last_playing = playing;
-        refresh_play_icon(playing);
-    }
-
-    refresh_progress();
+    am_refresh_playlist_popup();
 }
 
-/* ── public API ───────────────────────────────────────────────────────── */
+static void am_player_timer_cb(lv_timer_t *timer)
+{
+    LV_UNUSED(timer);
+    if(g_source_kind == AM_SOURCE_LOCAL) {
+        size_t idx = music_player_get_current_index();
+        if(idx < g_local_count) g_current_local = idx;
+    }
+    am_player_refresh_ui();
+}
 
-void am_player_init(void) {
-    size_t i;
-    for(i = 0; i < g_local_count; i++) { free(g_local_urls[i]); g_local_urls[i] = NULL; }
-    g_local_count = 0;
+void am_player_init(void)
+{
     memset(&g_h, 0, sizeof(g_h));
-    g_mode         = AM_PLAYER_MODE_IDLE;
-    g_stream_title[0] = '\0';
-    g_last_idx     = (size_t)-1;
-    g_last_playing = false;
-    if(g_timer) { lv_timer_delete(g_timer); g_timer = NULL; }
-    g_timer = lv_timer_create(am_player_timer_cb, 100, NULL);
+    g_source_kind = AM_SOURCE_NONE;
+    g_locals = NULL;
+    g_local_count = 0U;
+    g_radios = NULL;
+    g_radio_count = 0U;
+    g_current_local = 0U;
+    g_current_radio = 0U;
+    g_playlist_open = false;
+    g_volume = 65U;
+    if(g_timer != NULL) lv_timer_delete(g_timer);
+    g_timer = lv_timer_create(am_player_timer_cb, 120, NULL);
 }
 
-void am_player_deinit(void) {
-    size_t i;
-    if(g_timer) { lv_timer_delete(g_timer); g_timer = NULL; }
+void am_player_deinit(void)
+{
+    if(g_timer != NULL) {
+        lv_timer_delete(g_timer);
+        g_timer = NULL;
+    }
     music_player_deinit();
-    for(i = 0; i < g_local_count; i++) { free(g_local_urls[i]); g_local_urls[i] = NULL; }
-    g_local_count = 0;
     memset(&g_h, 0, sizeof(g_h));
+    g_source_kind = AM_SOURCE_NONE;
 }
 
-void am_player_bind_miniplayer(const am_miniplayer_handles_t *h) {
-    if(!h) { memset(&g_h, 0, sizeof(g_h)); return; }
+void am_player_bind_miniplayer(const am_miniplayer_handles_t *h)
+{
+    if(h == NULL) {
+        memset(&g_h, 0, sizeof(g_h));
+        return;
+    }
     g_h = *h;
-    /* 立即刷新 */
-    refresh_title();
-    refresh_play_icon(music_player_is_playing());
-    refresh_progress();
+    am_player_refresh_ui();
 }
 
-void am_player_load_local(const char **urls, size_t count, size_t start_index) {
+void am_player_set_sources(const am_local_item_t *locals, size_t local_count,
+                           const am_radio_item_t *radios, size_t radio_count)
+{
+    g_locals = locals;
+    g_local_count = local_count;
+    g_radios = radios;
+    g_radio_count = radio_count;
+    am_player_refresh_ui();
+}
+
+void am_player_play_local_index(size_t index)
+{
+    const char *urls[AM_PLAYER_LOCAL_MAX];
     size_t i;
-    for(i = 0; i < g_local_count; i++) { free(g_local_urls[i]); g_local_urls[i] = NULL; }
-    g_local_count = 0;
-    for(i = 0; i < count && i < AM_PLAYER_LOCAL_MAX; i++) {
-        g_local_urls[i] = strdup(urls[i]);
-        if(!g_local_urls[i]) break;  /* 内存不足时中止，避免 NULL 空洞 */
-        g_local_count++;
-    }
-    g_mode     = AM_PLAYER_MODE_LOCAL;
-    g_last_idx = (size_t)-1;
+
+    if(g_locals == NULL || g_local_count == 0U || index >= g_local_count) return;
+    if(g_local_count > AM_PLAYER_LOCAL_MAX) return;
+
+    for(i = 0U; i < g_local_count; i++) urls[i] = g_locals[i].path;
+
+    g_source_kind = AM_SOURCE_LOCAL;
+    g_current_local = index;
     music_player_deinit();
-    if(g_local_count > 0) {
-        music_player_init((const char **)g_local_urls, g_local_count);
-        if(start_index > 0 && start_index < g_local_count) {
-            music_player_select(start_index);
-        }
-    }
+    music_player_init(urls, g_local_count);
+    music_player_select(index);
+    music_player_set_volume(g_volume);
+    am_player_refresh_ui();
 }
 
-void am_player_play_stream(const char *url, const char *title) {
-    const char *one[1];
-    if(!url || !url[0]) return;  /* 防御空 URL */
-    strncpy(g_stream_title, title ? title : "", sizeof(g_stream_title) - 1);
-    g_stream_title[sizeof(g_stream_title) - 1] = '\0';
-    g_mode     = AM_PLAYER_MODE_STREAM;
-    g_last_idx = (size_t)-1;
+void am_player_play_radio_index(size_t index)
+{
+    const char *url_list[1];
+
+    if(g_radios == NULL || g_radio_count == 0U || index >= g_radio_count) return;
+    g_source_kind = AM_SOURCE_RADIO;
+    g_current_radio = index;
     music_player_deinit();
-    one[0] = url;
-    music_player_init(one, 1);
+    url_list[0] = g_radios[index].url;
+    music_player_init(url_list, 1U);
+    music_player_set_volume(g_volume);
+    am_player_refresh_ui();
 }
 
-void am_player_on_play_pause(lv_event_t *e) {
-    (void)e;
+void am_player_toggle_playback(void)
+{
     if(music_player_is_playing()) music_player_pause();
-    else                          music_player_resume();
+    else music_player_resume();
+    am_player_refresh_ui();
 }
 
-void am_player_on_prev(lv_event_t *e) { (void)e; music_player_prev(); }
-void am_player_on_next(lv_event_t *e) { (void)e; music_player_next(); }
+void am_player_prev(void)
+{
+    if(g_source_kind == AM_SOURCE_RADIO) {
+        if(g_radio_count == 0U) return;
+        if(g_current_radio == 0U) g_current_radio = g_radio_count - 1U;
+        else g_current_radio--;
+        am_player_play_radio_index(g_current_radio);
+        return;
+    }
+    music_player_prev();
+    if(g_current_local > 0U) g_current_local--;
+    am_player_refresh_ui();
+}
+
+void am_player_next(void)
+{
+    if(g_source_kind == AM_SOURCE_RADIO) {
+        if(g_radio_count == 0U) return;
+        g_current_radio = (g_current_radio + 1U) % g_radio_count;
+        am_player_play_radio_index(g_current_radio);
+        return;
+    }
+    music_player_next();
+    if(g_local_count > 0U) g_current_local = (g_current_local + 1U) % g_local_count;
+    am_player_refresh_ui();
+}
+
+void am_player_cycle_mode(void)
+{
+    music_player_cycle_play_mode();
+    am_player_refresh_ui();
+}
+
+void am_player_set_volume_percent(uint8_t percent)
+{
+    g_volume = percent;
+    music_player_set_volume(percent);
+    am_player_refresh_ui();
+}
+
+void am_player_set_playlist_open(bool open)
+{
+    g_playlist_open = open;
+    am_player_refresh_ui();
+}
+
+bool am_player_playlist_open(void)
+{
+    return g_playlist_open;
+}
+
+am_source_kind_t am_player_source_kind(void)
+{
+    return g_source_kind;
+}
+
+size_t am_player_current_local_index(void)
+{
+    return g_current_local;
+}
+
+size_t am_player_current_radio_index(void)
+{
+    return g_current_radio;
+}
+
+bool am_player_is_playing(void)
+{
+    return music_player_is_playing();
+}
+
+uint8_t am_player_volume_percent(void)
+{
+    return g_volume;
+}
+
+void am_player_on_play_pause(lv_event_t *e)
+{
+    LV_UNUSED(e);
+    am_player_toggle_playback();
+}
+
+void am_player_on_prev(lv_event_t *e)
+{
+    LV_UNUSED(e);
+    am_player_prev();
+}
+
+void am_player_on_next(lv_event_t *e)
+{
+    LV_UNUSED(e);
+    am_player_next();
+}
+
+void am_player_on_mode(lv_event_t *e)
+{
+    LV_UNUSED(e);
+    am_player_cycle_mode();
+}

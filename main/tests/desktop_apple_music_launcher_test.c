@@ -24,6 +24,15 @@ void apple_music_create_in(lv_obj_t *parent)
     g_last_parent = parent;
     lv_obj_t *content = lv_obj_create(parent);
     lv_obj_set_size(content, 32, 32);
+    lv_obj_t *sidebar = lv_obj_create(parent);
+    lv_obj_set_size(sidebar, 32, 32);
+    lv_obj_t *player = lv_obj_create(parent);
+    lv_obj_set_size(player, 32, 32);
+}
+
+void apple_music_destroy(void)
+{
+    g_player_deinit_called = true;
 }
 
 void am_metrics_init(int hor_res, int ver_res)
@@ -63,6 +72,7 @@ int main(void)
     assert(lv_obj_get_child_count(overlay) >= 2);
     assert(lv_obj_get_width(g_last_parent) == 800);
     assert(lv_obj_get_height(g_last_parent) == 480);
+    assert(lv_obj_get_child_count(g_last_parent) >= 3);
 
     lv_obj_t *back_btn = lv_obj_get_child(overlay, (int32_t)lv_obj_get_child_count(overlay) - 1);
     lv_obj_send_event(back_btn, LV_EVENT_CLICKED, NULL);

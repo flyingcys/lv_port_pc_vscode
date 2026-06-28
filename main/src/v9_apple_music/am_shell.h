@@ -1,16 +1,30 @@
-/* main/src/v9_apple_music/am_shell.h */
 #ifndef AM_SHELL_H
 #define AM_SHELL_H
+
 #include "lvgl/lvgl.h"
+
+#include "am_data.h"
 #include "am_player.h"
 
-/* 导航点击回调:传出被点项索引(0..4 对应 am_nav_items) */
-typedef void (*am_nav_cb_t)(int nav_index, void *user);
+typedef void (*am_nav_cb_t)(am_view_t view, void *user);
+typedef void (*am_simple_event_cb_t)(lv_event_t *e);
 
-/* 在 sidebar 容器内构建侧栏(品牌/导航/偏好/listener 卡);active_nav 高亮项;cb 用于切页 */
-void am_shell_build_sidebar(lv_obj_t *sidebar, int active_nav, am_nav_cb_t cb, void *user);
+typedef struct {
+    lv_obj_t *root;
+    lv_obj_t *sidebar;
+    lv_obj_t *header;
+    lv_obj_t *crumb;
+    lv_obj_t *content;
+    lv_obj_t *player;
+} am_shell_handles_t;
 
-/* 在 player 容器内构建迷你播放条，返回关键 widget 句柄 */
-am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player);
+void am_shell_build_sidebar(lv_obj_t *sidebar, am_view_t active_view, am_nav_cb_t cb, void *user);
+void am_shell_set_header_title(lv_obj_t *header_label, const char *title);
+am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
+                                                  am_simple_event_cb_t on_mode,
+                                                  am_simple_event_cb_t on_prev,
+                                                  am_simple_event_cb_t on_play,
+                                                  am_simple_event_cb_t on_next,
+                                                  am_simple_event_cb_t on_playlist);
 
 #endif /* AM_SHELL_H */

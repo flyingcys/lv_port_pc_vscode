@@ -16,5 +16,8 @@
 #define AM_ICON_NEXT      "⏭"  /* U+23ED  下一首 */
 #define AM_ICON_PAUSE     "||"  /* ASCII 竖线对，暂停图标（字体子集含全 ASCII）*/
 #define AM_ICON_REPLAY    "↺"  /* U+21BA  最近播放 item-action */
+#define AM_ICON_HEART     "♥"  /* U+2665  收藏 */
+#define AM_ICON_LIST      "≡"  /* U+2261  列表 */
+#define AM_ICON_SPEAKER   "◔"  /* U+25D4  音量占位 */
 
 #endif /* AM_ICONS_H */
