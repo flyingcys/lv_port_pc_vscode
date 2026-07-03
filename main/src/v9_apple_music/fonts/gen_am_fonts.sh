@@ -53,4 +53,15 @@ for N in 11 12 13 14 16 18 24 34; do
     --lv-font-name "am_font_$N" -o "$FDIR/am_font_$N.c" --force-fast-kern-format
   echo "am_font_$N done"
 done
-echo "完成。480 档字体(am_font_480_*)见 Task 10 单独生成。"
+
+# 480x272 档字体(am_font_480_*),同字符集
+for N in 10 12 15 18 22; do
+  npx -y lv_font_conv --no-compress --format lvgl --bpp 4 --size "$N" \
+    --font "$MONT" -r 0x20-0x7F \
+    --font "$SC"   --symbols "$CJK" \
+    --font "$DVM"  --symbols "⌂◉♫≣⚙♪⌕◌▶↺♥≡" \
+    --font "$SYM"  --symbols "⏮⏭◔" \
+    --lv-font-name "am_font_480_$N" -o "$FDIR/am_font_480_$N.c" --force-fast-kern-format
+  echo "am_font_480_$N done"
+done
+echo "完成。"

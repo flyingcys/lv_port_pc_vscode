@@ -123,21 +123,31 @@ static void am_build_now_view(lv_obj_t *parent)
     const am_metrics_t *m = am_metrics();
     lv_obj_t *view = lv_obj_create(parent);
     lv_obj_t *info;
+    bool stack = m->stack_content;             /* 最小档单列堆叠(封面在上,信息在下) */
+    int cover_sz = stack ? 100 : 188;
 
     lv_obj_remove_style_all(view);
     lv_obj_set_size(view, LV_PCT(100), LV_PCT(100));
-    lv_obj_set_style_pad_left(view, 26, 0);
-    lv_obj_set_style_pad_right(view, 26, 0);
-    lv_obj_set_style_pad_top(view, 18, 0);
-    lv_obj_set_style_pad_bottom(view, 18, 0);
+    lv_obj_set_style_pad_left(view, stack ? 14 : 26, 0);
+    lv_obj_set_style_pad_right(view, stack ? 14 : 26, 0);
+    lv_obj_set_style_pad_top(view, stack ? 12 : 18, 0);
+    lv_obj_set_style_pad_bottom(view, stack ? 12 : 18, 0);
     lv_obj_set_style_pad_column(view, 26, 0);
-    lv_obj_set_flex_flow(view, LV_FLEX_FLOW_ROW);
-    lv_obj_set_flex_align(view, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-    lv_obj_clear_flag(view, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_set_style_pad_row(view, stack ? 10 : 0, 0);
+    lv_obj_set_flex_flow(view, stack ? LV_FLEX_FLOW_COLUMN : LV_FLEX_FLOW_ROW);
+    lv_obj_set_flex_align(view, LV_FLEX_ALIGN_START,
+                          stack ? LV_FLEX_ALIGN_CENTER : LV_FLEX_ALIGN_CENTER,
+                          stack ? LV_FLEX_ALIGN_START : LV_FLEX_ALIGN_CENTER);
+    if(stack) {  /* 单列可能超一屏 → 允许竖向滚动 */
+        lv_obj_set_scroll_dir(view, LV_DIR_VER);
+        lv_obj_set_scrollbar_mode(view, LV_SCROLLBAR_MODE_OFF);
+    } else {
+        lv_obj_clear_flag(view, LV_OBJ_FLAG_SCROLLABLE);
+    }
 
     g_app.cover = lv_obj_create(view);
     lv_obj_remove_style_all(g_app.cover);
-    lv_obj_set_size(g_app.cover, 188, 188);
+    lv_obj_set_size(g_app.cover, cover_sz, cover_sz);
     lv_obj_set_style_radius(g_app.cover, 14, 0);
     lv_obj_set_style_clip_corner(g_app.cover, true, 0);   /* 让火焰图/纯色都被裁圆角 */
     lv_obj_set_style_shadow_width(g_app.cover, 30, 0);
@@ -146,13 +156,14 @@ static void am_build_now_view(lv_obj_t *parent)
     lv_obj_clear_flag(g_app.cover, LV_OBJ_FLAG_SCROLLABLE);
 
     g_app.cover_img = lv_image_create(g_app.cover);
-    lv_image_set_src(g_app.cover_img, &am_cover_fire);   /* mockup 火焰封面 */
+    lv_image_set_src(g_app.cover_img, &am_cover_fire);   /* mockup 火焰封面(188 原生) */
+    if(cover_sz != 188) lv_image_set_scale(g_app.cover_img, (uint32_t)(cover_sz * 256 / 188));
     lv_obj_center(g_app.cover_img);
 
     info = lv_obj_create(view);
     lv_obj_remove_style_all(info);
-    lv_obj_set_flex_grow(info, 1);
-    lv_obj_set_height(info, LV_SIZE_CONTENT);
+    if(stack) { lv_obj_set_width(info, LV_PCT(100)); lv_obj_set_height(info, LV_SIZE_CONTENT); }
+    else      { lv_obj_set_flex_grow(info, 1); lv_obj_set_height(info, LV_SIZE_CONTENT); }
     lv_obj_set_flex_flow(info, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_style_pad_row(info, 6, 0);
     lv_obj_clear_flag(info, LV_OBJ_FLAG_SCROLLABLE);
@@ -234,6 +245,9 @@ static void am_build_root(lv_obj_t *parent)
             if(height <= 0) height = lv_display_get_vertical_resolution(disp);
         }
     }
+
+    am_metrics_init(width, height);   /* 按分辨率选档(桌面入口已调用,此处兼顾无头 AM_RES) */
+    m = am_metrics();
 
     am_free_runtime_data();
     memset(&g_app, 0, sizeof(g_app));
