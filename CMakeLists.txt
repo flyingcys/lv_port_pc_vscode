@@ -63,6 +63,9 @@ file(GLOB LOCAL_MUSIC_DEMO_SOURCES CONFIGURE_DEPENDS
 file(GLOB V9_APPLE_MUSIC_FONT_SOURCES CONFIGURE_DEPENDS
     "${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/fonts/*.c"
 )
+file(GLOB V9_APPLE_MUSIC_ASSET_SOURCES CONFIGURE_DEPENDS
+    "${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/assets/*.c"
+)
 set(V9_APPLE_MUSIC_SOURCES
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_data.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_local_scan.c
@@ -76,6 +79,7 @@ set(V9_APPLE_MUSIC_SOURCES
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_widgets.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/apple_music.c
     ${V9_APPLE_MUSIC_FONT_SOURCES}
+    ${V9_APPLE_MUSIC_ASSET_SOURCES}
 )
 file(GLOB V9_TETRIS_SOURCES CONFIGURE_DEPENDS
     "${PROJECT_SOURCE_DIR}/main/src/v9-tetris/*.c"
@@ -381,6 +385,7 @@ add_executable(apple_music_parent_size_test
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_widgets.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/apple_music.c
     ${V9_APPLE_MUSIC_FONT_SOURCES}
+    ${V9_APPLE_MUSIC_ASSET_SOURCES}
 )
 target_include_directories(apple_music_parent_size_test PRIVATE
     ${PROJECT_SOURCE_DIR}
