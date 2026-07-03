@@ -189,6 +189,16 @@ static void am_show_view(am_view_t view)
     am_shell_set_header_title(g_app.crumb, am_view_label(view));
     lv_obj_clean(g_app.content);
 
+    /* lv_obj_clean 已释放正在播放页的子对象;这些句柄现在是悬垂指针,必须清 NULL,
+     * 否则切到电台/收藏后 am_update_now_view 会解引用已释放对象 → lv_label_set_text 类型断言崩溃。
+     * 切到 NOW 时 am_build_now_view 会重新赋值。 */
+    g_app.now_view = NULL;
+    g_app.cover = NULL;
+    g_app.cover_img = NULL;
+    g_app.title = NULL;
+    g_app.subtitle = NULL;
+    g_app.lyrics = NULL;
+
     switch(view) {
         case AM_VIEW_RADIO:
             am_page_list_build_radio(g_app.content, g_app.radios, g_app.radio_count,
