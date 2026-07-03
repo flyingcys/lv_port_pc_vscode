@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "am_data.h"
+#include "am_fonts.h"
 #include "am_local_scan.h"
 #include "am_metrics.h"
 #include "am_page_list.h"
@@ -23,6 +24,7 @@ typedef struct {
     lv_obj_t *content;
     lv_obj_t *now_view;
     lv_obj_t *cover;
+    lv_obj_t *cover_img;
     lv_obj_t *title;
     lv_obj_t *subtitle;
     lv_obj_t *lyrics;
@@ -92,9 +94,18 @@ static void am_update_now_view(void)
     if(g_app.title != NULL) lv_label_set_text(g_app.title, title);
     if(g_app.subtitle != NULL) lv_label_set_text(g_app.subtitle, subtitle);
     if(g_app.cover != NULL) {
-        lv_obj_set_style_bg_color(g_app.cover, radio ? lv_color_hex(0xfa2d48) : lv_color_hex(0x9a2407), 0);
-        lv_obj_set_style_bg_grad_color(g_app.cover, radio ? lv_color_hex(0xfb7a8f) : lv_color_hex(0xffb02f), 0);
-        lv_obj_set_style_bg_grad_dir(g_app.cover, LV_GRAD_DIR_VER, 0);
+        if(radio) {
+            /* 电台:纯色/线性渐变块(无火焰),隐藏火焰图 */
+            if(g_app.cover_img != NULL) lv_obj_add_flag(g_app.cover_img, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_set_style_bg_opa(g_app.cover, LV_OPA_COVER, 0);
+            lv_obj_set_style_bg_color(g_app.cover, lv_color_hex(0x7da0ff), 0);
+            lv_obj_set_style_bg_grad_color(g_app.cover, lv_color_hex(0x3f54c8), 0);
+            lv_obj_set_style_bg_grad_dir(g_app.cover, LV_GRAD_DIR_VER, 0);
+        } else {
+            /* 歌曲/本地:显示火焰图 */
+            if(g_app.cover_img != NULL) lv_obj_clear_flag(g_app.cover_img, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_set_style_bg_opa(g_app.cover, LV_OPA_TRANSP, 0);
+        }
     }
     if(g_app.lyrics != NULL) {
         lv_obj_clean(g_app.lyrics);
@@ -128,9 +139,15 @@ static void am_build_now_view(lv_obj_t *parent)
     lv_obj_remove_style_all(g_app.cover);
     lv_obj_set_size(g_app.cover, 188, 188);
     lv_obj_set_style_radius(g_app.cover, 14, 0);
+    lv_obj_set_style_clip_corner(g_app.cover, true, 0);   /* 让火焰图/纯色都被裁圆角 */
     lv_obj_set_style_shadow_width(g_app.cover, 30, 0);
     lv_obj_set_style_shadow_opa(g_app.cover, 56, 0);
     lv_obj_set_style_shadow_offset_y(g_app.cover, 12, 0);
+    lv_obj_clear_flag(g_app.cover, LV_OBJ_FLAG_SCROLLABLE);
+
+    g_app.cover_img = lv_image_create(g_app.cover);
+    lv_image_set_src(g_app.cover_img, &am_cover_fire);   /* mockup 火焰封面 */
+    lv_obj_center(g_app.cover_img);
 
     info = lv_obj_create(view);
     lv_obj_remove_style_all(info);
