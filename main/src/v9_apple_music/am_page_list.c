@@ -7,9 +7,9 @@
 
 #include "am_icons.h"
 #include "am_metrics.h"
+#include "am_player.h"
 #include "am_theme.h"
 #include "am_widgets.h"
-#include "music_player.h"
 
 /* 电台/收藏封面块的渐变配色(对应 mockup STATIONS 的 c1/c2 暖冷色循环) */
 static const uint32_t am_art_palette[][2] = {
@@ -237,7 +237,7 @@ lv_obj_t *am_page_list_build_favorites(lv_obj_t *parent,
         am_text(row, AM_ICON_HEART, m->f_label, lv_color_hex(0xfa2d48));
         {
             char dur[16];
-            uint32_t ms = music_player_get_track_duration_ms(i);
+            uint32_t ms = am_player_track_duration_ms(i);
             if(ms > 0U) { am_fmt_mmss(ms, dur, sizeof(dur)); }
             else { snprintf(dur, sizeof(dur), "--:--"); }
             am_text(row, dur, m->f_label, AM_MUTED);

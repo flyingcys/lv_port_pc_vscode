@@ -46,6 +46,7 @@ void am_player_set_playlist_open(bool open);
 bool am_player_playlist_open(void);
 
 am_source_kind_t am_player_source_kind(void);
+uint32_t am_player_track_duration_ms(size_t index);
 size_t am_player_current_local_index(void);
 size_t am_player_current_radio_index(void);
 bool am_player_is_playing(void);

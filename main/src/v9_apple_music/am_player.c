@@ -394,6 +394,11 @@ am_source_kind_t am_player_source_kind(void)
     return g_source_kind;
 }
 
+uint32_t am_player_track_duration_ms(size_t index)
+{
+    return music_player_get_track_duration_ms(index);
+}
+
 size_t am_player_current_local_index(void)
 {
     return g_current_local;

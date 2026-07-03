@@ -85,6 +85,12 @@ am_source_kind_t am_player_source_kind(void)
     return AM_SOURCE_NONE;
 }
 
+uint32_t am_player_track_duration_ms(size_t index)
+{
+    LV_UNUSED(index);
+    return 0U;
+}
+
 size_t am_player_current_local_index(void)
 {
     return 0U;
