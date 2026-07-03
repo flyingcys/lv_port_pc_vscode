@@ -14,6 +14,7 @@ typedef struct {
     lv_obj_t *progress_fill;
     lv_obj_t *knob;
     lv_obj_t *play_icon;
+    lv_obj_t *volume_icon;
     lv_obj_t *volume_track;
     lv_obj_t *volume_fill;
     lv_obj_t *playlist_popup;
@@ -39,6 +40,8 @@ void am_player_prev(void);
 void am_player_next(void);
 void am_player_cycle_mode(void);
 void am_player_set_volume_percent(uint8_t percent);
+void am_player_seek_percent(uint8_t percent);
+void am_player_toggle_mute(void);
 void am_player_set_playlist_open(bool open);
 bool am_player_playlist_open(void);
 

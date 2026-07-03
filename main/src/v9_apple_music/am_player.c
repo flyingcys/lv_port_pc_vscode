@@ -25,6 +25,11 @@ static size_t g_current_radio = 0U;
 static bool g_playlist_open = false;
 static uint8_t g_volume = 65U;
 static lv_timer_t *g_timer = NULL;
+static bool g_local_engine_ready = false;   /* 本地播放列表已 init(避免每次切歌 deinit/init) */
+
+static void am_progress_track_cb(lv_event_t *e);
+static void am_volume_track_cb(lv_event_t *e);
+static void am_speaker_cb(lv_event_t *e);
 
 static const char *am_current_title(void)
 {
@@ -182,6 +187,7 @@ void am_player_init(void)
     g_current_radio = 0U;
     g_playlist_open = false;
     g_volume = 65U;
+    g_local_engine_ready = false;
     if(g_timer != NULL) lv_timer_delete(g_timer);
     g_timer = lv_timer_create(am_player_timer_cb, 120, NULL);
 }
@@ -195,6 +201,7 @@ void am_player_deinit(void)
     music_player_deinit();
     memset(&g_h, 0, sizeof(g_h));
     g_source_kind = AM_SOURCE_NONE;
+    g_local_engine_ready = false;
 }
 
 void am_player_bind_miniplayer(const am_miniplayer_handles_t *h)
@@ -204,6 +211,21 @@ void am_player_bind_miniplayer(const am_miniplayer_handles_t *h)
         return;
     }
     g_h = *h;
+
+    /* 进度轨道点击 → seek;音量轨道点击 → 设音量;喇叭点击 → 静音 */
+    if(g_h.progress_track != NULL) {
+        lv_obj_add_flag(g_h.progress_track, LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_add_event_cb(g_h.progress_track, am_progress_track_cb, LV_EVENT_CLICKED, NULL);
+        lv_obj_add_event_cb(g_h.progress_track, am_progress_track_cb, LV_EVENT_RELEASED, NULL);
+    }
+    if(g_h.volume_track != NULL) {
+        lv_obj_add_flag(g_h.volume_track, LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_add_event_cb(g_h.volume_track, am_volume_track_cb, LV_EVENT_CLICKED, NULL);
+    }
+    if(g_h.volume_icon != NULL) {
+        lv_obj_add_flag(g_h.volume_icon, LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_add_event_cb(g_h.volume_icon, am_speaker_cb, LV_EVENT_CLICKED, NULL);
+    }
     am_player_refresh_ui();
 }
 
@@ -225,14 +247,18 @@ void am_player_play_local_index(size_t index)
     if(g_locals == NULL || g_local_count == 0U || index >= g_local_count) return;
     if(g_local_count > AM_PLAYER_LOCAL_MAX) return;
 
-    for(i = 0U; i < g_local_count; i++) urls[i] = g_locals[i].path;
-
     g_source_kind = AM_SOURCE_LOCAL;
     g_current_local = index;
-    music_player_deinit();
-    music_player_init(urls, g_local_count);
+
+    /* 一次 init 整份本地列表,之后只 select 切歌(此前每次都 deinit/init,重探测所有时长,过重) */
+    if(!g_local_engine_ready) {
+        for(i = 0U; i < g_local_count; i++) urls[i] = g_locals[i].path;
+        music_player_deinit();
+        music_player_init(urls, g_local_count);
+        music_player_set_volume(g_volume);
+        g_local_engine_ready = true;
+    }
     music_player_select(index);
-    music_player_set_volume(g_volume);
     am_player_refresh_ui();
 }
 
@@ -244,6 +270,7 @@ void am_player_play_radio_index(size_t index)
     g_source_kind = AM_SOURCE_RADIO;
     g_current_radio = index;
     music_player_deinit();
+    g_local_engine_ready = false;   /* 切电台重置了单例,本地需重新 init */
     url_list[0] = g_radios[index].url;
     music_player_init(url_list, 1U);
     music_player_set_volume(g_volume);
@@ -292,9 +319,64 @@ void am_player_cycle_mode(void)
 
 void am_player_set_volume_percent(uint8_t percent)
 {
+    if(percent > 100U) percent = 100U;
     g_volume = percent;
     music_player_set_volume(percent);
     am_player_refresh_ui();
+}
+
+void am_player_seek_percent(uint8_t percent)
+{
+    uint32_t dur;
+    if(g_source_kind != AM_SOURCE_LOCAL) return;   /* 电台直播不支持 seek */
+    dur = music_player_get_duration_ms();
+    if(dur == 0U) return;
+    if(percent > 100U) percent = 100U;
+    music_player_seek((uint32_t)((uint64_t)dur * percent / 100U));
+    am_player_refresh_ui();
+}
+
+void am_player_toggle_mute(void)
+{
+    music_player_mute_toggle();
+    am_player_refresh_ui();
+}
+
+/* 轨道点击/拖动 → 计算命中比例 */
+static uint8_t am_track_ratio(lv_event_t *e)
+{
+    lv_indev_t *indev = lv_event_get_indev(e);
+    lv_obj_t *track = lv_event_get_target(e);
+    lv_point_t p;
+    lv_area_t a;
+    int32_t w, rel, pct;
+
+    if(indev == NULL || track == NULL) return 0U;
+    lv_indev_get_point(indev, &p);
+    lv_obj_get_coords(track, &a);
+    w = lv_area_get_width(&a);
+    if(w <= 0) return 0U;
+    rel = p.x - a.x1;
+    pct = rel * 100 / w;
+    if(pct < 0) pct = 0;
+    if(pct > 100) pct = 100;
+    return (uint8_t)pct;
+}
+
+static void am_progress_track_cb(lv_event_t *e)
+{
+    am_player_seek_percent(am_track_ratio(e));
+}
+
+static void am_volume_track_cb(lv_event_t *e)
+{
+    am_player_set_volume_percent(am_track_ratio(e));
+}
+
+static void am_speaker_cb(lv_event_t *e)
+{
+    LV_UNUSED(e);
+    am_player_toggle_mute();
 }
 
 void am_player_set_playlist_open(bool open)

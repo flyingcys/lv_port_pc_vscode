@@ -281,7 +281,7 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
             lv_obj_set_style_pad_column(vol, 7, 0);
             lv_obj_clear_flag(vol, LV_OBJ_FLAG_SCROLLABLE);
 
-            am_text(vol, AM_ICON_SPEAKER, m->f_label, AM_MUTED);
+            h.volume_icon = am_text(vol, AM_ICON_SPEAKER, m->f_label, AM_MUTED);
             {
                 lv_obj_t *track = lv_obj_create(vol);
                 lv_obj_remove_style_all(track);
