@@ -97,7 +97,7 @@ void am_shell_build_sidebar(lv_obj_t *sidebar, am_view_t active_view, am_nav_cb_
     }
 
     {
-        lv_obj_t *title = am_text(sidebar, "音乐", m->f_h2, AM_TEXT);
+        lv_obj_t *title = am_text(sidebar, "音乐", m->f_metric, AM_TEXT);
         lv_obj_set_style_pad_left(title, 6, 0);
         lv_obj_set_style_pad_bottom(title, 12, 0);
     }

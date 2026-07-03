@@ -9,6 +9,29 @@
 #include "am_metrics.h"
 #include "am_theme.h"
 #include "am_widgets.h"
+#include "music_player.h"
+
+/* 电台/收藏封面块的渐变配色(对应 mockup STATIONS 的 c1/c2 暖冷色循环) */
+static const uint32_t am_art_palette[][2] = {
+    {0xff9a5aU, 0xe0531fU}, {0x7da0ffU, 0x3f54c8U},
+    {0xb98cffU, 0x7a3fd0U}, {0x4fd0a0U, 0x1f8a5eU},
+};
+
+static void am_art_gradient(lv_obj_t *art, size_t i)
+{
+    uint32_t c1 = am_art_palette[i % 4U][0];
+    uint32_t c2 = am_art_palette[i % 4U][1];
+    lv_obj_set_style_bg_color(art, lv_color_hex(c1), 0);
+    lv_obj_set_style_bg_grad_color(art, lv_color_hex(c2), 0);
+    lv_obj_set_style_bg_grad_dir(art, LV_GRAD_DIR_VER, 0);
+    lv_obj_set_style_bg_opa(art, LV_OPA_COVER, 0);
+}
+
+static void am_fmt_mmss(uint32_t ms, char *buf, size_t n)
+{
+    unsigned s = ms / 1000U;
+    snprintf(buf, n, "%02u:%02u", s / 60U, s % 60U);
+}
 
 static const am_metrics_t *am_list_metrics(void)
 {
@@ -113,8 +136,7 @@ lv_obj_t *am_page_list_build_radio(lv_obj_t *parent,
         lv_obj_remove_style_all(art);
         lv_obj_set_size(art, 42, 42);
         lv_obj_set_style_radius(art, 8, 0);
-        lv_obj_set_style_bg_color(art, lv_color_hex(0xfa2d48), 0);
-        lv_obj_set_style_bg_opa(art, LV_OPA_COVER, 0);
+        am_art_gradient(art, i);
         lv_obj_clear_flag(art, LV_OBJ_FLAG_SCROLLABLE);
         {
             lv_obj_t *icon = am_text(art, AM_ICON_RADIO, m->f_icon, AM_WHITE);
@@ -137,14 +159,17 @@ lv_obj_t *am_page_list_build_radio(lv_obj_t *parent,
             lv_obj_set_width(name, LV_PCT(100));
         }
 
-        snprintf(sub, sizeof(sub), "缓存 %ums", (unsigned)items[i].network_cache_ms);
+        (void)sub;
         {
-            lv_obj_t *label = am_text(info, sub, m->f_label, AM_MUTED);
+            lv_obj_t *label = am_text(info, "在线广播", m->f_label, AM_MUTED);
             lv_label_set_long_mode(label, LV_LABEL_LONG_DOT);
             lv_obj_set_width(label, LV_PCT(100));
         }
 
-        am_text(row, "LIVE", m->f_label, lv_color_hex(0xfa2d48));
+        /* 徽标仅当前播放行显示(mockup:非播放行行尾无徽标) */
+        if(i == current_index) {
+            am_text(row, "正在播放", m->f_label, lv_color_hex(0xfa2d48));
+        }
     }
 
     if(count > render_n) {
@@ -183,12 +208,12 @@ lv_obj_t *am_page_list_build_favorites(lv_obj_t *parent,
         lv_obj_remove_style_all(art);
         lv_obj_set_size(art, 42, 42);
         lv_obj_set_style_radius(art, 8, 0);
-        lv_obj_set_style_bg_color(art, lv_color_hex(0x1d1d1f), 0);
+        /* mockup 收藏封面 = 火焰渐变块(暖橙→暗红) */
+        lv_obj_set_style_bg_color(art, lv_color_hex(0xff9a3cU), 0);
+        lv_obj_set_style_bg_grad_color(art, lv_color_hex(0x9a2407U), 0);
+        lv_obj_set_style_bg_grad_dir(art, LV_GRAD_DIR_VER, 0);
         lv_obj_set_style_bg_opa(art, LV_OPA_COVER, 0);
-        {
-            lv_obj_t *icon = am_text(art, AM_ICON_HEART, m->f_icon, AM_WHITE);
-            lv_obj_center(icon);
-        }
+        lv_obj_clear_flag(art, LV_OBJ_FLAG_SCROLLABLE);
 
         info = lv_obj_create(row);
         lv_obj_remove_style_all(info);
@@ -206,12 +231,19 @@ lv_obj_t *am_page_list_build_favorites(lv_obj_t *parent,
             lv_obj_set_width(name, LV_PCT(100));
         }
         {
-            lv_obj_t *sub = am_text(info, items[i].path, m->f_label, AM_MUTED);
+            lv_obj_t *sub = am_text(info, "本地资料库", m->f_label, AM_MUTED);
             lv_label_set_long_mode(sub, LV_LABEL_LONG_DOT);
             lv_obj_set_width(sub, LV_PCT(100));
         }
 
         am_text(row, AM_ICON_HEART, m->f_label, lv_color_hex(0xfa2d48));
+        {
+            char dur[16];
+            uint32_t ms = music_player_get_track_duration_ms(i);
+            if(ms > 0U) { am_fmt_mmss(ms, dur, sizeof(dur)); }
+            else { snprintf(dur, sizeof(dur), "--:--"); }
+            am_text(row, dur, m->f_label, AM_MUTED);
+        }
     }
 
     return root;
