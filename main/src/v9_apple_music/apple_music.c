@@ -285,7 +285,15 @@ static void am_build_root(lv_obj_t *parent)
     am_player_bind_miniplayer(&g_app.mini);
     am_load_runtime_data();
     am_shell_build_sidebar(g_app.sidebar, AM_VIEW_NOW, am_on_nav, NULL);
-    am_show_view(AM_VIEW_NOW);
+
+    {
+        /* AM_PAGE=now|radio|fav：无头截图时设初始视图(见 scripts/am_shots.sh) */
+        const char *pg = getenv("AM_PAGE");
+        am_view_t init = AM_VIEW_NOW;
+        if(pg != NULL && strcmp(pg, "radio") == 0) init = AM_VIEW_RADIO;
+        else if(pg != NULL && strcmp(pg, "fav") == 0) init = AM_VIEW_FAVORITES;
+        am_show_view(init);
+    }
 }
 
 void apple_music_create(void)

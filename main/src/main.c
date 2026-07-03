@@ -22,6 +22,7 @@
 #include "fruit_ninja_app.h"
 #include "game_2048_app.h"
 #include "music_player.h"
+#include "v9_apple_music/apple_music.h"
 
 
 /*********************
@@ -119,6 +120,10 @@ int main(int argc, char **argv)
       fprintf(stderr, "DBG: launching local music\n"); fflush(stderr);
       local_music_demo_launch();
       fprintf(stderr, "DBG: local music launched\n"); fflush(stderr);
+    } else if(app && strcmp(app, "apple_music") == 0) {
+      fprintf(stderr, "DBG: launching apple_music\n"); fflush(stderr);
+      apple_music_create();
+      fprintf(stderr, "DBG: apple_music launched\n"); fflush(stderr);
     }
   }
 
@@ -145,12 +150,41 @@ int main(int argc, char **argv)
  *   STATIC FUNCTIONS
  **********************/
 
+/* 无头模式(设置 AM_SHOT 时):用软件显示替代 SDL 窗口,配合 lv_snapshot 出图。
+ * 本机 SDL 无法创建窗口(offscreen/dummy 均不可用),故截图走此路径。 */
+#include <time.h>
+static uint32_t headless_tick_cb(void)
+{
+  struct timespec ts;
+  clock_gettime(CLOCK_MONOTONIC, &ts);
+  return (uint32_t)(ts.tv_sec * 1000ULL + ts.tv_nsec / 1000000ULL);
+}
+static void headless_flush_cb(lv_display_t * disp, const lv_area_t * area, uint8_t * px_map)
+{
+  (void)area; (void)px_map;
+  lv_display_flush_ready(disp);
+}
+static lv_display_t * hal_init_headless(int32_t w, int32_t h)
+{
+  lv_tick_set_cb(headless_tick_cb);
+  lv_group_set_default(lv_group_create());
+  lv_display_t * disp = lv_display_create(w, h);
+  size_t buf_size = (size_t)w * (size_t)h * 4u;   /* 足够容纳全屏一帧 */
+  void * buf = malloc(buf_size);
+  if(buf == NULL) { fprintf(stderr, "headless buffer alloc failed\n"); exit(4); }
+  lv_display_set_buffers(disp, buf, NULL, buf_size, LV_DISPLAY_RENDER_MODE_PARTIAL);
+  lv_display_set_flush_cb(disp, headless_flush_cb);
+  lv_display_set_default(disp);
+  return disp;
+}
+
 /**
  * Initialize the Hardware Abstraction Layer (HAL) for the LVGL graphics
  * library
  */
 static lv_display_t * hal_init(int32_t w, int32_t h)
 {
+  if(getenv("AM_SHOT") != NULL) return hal_init_headless(w, h);
 
   lv_group_set_default(lv_group_create());
 
