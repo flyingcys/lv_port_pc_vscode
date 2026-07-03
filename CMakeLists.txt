@@ -326,6 +326,7 @@ target_link_libraries(desktop_apple_music_launcher_test lvgl ${PNG_LIBRARIES})
 
 add_executable(apple_music_data_test
     ${PROJECT_SOURCE_DIR}/main/tests/apple_music_data_test.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_data.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_local_scan.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_sources_csv.c
 )

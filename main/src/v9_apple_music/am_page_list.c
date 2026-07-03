@@ -15,6 +15,11 @@ static const am_metrics_t *am_list_metrics(void)
     return am_metrics();
 }
 
+/* 电台源(sources.tsv)可能有数百条,一次性建成 LVGL 行对象会导致布局极慢(近似卡死)。
+ * 先限制渲染行数(全量数据仍保留,供播放条上一首/下一首在全列表内循环)。
+ * TODO(Task 8): 换成懒加载/分页/lv_list,支持浏览全部电台。 */
+#define AM_RADIO_RENDER_MAX 60
+
 typedef struct {
     size_t index;
     void *user;
@@ -94,8 +99,9 @@ lv_obj_t *am_page_list_build_radio(lv_obj_t *parent,
     const am_metrics_t *m = am_metrics();
     lv_obj_t *root = am_build_list_root(parent, "广播电台");
     size_t i;
+    size_t render_n = (count > AM_RADIO_RENDER_MAX) ? (size_t)AM_RADIO_RENDER_MAX : count;
 
-    for(i = 0; i < count; i++) {
+    for(i = 0; i < render_n; i++) {
         lv_obj_t *row = am_list_row_base(root, i == current_index);
         lv_obj_t *art;
         lv_obj_t *info;
@@ -139,6 +145,14 @@ lv_obj_t *am_page_list_build_radio(lv_obj_t *parent,
         }
 
         am_text(row, "LIVE", m->f_label, lv_color_hex(0xfa2d48));
+    }
+
+    if(count > render_n) {
+        char more[80];
+        snprintf(more, sizeof(more), "共 %u 个电台，已显示前 %u 个",
+                 (unsigned)count, (unsigned)render_n);
+        lv_obj_t *note = am_text(root, more, m->f_label, AM_MUTED);
+        lv_obj_set_style_pad_top(note, 6, 0);
     }
 
     return root;

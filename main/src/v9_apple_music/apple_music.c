@@ -192,7 +192,7 @@ static void am_on_nav(am_view_t view, void *user)
 static void am_load_runtime_data(void)
 {
     if(g_app.radios == NULL) {
-        am_sources_csv_load("third-party/hls_player_demo/qa/production_test/config/sources.csv",
+        am_sources_csv_load("third-party/hls_player_demo/qa/production_test/config/sources.tsv",
                             &g_app.radios, &g_app.radio_count);
     }
     if(g_app.locals == NULL) {

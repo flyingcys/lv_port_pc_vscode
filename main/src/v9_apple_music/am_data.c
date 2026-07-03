@@ -15,10 +15,10 @@ const char *am_recent_titles[4] = {
 };
 
 const char *am_mock_lyrics[4] = {
-    "把播放器壳层先搭稳，再把真实数据接进来。",
-    "本地资料库走目录扫描，广播列表走 sources.csv。",
-    "当前行高亮、底部条状态、播放列表弹层保持同步。",
-    "视觉结构以 macOS Apple Music 轻主题为基准。",
+    "燃烧每一寸的渴望",
+    "火力全开 势不可挡",
+    "让心跳点燃整个舞台",
+    "无所畏惧 一路向光",
 };
 
 const am_theme_preset_t am_theme_presets[4] = {
