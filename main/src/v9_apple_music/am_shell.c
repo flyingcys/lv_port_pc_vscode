@@ -68,7 +68,8 @@ void am_shell_build_sidebar(lv_obj_t *sidebar, am_view_t active_view, am_nav_cb_
     if(ctx != NULL) {
         ctx->cb = cb;
         ctx->user = user;
-        lv_obj_add_event_cb(sidebar, am_nav_ctx_free_cb, LV_EVENT_DELETE, ctx);
+        /* 注意:sidebar 是常驻对象,每次切页 lv_obj_clean 只清子对象、不删 sidebar 本体。
+         * 故 ctx 的释放回调必须挂在"每次重建的子对象"(traffic)上,否则每次切页泄漏一份 ctx。 */
     }
 
     {
@@ -80,6 +81,7 @@ void am_shell_build_sidebar(lv_obj_t *sidebar, am_view_t active_view, am_nav_cb_
         lv_obj_set_style_pad_left(traffic, 4, 0);
         lv_obj_set_style_pad_column(traffic, 8, 0);
         lv_obj_clear_flag(traffic, LV_OBJ_FLAG_SCROLLABLE);
+        if(ctx != NULL) lv_obj_add_event_cb(traffic, am_nav_ctx_free_cb, LV_EVENT_DELETE, ctx);
 
         lv_color_t colors[3] = {
             lv_color_hex(0xff5f57),
@@ -211,6 +213,7 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
                 lv_obj_set_style_bg_color(bar, lv_color_hex(0xd6d6db), 0);
                 lv_obj_set_style_bg_opa(bar, LV_OPA_COVER, 0);
                 lv_obj_align(bar, LV_ALIGN_CENTER, 0, 0);
+                lv_obj_clear_flag(bar, LV_OBJ_FLAG_CLICKABLE);   /* 让点击穿透到 track */
             }
 
             h.progress_fill = lv_obj_create(track);
@@ -220,6 +223,7 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
             lv_obj_set_style_bg_color(h.progress_fill, lv_color_hex(0xfa2d48), 0);
             lv_obj_set_style_bg_opa(h.progress_fill, LV_OPA_COVER, 0);
             lv_obj_align(h.progress_fill, LV_ALIGN_LEFT_MID, 0, 0);
+            lv_obj_clear_flag(h.progress_fill, LV_OBJ_FLAG_CLICKABLE);
 
             /* 进度末端白色圆点 knob(mockup .sknob),位置由 refresh_ui 按进度设置 */
             h.knob = lv_obj_create(track);
@@ -232,6 +236,7 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
             lv_obj_set_style_shadow_opa(h.knob, 76, 0);
             lv_obj_set_style_shadow_offset_y(h.knob, 1, 0);
             lv_obj_align(h.knob, LV_ALIGN_LEFT_MID, 0, 0);
+            lv_obj_clear_flag(h.knob, LV_OBJ_FLAG_CLICKABLE);
         }
 
         h.time_total = am_text(scrub, "--:--", m->f_label, AM_MUTED);
@@ -299,6 +304,7 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
                 lv_obj_set_style_bg_color(h.volume_fill, AM_MUTED, 0);
                 lv_obj_set_style_bg_opa(h.volume_fill, LV_OPA_COVER, 0);
                 lv_obj_align(h.volume_fill, LV_ALIGN_LEFT_MID, 0, 0);
+                lv_obj_clear_flag(h.volume_fill, LV_OBJ_FLAG_CLICKABLE);   /* 让点击穿透到 volume_track */
             }
         }
     }

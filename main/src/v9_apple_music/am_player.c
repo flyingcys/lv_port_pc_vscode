@@ -216,7 +216,6 @@ void am_player_bind_miniplayer(const am_miniplayer_handles_t *h)
     if(g_h.progress_track != NULL) {
         lv_obj_add_flag(g_h.progress_track, LV_OBJ_FLAG_CLICKABLE);
         lv_obj_add_event_cb(g_h.progress_track, am_progress_track_cb, LV_EVENT_CLICKED, NULL);
-        lv_obj_add_event_cb(g_h.progress_track, am_progress_track_cb, LV_EVENT_RELEASED, NULL);
     }
     if(g_h.volume_track != NULL) {
         lv_obj_add_flag(g_h.volume_track, LV_OBJ_FLAG_CLICKABLE);

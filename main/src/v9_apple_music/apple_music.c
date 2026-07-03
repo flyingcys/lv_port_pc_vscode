@@ -235,7 +235,6 @@ static void am_build_root(lv_obj_t *parent)
     lv_coord_t width = lv_obj_get_width(parent);
     lv_coord_t height = lv_obj_get_height(parent);
     lv_coord_t main_width;
-    lv_coord_t content_height;
     lv_display_t *disp;
 
     if(width <= 0 || height <= 0) {
@@ -265,8 +264,6 @@ static void am_build_root(lv_obj_t *parent)
 
     main_width = width - m->sidebar_w;
     if(main_width < 0) main_width = width;
-    content_height = height - 46 - m->player_h;   /* 兼容旧引用,当前用 flex_grow */
-    (void)content_height;
 
     g_app.sidebar = lv_obj_create(parent);
     lv_obj_remove_style_all(g_app.sidebar);

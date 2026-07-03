@@ -128,7 +128,6 @@ lv_obj_t *am_page_list_build_radio(lv_obj_t *parent,
         lv_obj_t *row = am_list_row_base(root, i == current_index);
         lv_obj_t *art;
         lv_obj_t *info;
-        char sub[96];
 
         am_bind_row(row, i, user, on_select, NULL);
 
@@ -159,7 +158,6 @@ lv_obj_t *am_page_list_build_radio(lv_obj_t *parent,
             lv_obj_set_width(name, LV_PCT(100));
         }
 
-        (void)sub;
         {
             lv_obj_t *label = am_text(info, "在线广播", m->f_label, AM_MUTED);
             lv_label_set_long_mode(label, LV_LABEL_LONG_DOT);
