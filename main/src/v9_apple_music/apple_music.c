@@ -315,6 +315,17 @@ static void am_build_root(lv_obj_t *parent)
         if(pg != NULL && strcmp(pg, "radio") == 0) init = AM_VIEW_RADIO;
         else if(pg != NULL && strcmp(pg, "fav") == 0) init = AM_VIEW_FAVORITES;
         am_show_view(init);
+
+        /* AM_PANEL=playlist:无头截图时展开播放列表弹层 */
+        {
+            const char *panel = getenv("AM_PANEL");
+            if(panel != NULL && strcmp(panel, "playlist") == 0) {
+                if(g_app.locals != NULL && g_app.local_count > 0U) {
+                    am_player_play_local_index(0);   /* 让弹层有当前队列可显示 */
+                }
+                am_player_set_playlist_open(true);
+            }
+        }
     }
 }
 

@@ -303,8 +303,11 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
         }
     }
 
-    h.playlist_popup = lv_obj_create(player);
+    /* 弹层挂到 main(player 的父,占满右侧区域)而非 78px 的 player——否则会被父裁掉。
+     * FLOATING 使其不被 main 的 flex 布局接管、由 align 定位,浮于内容之上。 */
+    h.playlist_popup = lv_obj_create(lv_obj_get_parent(player));
     lv_obj_remove_style_all(h.playlist_popup);
+    lv_obj_add_flag(h.playlist_popup, LV_OBJ_FLAG_FLOATING);
     lv_obj_set_size(h.playlist_popup, 300, 240);
     lv_obj_set_style_bg_color(h.playlist_popup, AM_WHITE, 0);
     lv_obj_set_style_bg_opa(h.playlist_popup, LV_OPA_COVER, 0);

@@ -370,6 +370,7 @@ void lv_demo_music_play(uint32_t id)
 
 void _lv_demo_music_play(uint32_t id)
 {
+    if(spectrum_obj == NULL) return;   /* 非 lv_demo_music 场景(如 apple_music):UI 未构建,跳过异步驱动 */
     lv_demo_music_play(id);
 }
 
@@ -401,6 +402,7 @@ void lv_demo_music_resume(void)
 
 void _lv_demo_music_resume(void)
 {
+    if(spectrum_obj == NULL) return;
     lv_demo_music_resume();
 }
 
@@ -419,11 +421,13 @@ void lv_demo_music_pause(void)
 
 void _lv_demo_music_pause(void)
 {
+    if(spectrum_obj == NULL) return;
     lv_demo_music_pause();
 }
 
 void _lv_demo_music_begin_track_switch(void)
 {
+    if(spectrum_obj == NULL) return;
     track_switching = true;
     seeking = false;
     lv_slider_set_value(slider_obj, 0, LV_ANIM_OFF);
