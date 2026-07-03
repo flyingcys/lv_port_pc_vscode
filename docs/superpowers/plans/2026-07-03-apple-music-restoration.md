@@ -164,9 +164,29 @@ const char *am_mock_lyrics[4] = {
 
 ---
 
-### Task 3: 图标与封面资产(矢量图标字体子集 + 火焰封面 PNG)
+### Task 3: 字体与封面资产(图标字体 + CJK 文本子集重生成 + 火焰封面 PNG)
 
-**目的:** 产出真实矢量图标字体(nav/传输/模式/歌单/音量)与烘焙火焰封面 PNG,供后续视觉任务使用。
+**目的:** 产出真实矢量图标字体(nav/传输/模式/歌单/音量)、**重生成覆盖全部界面汉字的 CJK 文本子集字体(修豆腐块)**、烘焙火焰封面 PNG,供后续视觉任务使用。
+
+**⚠️ 豆腐块根因**:当前 `am_font_*` 的 CJK 子集缺字(实测 `未/层/首/稳` 等显示为 □),Task 2 新歌词又引入新字。必须从 app 实际字符串**程序化提取字符集**重生成所有文本字号字体。
+
+- [ ] **Step 0: 重生成 CJK 文本子集** — 从 app 源码(`am_data.c`、`apple_music.c`、`am_page_list.c`、`am_shell.c`、`am_player.c`)提取全部非 ASCII 字符集:
+```bash
+python3 - <<'PY'
+import pathlib,re
+srcs=['am_data.c','apple_music.c','am_page_list.c','am_shell.c','am_player.c']
+base=pathlib.Path('main/src/v9_apple_music')
+text=''.join((base/s).read_text(encoding='utf-8') for s in srcs)
+strs=''.join(a or b for a,b in re.findall(r'"([^"]*)"|`([^`]*)`',text))
+keep=sorted(set(ch for ch in strs if ord(ch)>0x7F))
+pathlib.Path('main/src/v9_apple_music/fonts/charset.txt').write_text(''.join(keep),encoding='utf-8')
+print(len(keep)); print(''.join(keep))
+PY
+```
+再对每个用到的字号(800 档:34/24/18/14/13/11;480 档:22/18/15/12/10)跑 `lv_font_conv`,源用仓库里的 `NotoSansSC-*.otf`(CJK)+ `Montserrat-*.ttf`(拉丁/数字),`-r 0x20-0x7E --symbols "$(cat charset.txt)"`,`--lv-font-name am_font_<px>`。生成后校验 `未/层/首` 等已嵌入(grep cmap 或截图验)。**注**:图标字形(Step 1)若并入同一字体则一并加 `--symbols`;否则单独图标字体。
+
+**Files(补充):**
+- Modify: `main/src/v9_apple_music/fonts/am_font_*.c`(重生成)、`fonts/charset.txt`
 
 **Files:**
 - Create: `main/src/v9_apple_music/fonts/am_icons_20.c` 等(每个用到字号一份图标字体,或基准字号 + 运行期 scale)
