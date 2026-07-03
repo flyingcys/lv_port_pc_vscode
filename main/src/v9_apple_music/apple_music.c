@@ -234,8 +234,8 @@ static void am_build_root(lv_obj_t *parent)
 
     main_width = width - m->sidebar_w;
     if(main_width < 0) main_width = width;
-    content_height = height - 46 - m->player_h;
-    if(content_height < 0) content_height = 0;
+    content_height = height - 46 - m->player_h;   /* 兼容旧引用,当前用 flex_grow */
+    (void)content_height;
 
     g_app.sidebar = lv_obj_create(parent);
     lv_obj_remove_style_all(g_app.sidebar);
@@ -248,10 +248,15 @@ static void am_build_root(lv_obj_t *parent)
     lv_obj_set_size(g_app.main, main_width, height);
     lv_obj_set_scrollbar_mode(g_app.main, LV_SCROLLBAR_MODE_OFF);
     lv_obj_clear_flag(g_app.main, LV_OBJ_FLAG_SCROLLABLE);
+    /* header / content / player 纵向堆叠;flex 驱动位置,避免子构建器 remove_style_all
+     * 清掉绝对坐标后 player 塌到顶部的问题 */
+    lv_obj_set_flex_flow(g_app.main, LV_FLEX_FLOW_COLUMN);
+    lv_obj_set_flex_align(g_app.main, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
+    lv_obj_set_style_pad_all(g_app.main, 0, 0);
+    lv_obj_set_style_pad_row(g_app.main, 0, 0);
 
     g_app.header = lv_obj_create(g_app.main);
     lv_obj_remove_style_all(g_app.header);
-    lv_obj_set_pos(g_app.header, 0, 0);
     lv_obj_set_size(g_app.header, LV_PCT(100), 46);
     lv_obj_set_style_pad_left(g_app.header, 22, 0);
     lv_obj_set_style_pad_right(g_app.header, 22, 0);
@@ -261,19 +266,19 @@ static void am_build_root(lv_obj_t *parent)
     lv_obj_set_style_border_opa(g_app.header, 24, 0);
     lv_obj_set_flex_flow(g_app.header, LV_FLEX_FLOW_ROW);
     lv_obj_set_flex_align(g_app.header, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+    lv_obj_clear_flag(g_app.header, LV_OBJ_FLAG_SCROLLABLE);
     g_app.crumb = am_text(g_app.header, "正在播放", m->f_body, AM_TEXT);
 
     g_app.content = lv_obj_create(g_app.main);
     lv_obj_remove_style_all(g_app.content);
-    lv_obj_set_pos(g_app.content, 0, 46);
-    lv_obj_set_size(g_app.content, LV_PCT(100), content_height);
+    lv_obj_set_width(g_app.content, LV_PCT(100));
+    lv_obj_set_flex_grow(g_app.content, 1);   /* 占据 header 与 player 之间的剩余高度 */
     lv_obj_set_scrollbar_mode(g_app.content, LV_SCROLLBAR_MODE_OFF);
     lv_obj_clear_flag(g_app.content, LV_OBJ_FLAG_SCROLLABLE);
 
     g_app.player = lv_obj_create(g_app.main);
     lv_obj_remove_style_all(g_app.player);
-    lv_obj_set_pos(g_app.player, 0, height - m->player_h);
-    lv_obj_set_size(g_app.player, LV_PCT(100), m->player_h);
+    lv_obj_set_size(g_app.player, LV_PCT(100), m->player_h);   /* build_miniplayer 内会再次确保 */
 
     am_player_init();
     g_app.mini = am_shell_build_miniplayer(g_app.player,

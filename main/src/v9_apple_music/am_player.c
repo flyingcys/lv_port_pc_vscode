@@ -135,12 +135,18 @@ void am_player_refresh_ui(void)
             lv_label_set_text(g_h.time_total, total_buf);
         }
     }
-    if(g_h.progress_fill != NULL) {
+    {
         int pct = 0;
         if(dur > 0U) pct = (int)((uint64_t)pos * 100ULL / dur);
         if(pct < 0) pct = 0;
         if(pct > 100) pct = 100;
-        lv_obj_set_width(g_h.progress_fill, LV_PCT(pct));
+        if(g_h.progress_fill != NULL) lv_obj_set_width(g_h.progress_fill, LV_PCT(pct));
+        if(g_h.knob != NULL && g_h.progress_track != NULL) {
+            lv_coord_t tw = lv_obj_get_width(g_h.progress_track);
+            lv_coord_t x = (lv_coord_t)((int)tw * pct / 100) - 6;   /* 半个 knob 宽 */
+            if(x < -6) x = -6;
+            lv_obj_align(g_h.knob, LV_ALIGN_LEFT_MID, x, 0);
+        }
     }
     if(g_h.volume_fill != NULL) {
         lv_coord_t width = (lv_coord_t)((70U * g_volume) / 100U);

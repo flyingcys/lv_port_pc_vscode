@@ -10,8 +10,11 @@ typedef struct {
     lv_obj_t *subtitle_label;
     lv_obj_t *time_cur;
     lv_obj_t *time_total;
+    lv_obj_t *progress_track;
     lv_obj_t *progress_fill;
+    lv_obj_t *knob;
     lv_obj_t *play_icon;
+    lv_obj_t *volume_track;
     lv_obj_t *volume_fill;
     lv_obj_t *playlist_popup;
     lv_obj_t *playlist_list;

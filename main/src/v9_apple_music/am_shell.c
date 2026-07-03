@@ -26,24 +26,17 @@ static void am_nav_ctx_free_cb(lv_event_t *e)
     lv_free(lv_event_get_user_data(e));
 }
 
-static lv_obj_t *am_simple_button(lv_obj_t *parent, const char *glyph, const lv_font_t *font,
-                                  int size, bool filled)
+/* 无边框图标按钮(mockup 传输键是纯字形,无圆圈/描边)。box=触控命中区,glyph 用较大字号。 */
+static lv_obj_t *am_icon_button(lv_obj_t *parent, const char *glyph, const lv_font_t *font,
+                                int box, lv_color_t color)
 {
     lv_obj_t *btn = lv_obj_create(parent);
     lv_obj_remove_style_all(btn);
-    lv_obj_set_size(btn, size, size);
-    lv_obj_set_style_radius(btn, LV_RADIUS_CIRCLE, 0);
-    lv_obj_set_style_bg_color(btn, filled ? AM_TEXT : AM_WHITE, 0);
-    lv_obj_set_style_bg_opa(btn, filled ? LV_OPA_COVER : 0, 0);
-    if(!filled) {
-        lv_obj_set_style_border_width(btn, 1, 0);
-        lv_obj_set_style_border_color(btn, lv_color_hex(0xd6d6db), 0);
-        lv_obj_set_style_border_opa(btn, LV_OPA_COVER, 0);
-    }
+    lv_obj_set_size(btn, box, box);
     lv_obj_add_flag(btn, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_clear_flag(btn, LV_OBJ_FLAG_SCROLLABLE);
 
-    lv_obj_t *label = am_text(btn, glyph, font, filled ? AM_WHITE : AM_TEXT);
+    lv_obj_t *label = am_text(btn, glyph, font, color);
     lv_obj_center(label);
     return btn;
 }
@@ -55,6 +48,8 @@ void am_shell_build_sidebar(lv_obj_t *sidebar, am_view_t active_view, am_nav_cb_
     size_t i;
 
     lv_obj_remove_style_all(sidebar);
+    /* remove_style_all 会清掉调用方设的尺寸,这里按 metrics 重设(满高) */
+    lv_obj_set_size(sidebar, m->sidebar_w, LV_PCT(100));
     lv_obj_set_style_bg_color(sidebar, lv_color_hex(0xf0f0f3), 0);
     lv_obj_set_style_bg_opa(sidebar, LV_OPA_COVER, 0);
     lv_obj_set_style_border_side(sidebar, LV_BORDER_SIDE_RIGHT, 0);
@@ -173,6 +168,8 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
     memset(&h, 0, sizeof(h));
 
     lv_obj_remove_style_all(player);
+    /* remove_style_all 清掉调用方设的尺寸;重设为满宽固定高(否则塌成默认 130 落到顶部) */
+    lv_obj_set_size(player, LV_PCT(100), m->player_h);
     lv_obj_set_style_bg_color(player, AM_WHITE, 0);
     lv_obj_set_style_bg_opa(player, LV_OPA_COVER, 0);
     lv_obj_set_style_border_side(player, LV_BORDER_SIDE_TOP, 0);
@@ -204,6 +201,7 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
             lv_obj_set_height(track, 12);
             lv_obj_set_flex_grow(track, 1);
             lv_obj_clear_flag(track, LV_OBJ_FLAG_SCROLLABLE);
+            h.progress_track = track;
 
             {
                 lv_obj_t *bar = lv_obj_create(track);
@@ -222,6 +220,18 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
             lv_obj_set_style_bg_color(h.progress_fill, lv_color_hex(0xfa2d48), 0);
             lv_obj_set_style_bg_opa(h.progress_fill, LV_OPA_COVER, 0);
             lv_obj_align(h.progress_fill, LV_ALIGN_LEFT_MID, 0, 0);
+
+            /* 进度末端白色圆点 knob(mockup .sknob),位置由 refresh_ui 按进度设置 */
+            h.knob = lv_obj_create(track);
+            lv_obj_remove_style_all(h.knob);
+            lv_obj_set_size(h.knob, 12, 12);
+            lv_obj_set_style_radius(h.knob, LV_RADIUS_CIRCLE, 0);
+            lv_obj_set_style_bg_color(h.knob, AM_WHITE, 0);
+            lv_obj_set_style_bg_opa(h.knob, LV_OPA_COVER, 0);
+            lv_obj_set_style_shadow_width(h.knob, 4, 0);
+            lv_obj_set_style_shadow_opa(h.knob, 76, 0);
+            lv_obj_set_style_shadow_offset_y(h.knob, 1, 0);
+            lv_obj_align(h.knob, LV_ALIGN_LEFT_MID, 0, 0);
         }
 
         h.time_total = am_text(scrub, "--:--", m->f_label, AM_MUTED);
@@ -235,34 +245,25 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
         lv_obj_set_flex_align(pbar, LV_FLEX_ALIGN_SPACE_BETWEEN, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
         lv_obj_clear_flag(pbar, LV_OBJ_FLAG_SCROLLABLE);
 
-        {
-            lv_obj_t *meta = lv_obj_create(pbar);
-            lv_obj_remove_style_all(meta);
-            lv_obj_set_width(meta, 220);
-            lv_obj_set_height(meta, LV_SIZE_CONTENT);
-            lv_obj_set_flex_flow(meta, LV_FLEX_FLOW_COLUMN);
-            lv_obj_set_style_pad_row(meta, 4, 0);
-            lv_obj_clear_flag(meta, LV_OBJ_FLAG_SCROLLABLE);
-
-            h.title_label = am_text(meta, "未播放", m->f_body, AM_TEXT);
-            h.subtitle_label = am_text(meta, "选择本地音乐或广播电台开始", m->f_label, AM_MUTED);
-        }
-
+        /* mockup 的播放条无标题/副标题(它们在"正在播放"页);传输键整组居中,音量右钉 */
         {
             lv_obj_t *ctrls = lv_obj_create(pbar);
             lv_obj_remove_style_all(ctrls);
-            lv_obj_set_size(ctrls, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+            lv_obj_set_height(ctrls, LV_SIZE_CONTENT);
+            lv_obj_set_flex_grow(ctrls, 1);   /* .ctrls{flex:1;justify-content:center} */
             lv_obj_set_flex_flow(ctrls, LV_FLEX_FLOW_ROW);
             lv_obj_set_flex_align(ctrls, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
             lv_obj_set_style_pad_column(ctrls, 26, 0);
             lv_obj_clear_flag(ctrls, LV_OBJ_FLAG_SCROLLABLE);
 
-            h.btn_mode = am_simple_button(ctrls, AM_ICON_REPLAY, m->f_icon, 24, false);
-            h.btn_prev = am_simple_button(ctrls, AM_ICON_PREV, m->f_icon, 24, false);
-            h.btn_play = am_simple_button(ctrls, AM_ICON_PLAY, m->f_icon, 30, true);
+            lv_color_t ctrl_col = lv_color_hex(0x2a2a2e);
+            lv_color_t accent_col = lv_color_hex(0xfa2d48);
+            h.btn_mode = am_icon_button(ctrls, AM_ICON_REPLAY, m->f_metric, 30, accent_col);
+            h.btn_prev = am_icon_button(ctrls, AM_ICON_PREV, m->f_metric, 30, ctrl_col);
+            h.btn_play = am_icon_button(ctrls, AM_ICON_PLAY, m->f_h2, 34, ctrl_col);
             h.play_icon = lv_obj_get_child(h.btn_play, 0);
-            h.btn_next = am_simple_button(ctrls, AM_ICON_NEXT, m->f_icon, 24, false);
-            h.btn_playlist = am_simple_button(ctrls, AM_ICON_LIST, m->f_icon, 24, false);
+            h.btn_next = am_icon_button(ctrls, AM_ICON_NEXT, m->f_metric, 30, ctrl_col);
+            h.btn_playlist = am_icon_button(ctrls, AM_ICON_LIST, m->f_metric, 30, ctrl_col);
 
             if(on_mode != NULL) lv_obj_add_event_cb(h.btn_mode, on_mode, LV_EVENT_CLICKED, NULL);
             if(on_prev != NULL) lv_obj_add_event_cb(h.btn_prev, on_prev, LV_EVENT_CLICKED, NULL);
@@ -289,6 +290,7 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
                 lv_obj_set_style_bg_color(track, lv_color_hex(0xd6d6db), 0);
                 lv_obj_set_style_bg_opa(track, LV_OPA_COVER, 0);
                 lv_obj_clear_flag(track, LV_OBJ_FLAG_SCROLLABLE);
+                h.volume_track = track;
 
                 h.volume_fill = lv_obj_create(track);
                 lv_obj_remove_style_all(h.volume_fill);
