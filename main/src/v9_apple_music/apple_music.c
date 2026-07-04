@@ -39,6 +39,34 @@ typedef struct {
 
 static am_app_t g_app;
 static void am_update_now_view(void);
+static void am_show_view(am_view_t view);
+static void am_sync_current_view(void);
+
+/* 选曲/切台发生在 LVGL 事件回调内,若同步 am_show_view→lv_obj_clean 会删掉正处理事件的行 → UAF。
+ * 故列表页重建一律经 lv_async_call 推迟到事件返回后;目标视图存于 g_pending_view(取最后一次)。 */
+static am_view_t g_pending_view = AM_VIEW_NOW;
+static void am_deferred_show_view_cb(void *param)
+{
+    LV_UNUSED(param);
+    am_show_view(g_pending_view);
+}
+static void am_request_view(am_view_t view)
+{
+    g_pending_view = view;
+    lv_async_call_cancel(am_deferred_show_view_cb, NULL);
+    lv_async_call(am_deferred_show_view_cb, NULL);
+}
+/* 切歌/切台后刷新当前页:正在播放页就地更新;列表页推迟重建以把高亮移到新选中项。 */
+static void am_sync_current_view(void)
+{
+    if(g_app.current_view == AM_VIEW_NOW) am_update_now_view();
+    else am_request_view(g_app.current_view);
+}
+/* 弹层选曲后跳到正在播放页(在 lv_async 回调内被调用,已脱离行点击事件,直接切视图安全)。 */
+static void am_on_playlist_pick(void)
+{
+    am_show_view(AM_VIEW_NOW);
+}
 
 static void am_free_runtime_data(void)
 {
@@ -59,20 +87,43 @@ static void am_on_radio_selected(size_t index, void *user)
 {
     LV_UNUSED(user);
     am_player_play_radio_index(index);
-    if(g_app.current_view == AM_VIEW_NOW) am_update_now_view();
+    am_sync_current_view();   /* 电台列表页:重建以把"正在播放"高亮移到新台 */
 }
 
 static void am_on_local_selected(size_t index, void *user)
 {
     LV_UNUSED(user);
     am_player_play_local_index(index);
-    if(g_app.current_view == AM_VIEW_NOW) am_update_now_view();
+    am_sync_current_view();   /* 收藏列表页:重建以移动高亮 */
 }
 
 static void am_on_playlist_toggle(lv_event_t *e)
 {
     LV_UNUSED(e);
     am_player_set_playlist_open(!am_player_playlist_open());
+}
+
+/* 传输键包一层:除转调 am_player_* 外,还在"正在播放"页时同步大图/标题/歌词。
+ * (首次按 ▶ 会懒加载本地库起播,此时曲目从"未播放"变为第 1 首,须刷新此页。) */
+static void am_on_play_pause(lv_event_t *e)
+{
+    LV_UNUSED(e);
+    am_player_toggle_playback();
+    if(g_app.current_view == AM_VIEW_NOW) am_update_now_view();
+}
+
+static void am_on_prev(lv_event_t *e)
+{
+    LV_UNUSED(e);
+    am_player_prev();
+    am_sync_current_view();   /* 上一首/台:同步当前页(列表页移动高亮,正在播放页更新) */
+}
+
+static void am_on_next(lv_event_t *e)
+{
+    LV_UNUSED(e);
+    am_player_next();
+    am_sync_current_view();   /* 下一首/台 */
 }
 
 static void am_update_now_view(void)
@@ -320,12 +371,13 @@ static void am_build_root(lv_obj_t *parent)
 
     am_player_init();
     g_app.mini = am_shell_build_miniplayer(g_app.player,
-                                           am_player_on_mode,
-                                           am_player_on_prev,
-                                           am_player_on_play_pause,
-                                           am_player_on_next,
+                                           am_player_on_mode,   /* 模式切换不改曲目,无需同步正在播放页 */
+                                           am_on_prev,
+                                           am_on_play_pause,
+                                           am_on_next,
                                            am_on_playlist_toggle);
     am_player_bind_miniplayer(&g_app.mini);
+    am_player_set_playlist_pick_cb(am_on_playlist_pick);   /* 弹层选曲 → 跳正在播放页 */
     am_load_runtime_data();
     am_shell_build_sidebar(g_app.sidebar, AM_VIEW_NOW, am_on_nav, NULL);
 
@@ -362,6 +414,7 @@ void apple_music_create_in(lv_obj_t *parent)
 
 void apple_music_destroy(void)
 {
+    lv_async_call_cancel(am_deferred_show_view_cb, NULL);   /* 取消待执行的视图重建,避免销毁后解引用 */
     am_player_deinit();
     am_free_runtime_data();
     memset(&g_app, 0, sizeof(g_app));

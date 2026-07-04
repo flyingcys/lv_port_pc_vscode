@@ -314,7 +314,23 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
     h.playlist_popup = lv_obj_create(lv_obj_get_parent(player));
     lv_obj_remove_style_all(h.playlist_popup);
     lv_obj_add_flag(h.playlist_popup, LV_OBJ_FLAG_FLOATING);
-    lv_obj_set_size(h.playlist_popup, 300, 240);
+    /* 尺寸/定位随分辨率自适应:弹层浮在 header 与 player 之间,底部贴 player 上方。
+     * 480x272 下固定 300x240+(-96) 会顶部溢出屏幕(顶=272-96-240<0),故按可用高收缩。
+     * (header 高 46 见 am_build_root;main 高=屏幕高,main 宽=屏幕宽-sidebar_w。) */
+    {
+        lv_display_t *disp = lv_display_get_default();
+        int scr_w = lv_display_get_horizontal_resolution(disp);
+        int scr_h = lv_display_get_vertical_resolution(disp);
+        int main_w = scr_w - m->sidebar_w;
+        int margin = 14;
+        int bottom_off = m->player_h + 12;               /* 浮在 player 上方 */
+        int max_h = scr_h - bottom_off - 46 - 8;          /* 顶部不越过 header(46)+留白 */
+        int max_w = main_w - 2 * margin;
+        int pw = (300 < max_w) ? 300 : max_w;
+        int ph = (240 < max_h) ? 240 : max_h;
+        lv_obj_set_size(h.playlist_popup, pw, ph);
+        lv_obj_align(h.playlist_popup, LV_ALIGN_BOTTOM_RIGHT, -margin, -bottom_off);
+    }
     lv_obj_set_style_bg_color(h.playlist_popup, AM_WHITE, 0);
     lv_obj_set_style_bg_opa(h.playlist_popup, LV_OPA_COVER, 0);
     lv_obj_set_style_border_width(h.playlist_popup, 1, 0);
@@ -327,7 +343,6 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
     lv_obj_set_style_pad_all(h.playlist_popup, 0, 0);
     lv_obj_set_style_pad_row(h.playlist_popup, 0, 0);
     lv_obj_set_flex_flow(h.playlist_popup, LV_FLEX_FLOW_COLUMN);
-    lv_obj_align(h.playlist_popup, LV_ALIGN_BOTTOM_RIGHT, -18, -96);
     lv_obj_add_flag(h.playlist_popup, LV_OBJ_FLAG_HIDDEN);
 
     {
@@ -348,7 +363,10 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
 
     h.playlist_list = lv_obj_create(h.playlist_popup);
     lv_obj_remove_style_all(h.playlist_list);
-    lv_obj_set_size(h.playlist_list, LV_PCT(100), LV_PCT(100));
+    /* 高度用 flex_grow 精确吃掉 head 之后的剩余空间;若用 PCT(100) 则等于弹层满高,
+     * 叠上 head 后底部溢出弹层被裁掉(最后一行永远看不全),故用 grow。 */
+    lv_obj_set_width(h.playlist_list, LV_PCT(100));
+    lv_obj_set_flex_grow(h.playlist_list, 1);
     lv_obj_set_style_pad_all(h.playlist_list, 6, 0);
     lv_obj_set_style_pad_row(h.playlist_list, 4, 0);
     lv_obj_set_flex_flow(h.playlist_list, LV_FLEX_FLOW_COLUMN);

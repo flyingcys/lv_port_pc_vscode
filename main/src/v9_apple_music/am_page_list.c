@@ -136,7 +136,9 @@ lv_obj_t *am_page_list_build_radio(lv_obj_t *parent,
         lv_obj_set_size(art, 42, 42);
         lv_obj_set_style_radius(art, 8, 0);
         am_art_gradient(art, i);
-        lv_obj_clear_flag(art, LV_OBJ_FLAG_SCROLLABLE);
+        /* lv_obj 默认带 CLICKABLE,行内子容器(封面/信息块)会截获点击使整行的
+         * on_select 不触发;子容器均须清掉 CLICKABLE,让点击命中冒泡回 row。 */
+        lv_obj_clear_flag(art, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
         {
             lv_obj_t *icon = am_text(art, AM_ICON_RADIO, m->f_icon, AM_WHITE);
             lv_obj_center(icon);
@@ -148,7 +150,7 @@ lv_obj_t *am_page_list_build_radio(lv_obj_t *parent,
         lv_obj_set_height(info, LV_SIZE_CONTENT);
         lv_obj_set_flex_flow(info, LV_FLEX_FLOW_COLUMN);
         lv_obj_set_style_pad_row(info, 2, 0);
-        lv_obj_clear_flag(info, LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_clear_flag(info, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
 
         {
             lv_obj_t *name = am_text(info, items[i].title, m->f_body,
@@ -211,7 +213,7 @@ lv_obj_t *am_page_list_build_favorites(lv_obj_t *parent,
         lv_obj_set_style_bg_grad_color(art, lv_color_hex(0x9a2407U), 0);
         lv_obj_set_style_bg_grad_dir(art, LV_GRAD_DIR_VER, 0);
         lv_obj_set_style_bg_opa(art, LV_OPA_COVER, 0);
-        lv_obj_clear_flag(art, LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_clear_flag(art, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
 
         info = lv_obj_create(row);
         lv_obj_remove_style_all(info);
@@ -219,7 +221,7 @@ lv_obj_t *am_page_list_build_favorites(lv_obj_t *parent,
         lv_obj_set_height(info, LV_SIZE_CONTENT);
         lv_obj_set_flex_flow(info, LV_FLEX_FLOW_COLUMN);
         lv_obj_set_style_pad_row(info, 2, 0);
-        lv_obj_clear_flag(info, LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_clear_flag(info, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
 
         {
             lv_obj_t *name = am_text(info, items[i].title, m->f_body,

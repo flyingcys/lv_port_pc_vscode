@@ -26,10 +26,47 @@ static bool g_playlist_open = false;
 static uint8_t g_volume = 65U;
 static lv_timer_t *g_timer = NULL;
 static bool g_local_engine_ready = false;   /* 本地播放列表已 init(避免每次切歌 deinit/init) */
+static am_player_pick_cb_t g_pick_cb = NULL;
+static size_t g_pending_pick = 0U;           /* 弹层待切歌的目标索引(见 am_playlist_pick_async) */
+
+/* 播放列表弹层已构建的内容指纹。am_player_refresh_ui 每 120ms 被定时器调用,
+ * 若每次都 lv_obj_clean+重建列表,会(1)把滚动位置重置回顶部→看不到后面的曲目,
+ * (2)在用户按下某行的瞬间销毁该行→CLICKED 丢失→点了切不了歌。
+ * 故仅当来源/当前索引/条目数变化时才重建,静止播放时保留现有列表。 */
+static bool g_pl_built = false;
+static am_source_kind_t g_pl_kind = AM_SOURCE_NONE;
+static size_t g_pl_index = (size_t)-1;
+static size_t g_pl_count = (size_t)-1;
 
 static void am_progress_track_cb(lv_event_t *e);
 static void am_volume_track_cb(lv_event_t *e);
 static void am_speaker_cb(lv_event_t *e);
+static void am_playlist_item_click_cb(lv_event_t *e);
+static void am_playlist_pick_async(void *data);
+
+void am_player_set_playlist_pick_cb(am_player_pick_cb_t cb)
+{
+    g_pick_cb = cb;
+}
+
+/* 推迟到事件返回后再切歌:切歌会经 am_player_refresh_ui → lv_obj_clean(playlist_list)
+ * 删掉正处理点击的本行,同步执行会 UAF。目标索引存于 g_pending_pick(取最后一次点击)。 */
+static void am_playlist_pick_async(void *data)
+{
+    LV_UNUSED(data);
+    if(g_source_kind == AM_SOURCE_RADIO) am_player_play_radio_index(g_pending_pick);
+    else                                 am_player_play_local_index(g_pending_pick);
+    g_playlist_open = false;                 /* 选完关闭弹层(对齐 mockup) */
+    if(g_pick_cb != NULL) g_pick_cb();        /* 通知宿主跳转/刷新正在播放页 */
+    am_player_refresh_ui();
+}
+
+static void am_playlist_item_click_cb(lv_event_t *e)
+{
+    g_pending_pick = (size_t)(intptr_t)lv_event_get_user_data(e);
+    lv_async_call_cancel(am_playlist_pick_async, NULL);   /* 连点只保留最后一次 */
+    lv_async_call(am_playlist_pick_async, NULL);
+}
 
 static const char *am_current_title(void)
 {
@@ -60,6 +97,20 @@ static void am_refresh_playlist_popup(void)
     size_t i;
 
     if(g_h.playlist_list == NULL) return;
+
+    /* 内容指纹未变则跳过重建,保住滚动位置、不吃点击(见 g_pl_* 说明) */
+    {
+        size_t cur_idx = (g_source_kind == AM_SOURCE_RADIO) ? g_current_radio : g_current_local;
+        size_t cur_cnt = (g_source_kind == AM_SOURCE_RADIO) ? g_radio_count : g_local_count;
+        if(g_pl_built && g_pl_kind == g_source_kind && g_pl_index == cur_idx && g_pl_count == cur_cnt) {
+            return;
+        }
+        g_pl_built = true;
+        g_pl_kind = g_source_kind;
+        g_pl_index = cur_idx;
+        g_pl_count = cur_cnt;
+    }
+
     lv_obj_clean(g_h.playlist_list);
 
     if(g_source_kind == AM_SOURCE_RADIO) {
@@ -99,6 +150,9 @@ static void am_refresh_playlist_popup(void)
         lv_obj_set_style_bg_opa(item, active ? 12 : LV_OPA_TRANSP, 0);
         lv_obj_set_flex_flow(item, LV_FLEX_FLOW_ROW);
         lv_obj_set_style_pad_column(item, 10, 0);
+        lv_obj_add_flag(item, LV_OBJ_FLAG_CLICKABLE);        /* 点击此行切歌 */
+        lv_obj_clear_flag(item, LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_add_event_cb(item, am_playlist_item_click_cb, LV_EVENT_CLICKED, (void *)(intptr_t)i);
 
         {
             char idx_buf[8];
@@ -111,6 +165,10 @@ static void am_refresh_playlist_popup(void)
         lv_obj_set_flex_grow(info, 1);
         lv_obj_set_height(info, LV_SIZE_CONTENT);
         lv_obj_set_flex_flow(info, LV_FLEX_FLOW_COLUMN);
+        /* lv_obj 默认带 LV_OBJ_FLAG_CLICKABLE,会截获落在 info 区(行内大部分宽度)的点击,
+         * 使 CLICKED 目标变成 info(无回调)而非绑了切歌回调的 item → 点标题区切不了歌。
+         * 清掉 info 的 CLICKABLE,让点击命中冒泡回 item。 */
+        lv_obj_clear_flag(info, LV_OBJ_FLAG_CLICKABLE);
         am_text(info, g_locals[i].title, am_metrics()->f_body, active ? lv_color_hex(0xfa2d48) : AM_TEXT);
         am_text(info, "本地音频", am_metrics()->f_label, AM_MUTED);
     }
@@ -188,12 +246,17 @@ void am_player_init(void)
     g_playlist_open = false;
     g_volume = 65U;
     g_local_engine_ready = false;
+    g_pl_built = false;
+    g_pl_kind = AM_SOURCE_NONE;
+    g_pl_index = (size_t)-1;
+    g_pl_count = (size_t)-1;
     if(g_timer != NULL) lv_timer_delete(g_timer);
     g_timer = lv_timer_create(am_player_timer_cb, 120, NULL);
 }
 
 void am_player_deinit(void)
 {
+    lv_async_call_cancel(am_playlist_pick_async, NULL);   /* 防止销毁后待处理的切歌回调解引用已释放数据 */
     if(g_timer != NULL) {
         lv_timer_delete(g_timer);
         g_timer = NULL;
@@ -202,6 +265,11 @@ void am_player_deinit(void)
     memset(&g_h, 0, sizeof(g_h));
     g_source_kind = AM_SOURCE_NONE;
     g_local_engine_ready = false;
+    g_pl_built = false;
+    g_locals = NULL;
+    g_local_count = 0U;
+    g_radios = NULL;
+    g_radio_count = 0U;
 }
 
 void am_player_bind_miniplayer(const am_miniplayer_handles_t *h)
@@ -253,11 +321,21 @@ void am_player_play_local_index(size_t index)
     if(!g_local_engine_ready) {
         for(i = 0U; i < g_local_count; i++) urls[i] = g_locals[i].path;
         music_player_deinit();
-        music_player_init(urls, g_local_count);
+        music_player_init(urls, g_local_count);   /* 固定从第 0 首起播 */
         music_player_set_volume(g_volume);
         g_local_engine_ready = true;
+        /* init 固定起播第 0 首,且此刻引擎尚未进入 PLAYING(状态经异步事件才更新),
+           故紧跟的 music_player_select 不会自动切歌(player_controller_select 仅在已
+           active 时自动播)→ 首次选非 0 曲会停在第 0 首。目标非 0 时显式 select+play
+           强制切到目标;目标为 0 时 init 已在播,无需再动(避免同曲重复 change_url)。 */
+        if(index != 0U) {
+            music_player_select(index);
+            music_player_play();
+        }
+        am_player_refresh_ui();
+        return;
     }
-    music_player_select(index);
+    music_player_select(index);   /* 引擎已 active,select 自动切并起播 */
     am_player_refresh_ui();
 }
 
@@ -276,8 +354,21 @@ void am_player_play_radio_index(size_t index)
     am_player_refresh_ui();
 }
 
+/* 首次交互(播放/上一首/下一首)时若尚未选择任何来源,懒加载本地库并从当前曲开始,
+ * 对齐 local_music_demo 的开箱即播:此前传输键仅转调 music_player_*,而引擎未 init
+ * (g_controller==NULL)→ 全部 no-op,表现为"播放按钮没反应、没声音"。
+ * 返回 true 表示本次调用刚启动播放,调用方无需再做暂停/切换。 */
+static bool am_player_ensure_started(void)
+{
+    if(g_source_kind != AM_SOURCE_NONE) return false;
+    if(g_locals == NULL || g_local_count == 0U) return false;
+    am_player_play_local_index(g_current_local < g_local_count ? g_current_local : 0U);
+    return true;
+}
+
 void am_player_toggle_playback(void)
 {
+    if(am_player_ensure_started()) return;   /* 首次按播放:刚起播即在放,无需再 toggle */
     if(music_player_is_playing()) music_player_pause();
     else music_player_resume();
     am_player_refresh_ui();
@@ -285,6 +376,7 @@ void am_player_toggle_playback(void)
 
 void am_player_prev(void)
 {
+    if(am_player_ensure_started()) return;   /* 未选歌时按上一首:先起播本地库 */
     if(g_source_kind == AM_SOURCE_RADIO) {
         if(g_radio_count == 0U) return;
         if(g_current_radio == 0U) g_current_radio = g_radio_count - 1U;
@@ -299,6 +391,7 @@ void am_player_prev(void)
 
 void am_player_next(void)
 {
+    if(am_player_ensure_started()) return;   /* 未选歌时按下一首:先起播本地库 */
     if(g_source_kind == AM_SOURCE_RADIO) {
         if(g_radio_count == 0U) return;
         g_current_radio = (g_current_radio + 1U) % g_radio_count;

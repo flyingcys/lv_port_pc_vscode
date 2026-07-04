@@ -80,6 +80,11 @@ bool am_player_playlist_open(void)
     return false;
 }
 
+void am_player_set_playlist_pick_cb(am_player_pick_cb_t cb)
+{
+    LV_UNUSED(cb);
+}
+
 am_source_kind_t am_player_source_kind(void)
 {
     return AM_SOURCE_NONE;

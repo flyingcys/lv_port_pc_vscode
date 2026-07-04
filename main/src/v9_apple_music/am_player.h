@@ -45,6 +45,10 @@ void am_player_toggle_mute(void);
 void am_player_set_playlist_open(bool open);
 bool am_player_playlist_open(void);
 
+/* 弹层(播放列表)点击某项切歌后回调宿主(用于跳转/刷新"正在播放"页)。 */
+typedef void (*am_player_pick_cb_t)(void);
+void am_player_set_playlist_pick_cb(am_player_pick_cb_t cb);
+
 am_source_kind_t am_player_source_kind(void);
 uint32_t am_player_track_duration_ms(size_t index);
 size_t am_player_current_local_index(void);
