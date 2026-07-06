@@ -134,3 +134,42 @@ cmake --build build --target apple_music_playlist_scrollbar_behavior_test -j4
 
 - PASS
 - 增强后的方向与底部钳制断言均通过
+
+## Review 修复追加（二）
+
+### 修复项
+
+- 修复 `playlist_scroll_track` 带 padding 时，thumb 布局与拖拽映射使用不同纵向原点的问题。
+- `am_playlist_scrollbar_sync()` 继续以 `LV_ALIGN_TOP_MID` 将 thumb 布局到 track 内容区。
+- `am_playlist_thumb_event_cb()` 改为通过 `am_playlist_track_content_top()` 读取 track 内容区顶部，用同一基准把指针位置映射回 `thumb_y`。
+
+### TDD 过程
+
+1. 先在行为测试里补一条新的 padding 场景断言：
+   - 当 `playlist_scroll_track` 有上下 padding 时，把 thumb 从顶部拖到内容区中点附近，`scroll_y` 应保持与中点比例一致。
+2. 先运行聚焦测试，初始失败：
+   - `scroll y should match middle ratio after dragging thumb to padded track midpoint`
+3. 在 `am_player.c` 中把拖拽映射的原点从 track 外框顶部改为 track 内容区顶部。
+4. 调整测试期望为与现有离散比例映射一致，并保留足够小的误差容忍，避免 1px 级几何取整噪声。
+5. 再次运行聚焦测试，通过。
+
+### 测试增强
+
+- 新增 padding 场景的中段比例断言，覆盖：
+  - track 有上下 padding
+  - thumb 从顶部拖到内容区中点
+  - `scroll_y` 与拖拽比例一致，不会因原点错误整体漂移
+
+### 本轮命令与结果
+
+命令：
+
+```bash
+cmake --build build --target apple_music_playlist_scrollbar_behavior_test -j4
+./bin/apple_music_playlist_scrollbar_behavior_test
+```
+
+结果：
+
+- 先失败，报错：`scroll y should match middle ratio after dragging thumb to padded track midpoint`
+- 修复后 PASS

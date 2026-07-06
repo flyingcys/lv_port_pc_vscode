@@ -326,6 +326,30 @@ int main(void)
                     (int)track_content_bottom);
             return 1;
         }
+
+        lv_obj_scroll_to_y(handles.playlist_list, 0, LV_ANIM_OFF);
+        am_player_refresh_ui();
+        lv_timer_handler();
+        lv_obj_update_layout(root);
+        lv_obj_get_coords(handles.playlist_scroll_track, &track_coords);
+        lv_obj_get_coords(handles.playlist_scroll_thumb, &thumb_coords);
+        {
+            int32_t track_content_top = track_coords.y1 + lv_obj_get_style_pad_top(handles.playlist_scroll_track, 0);
+            int32_t thumb_center_y = (thumb_coords.y1 + thumb_coords.y2) / 2;
+            int32_t thumb_half_h = lv_obj_get_height(handles.playlist_scroll_thumb) / 2;
+            int32_t track_range = lv_obj_get_content_height(handles.playlist_scroll_track)
+                                - lv_obj_get_height(handles.playlist_scroll_thumb);
+            int32_t drag_to_middle_dy = track_content_top + track_range / 2 + thumb_half_h - thumb_center_y;
+            int32_t expected_middle = ((track_range / 2) * content_range) / track_range;
+
+            simulate_thumb_drag(handles.playlist_scroll_thumb, drag_to_middle_dy);
+            if(LV_ABS(lv_obj_get_scroll_y(handles.playlist_list) - expected_middle) > 8) {
+                fprintf(stderr, "scroll y should match middle ratio after dragging thumb to padded track midpoint: got=%d expected=%d\n",
+                        (int)lv_obj_get_scroll_y(handles.playlist_list),
+                        (int)expected_middle);
+                return 1;
+            }
+        }
     }
     lv_obj_scroll_to_y(handles.playlist_list, 120, LV_ANIM_OFF);
     lv_timer_handler();

@@ -46,6 +46,7 @@ static void am_playlist_pick_async(void *data);
 static void am_playlist_scrollbar_sync(void);
 static void am_playlist_list_scroll_cb(lv_event_t *e);
 static void am_playlist_thumb_event_cb(lv_event_t *e);
+static int32_t am_playlist_track_content_top(const lv_obj_t *track);
 
 static bool g_playlist_thumb_dragging = false;
 static int32_t g_playlist_thumb_press_ofs_y = 0;
@@ -72,6 +73,15 @@ static void am_playlist_item_click_cb(lv_event_t *e)
     g_pending_pick = (size_t)(intptr_t)lv_event_get_user_data(e);
     lv_async_call_cancel(am_playlist_pick_async, NULL);   /* 连点只保留最后一次 */
     lv_async_call(am_playlist_pick_async, NULL);
+}
+
+static int32_t am_playlist_track_content_top(const lv_obj_t *track)
+{
+    lv_area_t a;
+
+    if(track == NULL) return 0;
+    lv_obj_get_coords((lv_obj_t *)track, &a);
+    return a.y1 + lv_obj_get_style_pad_top(track, 0);
 }
 
 static void am_playlist_scrollbar_sync(void)
@@ -132,7 +142,6 @@ static void am_playlist_thumb_event_cb(lv_event_t *e)
     lv_obj_t *list = g_h.playlist_list;
     lv_indev_t *indev = lv_event_get_indev(e);
     lv_point_t p;
-    lv_area_t track_a;
     lv_area_t thumb_a;
     int32_t track_h;
     int32_t thumb_h;
@@ -163,7 +172,6 @@ static void am_playlist_thumb_event_cb(lv_event_t *e)
 
     lv_obj_update_layout(track);
     lv_obj_update_layout(list);
-    lv_obj_get_coords(track, &track_a);
     track_h = lv_obj_get_content_height(track);
     thumb_h = lv_obj_get_height(thumb);
     track_range = track_h - thumb_h;
@@ -173,7 +181,7 @@ static void am_playlist_thumb_event_cb(lv_event_t *e)
 
     if(track_range <= 0 || content_range <= 0) return;
 
-    thumb_y = p.y - track_a.y1 - g_playlist_thumb_press_ofs_y;
+    thumb_y = p.y - am_playlist_track_content_top(track) - g_playlist_thumb_press_ofs_y;
     if(thumb_y < 0) thumb_y = 0;
     if(thumb_y > track_range) thumb_y = track_range;
 
