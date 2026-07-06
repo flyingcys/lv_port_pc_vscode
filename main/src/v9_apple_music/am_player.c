@@ -45,6 +45,10 @@ static void am_playlist_item_click_cb(lv_event_t *e);
 static void am_playlist_pick_async(void *data);
 static void am_playlist_scrollbar_sync(void);
 static void am_playlist_list_scroll_cb(lv_event_t *e);
+static void am_playlist_thumb_event_cb(lv_event_t *e);
+
+static bool g_playlist_thumb_dragging = false;
+static int32_t g_playlist_thumb_press_ofs_y = 0;
 
 void am_player_set_playlist_pick_cb(am_player_pick_cb_t cb)
 {
@@ -98,7 +102,7 @@ static void am_playlist_scrollbar_sync(void)
     }
 
     lv_obj_clear_flag(track, LV_OBJ_FLAG_HIDDEN);
-    track_h = lv_obj_get_content_height(track);
+    track_h = lv_obj_get_height(track);
     thumb_h = (track_h * viewport_h) / content_h;
     if(thumb_h < 24) thumb_h = 24;
     if(thumb_h > track_h) thumb_h = track_h;
@@ -109,12 +113,71 @@ static void am_playlist_scrollbar_sync(void)
         : 0;
 
     lv_obj_set_height(thumb, thumb_h);
-    lv_obj_set_y(thumb, thumb_y);
+    lv_obj_set_width(thumb, 4);
+    lv_obj_align(thumb, LV_ALIGN_TOP_MID, 0, thumb_y);
 }
 
 static void am_playlist_list_scroll_cb(lv_event_t *e)
 {
     LV_UNUSED(e);
+    am_playlist_scrollbar_sync();
+}
+
+static void am_playlist_thumb_event_cb(lv_event_t *e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+    lv_obj_t *thumb = lv_event_get_target(e);
+    lv_obj_t *track = g_h.playlist_scroll_track;
+    lv_obj_t *list = g_h.playlist_list;
+    lv_indev_t *indev = lv_event_get_indev(e);
+    lv_point_t p;
+    lv_area_t track_a;
+    lv_area_t thumb_a;
+    int32_t track_h;
+    int32_t thumb_h;
+    int32_t track_range;
+    int32_t thumb_y;
+    int32_t viewport_h;
+    int32_t content_h;
+    int32_t content_range;
+    int32_t scroll_target;
+
+    if(thumb == NULL || track == NULL || list == NULL) return;
+    if(indev != NULL) lv_indev_get_point(indev, &p);
+
+    if(code == LV_EVENT_PRESSED) {
+        if(indev == NULL) return;
+        lv_obj_get_coords(thumb, &thumb_a);
+        g_playlist_thumb_dragging = true;
+        g_playlist_thumb_press_ofs_y = p.y - thumb_a.y1;
+        return;
+    }
+
+    if(code == LV_EVENT_RELEASED || code == LV_EVENT_PRESS_LOST) {
+        g_playlist_thumb_dragging = false;
+        return;
+    }
+
+    if(code != LV_EVENT_PRESSING || !g_playlist_thumb_dragging || indev == NULL) return;
+
+    lv_obj_update_layout(track);
+    lv_obj_update_layout(list);
+    lv_obj_get_coords(track, &track_a);
+    track_h = lv_obj_get_content_height(track);
+    thumb_h = lv_obj_get_height(thumb);
+    track_range = track_h - thumb_h;
+    viewport_h = lv_obj_get_content_height(list);
+    content_h = lv_obj_get_scroll_bottom(list) - lv_obj_get_scroll_top(list) + viewport_h;
+    content_range = content_h - viewport_h;
+
+    if(track_range <= 0 || content_range <= 0) return;
+
+    thumb_y = p.y - track_a.y1 - g_playlist_thumb_press_ofs_y;
+    if(thumb_y < 0) thumb_y = 0;
+    if(thumb_y > track_range) thumb_y = track_range;
+
+    scroll_target = (thumb_y * content_range) / track_range;
+    lv_obj_scroll_to_y(list, scroll_target, LV_ANIM_OFF);
     am_playlist_scrollbar_sync();
 }
 
@@ -349,6 +412,15 @@ void am_player_bind_miniplayer(const am_miniplayer_handles_t *h)
     }
     if(g_h.playlist_list != NULL) {
         lv_obj_add_event_cb(g_h.playlist_list, am_playlist_list_scroll_cb, LV_EVENT_SCROLL, NULL);
+    }
+    if(g_h.playlist_scroll_thumb != NULL) {
+        lv_obj_add_flag(g_h.playlist_scroll_thumb, LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_add_flag(g_h.playlist_scroll_thumb, LV_OBJ_FLAG_PRESS_LOCK);
+        lv_obj_clear_flag(g_h.playlist_scroll_thumb, LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_add_event_cb(g_h.playlist_scroll_thumb, am_playlist_thumb_event_cb, LV_EVENT_PRESSED, NULL);
+        lv_obj_add_event_cb(g_h.playlist_scroll_thumb, am_playlist_thumb_event_cb, LV_EVENT_PRESSING, NULL);
+        lv_obj_add_event_cb(g_h.playlist_scroll_thumb, am_playlist_thumb_event_cb, LV_EVENT_RELEASED, NULL);
+        lv_obj_add_event_cb(g_h.playlist_scroll_thumb, am_playlist_thumb_event_cb, LV_EVENT_PRESS_LOST, NULL);
     }
     am_player_refresh_ui();
 }

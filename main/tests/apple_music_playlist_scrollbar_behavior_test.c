@@ -164,6 +164,50 @@ static void fill_local_item(am_local_item_t *item, size_t index)
     item->favorite = false;
 }
 
+typedef struct {
+    lv_point_t point;
+    lv_indev_state_t state;
+} drag_state_t;
+
+static void drag_read_cb(lv_indev_t *indev, lv_indev_data_t *data)
+{
+    drag_state_t *state = (drag_state_t *)lv_indev_get_user_data(indev);
+
+    data->state = state->state;
+    data->point = state->point;
+    data->timestamp = lv_tick_get();
+}
+
+static void simulate_thumb_drag(lv_obj_t *thumb, int32_t dy)
+{
+    lv_indev_t *indev;
+    drag_state_t state;
+    lv_area_t coords;
+
+    lv_obj_get_coords(thumb, &coords);
+    state.point.x = (coords.x1 + coords.x2) / 2;
+    state.point.y = (coords.y1 + coords.y2) / 2;
+    state.state = LV_INDEV_STATE_PRESSED;
+
+    indev = lv_indev_create();
+    lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER);
+    lv_indev_set_read_cb(indev, drag_read_cb);
+    lv_indev_set_user_data(indev, &state);
+
+    lv_indev_read(indev);
+    lv_obj_send_event(thumb, LV_EVENT_PRESSED, indev);
+
+    state.point.y += dy;
+    lv_indev_read(indev);
+    lv_obj_send_event(thumb, LV_EVENT_PRESSING, indev);
+
+    state.state = LV_INDEV_STATE_RELEASED;
+    lv_indev_read(indev);
+    lv_obj_send_event(thumb, LV_EVENT_RELEASED, indev);
+
+    lv_indev_delete(indev);
+}
+
 int main(void)
 {
     enum { SHORT_COUNT = 2, LONG_COUNT = 28 };
@@ -225,6 +269,15 @@ int main(void)
     }
 
     lv_obj_get_coords(handles.playlist_scroll_thumb, &thumb_coords_before);
+    {
+        int32_t before = lv_obj_get_scroll_y(handles.playlist_list);
+        simulate_thumb_drag(handles.playlist_scroll_thumb, 24);
+        int32_t after = lv_obj_get_scroll_y(handles.playlist_list);
+        if(after == before) {
+            fprintf(stderr, "scroll y should change after dragging thumb\n");
+            return 1;
+        }
+    }
     lv_obj_scroll_to_y(handles.playlist_list, 120, LV_ANIM_OFF);
     lv_timer_handler();
     lv_obj_update_layout(root);
