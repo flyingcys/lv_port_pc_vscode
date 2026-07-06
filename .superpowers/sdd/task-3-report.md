@@ -173,3 +173,56 @@ cmake --build build --target apple_music_playlist_scrollbar_behavior_test -j4
 
 - 先失败，报错：`scroll y should match middle ratio after dragging thumb to padded track midpoint`
 - 修复后 PASS
+
+## Review 修复追加（三）
+
+### 修复项
+
+- 修复 `content_range` 推导错误：
+  - 生产代码从 `scroll_bottom - scroll_top + viewport_h` 改为正确的 `content_range = scroll_top + scroll_bottom`
+  - `content_h` 改为 `viewport_h + content_range`
+- 修复自定义 `playlist_scroll_track` 几何：
+  - 运行时在 `am_player.c` 中把 track 高度和纵向位置绑定到 `playlist_list`
+  - 初始构建阶段在 `am_shell.c` 先按 `playlist_list` 对齐一次，避免布局测试阶段 track 侵入 header
+- 同时把 `playlist_list` 的原生 scrollbar 关闭，避免自定义滚动条与原生滚动条叠加
+
+### TDD / Debugging 过程
+
+1. 先在行为测试中把 `playlist_content_range()` 改为正确公式，并补一条“程序化滚到中段后，thumb 位置应符合正确比例”的断言。
+2. 先在布局测试里补一条“track 顶部不得早于 `playlist_list` 顶部”的断言。
+3. 运行聚焦测试，先得到红灯：
+   - `thumb y should match correct scroll ratio after programmatic scroll`
+   - `playlist scroll track should not enter header area`
+4. 在生产代码中修正 `content_range` 公式，并把 track 几何绑定到 `playlist_list`。
+5. 中途首个拖拽断言回归，继续按 systematic-debugging 排查：
+   - 先验证测试 indev 的 `point/state` 已真实写入
+   - 再验证 thumb 回调已真实触发
+   - 最后定位到回归根因不是 High finding 本身，而是拖拽过程中 `track_content_top` 的临时算法错误
+6. 将拖拽起始基准改回直接基于 `track` 几何：
+   - `track_a.y1 + lv_obj_get_style_pad_top(track, 0)`
+7. 去掉全部临时调试输出后重跑聚焦测试，通过。
+
+### 测试增强
+
+- 行为测试新增并保留：
+  - 正确 `content_range` 公式下的中段比例断言
+  - padding 场景下的拖拽比例断言
+- 布局测试新增并保留：
+  - `playlist_scroll_track` 顶部不得进入 header 区域
+
+### 本轮命令与结果
+
+命令：
+
+```bash
+cmake --build build --target apple_music_playlist_scrollbar_behavior_test apple_music_playlist_popup_layout_test -j4
+./bin/apple_music_playlist_scrollbar_behavior_test
+./bin/apple_music_playlist_popup_layout_test
+```
+
+结果：
+
+- 先失败，红在：
+  - `thumb y should match correct scroll ratio after programmatic scroll`
+  - `playlist scroll track should not enter header area`
+- 收敛修复后，两项聚焦测试均 PASS

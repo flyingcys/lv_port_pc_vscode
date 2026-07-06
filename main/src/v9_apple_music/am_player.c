@@ -46,10 +46,12 @@ static void am_playlist_pick_async(void *data);
 static void am_playlist_scrollbar_sync(void);
 static void am_playlist_list_scroll_cb(lv_event_t *e);
 static void am_playlist_thumb_event_cb(lv_event_t *e);
-static int32_t am_playlist_track_content_top(const lv_obj_t *track);
+static int32_t am_playlist_content_range(const lv_obj_t *list);
+static void am_playlist_track_sync_geometry(lv_obj_t *track, lv_obj_t *list);
 
 static bool g_playlist_thumb_dragging = false;
 static int32_t g_playlist_thumb_press_ofs_y = 0;
+static int32_t g_playlist_thumb_track_top = 0;
 
 void am_player_set_playlist_pick_cb(am_player_pick_cb_t cb)
 {
@@ -75,13 +77,20 @@ static void am_playlist_item_click_cb(lv_event_t *e)
     lv_async_call(am_playlist_pick_async, NULL);
 }
 
-static int32_t am_playlist_track_content_top(const lv_obj_t *track)
+static int32_t am_playlist_content_range(const lv_obj_t *list)
 {
-    lv_area_t a;
+    if(list == NULL) return 0;
+    return lv_obj_get_scroll_top((lv_obj_t *)list) + lv_obj_get_scroll_bottom((lv_obj_t *)list);
+}
 
-    if(track == NULL) return 0;
-    lv_obj_get_coords((lv_obj_t *)track, &a);
-    return a.y1 + lv_obj_get_style_pad_top(track, 0);
+static void am_playlist_track_sync_geometry(lv_obj_t *track, lv_obj_t *list)
+{
+    if(track == NULL || list == NULL) return;
+
+    lv_obj_update_layout(list);
+    lv_obj_set_height(track, lv_obj_get_height(list));
+    lv_obj_set_width(track, 8);
+    lv_obj_align_to(track, list, LV_ALIGN_TOP_RIGHT, -6, 0);
 }
 
 static void am_playlist_scrollbar_sync(void)
@@ -90,9 +99,9 @@ static void am_playlist_scrollbar_sync(void)
     lv_obj_t *track = g_h.playlist_scroll_track;
     lv_obj_t *thumb = g_h.playlist_scroll_thumb;
     int32_t viewport_h;
-    int32_t content_h;
     int32_t scroll_y;
     int32_t content_range;
+    int32_t content_h;
     int32_t track_h;
     int32_t thumb_h;
     int32_t track_range;
@@ -101,10 +110,11 @@ static void am_playlist_scrollbar_sync(void)
     if(list == NULL || track == NULL || thumb == NULL) return;
 
     lv_obj_update_layout(list);
+    am_playlist_track_sync_geometry(track, list);
     viewport_h = lv_obj_get_content_height(list);
-    content_h = lv_obj_get_scroll_bottom(list) - lv_obj_get_scroll_top(list) + viewport_h;
+    content_range = am_playlist_content_range(list);
+    content_h = viewport_h + content_range;
     scroll_y = lv_obj_get_scroll_y(list);
-    content_range = content_h - viewport_h;
 
     if(content_range <= 0) {
         lv_obj_add_flag(track, LV_OBJ_FLAG_HIDDEN);
@@ -142,14 +152,16 @@ static void am_playlist_thumb_event_cb(lv_event_t *e)
     lv_obj_t *list = g_h.playlist_list;
     lv_indev_t *indev = lv_event_get_indev(e);
     lv_point_t p;
+    lv_area_t track_a;
     lv_area_t thumb_a;
+    int32_t track_content_top;
     int32_t track_h;
     int32_t thumb_h;
     int32_t track_range;
     int32_t thumb_y;
     int32_t viewport_h;
-    int32_t content_h;
     int32_t content_range;
+    int32_t content_h;
     int32_t scroll_target;
 
     if(thumb == NULL || track == NULL || list == NULL) return;
@@ -157,8 +169,12 @@ static void am_playlist_thumb_event_cb(lv_event_t *e)
 
     if(code == LV_EVENT_PRESSED) {
         if(indev == NULL) return;
+        am_playlist_scrollbar_sync();
+        lv_obj_update_layout(thumb);
+        lv_obj_get_coords(track, &track_a);
         lv_obj_get_coords(thumb, &thumb_a);
         g_playlist_thumb_dragging = true;
+        g_playlist_thumb_track_top = track_a.y1 + lv_obj_get_style_pad_top(track, 0);
         g_playlist_thumb_press_ofs_y = p.y - thumb_a.y1;
         return;
     }
@@ -170,18 +186,19 @@ static void am_playlist_thumb_event_cb(lv_event_t *e)
 
     if(code != LV_EVENT_PRESSING || !g_playlist_thumb_dragging || indev == NULL) return;
 
-    lv_obj_update_layout(track);
-    lv_obj_update_layout(list);
+    am_playlist_track_sync_geometry(track, list);
     track_h = lv_obj_get_content_height(track);
     thumb_h = lv_obj_get_height(thumb);
     track_range = track_h - thumb_h;
     viewport_h = lv_obj_get_content_height(list);
-    content_h = lv_obj_get_scroll_bottom(list) - lv_obj_get_scroll_top(list) + viewport_h;
-    content_range = content_h - viewport_h;
+    content_range = am_playlist_content_range(list);
+    content_h = viewport_h + content_range;
 
     if(track_range <= 0 || content_range <= 0) return;
 
-    thumb_y = p.y - am_playlist_track_content_top(track) - g_playlist_thumb_press_ofs_y;
+    lv_obj_get_coords(thumb, &thumb_a);
+    track_content_top = g_playlist_thumb_track_top;
+    thumb_y = p.y - track_content_top - g_playlist_thumb_press_ofs_y;
     if(thumb_y < 0) thumb_y = 0;
     if(thumb_y > track_range) thumb_y = track_range;
 

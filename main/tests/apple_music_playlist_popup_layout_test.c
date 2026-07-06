@@ -87,6 +87,10 @@ int main(void)
     if(lv_obj_get_y(handles.playlist_list) != lv_obj_get_height(head)) {
         return failf("playlist list y unexpected", lv_obj_get_y(handles.playlist_list));
     }
+    if(lv_obj_get_y(handles.playlist_scroll_track) < lv_obj_get_y(handles.playlist_list)) {
+        return failf("playlist scroll track should not enter header area",
+                     lv_obj_get_y(handles.playlist_scroll_track));
+    }
 
     lv_display_delete(disp);
     return 0;

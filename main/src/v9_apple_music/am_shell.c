@@ -390,7 +390,12 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
     lv_obj_set_style_pad_right(h.playlist_list, 16, 0);
     lv_obj_set_flex_flow(h.playlist_list, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_scroll_dir(h.playlist_list, LV_DIR_VER);
-    lv_obj_set_scrollbar_mode(h.playlist_list, LV_SCROLLBAR_MODE_AUTO);
+    lv_obj_set_scrollbar_mode(h.playlist_list, LV_SCROLLBAR_MODE_OFF);
+
+    lv_obj_update_layout(h.playlist_popup);
+    lv_obj_set_height(h.playlist_scroll_track, lv_obj_get_height(h.playlist_list));
+    lv_obj_set_width(h.playlist_scroll_track, 8);
+    lv_obj_align_to(h.playlist_scroll_track, h.playlist_list, LV_ALIGN_TOP_RIGHT, -6, 0);
 
     return h;
 }

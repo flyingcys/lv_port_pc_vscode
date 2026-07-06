@@ -191,9 +191,11 @@ static void simulate_thumb_drag(lv_obj_t *thumb, int32_t dy)
 
     indev = lv_indev_create();
     lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER);
+    lv_indev_set_display(indev, lv_display_get_default());
     lv_indev_set_read_cb(indev, drag_read_cb);
     lv_indev_set_user_data(indev, &state);
 
+    state.state = LV_INDEV_STATE_PRESSED;
     lv_indev_read(indev);
     lv_obj_send_event(thumb, LV_EVENT_PRESSED, indev);
 
@@ -210,9 +212,7 @@ static void simulate_thumb_drag(lv_obj_t *thumb, int32_t dy)
 
 static int32_t playlist_content_range(lv_obj_t *list)
 {
-    int32_t viewport_h = lv_obj_get_content_height(list);
-    int32_t content_h = lv_obj_get_scroll_bottom(list) - lv_obj_get_scroll_top(list) + viewport_h;
-    return content_h - viewport_h;
+    return lv_obj_get_scroll_top(list) + lv_obj_get_scroll_bottom(list);
 }
 
 int main(void)
@@ -355,6 +355,29 @@ int main(void)
     lv_timer_handler();
     lv_obj_update_layout(root);
     lv_obj_get_coords(handles.playlist_scroll_thumb, &thumb_coords_after);
+    {
+        lv_area_t track_coords;
+        int32_t track_content_top;
+        int32_t track_range;
+        int32_t thumb_y;
+        int32_t content_range;
+        int32_t expected_thumb_y;
+
+        lv_obj_get_coords(handles.playlist_scroll_track, &track_coords);
+        track_content_top = track_coords.y1 + lv_obj_get_style_pad_top(handles.playlist_scroll_track, 0);
+        track_range = lv_obj_get_content_height(handles.playlist_scroll_track)
+                    - lv_obj_get_height(handles.playlist_scroll_thumb);
+        thumb_y = thumb_coords_after.y1 - track_content_top;
+        content_range = playlist_content_range(handles.playlist_list);
+        expected_thumb_y = (track_range * lv_obj_get_scroll_y(handles.playlist_list)) / content_range;
+
+        if(LV_ABS(thumb_y - expected_thumb_y) > 2) {
+            fprintf(stderr, "thumb y should match correct scroll ratio after programmatic scroll: got=%d expected=%d\n",
+                    (int)thumb_y,
+                    (int)expected_thumb_y);
+            return 1;
+        }
+    }
     if(thumb_coords_after.y1 <= thumb_coords_before.y1) {
         fprintf(stderr, "thumb should move after scroll: before=%d after=%d\n",
                 (int)thumb_coords_before.y1,
