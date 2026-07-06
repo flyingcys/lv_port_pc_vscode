@@ -104,3 +104,33 @@ AM_APP=apple_music AM_SHOT=/tmp/am_playlist_scrollbar.ppm AM_PANEL=playlist ./bi
 
 - 本次没有修改任何其他源码文件。
 - 截图命令已执行并产出文件；主应用初始态下滚动条在截图里不算醒目，但行为测试已覆盖拖拽滚动的核心逻辑。
+
+## Review 修复追加
+
+### 修复项
+
+- 修复 `am_playlist_scrollbar_sync()` 与 `am_playlist_thumb_event_cb()` 使用不同 track 高度基准的问题。
+- 现在两处统一使用 `lv_obj_get_content_height(track)`，避免后续给 track 加 padding 等样式后，thumb 同步位置和拖拽比例发生漂移。
+
+### 测试增强
+
+- 保留原有“拖动后 `scroll_y` 变化”的断言。
+- 新增“向下拖动后 `scroll_y` 应增大”的方向断言。
+- 新增一组带 `track` 上下 padding 的断言，覆盖：
+  - 大位移拖拽后 `scroll_y` 能钳到接近底部
+  - `thumb` 仍保持在 `track` 内容区内
+- 同时把测试里的底部拖拽位移改为基于实际 `track` 坐标计算，避免越出显示区域的输入告警。
+
+### 本轮命令与结果
+
+命令：
+
+```bash
+cmake --build build --target apple_music_playlist_scrollbar_behavior_test -j4
+./bin/apple_music_playlist_scrollbar_behavior_test
+```
+
+结果：
+
+- PASS
+- 增强后的方向与底部钳制断言均通过

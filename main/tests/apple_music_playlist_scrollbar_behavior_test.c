@@ -208,6 +208,13 @@ static void simulate_thumb_drag(lv_obj_t *thumb, int32_t dy)
     lv_indev_delete(indev);
 }
 
+static int32_t playlist_content_range(lv_obj_t *list)
+{
+    int32_t viewport_h = lv_obj_get_content_height(list);
+    int32_t content_h = lv_obj_get_scroll_bottom(list) - lv_obj_get_scroll_top(list) + viewport_h;
+    return content_h - viewport_h;
+}
+
 int main(void)
 {
     enum { SHORT_COUNT = 2, LONG_COUNT = 28 };
@@ -275,6 +282,48 @@ int main(void)
         int32_t after = lv_obj_get_scroll_y(handles.playlist_list);
         if(after == before) {
             fprintf(stderr, "scroll y should change after dragging thumb\n");
+            return 1;
+        }
+        if(after < before) {
+            fprintf(stderr, "scroll y should increase after dragging thumb downward: before=%d after=%d\n",
+                    (int)before, (int)after);
+            return 1;
+        }
+    }
+    {
+        int32_t content_range;
+        lv_area_t track_coords;
+        lv_area_t thumb_coords;
+        int32_t track_content_bottom;
+        int32_t bottom_drag_dy;
+
+        lv_obj_set_style_pad_top(handles.playlist_scroll_track, 10, 0);
+        lv_obj_set_style_pad_bottom(handles.playlist_scroll_track, 10, 0);
+        lv_obj_scroll_to_y(handles.playlist_list, 0, LV_ANIM_OFF);
+        am_player_refresh_ui();
+        lv_obj_update_layout(root);
+
+        content_range = playlist_content_range(handles.playlist_list);
+        lv_obj_get_coords(handles.playlist_scroll_track, &track_coords);
+        lv_obj_get_coords(handles.playlist_scroll_thumb, &thumb_coords);
+        bottom_drag_dy = track_coords.y2 - ((thumb_coords.y1 + thumb_coords.y2) / 2) + 1;
+        simulate_thumb_drag(handles.playlist_scroll_thumb, bottom_drag_dy);
+        if(lv_obj_get_scroll_y(handles.playlist_list) < content_range - 2) {
+            fprintf(stderr, "scroll y should clamp near bottom after large thumb drag: got=%d expected>=%d\n",
+                    (int)lv_obj_get_scroll_y(handles.playlist_list),
+                    (int)(content_range - 2));
+            return 1;
+        }
+
+        lv_obj_get_coords(handles.playlist_scroll_track, &track_coords);
+        lv_obj_get_coords(handles.playlist_scroll_thumb, &thumb_coords);
+        track_content_bottom = track_coords.y1
+                             + lv_obj_get_style_pad_top(handles.playlist_scroll_track, 0)
+                             + lv_obj_get_content_height(handles.playlist_scroll_track);
+        if(thumb_coords.y2 > track_content_bottom) {
+            fprintf(stderr, "thumb should stay within track content area after bottom drag: thumb_bottom=%d content_bottom=%d\n",
+                    (int)thumb_coords.y2,
+                    (int)track_content_bottom);
             return 1;
         }
     }

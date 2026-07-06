@@ -102,7 +102,8 @@ static void am_playlist_scrollbar_sync(void)
     }
 
     lv_obj_clear_flag(track, LV_OBJ_FLAG_HIDDEN);
-    track_h = lv_obj_get_height(track);
+    lv_obj_update_layout(track);
+    track_h = lv_obj_get_content_height(track);
     thumb_h = (track_h * viewport_h) / content_h;
     if(thumb_h < 24) thumb_h = 24;
     if(thumb_h > track_h) thumb_h = track_h;
