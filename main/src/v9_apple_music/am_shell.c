@@ -352,6 +352,7 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
     lv_obj_set_style_bg_color(h.playlist_scroll_track, lv_color_hex(0x000000), 0);
     lv_obj_set_style_bg_opa(h.playlist_scroll_track, 20, 0);
     lv_obj_set_style_radius(h.playlist_scroll_track, LV_RADIUS_CIRCLE, 0);
+    lv_obj_add_flag(h.playlist_scroll_track, LV_OBJ_FLAG_IGNORE_LAYOUT);
     lv_obj_add_flag(h.playlist_scroll_track, LV_OBJ_FLAG_HIDDEN);
 
     h.playlist_scroll_thumb = lv_obj_create(h.playlist_scroll_track);

@@ -26,6 +26,7 @@ int main(void)
     lv_display_t *disp;
     lv_obj_t *root;
     lv_obj_t *player;
+    lv_obj_t *head;
     am_miniplayer_handles_t handles;
 
     lv_init();
@@ -69,9 +70,22 @@ int main(void)
     if(!lv_obj_has_flag(handles.playlist_scroll_track, LV_OBJ_FLAG_HIDDEN)) {
         return failf("playlist scroll track should start hidden", 0);
     }
+    if(!lv_obj_has_flag(handles.playlist_scroll_track, LV_OBJ_FLAG_IGNORE_LAYOUT)) {
+        return failf("playlist scroll track should ignore layout", 0);
+    }
     if(lv_obj_get_style_pad_right(handles.playlist_list, LV_PART_MAIN) != 16) {
         return failf("playlist list pad right unexpected",
                      lv_obj_get_style_pad_right(handles.playlist_list, LV_PART_MAIN));
+    }
+    head = lv_obj_get_child(handles.playlist_popup, 1);
+    if(head == NULL) {
+        return failf("playlist head missing", 0);
+    }
+    if(lv_obj_get_y(head) != 0) {
+        return failf("playlist head y unexpected", lv_obj_get_y(head));
+    }
+    if(lv_obj_get_y(handles.playlist_list) != lv_obj_get_height(head)) {
+        return failf("playlist list y unexpected", lv_obj_get_y(handles.playlist_list));
     }
 
     lv_display_delete(disp);
