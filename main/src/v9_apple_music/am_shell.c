@@ -345,6 +345,23 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
     lv_obj_set_flex_flow(h.playlist_popup, LV_FLEX_FLOW_COLUMN);
     lv_obj_add_flag(h.playlist_popup, LV_OBJ_FLAG_HIDDEN);
 
+    h.playlist_scroll_track = lv_obj_create(h.playlist_popup);
+    lv_obj_remove_style_all(h.playlist_scroll_track);
+    lv_obj_set_size(h.playlist_scroll_track, 8, LV_PCT(100));
+    lv_obj_align(h.playlist_scroll_track, LV_ALIGN_RIGHT_MID, -6, 0);
+    lv_obj_set_style_bg_color(h.playlist_scroll_track, lv_color_hex(0x000000), 0);
+    lv_obj_set_style_bg_opa(h.playlist_scroll_track, 20, 0);
+    lv_obj_set_style_radius(h.playlist_scroll_track, LV_RADIUS_CIRCLE, 0);
+    lv_obj_add_flag(h.playlist_scroll_track, LV_OBJ_FLAG_HIDDEN);
+
+    h.playlist_scroll_thumb = lv_obj_create(h.playlist_scroll_track);
+    lv_obj_remove_style_all(h.playlist_scroll_thumb);
+    lv_obj_set_size(h.playlist_scroll_thumb, LV_PCT(100), 32);
+    lv_obj_align(h.playlist_scroll_thumb, LV_ALIGN_TOP_MID, 0, 0);
+    lv_obj_set_style_bg_color(h.playlist_scroll_thumb, lv_color_hex(0x7d7d7d), 0);
+    lv_obj_set_style_bg_opa(h.playlist_scroll_thumb, LV_OPA_COVER, 0);
+    lv_obj_set_style_radius(h.playlist_scroll_thumb, LV_RADIUS_CIRCLE, 0);
+
     {
         lv_obj_t *head = lv_obj_create(h.playlist_popup);
         lv_obj_remove_style_all(head);
@@ -369,6 +386,7 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
     lv_obj_set_flex_grow(h.playlist_list, 1);
     lv_obj_set_style_pad_all(h.playlist_list, 6, 0);
     lv_obj_set_style_pad_row(h.playlist_list, 4, 0);
+    lv_obj_set_style_pad_right(h.playlist_list, 16, 0);
     lv_obj_set_flex_flow(h.playlist_list, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_scroll_dir(h.playlist_list, LV_DIR_VER);
     lv_obj_set_scrollbar_mode(h.playlist_list, LV_SCROLLBAR_MODE_AUTO);
