@@ -169,6 +169,23 @@ typedef struct {
     lv_indev_state_t state;
 } drag_state_t;
 
+static lv_obj_t *find_topmost_hit(lv_obj_t *obj, const lv_point_t *point)
+{
+    int32_t i;
+
+    if(obj == NULL) return NULL;
+    if(lv_obj_has_flag(obj, LV_OBJ_FLAG_HIDDEN)) return NULL;
+    if(!lv_obj_hit_test(obj, point)) return NULL;
+
+    for(i = (int32_t)lv_obj_get_child_count(obj) - 1; i >= 0; i--) {
+        lv_obj_t *child = lv_obj_get_child(obj, i);
+        lv_obj_t *hit = find_topmost_hit(child, point);
+        if(hit != NULL) return hit;
+    }
+
+    return obj;
+}
+
 static void drag_read_cb(lv_indev_t *indev, lv_indev_data_t *data)
 {
     drag_state_t *state = (drag_state_t *)lv_indev_get_user_data(indev);
@@ -276,6 +293,18 @@ int main(void)
     }
 
     lv_obj_get_coords(handles.playlist_scroll_thumb, &thumb_coords_before);
+    {
+        lv_point_t hit_point = {
+            .x = (thumb_coords_before.x1 + thumb_coords_before.x2) / 2,
+            .y = (thumb_coords_before.y1 + thumb_coords_before.y2) / 2,
+        };
+        lv_obj_t *hit = find_topmost_hit(handles.playlist_popup, &hit_point);
+
+        if(hit != handles.playlist_scroll_thumb) {
+            fprintf(stderr, "thumb hit test should resolve to playlist_scroll_thumb\n");
+            return 1;
+        }
+    }
     {
         int32_t before = lv_obj_get_scroll_y(handles.playlist_list);
         simulate_thumb_drag(handles.playlist_scroll_thumb, 24);

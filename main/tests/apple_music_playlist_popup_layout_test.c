@@ -28,6 +28,7 @@ int main(void)
     lv_obj_t *player;
     lv_obj_t *head;
     am_miniplayer_handles_t handles;
+    uint32_t i;
 
     lv_init();
     disp = lv_display_create(800, 480);
@@ -77,7 +78,13 @@ int main(void)
         return failf("playlist list pad right unexpected",
                      lv_obj_get_style_pad_right(handles.playlist_list, LV_PART_MAIN));
     }
-    head = lv_obj_get_child(handles.playlist_popup, 1);
+    head = NULL;
+    for(i = 0; i < lv_obj_get_child_count(handles.playlist_popup); i++) {
+        lv_obj_t *child = lv_obj_get_child(handles.playlist_popup, (int32_t)i);
+        if(child == handles.playlist_scroll_track || child == handles.playlist_list) continue;
+        head = child;
+        break;
+    }
     if(head == NULL) {
         return failf("playlist head missing", 0);
     }

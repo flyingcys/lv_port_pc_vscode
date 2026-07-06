@@ -396,6 +396,7 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
     lv_obj_set_height(h.playlist_scroll_track, lv_obj_get_height(h.playlist_list));
     lv_obj_set_width(h.playlist_scroll_track, 8);
     lv_obj_align_to(h.playlist_scroll_track, h.playlist_list, LV_ALIGN_TOP_RIGHT, -6, 0);
+    lv_obj_move_foreground(h.playlist_scroll_track);
 
     return h;
 }

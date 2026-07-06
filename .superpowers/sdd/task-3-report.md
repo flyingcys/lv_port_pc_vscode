@@ -226,3 +226,50 @@ cmake --build build --target apple_music_playlist_scrollbar_behavior_test apple_
   - `thumb y should match correct scroll ratio after programmatic scroll`
   - `playlist scroll track should not enter header area`
 - 收敛修复后，两项聚焦测试均 PASS
+
+## Review 修复追加（四）
+
+### 修复项
+
+- 修复真实 pointer hit path 可能先命中 `playlist_list`、导致右侧 thumb 拖拽回调触发不到的问题。
+- 在 `am_shell.c` 中将 `playlist_scroll_track` 在构建末尾移动到前景：
+  - `lv_obj_move_foreground(h.playlist_scroll_track);`
+- 保持此前 High/Medium 修复不变：
+  - `content_range = scroll_top + scroll_bottom`
+  - track 几何绑定到 `playlist_list`
+
+### TDD / Debugging 过程
+
+1. 先在行为测试里补一条“最接近真实命中路径”的断言：
+   - 使用 `lv_obj_hit_test()` 递归遍历 `playlist_popup`
+   - 按 `lv_indev_search_obj()` 同样的逆序 sibling 规则解析命中目标
+   - 在 thumb 中心点上，期望命中结果为 `playlist_scroll_thumb`
+2. 先运行行为测试，初始失败：
+   - `thumb hit test should resolve to playlist_scroll_thumb`
+3. 在 `am_shell.c` 里只做最小层级修复，把 `playlist_scroll_track` 提到前景。
+4. 修复后布局测试因 child 顺序变化而失败，说明旧测试依赖固定 child index：
+   - `playlist head y unexpected`
+5. 将布局测试改为按对象身份排除 `track` 和 `list` 后再定位 header，而不是依赖 child 顺序。
+6. 再次运行聚焦测试，通过。
+
+### 测试验证层次
+
+- 本轮行为测试验证的是“最接近真实命中路径”的对象解析层：
+  - 不是直接对 thumb 发事件来证明层级
+  - 而是先在 `playlist_popup` 内做与 LVGL 命中顺序一致的逆序 sibling hit test
+  - 证明右侧 thumb 中心点会先解析到 `playlist_scroll_thumb`，而不是被 `playlist_list` 截走
+
+### 本轮命令与结果
+
+命令：
+
+```bash
+cmake --build build --target apple_music_playlist_scrollbar_behavior_test apple_music_playlist_popup_layout_test -j4
+./bin/apple_music_playlist_scrollbar_behavior_test
+./bin/apple_music_playlist_popup_layout_test
+```
+
+结果：
+
+- 先失败，报错：`thumb hit test should resolve to playlist_scroll_thumb`
+- 修复层级后，行为测试与布局测试均 PASS
