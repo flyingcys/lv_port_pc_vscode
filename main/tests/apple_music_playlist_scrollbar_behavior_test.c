@@ -195,6 +195,16 @@ static void drag_read_cb(lv_indev_t *indev, lv_indev_data_t *data)
     data->timestamp = lv_tick_get();
 }
 
+static void pump_pointer(lv_indev_t *indev, drag_state_t *state,
+                         lv_coord_t x, lv_coord_t y, lv_indev_state_t input_state)
+{
+    state->point.x = x;
+    state->point.y = y;
+    state->state = input_state;
+    lv_indev_read(indev);
+    lv_timer_handler();
+}
+
 static void simulate_thumb_drag(lv_obj_t *thumb, int32_t dy)
 {
     lv_indev_t *indev;
@@ -223,6 +233,33 @@ static void simulate_thumb_drag(lv_obj_t *thumb, int32_t dy)
     state.state = LV_INDEV_STATE_RELEASED;
     lv_indev_read(indev);
     lv_obj_send_event(thumb, LV_EVENT_RELEASED, indev);
+
+    lv_indev_delete(indev);
+}
+
+static void simulate_content_drag(lv_coord_t x, lv_coord_t start_y, int32_t dy)
+{
+    lv_indev_t *indev;
+    drag_state_t state;
+    int32_t step;
+    enum { DRAG_STEPS = 6 };
+
+    state.point.x = x;
+    state.point.y = start_y;
+    state.state = LV_INDEV_STATE_RELEASED;
+
+    indev = lv_indev_create();
+    lv_indev_set_type(indev, LV_INDEV_TYPE_POINTER);
+    lv_indev_set_display(indev, lv_display_get_default());
+    lv_indev_set_read_cb(indev, drag_read_cb);
+    lv_indev_set_user_data(indev, &state);
+
+    pump_pointer(indev, &state, x, start_y, LV_INDEV_STATE_PRESSED);
+    for(step = 1; step <= DRAG_STEPS; step++) {
+        lv_coord_t cur_y = start_y + (dy * step) / DRAG_STEPS;
+        pump_pointer(indev, &state, x, cur_y, LV_INDEV_STATE_PRESSED);
+    }
+    pump_pointer(indev, &state, x, start_y + dy, LV_INDEV_STATE_RELEASED);
 
     lv_indev_delete(indev);
 }
@@ -290,6 +327,28 @@ int main(void)
         fprintf(stderr, "thumb height too small: %d\n",
                 (int)lv_obj_get_height(handles.playlist_scroll_thumb));
         return 1;
+    }
+    {
+        lv_obj_t *row = lv_obj_get_child(handles.playlist_list, 3);
+        lv_area_t row_coords;
+        int32_t before;
+        int32_t after;
+
+        if(row == NULL) {
+            fprintf(stderr, "playlist row missing for drag test\n");
+            return 1;
+        }
+
+        lv_obj_get_coords(row, &row_coords);
+        before = lv_obj_get_scroll_y(handles.playlist_list);
+        simulate_content_drag(row_coords.x1 + 24, (row_coords.y1 + row_coords.y2) / 2, -48);
+        lv_obj_update_layout(root);
+        after = lv_obj_get_scroll_y(handles.playlist_list);
+        if(after <= before) {
+            fprintf(stderr, "scroll y should increase after dragging playlist content: before=%d after=%d\n",
+                    (int)before, (int)after);
+            return 1;
+        }
     }
 
     lv_obj_get_coords(handles.playlist_scroll_thumb, &thumb_coords_before);

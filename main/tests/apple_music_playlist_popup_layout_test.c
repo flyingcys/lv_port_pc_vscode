@@ -74,6 +74,12 @@ int main(void)
     if(!lv_obj_has_flag(handles.playlist_scroll_track, LV_OBJ_FLAG_IGNORE_LAYOUT)) {
         return failf("playlist scroll track should ignore layout", 0);
     }
+    if(lv_obj_has_flag(handles.playlist_popup, LV_OBJ_FLAG_SCROLLABLE)) {
+        return failf("playlist popup should not be scrollable", 0);
+    }
+    if(lv_obj_has_flag(handles.playlist_scroll_track, LV_OBJ_FLAG_SCROLLABLE)) {
+        return failf("playlist scroll track should not be scrollable", 0);
+    }
     if(lv_obj_get_style_pad_right(handles.playlist_list, LV_PART_MAIN) != 16) {
         return failf("playlist list pad right unexpected",
                      lv_obj_get_style_pad_right(handles.playlist_list, LV_PART_MAIN));

@@ -314,6 +314,7 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
     h.playlist_popup = lv_obj_create(lv_obj_get_parent(player));
     lv_obj_remove_style_all(h.playlist_popup);
     lv_obj_add_flag(h.playlist_popup, LV_OBJ_FLAG_FLOATING);
+    lv_obj_clear_flag(h.playlist_popup, LV_OBJ_FLAG_SCROLLABLE);
     /* 尺寸/定位随分辨率自适应:弹层浮在 header 与 player 之间,底部贴 player 上方。
      * 480x272 下固定 300x240+(-96) 会顶部溢出屏幕(顶=272-96-240<0),故按可用高收缩。
      * (header 高 46 见 am_build_root;main 高=屏幕高,main 宽=屏幕宽-sidebar_w。) */
@@ -347,6 +348,7 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
 
     h.playlist_scroll_track = lv_obj_create(h.playlist_popup);
     lv_obj_remove_style_all(h.playlist_scroll_track);
+    lv_obj_clear_flag(h.playlist_scroll_track, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_set_size(h.playlist_scroll_track, 8, LV_PCT(100));
     lv_obj_align(h.playlist_scroll_track, LV_ALIGN_RIGHT_MID, -6, 0);
     lv_obj_set_style_bg_color(h.playlist_scroll_track, lv_color_hex(0x000000), 0);
