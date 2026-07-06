@@ -43,6 +43,8 @@ static void am_volume_track_cb(lv_event_t *e);
 static void am_speaker_cb(lv_event_t *e);
 static void am_playlist_item_click_cb(lv_event_t *e);
 static void am_playlist_pick_async(void *data);
+static void am_playlist_scrollbar_sync(void);
+static void am_playlist_list_scroll_cb(lv_event_t *e);
 
 void am_player_set_playlist_pick_cb(am_player_pick_cb_t cb)
 {
@@ -66,6 +68,54 @@ static void am_playlist_item_click_cb(lv_event_t *e)
     g_pending_pick = (size_t)(intptr_t)lv_event_get_user_data(e);
     lv_async_call_cancel(am_playlist_pick_async, NULL);   /* 连点只保留最后一次 */
     lv_async_call(am_playlist_pick_async, NULL);
+}
+
+static void am_playlist_scrollbar_sync(void)
+{
+    lv_obj_t *list = g_h.playlist_list;
+    lv_obj_t *track = g_h.playlist_scroll_track;
+    lv_obj_t *thumb = g_h.playlist_scroll_thumb;
+    int32_t viewport_h;
+    int32_t content_h;
+    int32_t scroll_y;
+    int32_t content_range;
+    int32_t track_h;
+    int32_t thumb_h;
+    int32_t track_range;
+    int32_t thumb_y;
+
+    if(list == NULL || track == NULL || thumb == NULL) return;
+
+    lv_obj_update_layout(list);
+    viewport_h = lv_obj_get_content_height(list);
+    content_h = lv_obj_get_scroll_bottom(list) - lv_obj_get_scroll_top(list) + viewport_h;
+    scroll_y = lv_obj_get_scroll_y(list);
+    content_range = content_h - viewport_h;
+
+    if(content_range <= 0) {
+        lv_obj_add_flag(track, LV_OBJ_FLAG_HIDDEN);
+        return;
+    }
+
+    lv_obj_clear_flag(track, LV_OBJ_FLAG_HIDDEN);
+    track_h = lv_obj_get_content_height(track);
+    thumb_h = (track_h * viewport_h) / content_h;
+    if(thumb_h < 24) thumb_h = 24;
+    if(thumb_h > track_h) thumb_h = track_h;
+
+    track_range = track_h - thumb_h;
+    thumb_y = (content_range > 0 && track_range > 0)
+        ? (track_range * scroll_y) / content_range
+        : 0;
+
+    lv_obj_set_height(thumb, thumb_h);
+    lv_obj_set_y(thumb, thumb_y);
+}
+
+static void am_playlist_list_scroll_cb(lv_event_t *e)
+{
+    LV_UNUSED(e);
+    am_playlist_scrollbar_sync();
 }
 
 static const char *am_current_title(void)
@@ -135,6 +185,7 @@ static void am_refresh_playlist_popup(void)
                 am_text(info, "LIVE", am_metrics()->f_label, AM_MUTED);
             }
         }
+        am_playlist_scrollbar_sync();
         return;
     }
 
@@ -172,6 +223,8 @@ static void am_refresh_playlist_popup(void)
         am_text(info, g_locals[i].title, am_metrics()->f_body, active ? lv_color_hex(0xfa2d48) : AM_TEXT);
         am_text(info, "本地音频", am_metrics()->f_label, AM_MUTED);
     }
+
+    am_playlist_scrollbar_sync();
 }
 
 void am_player_refresh_ui(void)
@@ -221,6 +274,7 @@ void am_player_refresh_ui(void)
     }
 
     am_refresh_playlist_popup();
+    am_playlist_scrollbar_sync();
 }
 
 static void am_player_timer_cb(lv_timer_t *timer)
@@ -292,6 +346,9 @@ void am_player_bind_miniplayer(const am_miniplayer_handles_t *h)
     if(g_h.volume_icon != NULL) {
         lv_obj_add_flag(g_h.volume_icon, LV_OBJ_FLAG_CLICKABLE);
         lv_obj_add_event_cb(g_h.volume_icon, am_speaker_cb, LV_EVENT_CLICKED, NULL);
+    }
+    if(g_h.playlist_list != NULL) {
+        lv_obj_add_event_cb(g_h.playlist_list, am_playlist_list_scroll_cb, LV_EVENT_SCROLL, NULL);
     }
     am_player_refresh_ui();
 }
