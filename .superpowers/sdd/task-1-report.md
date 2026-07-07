@@ -41,3 +41,42 @@ cmake -S . -B build && cmake --build build --target apple_music_state_test && ./
 ## Concerns
 
 - 仓库内要求的 GitNexus impact / detect_changes 在本地不可用：`npx gitnexus analyze` 在当前环境触发 native worker abort，随后 `npx gitnexus status` 仍显示 `Repository not indexed`。本次只能以本地引用扫描和 diff 自检作为替代，无法提供正式 GitNexus 报告。
+
+## 评审修复追加记录
+
+### 修复说明
+
+- 修正 `main/src/v9_apple_music/am_state.c` 的 `am_state_save()`：仅当歌曲 `favorite == true` 或 `recent_seq > 0` 时才写入状态文件，避免把整份本地列表持久化为播放状态。
+- 在 `main/tests/apple_music_state_test.c` 新增测试，锁定 `AM_STATE_PATH` 必须等于 `apple_music_state.tsv`。
+- 同时把该测试文件内的断言改为自定义 `CHECK()`，原因是当前构建配置下 `assert` 被编译掉，无法可靠地产生 RED/GREEN 信号。
+
+### 本次 TDD 记录
+
+1. 先在 `main/tests/apple_music_state_test.c` 增加两条测试：
+   - `test_state_path_constant`
+   - `test_state_save_skips_plain_local_items`
+2. 首次执行定向测试目标后，发现 `assert` 在当前构建配置下无效，新增用例以空指针崩溃形式失败；随后将该测试文件中的断言替换为自定义 `CHECK()`，确保失败能明确暴露。
+3. 再次执行定向测试，确认 RED：
+   - 失败点为 `test_state_save_skips_plain_local_items`
+   - 失败信息为 `CHECK failed: strstr(line, "/music/a.mp3") == NULL`
+4. 最后仅修改 `am_state_save()` 的过滤逻辑，重新执行同一测试目标，确认 GREEN。
+
+### 本次验证命令与结果
+
+RED：
+
+```bash
+cmake --build build --target apple_music_state_test && ./bin/apple_music_state_test
+```
+
+- 结果：退出码 `134`
+- 摘要：命中 `test_state_save_skips_plain_local_items`，暴露当前实现仍会写出 `/music/a.mp3`
+
+GREEN：
+
+```bash
+cmake --build build --target apple_music_state_test && ./bin/apple_music_state_test
+```
+
+- 结果：退出码 `0`
+- 摘要：`apple_music_state_test` 定向目标通过

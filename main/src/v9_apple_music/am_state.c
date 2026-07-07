@@ -56,6 +56,7 @@ int am_state_save(const char *path, const am_local_item_t *items, size_t count)
 
     for(i = 0; i < count; i++) {
         if(items[i].path[0] == '\0') continue;
+        if(!items[i].favorite && items[i].recent_seq == 0U) continue;
 
         fprintf(fp, "%s\t%u\t%llu\n",
                 items[i].path,
