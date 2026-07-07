@@ -16,6 +16,8 @@ static bool g_is_playing = false;
 static uint32_t g_position_ms = 0U;
 static uint32_t g_duration_ms = 180000U;
 static uint8_t g_volume = 65U;
+static size_t g_track_count = 0U;
+static size_t g_current_index = 0U;
 
 static void flush_cb(lv_display_t *disp, const lv_area_t *area, uint8_t *px_map)
 {
@@ -35,8 +37,11 @@ static void check_true(bool cond, const char *expr, int line)
 
 void music_player_init(const char **urls, size_t count)
 {
-    LV_UNUSED(urls);
-    CHECK(count == 1U);
+    CHECK(urls != NULL);
+    CHECK(count > 0U);
+    CHECK(urls[0] != NULL);
+    g_track_count = count;
+    g_current_index = 0U;
     g_is_playing = true;
     g_position_ms = 0U;
 }
@@ -45,6 +50,8 @@ void music_player_deinit(void)
 {
     g_is_playing = false;
     g_position_ms = 0U;
+    g_track_count = 0U;
+    g_current_index = 0U;
 }
 
 void music_player_play(void)
@@ -66,17 +73,18 @@ void music_player_next(void) {}
 void music_player_prev(void) {}
 void music_player_select(size_t index)
 {
-    CHECK(index == 0U);
+    CHECK(index < g_track_count);
+    g_current_index = index;
 }
 
 size_t music_player_get_count(void)
 {
-    return 1U;
+    return g_track_count;
 }
 
 size_t music_player_get_current_index(void)
 {
-    return 0U;
+    return g_current_index;
 }
 
 const char *music_player_get_title(size_t index)
@@ -152,6 +160,13 @@ bool music_player_is_muted(void)
 void local_music_demo_launch(void) {}
 void local_music_demo_close(void) {}
 
+static void fill_local_item(am_local_item_t *item, const char *path, const char *title)
+{
+    memset(item, 0, sizeof(*item));
+    snprintf(item->path, sizeof(item->path), "%s", path);
+    snprintf(item->title, sizeof(item->title), "%s", title);
+}
+
 static void setup_display(lv_display_t **disp_out, lv_obj_t **root_out, am_miniplayer_handles_t *handles_out)
 {
     lv_display_t *disp;
@@ -222,6 +237,39 @@ static void test_single_file_playlist_renders_one_row(void)
     teardown_display(disp);
 }
 
+static void test_single_file_playlist_rebuilds_after_local_playlist(void)
+{
+    lv_display_t *disp;
+    lv_obj_t *root;
+    am_miniplayer_handles_t handles;
+    am_local_item_t locals[2];
+
+    fill_local_item(&locals[0], "/tmp/a.mp3", "Alpha");
+    fill_local_item(&locals[1], "/tmp/b.mp3", "Beta");
+
+    setup_display(&disp, &root, &handles);
+    am_player_init();
+    am_player_bind_miniplayer(&handles);
+    am_player_set_sources(locals, 2U, NULL, 0U);
+    am_player_play_local_index(0U);
+    am_player_set_playlist_open(true);
+    am_player_refresh_ui();
+    CHECK(root != NULL);
+    CHECK(lv_obj_get_child_count(handles.playlist_list) == 2U);
+
+    am_player_play_single_file("/tmp/picked.mp3", "picked");
+    am_player_set_playlist_open(true);
+    am_player_refresh_ui();
+
+    CHECK(lv_obj_get_child_count(handles.playlist_list) == 1U);
+    CHECK(strcmp(lv_label_get_text(handles.title_label), "picked") == 0);
+    CHECK(strcmp(lv_label_get_text(handles.subtitle_label), "单个文件") == 0);
+    CHECK(am_player_is_single_file_mode());
+
+    am_player_deinit();
+    teardown_display(disp);
+}
+
 static void test_single_file_next_prev_do_not_leave_current_file(void)
 {
     am_player_init();
@@ -249,6 +297,7 @@ static void test_clear_single_file_mode_resets_flag(void)
 int main(void)
 {
     test_single_file_playlist_renders_one_row();
+    test_single_file_playlist_rebuilds_after_local_playlist();
     test_single_file_next_prev_do_not_leave_current_file();
     test_clear_single_file_mode_resets_flag();
     return 0;

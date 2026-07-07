@@ -95,3 +95,68 @@ cmake --build build --target apple_music_single_file_player_test apple_music_pla
 
 - 当前副标题文案固定为 `单个文件`，这是按“最小必要刷新”实现的内部态展示；宿主页文案同步仍留给后续任务。
 - 单文件模式下播放列表条目目前不提供切歌交互，符合本任务只做内部会话态的边界。
+
+## 后续修复记录
+
+### 问题
+
+- 播放列表缓存指纹 `g_pl_*` 之前只看 `来源 / 当前索引 / 条目数`。
+- 单文件模式沿用 `AM_SOURCE_LOCAL`，如果先构建过本地库列表，再切到单文件模式，就可能命中旧指纹直接返回，导致弹层保留旧的多行本地列表。
+
+### 本次修复
+
+- 在播放列表缓存指纹中加入 `g_single_file_mode`。
+- 这样切入或切出单文件模式时，播放列表重建判定一定失效并重建。
+
+### 本次 TDD
+
+#### RED
+
+命令：
+
+```bash
+cmake --build build --target apple_music_single_file_player_test && ctest --test-dir build -R '^apple_music_single_file_player_test$' --output-on-failure
+```
+
+关键输出：
+
+```text
+CHECK failed: lv_obj_get_child_count(handles.playlist_list) == 1U
+```
+
+为什么这个 RED 合理：
+
+- 新增回归用例先构建 2 行本地库播放列表，再切到 `am_player_play_single_file()`。
+- 失败点正是“切到单文件后仍然保留旧的 2 行列表”，直接锁定了缓存指纹漏掉单文件态这个根因。
+
+#### GREEN
+
+命令：
+
+```bash
+cmake --build build --target apple_music_single_file_player_test && ctest --test-dir build -R '^apple_music_single_file_player_test$' --output-on-failure
+```
+
+关键输出：
+
+```text
+1/1 Test #18: apple_music_single_file_player_test ...   Passed
+100% tests passed, 0 tests failed out of 1
+```
+
+### 本次覆盖验证
+
+命令：
+
+```bash
+cmake --build build --target apple_music_single_file_player_test apple_music_playlist_popup_layout_test apple_music_playlist_scrollbar_behavior_test && ctest --test-dir build -R '^(apple_music_single_file_player_test|apple_music_playlist_popup_layout_test|apple_music_playlist_scrollbar_behavior_test)$' --output-on-failure
+```
+
+关键输出：
+
+```text
+1/3 Test #16: apple_music_playlist_popup_layout_test .........   Passed
+2/3 Test #17: apple_music_playlist_scrollbar_behavior_test ...   Passed
+3/3 Test #18: apple_music_single_file_player_test ............   Passed
+100% tests passed, 0 tests failed out of 3
+```

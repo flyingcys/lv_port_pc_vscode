@@ -35,9 +35,10 @@ static char g_single_file_title[256];
 /* 播放列表弹层已构建的内容指纹。am_player_refresh_ui 每 120ms 被定时器调用,
  * 若每次都 lv_obj_clean+重建列表,会(1)把滚动位置重置回顶部→看不到后面的曲目,
  * (2)在用户按下某行的瞬间销毁该行→CLICKED 丢失→点了切不了歌。
- * 故仅当来源/当前索引/条目数变化时才重建,静止播放时保留现有列表。 */
+ * 故仅当来源/单文件态/当前索引/条目数变化时才重建,静止播放时保留现有列表。 */
 static bool g_pl_built = false;
 static am_source_kind_t g_pl_kind = AM_SOURCE_NONE;
+static bool g_pl_single_file_mode = false;
 static size_t g_pl_index = (size_t)-1;
 static size_t g_pl_count = (size_t)-1;
 
@@ -259,11 +260,14 @@ static void am_refresh_playlist_popup(void)
     {
         size_t cur_idx = (g_source_kind == AM_SOURCE_RADIO) ? g_current_radio : g_current_local;
         size_t cur_cnt = (g_source_kind == AM_SOURCE_RADIO) ? g_radio_count : g_local_count;
-        if(g_pl_built && g_pl_kind == g_source_kind && g_pl_index == cur_idx && g_pl_count == cur_cnt) {
+        if(g_pl_built && g_pl_kind == g_source_kind &&
+           g_pl_single_file_mode == g_single_file_mode &&
+           g_pl_index == cur_idx && g_pl_count == cur_cnt) {
             return;
         }
         g_pl_built = true;
         g_pl_kind = g_source_kind;
+        g_pl_single_file_mode = g_single_file_mode;
         g_pl_index = cur_idx;
         g_pl_count = cur_cnt;
     }
@@ -448,6 +452,7 @@ void am_player_init(void)
     g_single_file_title[0] = '\0';
     g_pl_built = false;
     g_pl_kind = AM_SOURCE_NONE;
+    g_pl_single_file_mode = false;
     g_pl_index = (size_t)-1;
     g_pl_count = (size_t)-1;
     if(g_timer != NULL) lv_timer_delete(g_timer);
@@ -469,6 +474,7 @@ void am_player_deinit(void)
     g_single_file_path[0] = '\0';
     g_single_file_title[0] = '\0';
     g_pl_built = false;
+    g_pl_single_file_mode = false;
     g_locals = NULL;
     g_local_count = 0U;
     g_radios = NULL;
