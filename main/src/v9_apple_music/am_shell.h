@@ -18,7 +18,12 @@ typedef struct {
     lv_obj_t *player;
 } am_shell_handles_t;
 
-void am_shell_build_sidebar(lv_obj_t *sidebar, am_view_t active_view, am_nav_cb_t cb, void *user);
+void am_shell_build_sidebar(lv_obj_t *sidebar,
+                            am_view_t active_view,
+                            const am_local_item_t *locals,
+                            size_t local_count,
+                            am_nav_cb_t cb,
+                            void *user);
 void am_shell_set_header_title(lv_obj_t *header_label, const char *title);
 am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
                                                   am_simple_event_cb_t on_mode,

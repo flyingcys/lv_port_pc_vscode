@@ -7,13 +7,6 @@ const am_nav_item_t am_nav_items[AM_VIEW_COUNT] = {
     {"favorites", "我的收藏", AM_ICON_HEART},
 };
 
-const char *am_recent_titles[4] = {
-    "火力全开 (DJ版)",
-    "光年之外 (Remix)",
-    "起风了 (DJ版)",
-    "海阔天空 (摇滚版)",
-};
-
 const char *am_mock_lyrics[4] = {
     "燃烧每一寸的渴望",
     "火力全开 势不可挡",

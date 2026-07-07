@@ -391,6 +391,7 @@ add_executable(apple_music_parent_size_test
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_metrics.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_page_list.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_shell.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_state.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_sources_csv.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_theme.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_widgets.c
@@ -403,6 +404,25 @@ target_include_directories(apple_music_parent_size_test PRIVATE
     ${PROJECT_SOURCE_DIR}/main/src
 )
 target_link_libraries(apple_music_parent_size_test lvgl ${PNG_LIBRARIES})
+
+add_executable(apple_music_now_view_state_test
+    ${PROJECT_SOURCE_DIR}/main/tests/apple_music_now_view_state_test.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_data.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_metrics.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_page_list.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_shell.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_state.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_theme.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_widgets.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/apple_music.c
+    ${V9_APPLE_MUSIC_FONT_SOURCES}
+    ${V9_APPLE_MUSIC_ASSET_SOURCES}
+)
+target_include_directories(apple_music_now_view_state_test PRIVATE
+    ${PROJECT_SOURCE_DIR}
+    ${PROJECT_SOURCE_DIR}/main/src
+)
+target_link_libraries(apple_music_now_view_state_test lvgl ${PNG_LIBRARIES})
 
 add_executable(apple_music_playlist_popup_layout_test
     ${PROJECT_SOURCE_DIR}/main/tests/apple_music_playlist_popup_layout_test.c
@@ -512,6 +532,12 @@ add_test(
     COMMAND $<TARGET_FILE:apple_music_parent_size_test>
 )
 set_tests_properties(apple_music_parent_size_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_test(
+    NAME apple_music_now_view_state_test
+    COMMAND $<TARGET_FILE:apple_music_now_view_state_test>
+)
+set_tests_properties(apple_music_now_view_state_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 add_test(
     NAME apple_music_playlist_popup_layout_test

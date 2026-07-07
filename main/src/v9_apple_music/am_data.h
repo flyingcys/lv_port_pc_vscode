@@ -51,7 +51,6 @@ typedef struct {
 } am_local_item_t;
 
 extern const am_nav_item_t am_nav_items[AM_VIEW_COUNT];
-extern const char *am_recent_titles[4];
 extern const char *am_mock_lyrics[4];
 extern const am_theme_preset_t am_theme_presets[4];
 extern const am_settings_tab_t am_settings_tabs[3];

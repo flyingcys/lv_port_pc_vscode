@@ -6,6 +6,7 @@
 
 #include "am_data.h"
 #include "am_fonts.h"
+#include "am_icons.h"
 #include "am_local_scan.h"
 #include "am_metrics.h"
 #include "am_page_list.h"
@@ -28,6 +29,8 @@ typedef struct {
     lv_obj_t *cover_img;
     lv_obj_t *title;
     lv_obj_t *subtitle;
+    lv_obj_t *favorite_btn;
+    lv_obj_t *favorite_icon;
     lv_obj_t *lyrics;
     lv_obj_t *player;
     am_miniplayer_handles_t mini;
@@ -45,6 +48,7 @@ static void am_show_view(am_view_t view);
 static void am_sync_current_view(void);
 static void am_save_local_state(void);
 static void am_record_current_local_playback(void);
+static void am_on_toggle_favorite(lv_event_t *e);
 
 /* 选曲/切台发生在 LVGL 事件回调内,若同步 am_show_view→lv_obj_clean 会删掉正处理事件的行 → UAF。
  * 故列表页重建一律经 lv_async_call 推迟到事件返回后;目标视图存于 g_pending_view(取最后一次)。 */
@@ -131,6 +135,25 @@ static void am_on_playlist_toggle(lv_event_t *e)
     am_player_set_playlist_open(!am_player_playlist_open());
 }
 
+static void am_on_toggle_favorite(lv_event_t *e)
+{
+    size_t index;
+
+    LV_UNUSED(e);
+
+    if(am_player_source_kind() != AM_SOURCE_LOCAL) return;
+    index = am_player_current_local_index();
+    if(g_app.locals == NULL || index >= g_app.local_count) return;
+
+    am_state_toggle_favorite(g_app.locals, g_app.local_count, index);
+    am_save_local_state();
+    if(g_app.current_view == AM_VIEW_FAVORITES) am_request_view(AM_VIEW_FAVORITES);
+    am_update_now_view();
+    lv_obj_clean(g_app.sidebar);
+    am_shell_build_sidebar(g_app.sidebar, g_app.current_view, g_app.locals, g_app.local_count,
+                           (am_nav_cb_t)am_show_view, NULL);
+}
+
 /* 传输键包一层:除转调 am_player_* 外,还在"正在播放"页时同步大图/标题/歌词。
  * (首次按 ▶ 会懒加载本地库起播,此时曲目从"未播放"变为第 1 首,须刷新此页。) */
 static void am_on_play_pause(lv_event_t *e)
@@ -175,6 +198,21 @@ static void am_update_now_view(void)
 
     if(g_app.title != NULL) lv_label_set_text(g_app.title, title);
     if(g_app.subtitle != NULL) lv_label_set_text(g_app.subtitle, subtitle);
+    if(g_app.favorite_btn != NULL) {
+        bool is_local = (am_player_source_kind() == AM_SOURCE_LOCAL);
+        bool is_favorite = false;
+
+        if(is_local && g_app.locals != NULL && am_player_current_local_index() < g_app.local_count) {
+            is_favorite = g_app.locals[am_player_current_local_index()].favorite;
+        }
+        if(is_local) lv_obj_clear_flag(g_app.favorite_btn, LV_OBJ_FLAG_HIDDEN);
+        else lv_obj_add_flag(g_app.favorite_btn, LV_OBJ_FLAG_HIDDEN);
+        if(g_app.favorite_icon != NULL) {
+            lv_obj_set_style_text_color(g_app.favorite_icon,
+                                        is_favorite ? lv_color_hex(0xfa2d48) : AM_MUTED,
+                                        0);
+        }
+    }
     if(g_app.cover != NULL) {
         if(radio) {
             /* 电台:纯色/线性渐变块(无火焰),隐藏火焰图 */
@@ -253,6 +291,24 @@ static void am_build_now_view(lv_obj_t *parent)
     g_app.title = am_text(info, "未播放", m->f_title, AM_TEXT);
     g_app.subtitle = am_text(info, "选择本地音乐或广播电台开始", m->f_body, AM_MUTED);
 
+    {
+        lv_obj_t *actions = lv_obj_create(info);
+        lv_obj_remove_style_all(actions);
+        lv_obj_set_size(actions, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+        lv_obj_set_flex_flow(actions, LV_FLEX_FLOW_ROW);
+        lv_obj_set_style_pad_top(actions, 8, 0);
+        lv_obj_clear_flag(actions, LV_OBJ_FLAG_SCROLLABLE);
+
+        g_app.favorite_btn = lv_obj_create(actions);
+        lv_obj_remove_style_all(g_app.favorite_btn);
+        lv_obj_set_size(g_app.favorite_btn, 28, 28);
+        lv_obj_add_flag(g_app.favorite_btn, LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_clear_flag(g_app.favorite_btn, LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_add_event_cb(g_app.favorite_btn, am_on_toggle_favorite, LV_EVENT_CLICKED, NULL);
+        g_app.favorite_icon = am_text(g_app.favorite_btn, AM_ICON_HEART, m->f_icon, AM_MUTED);
+        lv_obj_center(g_app.favorite_icon);
+    }
+
     g_app.lyrics = lv_obj_create(info);
     lv_obj_remove_style_all(g_app.lyrics);
     lv_obj_set_size(g_app.lyrics, LV_PCT(100), LV_SIZE_CONTENT);
@@ -267,7 +323,8 @@ static void am_build_now_view(lv_obj_t *parent)
 static void am_show_view(am_view_t view)
 {
     lv_obj_clean(g_app.sidebar);
-    am_shell_build_sidebar(g_app.sidebar, view, (am_nav_cb_t)am_show_view, NULL);
+    am_shell_build_sidebar(g_app.sidebar, view, g_app.locals, g_app.local_count,
+                           (am_nav_cb_t)am_show_view, NULL);
     am_shell_set_header_title(g_app.crumb, am_view_label(view));
     lv_obj_clean(g_app.content);
 
@@ -279,6 +336,8 @@ static void am_show_view(am_view_t view)
     g_app.cover_img = NULL;
     g_app.title = NULL;
     g_app.subtitle = NULL;
+    g_app.favorite_btn = NULL;
+    g_app.favorite_icon = NULL;
     g_app.lyrics = NULL;
 
     switch(view) {
@@ -414,7 +473,8 @@ static void am_build_root(lv_obj_t *parent)
     am_player_bind_miniplayer(&g_app.mini);
     am_player_set_playlist_pick_cb(am_on_playlist_pick);   /* 弹层选曲 → 跳正在播放页 */
     am_load_runtime_data();
-    am_shell_build_sidebar(g_app.sidebar, AM_VIEW_NOW, am_on_nav, NULL);
+    am_shell_build_sidebar(g_app.sidebar, AM_VIEW_NOW, g_app.locals, g_app.local_count,
+                           am_on_nav, NULL);
 
     {
         /* AM_PAGE=now|radio|fav：无头截图时设初始视图(见 scripts/am_shots.sh) */

@@ -6,6 +6,7 @@
 
 #include "am_icons.h"
 #include "am_metrics.h"
+#include "am_state.h"
 #include "am_theme.h"
 #include "am_widgets.h"
 
@@ -41,10 +42,17 @@ static lv_obj_t *am_icon_button(lv_obj_t *parent, const char *glyph, const lv_fo
     return btn;
 }
 
-void am_shell_build_sidebar(lv_obj_t *sidebar, am_view_t active_view, am_nav_cb_t cb, void *user)
+void am_shell_build_sidebar(lv_obj_t *sidebar,
+                            am_view_t active_view,
+                            const am_local_item_t *locals,
+                            size_t local_count,
+                            am_nav_cb_t cb,
+                            void *user)
 {
     const am_metrics_t *m = am_metrics();
     am_nav_ctx_t *ctx;
+    size_t recent[4] = {0U};
+    size_t recent_count = am_state_collect_recent(locals, local_count, recent, 4U);
     size_t i;
 
     lv_obj_remove_style_all(sidebar);
@@ -142,12 +150,19 @@ void am_shell_build_sidebar(lv_obj_t *sidebar, am_view_t active_view, am_nav_cb_
     }
 
     am_section_title(sidebar, "最近播放");
-    for(i = 0; i < 4U; i++) {
-        lv_obj_t *recent = am_text(sidebar, am_recent_titles[i], m->f_body, AM_MUTED);
-        lv_label_set_long_mode(recent, LV_LABEL_LONG_DOT);
-        lv_obj_set_width(recent, LV_PCT(100));
-        lv_obj_set_style_pad_left(recent, 8, 0);
-        lv_obj_set_style_pad_top(recent, 5, 0);
+    for(i = 0; i < recent_count; i++) {
+        lv_obj_t *recent_label = am_text(sidebar, locals[recent[i]].title, m->f_body, AM_MUTED);
+        lv_label_set_long_mode(recent_label, LV_LABEL_LONG_DOT);
+        lv_obj_set_width(recent_label, LV_PCT(100));
+        lv_obj_set_style_pad_left(recent_label, 8, 0);
+        lv_obj_set_style_pad_top(recent_label, 5, 0);
+    }
+    for(; i < 4U; i++) {
+        lv_obj_t *recent_label = am_text(sidebar, "", m->f_body, AM_MUTED);
+        lv_label_set_long_mode(recent_label, LV_LABEL_LONG_DOT);
+        lv_obj_set_width(recent_label, LV_PCT(100));
+        lv_obj_set_style_pad_left(recent_label, 8, 0);
+        lv_obj_set_style_pad_top(recent_label, 5, 0);
     }
 }
 
