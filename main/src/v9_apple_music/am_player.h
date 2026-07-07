@@ -14,6 +14,7 @@ typedef struct {
     lv_obj_t *progress_fill;
     lv_obj_t *knob;
     lv_obj_t *play_icon;
+    lv_obj_t *pause_icon;
     lv_obj_t *volume_icon;
     lv_obj_t *volume_track;
     lv_obj_t *volume_fill;

@@ -202,6 +202,22 @@ static lv_obj_t *find_miniplayer_button(lv_obj_t *parent, const char *icon_text)
     return lv_obj_get_parent(icon);
 }
 
+static lv_obj_t *find_miniplayer_button_any(lv_obj_t *parent,
+                                            const char *primary_icon_text,
+                                            const char *secondary_icon_text)
+{
+    lv_obj_t *main = get_main_panel(parent);
+    lv_obj_t *icon;
+
+    CHECK(main != NULL);
+    icon = find_label_object(main, primary_icon_text, true);
+    if(icon == NULL && secondary_icon_text != NULL) {
+        icon = find_label_object(main, secondary_icon_text, true);
+    }
+    CHECK(icon != NULL);
+    return lv_obj_get_parent(icon);
+}
+
 static lv_obj_t *create_parent(void)
 {
     lv_obj_t *parent = lv_obj_create(lv_screen_active());
@@ -416,7 +432,7 @@ static void test_next_track_refreshes_recent_sidebar_immediately(void)
     apple_music_create_in(parent);
     lv_obj_update_layout(parent);
     sidebar = get_sidebar(parent);
-    next_btn = find_miniplayer_button(parent, AM_ICON_NEXT);
+    next_btn = find_miniplayer_button(parent, LV_SYMBOL_NEXT);
 
     CHECK(sidebar != NULL);
     CHECK(find_label_order(sidebar, "Gamma") < 0);
@@ -458,7 +474,7 @@ static void test_pause_does_not_refresh_recent_sidebar(void)
     apple_music_create_in(parent);
     lv_obj_update_layout(parent);
     sidebar = get_sidebar(parent);
-    play_btn = find_miniplayer_button(parent, AM_ICON_PLAY);
+    play_btn = find_miniplayer_button_any(parent, LV_SYMBOL_PAUSE, LV_SYMBOL_PLAY);
 
     CHECK(sidebar != NULL);
     CHECK(play_btn != NULL);

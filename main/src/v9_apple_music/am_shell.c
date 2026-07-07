@@ -34,11 +34,54 @@ static lv_obj_t *am_icon_button(lv_obj_t *parent, const char *glyph, const lv_fo
     lv_obj_t *btn = lv_obj_create(parent);
     lv_obj_remove_style_all(btn);
     lv_obj_set_size(btn, box, box);
+    lv_obj_set_style_radius(btn, 10, 0);
+    lv_obj_set_style_bg_color(btn, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_PRESSED);
+    lv_obj_set_style_bg_opa(btn, 10, LV_PART_MAIN | LV_STATE_PRESSED);
     lv_obj_add_flag(btn, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_clear_flag(btn, LV_OBJ_FLAG_SCROLLABLE);
 
     lv_obj_t *label = am_text(btn, glyph, font, color);
     lv_obj_center(label);
+    return btn;
+}
+
+static lv_obj_t *am_transport_button_base(lv_obj_t *parent, int box)
+{
+    lv_obj_t *btn = lv_obj_create(parent);
+    lv_obj_remove_style_all(btn);
+    lv_obj_set_size(btn, box, box);
+    lv_obj_set_style_radius(btn, 10, 0);
+    lv_obj_set_style_bg_color(btn, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_PRESSED);
+    lv_obj_set_style_bg_opa(btn, 8, LV_PART_MAIN | LV_STATE_PRESSED);
+    lv_obj_add_flag(btn, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_clear_flag(btn, LV_OBJ_FLAG_SCROLLABLE);
+    return btn;
+}
+
+static lv_obj_t *am_transport_symbol_button(lv_obj_t *parent, const char *glyph,
+                                            const lv_font_t *font, int box,
+                                            lv_color_t color, lv_obj_t **icon_out)
+{
+    lv_obj_t *btn = am_transport_button_base(parent, box);
+    lv_obj_t *label = am_text(btn, glyph, font, color);
+    lv_obj_center(label);
+    if(icon_out != NULL) *icon_out = label;
+    return btn;
+}
+
+static lv_obj_t *am_transport_play_button(lv_obj_t *parent, lv_color_t color,
+                                          lv_obj_t **play_icon_out, lv_obj_t **pause_icon_out)
+{
+    lv_obj_t *btn = am_transport_button_base(parent, 38);
+    lv_obj_t *play_icon = am_text(btn, LV_SYMBOL_PLAY, &lv_font_montserrat_24, color);
+    lv_obj_t *pause_icon = am_text(btn, LV_SYMBOL_PAUSE, &lv_font_montserrat_22, color);
+
+    lv_obj_center(play_icon);
+    lv_obj_center(pause_icon);
+    lv_obj_add_flag(pause_icon, LV_OBJ_FLAG_HIDDEN);
+
+    if(play_icon_out != NULL) *play_icon_out = play_icon;
+    if(pause_icon_out != NULL) *pause_icon_out = pause_icon;
     return btn;
 }
 
@@ -266,17 +309,20 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
             lv_obj_set_flex_grow(ctrls, 1);   /* .ctrls{flex:1;justify-content:center} */
             lv_obj_set_flex_flow(ctrls, LV_FLEX_FLOW_ROW);
             lv_obj_set_flex_align(ctrls, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-            lv_obj_set_style_pad_column(ctrls, 26, 0);
+            lv_obj_set_style_pad_column(ctrls, 18, 0);
             lv_obj_clear_flag(ctrls, LV_OBJ_FLAG_SCROLLABLE);
 
             lv_color_t ctrl_col = lv_color_hex(0x2a2a2e);
             lv_color_t accent_col = lv_color_hex(0xfa2d48);
             h.btn_mode = am_icon_button(ctrls, AM_ICON_REPLAY, m->f_metric, 30, accent_col);
-            h.btn_prev = am_icon_button(ctrls, AM_ICON_PREV, m->f_metric, 30, ctrl_col);
-            h.btn_play = am_icon_button(ctrls, AM_ICON_PLAY, m->f_h2, 34, ctrl_col);
-            h.play_icon = lv_obj_get_child(h.btn_play, 0);
-            h.btn_next = am_icon_button(ctrls, AM_ICON_NEXT, m->f_metric, 30, ctrl_col);
+            h.btn_prev = am_transport_symbol_button(ctrls, LV_SYMBOL_PREV, &lv_font_montserrat_20,
+                                                    32, ctrl_col, NULL);
+            h.btn_play = am_transport_play_button(ctrls, ctrl_col, &h.play_icon, &h.pause_icon);
+            h.btn_next = am_transport_symbol_button(ctrls, LV_SYMBOL_NEXT, &lv_font_montserrat_20,
+                                                    32, ctrl_col, NULL);
             h.btn_playlist = am_icon_button(ctrls, AM_ICON_LIST, m->f_metric, 30, ctrl_col);
+            lv_obj_set_style_margin_left(h.btn_prev, 2, 0);
+            lv_obj_set_style_margin_right(h.btn_next, 2, 0);
 
             if(on_mode != NULL) lv_obj_add_event_cb(h.btn_mode, on_mode, LV_EVENT_CLICKED, NULL);
             if(on_prev != NULL) lv_obj_add_event_cb(h.btn_prev, on_prev, LV_EVENT_CLICKED, NULL);

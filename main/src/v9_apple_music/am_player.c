@@ -325,7 +325,17 @@ void am_player_refresh_ui(void)
 
     if(g_h.title_label != NULL) lv_label_set_text(g_h.title_label, am_current_title());
     if(g_h.subtitle_label != NULL) lv_label_set_text(g_h.subtitle_label, am_current_subtitle());
-    if(g_h.play_icon != NULL) lv_label_set_text(g_h.play_icon, music_player_is_playing() ? AM_ICON_PAUSE : AM_ICON_PLAY);
+    if(g_h.play_icon != NULL || g_h.pause_icon != NULL) {
+        bool playing = music_player_is_playing();
+        if(g_h.play_icon != NULL) {
+            if(playing) lv_obj_add_flag(g_h.play_icon, LV_OBJ_FLAG_HIDDEN);
+            else lv_obj_clear_flag(g_h.play_icon, LV_OBJ_FLAG_HIDDEN);
+        }
+        if(g_h.pause_icon != NULL) {
+            if(playing) lv_obj_clear_flag(g_h.pause_icon, LV_OBJ_FLAG_HIDDEN);
+            else lv_obj_add_flag(g_h.pause_icon, LV_OBJ_FLAG_HIDDEN);
+        }
+    }
     if(g_h.time_cur != NULL) {
         if(g_source_kind == AM_SOURCE_RADIO && dur == 0U) lv_label_set_text(g_h.time_cur, "LIVE");
         else {
