@@ -466,6 +466,23 @@ target_include_directories(apple_music_playlist_scrollbar_behavior_test PRIVATE
 )
 target_link_libraries(apple_music_playlist_scrollbar_behavior_test lvgl ${PNG_LIBRARIES})
 
+add_executable(apple_music_single_file_player_test
+    ${PROJECT_SOURCE_DIR}/main/tests/apple_music_single_file_player_test.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_data.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_metrics.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_player.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_shell.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_state.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_theme.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_widgets.c
+    ${V9_APPLE_MUSIC_FONT_SOURCES}
+)
+target_include_directories(apple_music_single_file_player_test PRIVATE
+    ${PROJECT_SOURCE_DIR}
+    ${PROJECT_SOURCE_DIR}/main/src
+)
+target_link_libraries(apple_music_single_file_player_test lvgl ${PNG_LIBRARIES})
+
 add_test(
     NAME fruit_ninja_assets_test
     COMMAND $<TARGET_FILE:fruit_ninja_assets_test>
@@ -567,6 +584,12 @@ add_test(
     COMMAND $<TARGET_FILE:apple_music_playlist_scrollbar_behavior_test>
 )
 set_tests_properties(apple_music_playlist_scrollbar_behavior_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_test(
+    NAME apple_music_single_file_player_test
+    COMMAND $<TARGET_FILE:apple_music_single_file_player_test>
+)
+set_tests_properties(apple_music_single_file_player_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 add_custom_target(fruit_ninja_tests
     COMMAND $<TARGET_FILE:fruit_ninja_assets_test>

@@ -38,6 +38,7 @@ void am_player_set_sources(const am_local_item_t *locals, size_t local_count,
 
 void am_player_play_local_index(size_t index);
 void am_player_play_radio_index(size_t index);
+void am_player_play_single_file(const char *path, const char *title);
 void am_player_toggle_playback(void);
 void am_player_prev(void);
 void am_player_next(void);
@@ -57,7 +58,9 @@ uint32_t am_player_track_duration_ms(size_t index);
 size_t am_player_current_local_index(void);
 size_t am_player_current_radio_index(void);
 bool am_player_is_playing(void);
+bool am_player_is_single_file_mode(void);
 uint8_t am_player_volume_percent(void);
+void am_player_clear_single_file_mode(void);
 
 void am_player_refresh_ui(void);
 

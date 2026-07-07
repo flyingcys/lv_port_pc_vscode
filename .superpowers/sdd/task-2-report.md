@@ -1,82 +1,97 @@
-# Task 2 报告
+# Task 2 实现报告
 
-## 状态
+## 目标
 
-DONE
+按 `task-2-brief.md` 实现播放器内部的单文件会话态，范围仅限：
 
-## 执行记录
+- 单文件播放入口与状态查询/清理接口
+- 播放列表弹层在单文件模式下只渲染一行
+- `prev` / `next` 在单文件模式下不离开当前文件
+- 对播放器标题/副标题做最小必要刷新
 
-1. 已读取唯一需求源 `.superpowers/sdd/task-2-brief.md`，按 brief 约束尝试执行 TDD。
-2. 已确认当前工作树基线为 `39ea04f`，且未触碰无关脏文件 `third-party/hls_player_demo` 与 `21.png`。
-3. 已尝试使用 GitNexus 做预编辑分析，但当前环境中该仓库未出现在 MCP 索引列表；随后执行 `npx gitnexus analyze` 也因 native worker/binding 异常中止，无法得到可用的 impact / detect_changes 结果。
-4. 已先把 `main/tests/apple_music_data_test.c` 改成显式失败风格，验证 RED：
-   - `cmake --build build --target apple_music_data_test && ./bin/apple_music_data_test`
-   - 失败点为 `local[i].favorite == false`，证明“扫描阶段伪收藏”确实存在。
-5. 已在允许写面内尝试最小实现：
-   - `am_local_scan.c` 去掉扫描默认收藏并清零 `recent_seq`
-   - `apple_music.c` 接入 `am_state_load/save/mark_recent`
-6. GREEN/编译验证时触发硬阻塞：
-   - `cmake --build build --target apple_music_data_test main`
-   - `apple_music_data_test` 可通过
-   - `main` 链接失败，缺少 `am_state_load` / `am_state_save` / `am_state_mark_recent`
+未实现：
 
-## 阻塞原因
+- Task 3/4 的按钮接线
+- 宿主页同步
+- 超出 brief 的播放模式扩展
 
-当前 `main` 目标的源集合没有把 `main/src/v9_apple_music/am_state.c` 链进去。要完成 Task 2，必须修改 `CMakeLists.txt`（或等价构建配置）把 `am_state.c` 纳入 `V9_APPLE_MUSIC_SOURCES` / `main` 目标。
+## 实现摘要
 
-但你当前明确限制了写面只允许：
+- 在 `am_player` 内新增单文件模式状态、路径和标题缓存。
+- 新增 `am_player_play_single_file()`、`am_player_is_single_file_mode()`、`am_player_clear_single_file_mode()`。
+- 单文件模式下：
+  - 标题显示传入文件标题
+  - 副标题显示 `单个文件`
+  - 播放列表弹层固定渲染 1 行
+  - `am_player_prev()` / `am_player_next()` 只刷新 UI，不切出当前文件
+- 当切回本地库或电台播放时，清除单文件模式标记。
 
-- `main/src/v9_apple_music/am_local_scan.c`
-- `main/src/v9_apple_music/apple_music.c`
-- `main/tests/apple_music_data_test.c`
+## TDD 记录
 
-并要求“如果发现必须改出这三个文件，先停下并报 NEEDS_CONTEXT”。因此我没有继续改 `CMakeLists.txt`，并且已经把三个允许写面的临时改动全部回滚，避免把仓库留在半成品状态。
+### RED
 
-## 需要的上下文/放权
+命令：
 
-至少需要允许修改以下文件之一：
+```bash
+cmake -S . -B build && cmake --build build --target apple_music_single_file_player_test && ctest --test-dir build -R '^apple_music_single_file_player_test$' --output-on-failure
+```
 
+关键输出：
+
+```text
+undefined reference to `am_player_play_single_file'
+undefined reference to `am_player_is_single_file_mode'
+undefined reference to `am_player_clear_single_file_mode'
+```
+
+为什么这个 RED 合理：
+
+- 新测试先声明了 brief 要求的新接口和行为。
+- 当时生产代码里还没有这些接口定义，链接失败正好证明测试确实覆盖到了“尚未实现的能力”，不是误测已有行为。
+
+### GREEN
+
+命令：
+
+```bash
+cmake --build build --target apple_music_single_file_player_test && ctest --test-dir build -R '^apple_music_single_file_player_test$' --output-on-failure
+```
+
+关键输出：
+
+```text
+1/1 Test #18: apple_music_single_file_player_test ...   Passed
+100% tests passed, 0 tests failed out of 1
+```
+
+## 最终验证
+
+命令：
+
+```bash
+cmake --build build --target apple_music_single_file_player_test apple_music_playlist_popup_layout_test apple_music_playlist_scrollbar_behavior_test && ctest --test-dir build -R '^(apple_music_single_file_player_test|apple_music_playlist_popup_layout_test|apple_music_playlist_scrollbar_behavior_test)$' --output-on-failure
+```
+
+关键输出：
+
+```text
+1/3 Test #16: apple_music_playlist_popup_layout_test .........   Passed
+2/3 Test #17: apple_music_playlist_scrollbar_behavior_test ...   Passed
+3/3 Test #18: apple_music_single_file_player_test ............   Passed
+100% tests passed, 0 tests failed out of 3
+```
+
+## 写面确认
+
+本次只修改了 brief 允许的文件：
+
+- `main/src/v9_apple_music/am_player.h`
+- `main/src/v9_apple_music/am_player.c`
+- `main/tests/apple_music_single_file_player_test.c`
 - `CMakeLists.txt`
+- `.superpowers/sdd/task-2-report.md`
 
-建议变更：
+## 关注点
 
-- 将 `main/src/v9_apple_music/am_state.c` 加入 `V9_APPLE_MUSIC_SOURCES`
-
-拿到该写面后，可以按同一 TDD 路径快速完成：
-
-1. 重做 `apple_music_data_test.c` 的 RED
-2. 实现 `am_local_scan.c` 与 `apple_music.c` 的最小改动
-3. 验证 `apple_music_data_test` GREEN
-4. 验证 `main` 重新链接成功
-5. 再做一次变更范围检查并提交
-
-## 继续执行结果
-
-1. 已获得额外写面 `CMakeLists.txt`，并按原 RED 路径继续执行。
-2. 重新验证 RED：
-   - `cmake --build build --target apple_music_data_test && ./bin/apple_music_data_test`
-   - 失败点仍为 `local[i].favorite == false`
-3. 已完成最小实现：
-   - `main/tests/apple_music_data_test.c`
-     - 把数据测试切换为显式 `CHECK`，避免 Release 构建下 `assert` 被 `-DNDEBUG` 吃掉
-     - 锁定“扫描结果中全部 `favorite == false` 且 `recent_seq == 0U`”
-   - `main/src/v9_apple_music/am_local_scan.c`
-     - 去掉扫描阶段的假收藏初始化
-     - 显式清零 `recent_seq`
-   - `main/src/v9_apple_music/apple_music.c`
-     - 新增 `am_state.h` include
-     - 新增 `g_recent_seq_next`
-     - 新增 `am_save_local_state()` / `am_record_current_local_playback()`
-     - 在 `am_load_runtime_data()` 中加载持久化状态
-     - 在本地切歌入口 `am_on_local_selected()` / `am_on_play_pause()` / `am_on_prev()` / `am_on_next()` / `am_on_playlist_pick()` 后记录最近播放
-   - `CMakeLists.txt`
-     - 仅把 `main/src/v9_apple_music/am_state.c` 纳入 `V9_APPLE_MUSIC_SOURCES`
-4. GREEN 与链接验证：
-   - `cmake --build build --target apple_music_data_test apple_music_state_test main`
-   - `./bin/apple_music_data_test`
-   - `./bin/apple_music_state_test`
-   - 以上均通过，且 `main` 成功重新链接。
-
-## 提交
-
-- 已创建 commit：`feat: wire apple music runtime state updates`
+- 当前副标题文案固定为 `单个文件`，这是按“最小必要刷新”实现的内部态展示；宿主页文案同步仍留给后续任务。
+- 单文件模式下播放列表条目目前不提供切歌交互，符合本任务只做内部会话态的边界。
