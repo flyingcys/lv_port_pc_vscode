@@ -286,3 +286,67 @@ ctest --test-dir build -R '^apple_music_' --output-on-failure
 ```text
 100% tests passed, 0 tests failed out of 9
 ```
+
+## Old Test Fixture Cleanup
+
+### 现象
+
+- `^apple_music_` 全量回归虽然已经通过
+- 但跑完后工作树仍会留下仓库根目录受控文件 `apple_music_state.tsv` 的删除状态
+
+### 根因
+
+- `main/tests/apple_music_now_view_state_test.c` 仍直接在仓库根目录运行
+- 这套旧测试和 `apple_music_now_view_single_file_test` 修复前一样，直接通过相对路径 `AM_STATE_PATH` 读写 `apple_music_state.tsv`
+- 因此测试本身会对仓库根目录受控文件产生副作用，哪怕测试通过，也会把工作树留脏
+
+### 修复
+
+- 给 `apple_music_now_view_state_test.c` 增加独立临时工作目录夹具
+- 测试启动时用 `mkdtemp(...)` 创建临时目录并 `chdir(...)` 进入
+- 测试结束时只删除临时目录中的 `apple_music_state.tsv`，再切回原工作目录并移除临时目录
+- 旧测试语义不变，只隔离状态文件副作用
+
+### 验证
+
+#### 命令 1
+
+```bash
+ctest --test-dir build -R '^apple_music_now_view_state_test$' --output-on-failure
+```
+
+#### 结果 1
+
+```text
+Test #15: apple_music_now_view_state_test ...   Passed
+100% tests passed, 0 tests failed out of 1
+```
+
+#### 命令 2
+
+```bash
+ctest --test-dir build -R '^apple_music_' --output-on-failure
+```
+
+#### 结果 2
+
+```text
+100% tests passed, 0 tests failed out of 9
+```
+
+#### 命令 3
+
+```bash
+git status --short -- apple_music_state.tsv
+```
+
+#### 结果 3
+
+```text
+# 无输出
+```
+
+### 最终说明
+
+- `apple_music_now_view_state_test.c` 现在不再直接触碰仓库根目录的 `apple_music_state.tsv`
+- 完整 `^apple_music_` 回归结束后，不再留下 ` D apple_music_state.tsv`
