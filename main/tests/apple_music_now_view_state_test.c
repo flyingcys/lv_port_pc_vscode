@@ -451,6 +451,32 @@ static void test_sidebar_without_recent_has_no_placeholder_labels(void)
     unlink(AM_STATE_PATH);
 }
 
+static void test_sidebar_title_is_first_child_without_window_controls(void)
+{
+    lv_obj_t *parent;
+    lv_obj_t *sidebar;
+    lv_obj_t *first_child;
+
+    g_source_kind = AM_SOURCE_LOCAL;
+    g_current_local_index = 0U;
+    g_is_playing = false;
+    unlink(AM_STATE_PATH);
+
+    parent = create_parent();
+    apple_music_create_in(parent);
+    lv_obj_update_layout(parent);
+    sidebar = get_sidebar(parent);
+    first_child = lv_obj_get_child(sidebar, 0);
+
+    CHECK(sidebar != NULL);
+    CHECK(first_child != NULL);
+    CHECK(lv_obj_check_type(first_child, &lv_label_class));
+    CHECK(strcmp(lv_label_get_text(first_child), "音乐") == 0);
+
+    apple_music_destroy();
+    unlink(AM_STATE_PATH);
+}
+
 static void test_local_favorite_button_click_persists_state(void)
 {
     lv_obj_t *parent;
@@ -652,6 +678,7 @@ int main(void)
 
     test_recent_sidebar_and_local_favorite_button();
     test_sidebar_without_recent_has_no_placeholder_labels();
+    test_sidebar_title_is_first_child_without_window_controls();
     test_local_favorite_button_click_persists_state();
     test_next_track_refreshes_recent_sidebar_immediately();
     test_pause_does_not_refresh_recent_sidebar();

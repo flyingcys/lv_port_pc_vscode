@@ -176,37 +176,12 @@ void am_shell_build_sidebar(lv_obj_t *sidebar,
         ctx->cb = cb;
         ctx->user = user;
         /* 注意:sidebar 是常驻对象,每次切页 lv_obj_clean 只清子对象、不删 sidebar 本体。
-         * 故 ctx 的释放回调必须挂在"每次重建的子对象"(traffic)上,否则每次切页泄漏一份 ctx。 */
-    }
-
-    {
-        lv_obj_t *traffic = lv_obj_create(sidebar);
-        lv_obj_remove_style_all(traffic);
-        lv_obj_set_size(traffic, LV_PCT(100), 44);
-        lv_obj_set_flex_flow(traffic, LV_FLEX_FLOW_ROW);
-        lv_obj_set_flex_align(traffic, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-        lv_obj_set_style_pad_left(traffic, 4, 0);
-        lv_obj_set_style_pad_column(traffic, 8, 0);
-        lv_obj_clear_flag(traffic, LV_OBJ_FLAG_SCROLLABLE);
-        if(ctx != NULL) lv_obj_add_event_cb(traffic, am_nav_ctx_free_cb, LV_EVENT_DELETE, ctx);
-
-        lv_color_t colors[3] = {
-            lv_color_hex(0xff5f57),
-            lv_color_hex(0xfebc2e),
-            lv_color_hex(0x28c840),
-        };
-        for(i = 0; i < 3U; i++) {
-            lv_obj_t *dot = lv_obj_create(traffic);
-            lv_obj_remove_style_all(dot);
-            lv_obj_set_size(dot, 12, 12);
-            lv_obj_set_style_radius(dot, LV_RADIUS_CIRCLE, 0);
-            lv_obj_set_style_bg_color(dot, colors[i], 0);
-            lv_obj_set_style_bg_opa(dot, LV_OPA_COVER, 0);
-        }
+         * 故 ctx 的释放回调必须挂在"每次重建的子对象"上,否则每次切页泄漏一份 ctx。 */
     }
 
     {
         lv_obj_t *title = am_text(sidebar, "音乐", m->f_metric, AM_TEXT);
+        if(ctx != NULL) lv_obj_add_event_cb(title, am_nav_ctx_free_cb, LV_EVENT_DELETE, ctx);
         lv_obj_set_style_pad_left(title, 6, 0);
         lv_obj_set_style_pad_bottom(title, 12, 0);
     }
