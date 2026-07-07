@@ -47,6 +47,7 @@ typedef struct {
     char path[1024];
     char title[256];
     bool favorite;
+    uint64_t recent_seq;
 } am_local_item_t;
 
 extern const am_nav_item_t am_nav_items[AM_VIEW_COUNT];

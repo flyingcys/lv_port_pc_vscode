@@ -342,6 +342,16 @@ target_include_directories(apple_music_data_test PRIVATE
 )
 target_link_libraries(apple_music_data_test lvgl ${PNG_LIBRARIES})
 
+add_executable(apple_music_state_test
+    ${PROJECT_SOURCE_DIR}/main/tests/apple_music_state_test.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_state.c
+)
+target_include_directories(apple_music_state_test PRIVATE
+    ${PROJECT_SOURCE_DIR}
+    ${PROJECT_SOURCE_DIR}/main/src
+)
+target_link_libraries(apple_music_state_test lvgl ${PNG_LIBRARIES})
+
 add_executable(desktop_runtime_page_count_test
     ${PROJECT_SOURCE_DIR}/main/tests/desktop_runtime_page_count_test.c
     ${DESKTOP_SOURCES}
@@ -477,6 +487,12 @@ add_test(
     COMMAND $<TARGET_FILE:apple_music_data_test>
 )
 set_tests_properties(apple_music_data_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_test(
+    NAME apple_music_state_test
+    COMMAND $<TARGET_FILE:apple_music_state_test>
+)
+set_tests_properties(apple_music_state_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 add_test(
     NAME desktop_apple_music_launcher_test
