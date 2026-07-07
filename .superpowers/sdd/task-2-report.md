@@ -160,3 +160,74 @@ cmake --build build --target apple_music_single_file_player_test apple_music_pla
 3/3 Test #18: apple_music_single_file_player_test ............   Passed
 100% tests passed, 0 tests failed out of 3
 ```
+
+## Reviewer Fix 记录
+
+### 问题
+
+- `am_player_clear_single_file_mode()` 之前只清除了单文件 flag 和文本缓存。
+- 在单文件播放后调用它，`g_source_kind` 仍保留为 `AM_SOURCE_LOCAL`，播放器会继续带着“当前固定本地库条目”的上下文。
+- 这不满足“单文件模式不污染固定资料库上下文”的闭环要求。
+
+### 本次修复
+
+- `am_player_clear_single_file_mode()` 在当前确实处于单文件模式时：
+  - 停止当前单文件播放会话
+  - 将来源重置为 `AM_SOURCE_NONE`
+  - 重置当前本地/电台索引
+  - 清空单文件缓存
+  - 刷新 UI
+- `am_refresh_playlist_popup()` 在 `AM_SOURCE_NONE` 时不再继续渲染本地库列表，避免 neutral state 下仍伪装成固定本地库当前项。
+
+### 本次 TDD
+
+#### RED
+
+命令：
+
+```bash
+cmake --build build --target apple_music_single_file_player_test && ctest --test-dir build -R '^apple_music_single_file_player_test$' --output-on-failure
+```
+
+关键输出：
+
+```text
+CHECK failed: am_player_source_kind() == AM_SOURCE_NONE
+```
+
+为什么这个 RED 合理：
+
+- 扩展后的 clear 用例先注入本地库 sources，再进入单文件会话并调用 `am_player_clear_single_file_mode()`。
+- 失败点直接证明 clear 后仍保留了 `AM_SOURCE_LOCAL` 上下文，正是 reviewer 指出的语义缺口。
+
+#### GREEN
+
+命令：
+
+```bash
+cmake --build build --target apple_music_single_file_player_test && ctest --test-dir build -R '^apple_music_single_file_player_test$' --output-on-failure
+```
+
+关键输出：
+
+```text
+1/1 Test #18: apple_music_single_file_player_test ...   Passed
+100% tests passed, 0 tests failed out of 1
+```
+
+### 本次覆盖验证
+
+命令：
+
+```bash
+cmake --build build --target apple_music_single_file_player_test apple_music_playlist_popup_layout_test apple_music_playlist_scrollbar_behavior_test && ctest --test-dir build -R '^(apple_music_single_file_player_test|apple_music_playlist_popup_layout_test|apple_music_playlist_scrollbar_behavior_test)$' --output-on-failure
+```
+
+关键输出：
+
+```text
+1/3 Test #16: apple_music_playlist_popup_layout_test .........   Passed
+2/3 Test #17: apple_music_playlist_scrollbar_behavior_test ...   Passed
+3/3 Test #18: apple_music_single_file_player_test ............   Passed
+100% tests passed, 0 tests failed out of 3
+```

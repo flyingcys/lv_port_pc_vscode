@@ -286,12 +286,34 @@ static void test_single_file_next_prev_do_not_leave_current_file(void)
 
 static void test_clear_single_file_mode_resets_flag(void)
 {
+    lv_display_t *disp;
+    lv_obj_t *root;
+    am_miniplayer_handles_t handles;
+    am_local_item_t locals[2];
+
+    fill_local_item(&locals[0], "/tmp/a.mp3", "Alpha");
+    fill_local_item(&locals[1], "/tmp/b.mp3", "Beta");
+
+    setup_display(&disp, &root, &handles);
     am_player_init();
+    am_player_bind_miniplayer(&handles);
+    am_player_set_sources(locals, 2U, NULL, 0U);
     am_player_play_single_file("/tmp/picked.mp3", "picked");
     CHECK(am_player_is_single_file_mode());
     am_player_clear_single_file_mode();
+
     CHECK(!am_player_is_single_file_mode());
+    CHECK(am_player_source_kind() == AM_SOURCE_NONE);
+    CHECK(!am_player_is_playing());
+    CHECK(strcmp(lv_label_get_text(handles.title_label), "未播放") == 0);
+    CHECK(strcmp(lv_label_get_text(handles.subtitle_label), "选择本地音乐或广播电台开始") == 0);
+    am_player_set_playlist_open(true);
+    am_player_refresh_ui();
+    CHECK(root != NULL);
+    CHECK(lv_obj_get_child_count(handles.playlist_list) == 0U);
+
     am_player_deinit();
+    teardown_display(disp);
 }
 
 int main(void)

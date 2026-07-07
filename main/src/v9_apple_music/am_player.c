@@ -300,6 +300,11 @@ static void am_refresh_playlist_popup(void)
         return;
     }
 
+    if(g_source_kind == AM_SOURCE_NONE) {
+        am_playlist_scrollbar_sync();
+        return;
+    }
+
     if(g_source_kind == AM_SOURCE_RADIO) {
         if(g_radios != NULL && g_current_radio < g_radio_count) {
             lv_obj_t *item = lv_obj_create(g_h.playlist_list);
@@ -770,9 +775,17 @@ uint8_t am_player_volume_percent(void)
 
 void am_player_clear_single_file_mode(void)
 {
+    if(!g_single_file_mode) return;
+
+    music_player_deinit();
+    g_source_kind = AM_SOURCE_NONE;
+    g_current_local = 0U;
+    g_current_radio = 0U;
+    g_local_engine_ready = false;
     g_single_file_mode = false;
     g_single_file_path[0] = '\0';
     g_single_file_title[0] = '\0';
+    am_player_refresh_ui();
 }
 
 void am_player_on_play_pause(lv_event_t *e)
