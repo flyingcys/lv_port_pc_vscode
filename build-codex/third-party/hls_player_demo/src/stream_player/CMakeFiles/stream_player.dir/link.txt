@@ -1,0 +1,1 @@
+/usr/bin/cc -g CMakeFiles/stream_player.dir/__/__/demos/linux/main.c.o -o ../../../../bin/stream_player  ../player_controller/libplayer_controller.a libstream_player_module_linux.a /usr/lib/x86_64-linux-gnu/libasound.so -lm ../http_client/libhttp_client.a /usr/lib/x86_64-linux-gnu/libssl.so /usr/lib/x86_64-linux-gnu/libcrypto.so 

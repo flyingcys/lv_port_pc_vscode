@@ -140,6 +140,7 @@
   .cbtn.lg svg { width: 30px; height: 30px; }
   .cbtn.mode { color: var(--accent); }          /* active play-mode tint */
   .cbtn.mode svg { width: 20px; height: 20px; }
+  .cbtn.file svg { width: 20px; height: 20px; }
   .cbtn.list svg { width: 21px; height: 21px; }
   .i-pause { display: none; }
   .playing .i-play { display: none; }
@@ -250,6 +251,13 @@
             <span class="i-pause"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4.2" height="16" rx="1"/><rect x="13.8" y="4" width="4.2" height="16" rx="1"/></svg></span>
           </div>
           <div class="cbtn" id="btn-next"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="4,5 15,12 4,19"/><rect x="16.4" y="5" width="2.6" height="14" rx="1"/></svg></div>
+          <div class="cbtn file" id="btn-open-file" title="打开本地文件">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H10l2 2h5.5A2.5 2.5 0 0 1 20 9.5v7A2.5 2.5 0 0 1 17.5 19h-11A2.5 2.5 0 0 1 4 16.5z"/>
+              <path d="M12 10v6"/>
+              <path d="M9.5 13.5 12 16l2.5-2.5"/>
+            </svg>
+          </div>
           <!-- playlist / queue -->
           <div class="cbtn list" id="ic-playlist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="15" y2="6"/><line x1="3" y1="12" x2="13" y2="12"/><line x1="3" y1="18" x2="11" y2="18"/><circle cx="18" cy="16" r="2.4"/><path d="M20.4 16V8l-1 0.4"/></svg></div>
         </div>
@@ -267,6 +275,8 @@
     <div class="pl-head">播放列表 <span class="pl-count" id="pl-count"></span></div>
     <div class="pl-list" id="pl-list"></div>
   </div>
+  <input type="file" id="local-file-input" accept="audio/*" hidden>
+  <audio id="local-audio" preload="metadata"></audio>
 
 </div><!-- .window -->
 
@@ -295,6 +305,7 @@ const STATIONS = [
 const FAVORITES = ['火力全开 (DJ版)', '光年之外 (Remix)', '海阔天空 (摇滚版)', '稻香'];   // names → resolve in PLAYLIST
 const RADIO_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/><path d="M8.5 8.5a5 5 0 0 0 0 7"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>';
 const FIRE_BG = 'radial-gradient(circle at 44% 40%, #ffd24a 0%, #ff7a18 45%, #9a2407 100%)';
+const LOCAL_BG = 'linear-gradient(150deg, #f7b14c, #ef5b3b)';
 
 const $ = (s) => document.querySelector(s);
 
@@ -304,12 +315,18 @@ LYRICS.forEach(l => { const d = document.createElement('div'); d.className = 'ly
 
 /* ───────── Play / pause (cover scales up when playing, down when paused) ───────── */
 const btnPlay = $('#btn-play'), mainEl = $('#main');
-let playing = true, idx = 0, mode = 3, station = -1, view = 'now';   // mode 3 = 列表循环
+const localFileInput = $('#local-file-input'), localAudio = $('#local-audio');
+let playing = true, idx = 0, mode = 3, station = -1, view = 'now', localTrack = null, localTrackUrl = '';   // mode 3 = 列表循环
 function render() {
   btnPlay.classList.toggle('playing', playing);
   mainEl.classList.toggle('paused', !playing);
 }
-btnPlay.addEventListener('click', () => { playing = !playing; render(); });
+function syncLocalAudio() {
+  if (!localTrack) return;
+  if (playing) localAudio.play().catch(() => {});
+  else localAudio.pause();
+}
+btnPlay.addEventListener('click', () => { playing = !playing; render(); syncLocalAudio(); });
 
 /* now-playing area — song or live radio */
 const songTitle = $('#song-title'), songSub = $('#song-sub'), cover = $('#cover');
@@ -322,6 +339,12 @@ function renderNowPlaying() {
     ly.style.display = 'none';
     cover.style.background = `linear-gradient(150deg, ${st.c1}, ${st.c2})`;
     cover.classList.add('no-fire');
+  } else if (localTrack) {
+    songTitle.textContent = localTrack.name;
+    songSub.textContent = '本地文件';
+    ly.style.display = 'none';
+    cover.style.background = LOCAL_BG;
+    cover.classList.add('no-fire');
   } else {
     songTitle.textContent = PLAYLIST[idx].name;
     songSub.textContent = PLAYLIST[idx].sub;
@@ -331,8 +354,32 @@ function renderNowPlaying() {
   }
 }
 /* play a queue/favourite song, or a station */
-function play(i)        { station = -1; idx = i; playing = true; renderNowPlaying(); render(); buildPlaylist(); buildFavorites(); }
-function playStation(i) { station = i; playing = true; renderNowPlaying(); render(); buildStations(); buildFavorites(); showView('now'); }
+function clearLocalTrack() {
+  if (!localTrack) return;
+  localAudio.pause();
+  localAudio.removeAttribute('src');
+  localAudio.load();
+  if (localTrackUrl) URL.revokeObjectURL(localTrackUrl);
+  localTrack = null;
+  localTrackUrl = '';
+}
+function play(i)        { clearLocalTrack(); station = -1; idx = i; playing = true; renderNowPlaying(); render(); buildPlaylist(); buildFavorites(); }
+function playStation(i) { clearLocalTrack(); station = i; playing = true; renderNowPlaying(); render(); buildStations(); buildFavorites(); showView('now'); }
+function playLocalFile(file) {
+  if (!file) return;
+  clearLocalTrack();
+  station = -1;
+  localTrack = { name: file.name.replace(/\.[^.]+$/, '') || file.name };
+  localTrackUrl = URL.createObjectURL(file);
+  localAudio.src = localTrackUrl;
+  playing = true;
+  renderNowPlaying();
+  render();
+  buildPlaylist();
+  buildFavorites();
+  showView('now');
+  syncLocalAudio();
+}
 
 /* ───────── 视图切换：正在播放 / 广播电台 / 我的收藏 ───────── */
 function showView(name) {
@@ -365,7 +412,7 @@ function buildFavorites() {
   FAVORITES.forEach(nm => {
     const pi = PLAYLIST.findIndex(p => p.name === nm);
     const s = PLAYLIST[pi] || { name: nm, sub: '', dur: '' };
-    const cur = station < 0 && pi === idx;
+    const cur = !localTrack && station < 0 && pi === idx;
     const row = document.createElement('div');
     row.className = 'lrow' + (cur ? ' on' : '');
     row.innerHTML =
@@ -404,6 +451,23 @@ function step(dir) {
 $('#btn-prev').addEventListener('click', () => step(-1));
 $('#btn-next').addEventListener('click', () => step(1));
 
+/* ───────── Local file picker ───────── */
+$('#btn-open-file').addEventListener('click', () => localFileInput.click());
+localFileInput.addEventListener('change', () => {
+  const [file] = localFileInput.files || [];
+  playLocalFile(file);
+  localFileInput.value = '';
+});
+localAudio.addEventListener('ended', () => {
+  if (MODES[mode].key === 'one') {
+    localAudio.currentTime = 0;
+    localAudio.play().catch(() => {});
+    return;
+  }
+  playing = false;
+  render();
+});
+
 /* ───────── Playlist popup (queue) ───────── */
 const plPop = $('#playlist-pop'), plBackdrop = $('#pl-backdrop'), plList = $('#pl-list'), icPlaylist = $('#ic-playlist');
 $('#pl-count').textContent = PLAYLIST.length + ' 首';
@@ -411,7 +475,7 @@ function buildPlaylist() {
   plList.innerHTML = '';
   PLAYLIST.forEach((s, i) => {
     const row = document.createElement('div');
-    row.className = 'pl-item' + (i === idx ? ' on' : '');
+    row.className = 'pl-item' + (!localTrack && i === idx ? ' on' : '');
     row.innerHTML =
       `<div class="pl-idx">${i + 1}</div>
        <div class="pl-info"><div class="pl-name">${s.name}</div><div class="pl-sub">${s.sub}</div></div>

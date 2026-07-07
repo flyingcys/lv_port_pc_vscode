@@ -91,6 +91,56 @@ static lv_obj_t *am_transport_play_button(lv_obj_t *parent, lv_color_t color,
     return btn;
 }
 
+static lv_obj_t *am_playlist_button(lv_obj_t *parent, int box, lv_color_t color)
+{
+    lv_obj_t *btn = am_transport_button_base(parent, box);
+    lv_obj_t *bar;
+    lv_obj_t *dot;
+    lv_obj_t *stem;
+
+    bar = lv_obj_create(btn);
+    lv_obj_remove_style_all(bar);
+    lv_obj_set_size(bar, 12, 2);
+    lv_obj_set_style_radius(bar, LV_RADIUS_CIRCLE, 0);
+    lv_obj_set_style_bg_color(bar, color, 0);
+    lv_obj_set_style_bg_opa(bar, LV_OPA_COVER, 0);
+    lv_obj_set_pos(bar, 5, 7);
+
+    bar = lv_obj_create(btn);
+    lv_obj_remove_style_all(bar);
+    lv_obj_set_size(bar, 10, 2);
+    lv_obj_set_style_radius(bar, LV_RADIUS_CIRCLE, 0);
+    lv_obj_set_style_bg_color(bar, color, 0);
+    lv_obj_set_style_bg_opa(bar, LV_OPA_COVER, 0);
+    lv_obj_set_pos(bar, 5, 13);
+
+    bar = lv_obj_create(btn);
+    lv_obj_remove_style_all(bar);
+    lv_obj_set_size(bar, 8, 2);
+    lv_obj_set_style_radius(bar, LV_RADIUS_CIRCLE, 0);
+    lv_obj_set_style_bg_color(bar, color, 0);
+    lv_obj_set_style_bg_opa(bar, LV_OPA_COVER, 0);
+    lv_obj_set_pos(bar, 5, 19);
+
+    stem = lv_obj_create(btn);
+    lv_obj_remove_style_all(stem);
+    lv_obj_set_size(stem, 2, 8);
+    lv_obj_set_style_radius(stem, LV_RADIUS_CIRCLE, 0);
+    lv_obj_set_style_bg_color(stem, color, 0);
+    lv_obj_set_style_bg_opa(stem, LV_OPA_COVER, 0);
+    lv_obj_set_pos(stem, 20, 8);
+
+    dot = lv_obj_create(btn);
+    lv_obj_remove_style_all(dot);
+    lv_obj_set_size(dot, 6, 6);
+    lv_obj_set_style_radius(dot, LV_RADIUS_CIRCLE, 0);
+    lv_obj_set_style_bg_color(dot, color, 0);
+    lv_obj_set_style_bg_opa(dot, LV_OPA_COVER, 0);
+    lv_obj_set_pos(dot, 17, 17);
+
+    return btn;
+}
+
 void am_shell_build_sidebar(lv_obj_t *sidebar,
                             am_view_t active_view,
                             const am_local_item_t *locals,
@@ -298,8 +348,6 @@ am_miniplayer_handles_t am_shell_build_miniplayer_ex(lv_obj_t *player,
         }
 
         h.time_total = am_text(scrub, "--:--", m->f_label, AM_MUTED);
-        h.btn_mode = am_text_button(scrub, "SEQ", m->f_label, 30, lv_color_hex(0xfa2d48));
-        if(on_mode != NULL) lv_obj_add_event_cb(h.btn_mode, on_mode, LV_EVENT_CLICKED, NULL);
     }
 
     {
@@ -318,20 +366,22 @@ am_miniplayer_handles_t am_shell_build_miniplayer_ex(lv_obj_t *player,
             lv_obj_set_flex_grow(ctrls, 1);   /* .ctrls{flex:1;justify-content:center} */
             lv_obj_set_flex_flow(ctrls, LV_FLEX_FLOW_ROW);
             lv_obj_set_flex_align(ctrls, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-            lv_obj_set_style_pad_column(ctrls, 18, 0);
+            lv_obj_set_style_pad_column(ctrls, 26, 0);
             lv_obj_clear_flag(ctrls, LV_OBJ_FLAG_SCROLLABLE);
 
             lv_color_t ctrl_col = lv_color_hex(0x2a2a2e);
+            h.btn_mode = am_text_button(ctrls, "SEQ", m->f_label, 30, lv_color_hex(0xfa2d48));
             h.btn_prev = am_transport_symbol_button(ctrls, LV_SYMBOL_PREV, &lv_font_montserrat_20,
                                                     32, ctrl_col, NULL);
             h.btn_play = am_transport_play_button(ctrls, ctrl_col, &h.play_icon, &h.pause_icon);
             h.btn_next = am_transport_symbol_button(ctrls, LV_SYMBOL_NEXT, &lv_font_montserrat_20,
                                                     32, ctrl_col, NULL);
             h.btn_open_file = am_text_button(ctrls, AM_ICON_OPEN_FILE, m->f_label, 30, ctrl_col);
-            h.btn_playlist = am_icon_button(ctrls, AM_ICON_LIST, m->f_metric, 30, ctrl_col);
+            h.btn_playlist = am_playlist_button(ctrls, 30, ctrl_col);
             lv_obj_set_style_margin_left(h.btn_prev, 2, 0);
             lv_obj_set_style_margin_right(h.btn_next, 2, 0);
 
+            if(on_mode != NULL) lv_obj_add_event_cb(h.btn_mode, on_mode, LV_EVENT_CLICKED, NULL);
             if(on_prev != NULL) lv_obj_add_event_cb(h.btn_prev, on_prev, LV_EVENT_CLICKED, NULL);
             if(on_play != NULL) lv_obj_add_event_cb(h.btn_play, on_play, LV_EVENT_CLICKED, NULL);
             if(on_next != NULL) lv_obj_add_event_cb(h.btn_next, on_next, LV_EVENT_CLICKED, NULL);
@@ -433,16 +483,20 @@ am_miniplayer_handles_t am_shell_build_miniplayer_ex(lv_obj_t *player,
         lv_obj_t *head = lv_obj_create(h.playlist_popup);
         lv_obj_remove_style_all(head);
         lv_obj_set_size(head, LV_PCT(100), LV_SIZE_CONTENT);
+        lv_obj_set_flex_flow(head, LV_FLEX_FLOW_ROW);
+        lv_obj_set_flex_align(head, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
         lv_obj_set_style_pad_left(head, 15, 0);
         lv_obj_set_style_pad_right(head, 15, 0);
         lv_obj_set_style_pad_top(head, 12, 0);
         lv_obj_set_style_pad_bottom(head, 12, 0);
+        lv_obj_set_style_pad_column(head, 8, 0);
         lv_obj_set_style_border_side(head, LV_BORDER_SIDE_BOTTOM, 0);
         lv_obj_set_style_border_width(head, 1, 0);
         lv_obj_set_style_border_color(head, lv_color_hex(0x000000), 0);
         lv_obj_set_style_border_opa(head, 24, 0);
         lv_obj_clear_flag(head, LV_OBJ_FLAG_SCROLLABLE);
         am_text(head, "播放列表", m->f_body, AM_TEXT);
+        h.playlist_count_label = am_text(head, "", m->f_label, AM_MUTED);
     }
 
     h.playlist_list = lv_obj_create(h.playlist_popup);

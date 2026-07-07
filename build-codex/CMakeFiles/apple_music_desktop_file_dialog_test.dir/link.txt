@@ -1,0 +1,1 @@
+/usr/bin/cc  -march=native -g CMakeFiles/apple_music_desktop_file_dialog_test.dir/main/tests/apple_music_desktop_file_dialog_test.c.o CMakeFiles/apple_music_desktop_file_dialog_test.dir/main/src/v9_apple_music/am_desktop_file_dialog.c.o -o ../bin/apple_music_desktop_file_dialog_test 

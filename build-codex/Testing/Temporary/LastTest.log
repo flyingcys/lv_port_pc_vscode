@@ -1,0 +1,21 @@
+Start testing: Jul 07 20:24 CST
+----------------------------------------------------------
+17/19 Testing: apple_music_playlist_popup_layout_test
+17/19 Test: apple_music_playlist_popup_layout_test
+Command: "/home/share/samba/lvgl/lv_port_pc_vscode_flyingcys/bin/apple_music_playlist_popup_layout_test"
+Directory: /home/share/samba/lvgl/lv_port_pc_vscode_flyingcys
+"apple_music_playlist_popup_layout_test" start time: Jul 07 20:24 CST
+Output:
+----------------------------------------------------------
+[Warn]	(0.000, +0)	 lv_init: Memory integrity checks are enabled via LV_USE_ASSERT_MEM_INTEGRITY which makes LVGL much slower lv_init.c:326
+[Warn]	(0.000, +0)	 lv_init: Object sanity checks are enabled via LV_USE_ASSERT_OBJ which makes LVGL much slower lv_init.c:330
+[Warn]	(0.000, +0)	 lv_init: Style sanity checks are enabled that uses more RAM lv_init.c:334
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"apple_music_playlist_popup_layout_test" end time: Jul 07 20:24 CST
+"apple_music_playlist_popup_layout_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Jul 07 20:24 CST

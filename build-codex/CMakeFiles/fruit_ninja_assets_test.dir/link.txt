@@ -1,0 +1,1 @@
+/usr/bin/cc  -march=native -g CMakeFiles/fruit_ninja_assets_test.dir/main/tests/fruit_ninja_assets_test.c.o CMakeFiles/fruit_ninja_assets_test.dir/main/src/v9-fruit_ninja/fruit_ninja_assets.c.o -o ../bin/fruit_ninja_assets_test 

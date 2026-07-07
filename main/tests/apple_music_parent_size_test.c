@@ -5,6 +5,7 @@
 #include "lvgl.h"
 #include "../src/v9_apple_music/am_metrics.h"
 #include "../src/v9_apple_music/am_data.h"
+#include "../src/v9_apple_music/am_desktop_file_dialog.h"
 #include "../src/v9_apple_music/am_player.h"
 #include "../src/v9_apple_music/apple_music.h"
 
@@ -50,6 +51,28 @@ void am_player_play_radio_index(size_t index)
 }
 
 void am_player_toggle_playback(void)
+{
+}
+
+bool am_player_is_single_file_mode(void)
+{
+    return false;
+}
+
+am_file_pick_result_t am_desktop_file_dialog_pick_audio(char *path_buf, size_t path_buf_size)
+{
+    LV_UNUSED(path_buf);
+    LV_UNUSED(path_buf_size);
+    return AM_FILE_PICK_CANCEL;
+}
+
+void am_player_play_single_file(const char *path, const char *title)
+{
+    LV_UNUSED(path);
+    LV_UNUSED(title);
+}
+
+void am_player_clear_single_file_mode(void)
 {
 }
 

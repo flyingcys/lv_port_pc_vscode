@@ -1,0 +1,1 @@
+/usr/bin/cc  -march=native -g CMakeFiles/fruit_ninja_model_test.dir/main/tests/fruit_ninja_model_test.c.o -o ../bin/fruit_ninja_model_test 

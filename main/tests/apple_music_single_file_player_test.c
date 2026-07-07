@@ -287,8 +287,9 @@ static void test_mode_button_text_follows_play_mode(void)
     am_player_bind_miniplayer(&handles);
 
     CHECK(root != NULL);
-    CHECK(lv_obj_get_parent(handles.btn_mode) != lv_obj_get_parent(handles.btn_prev));
-    CHECK(lv_obj_get_child_count(lv_obj_get_parent(handles.btn_prev)) == 5U);
+    CHECK(lv_obj_get_parent(handles.btn_mode) == lv_obj_get_parent(handles.btn_prev));
+    CHECK(lv_obj_get_child_count(lv_obj_get_parent(handles.btn_prev)) == 6U);
+    CHECK(lv_obj_get_style_pad_column(lv_obj_get_parent(handles.btn_prev), LV_PART_MAIN) == 26);
     check_mode_button_text(&handles, MP_MODE_SEQ, "SEQ");
     check_mode_button_text(&handles, MP_MODE_REPEAT_ONE, "ONE");
     check_mode_button_text(&handles, MP_MODE_REPEAT_ALL, "LOOP");
@@ -317,6 +318,8 @@ static void test_single_file_playlist_renders_one_row(void)
     CHECK(strcmp(lv_label_get_text(handles.subtitle_label), "单个文件") == 0);
     CHECK(!lv_obj_has_flag(handles.playlist_popup, LV_OBJ_FLAG_HIDDEN));
     CHECK(am_player_is_single_file_mode());
+    CHECK(handles.playlist_count_label != NULL);
+    CHECK(strcmp(lv_label_get_text(handles.playlist_count_label), "1 首") == 0);
 
     am_player_deinit();
     teardown_display(disp);
@@ -341,6 +344,8 @@ static void test_single_file_playlist_rebuilds_after_local_playlist(void)
     am_player_refresh_ui();
     CHECK(root != NULL);
     CHECK(lv_obj_get_child_count(handles.playlist_list) == 2U);
+    CHECK(handles.playlist_count_label != NULL);
+    CHECK(strcmp(lv_label_get_text(handles.playlist_count_label), "2 首") == 0);
 
     am_player_play_single_file("/tmp/picked.mp3", "picked");
     am_player_set_playlist_open(true);
@@ -350,6 +355,7 @@ static void test_single_file_playlist_rebuilds_after_local_playlist(void)
     CHECK(strcmp(lv_label_get_text(handles.title_label), "picked") == 0);
     CHECK(strcmp(lv_label_get_text(handles.subtitle_label), "单个文件") == 0);
     CHECK(am_player_is_single_file_mode());
+    CHECK(strcmp(lv_label_get_text(handles.playlist_count_label), "1 首") == 0);
 
     am_player_deinit();
     teardown_display(disp);
@@ -441,6 +447,7 @@ static void test_clear_single_file_mode_resets_flag(void)
     am_player_refresh_ui();
     CHECK(root != NULL);
     CHECK(lv_obj_get_child_count(handles.playlist_list) == 0U);
+    CHECK(strcmp(lv_label_get_text(handles.playlist_count_label), "") == 0);
 
     am_player_deinit();
     teardown_display(disp);

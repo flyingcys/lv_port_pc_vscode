@@ -1,0 +1,1 @@
+/usr/bin/cc  -march=native -g CMakeFiles/design_fruit_model_test.dir/main/tests/design_fruit_model_test.c.o CMakeFiles/design_fruit_model_test.dir/main/src/design_fruit/design_fruit_model.c.o -o ../bin/design_fruit_model_test 

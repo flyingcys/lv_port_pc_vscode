@@ -324,9 +324,11 @@ static void am_build_now_view(lv_obj_t *parent)
     lv_obj_set_style_pad_column(view, 26, 0);
     lv_obj_set_style_pad_row(view, stack ? 10 : 0, 0);
     lv_obj_set_flex_flow(view, stack ? LV_FLEX_FLOW_COLUMN : LV_FLEX_FLOW_ROW);
-    lv_obj_set_flex_align(view, LV_FLEX_ALIGN_START,
-                          stack ? LV_FLEX_ALIGN_CENTER : LV_FLEX_ALIGN_CENTER,
-                          stack ? LV_FLEX_ALIGN_START : LV_FLEX_ALIGN_CENTER);
+    if(stack) {
+        lv_obj_set_flex_align(view, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_START);
+    } else {
+        lv_obj_set_flex_align(view, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
+    }
     if(stack) {  /* 单列可能超一屏 → 允许竖向滚动 */
         lv_obj_set_scroll_dir(view, LV_DIR_VER);
         lv_obj_set_scrollbar_mode(view, LV_SCROLLBAR_MODE_OFF);

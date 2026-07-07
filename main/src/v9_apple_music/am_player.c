@@ -52,6 +52,8 @@ static void am_playlist_list_scroll_cb(lv_event_t *e);
 static void am_playlist_thumb_event_cb(lv_event_t *e);
 static int32_t am_playlist_content_range(const lv_obj_t *list);
 static void am_playlist_track_sync_geometry(lv_obj_t *track, lv_obj_t *list);
+static size_t am_playlist_visible_count(void);
+static void am_playlist_update_count_label(size_t count);
 static void am_copy_text(char *dst, size_t dst_size, const char *src);
 static const char *am_mode_button_text(music_play_mode_t mode);
 
@@ -85,6 +87,36 @@ static const char *am_mode_button_text(music_play_mode_t mode)
         default:
             return "SEQ";
     }
+}
+
+static size_t am_playlist_visible_count(void)
+{
+    if(g_single_file_mode) return 1U;
+
+    switch(g_source_kind) {
+        case AM_SOURCE_LOCAL:
+            return g_local_count;
+        case AM_SOURCE_RADIO:
+            return (g_radios != NULL && g_radio_count > 0U) ? 1U : 0U;
+        case AM_SOURCE_NONE:
+        default:
+            return 0U;
+    }
+}
+
+static void am_playlist_update_count_label(size_t count)
+{
+    char buf[32];
+
+    if(g_h.playlist_count_label == NULL) return;
+
+    if(count == 0U) {
+        lv_label_set_text(g_h.playlist_count_label, "");
+        return;
+    }
+
+    snprintf(buf, sizeof(buf), "%u 首", (unsigned)count);
+    lv_label_set_text(g_h.playlist_count_label, buf);
 }
 
 void am_player_set_playlist_pick_cb(am_player_pick_cb_t cb)
@@ -270,13 +302,14 @@ static void am_format_time(uint32_t ms, char *buf, size_t size)
 static void am_refresh_playlist_popup(void)
 {
     size_t i;
+    size_t cur_idx = (g_source_kind == AM_SOURCE_RADIO) ? g_current_radio : g_current_local;
+    size_t cur_cnt = am_playlist_visible_count();
 
     if(g_h.playlist_list == NULL) return;
+    am_playlist_update_count_label(cur_cnt);
 
     /* 内容指纹未变则跳过重建,保住滚动位置、不吃点击(见 g_pl_* 说明) */
     {
-        size_t cur_idx = (g_source_kind == AM_SOURCE_RADIO) ? g_current_radio : g_current_local;
-        size_t cur_cnt = (g_source_kind == AM_SOURCE_RADIO) ? g_radio_count : g_local_count;
         if(g_pl_built && g_pl_kind == g_source_kind &&
            g_pl_single_file_mode == g_single_file_mode &&
            g_pl_index == cur_idx && g_pl_count == cur_cnt) {

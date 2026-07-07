@@ -19,6 +19,7 @@ typedef struct {
     lv_obj_t *volume_track;
     lv_obj_t *volume_fill;
     lv_obj_t *playlist_popup;
+    lv_obj_t *playlist_count_label;
     lv_obj_t *playlist_list;
     lv_obj_t *playlist_scroll_track;
     lv_obj_t *playlist_scroll_thumb;
