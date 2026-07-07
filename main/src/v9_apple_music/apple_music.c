@@ -47,6 +47,7 @@ static void am_update_now_view(void);
 static void am_show_view(am_view_t view);
 static void am_sync_current_view(void);
 static void am_save_local_state(void);
+static void am_refresh_sidebar(void);
 static void am_record_current_local_playback(void);
 static void am_on_toggle_favorite(lv_event_t *e);
 
@@ -79,6 +80,15 @@ static void am_save_local_state(void)
     }
 }
 
+static void am_refresh_sidebar(void)
+{
+    if(g_app.sidebar == NULL) return;
+
+    lv_obj_clean(g_app.sidebar);
+    am_shell_build_sidebar(g_app.sidebar, g_app.current_view, g_app.locals, g_app.local_count,
+                           (am_nav_cb_t)am_show_view, NULL);
+}
+
 static void am_record_current_local_playback(void)
 {
     size_t index;
@@ -91,6 +101,7 @@ static void am_record_current_local_playback(void)
 
     am_state_mark_recent(g_app.locals, g_app.local_count, index, &g_recent_seq_next);
     am_save_local_state();
+    am_refresh_sidebar();
 }
 /* 弹层选曲后跳到正在播放页(在 lv_async 回调内被调用,已脱离行点击事件,直接切视图安全)。 */
 static void am_on_playlist_pick(void)
@@ -149,9 +160,7 @@ static void am_on_toggle_favorite(lv_event_t *e)
     am_save_local_state();
     if(g_app.current_view == AM_VIEW_FAVORITES) am_request_view(AM_VIEW_FAVORITES);
     am_update_now_view();
-    lv_obj_clean(g_app.sidebar);
-    am_shell_build_sidebar(g_app.sidebar, g_app.current_view, g_app.locals, g_app.local_count,
-                           (am_nav_cb_t)am_show_view, NULL);
+    am_refresh_sidebar();
 }
 
 /* 传输键包一层:除转调 am_player_* 外,还在"正在播放"页时同步大图/标题/歌词。

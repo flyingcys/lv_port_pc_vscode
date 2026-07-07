@@ -429,6 +429,7 @@ add_executable(apple_music_playlist_popup_layout_test
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_data.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_metrics.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_shell.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_state.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_theme.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_widgets.c
     ${V9_APPLE_MUSIC_FONT_SOURCES}
@@ -445,6 +446,7 @@ add_executable(apple_music_playlist_scrollbar_behavior_test
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_metrics.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_player.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_shell.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_state.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_theme.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_widgets.c
     ${V9_APPLE_MUSIC_FONT_SOURCES}

@@ -90,3 +90,54 @@ cmake --build build --target apple_music_now_view_state_test apple_music_parent_
 - `main/src/v9_apple_music/apple_music.c`
 - `main/tests/apple_music_now_view_state_test.c`
 - `CMakeLists.txt`
+
+## 追加修复（评审后）
+
+### 修复内容
+
+- 为所有直接链接 `am_shell.c` 但缺失 `am_state.c` 的相关测试目标补齐最小依赖：
+  - `apple_music_playlist_popup_layout_test`
+  - `apple_music_playlist_scrollbar_behavior_test`
+- 在 `apple_music.c` 收敛出 `am_refresh_sidebar()`，统一侧边栏重建逻辑
+- `am_record_current_local_playback()` 在 recent 序号更新并落盘后，立即刷新侧边栏，避免 UI 比状态晚一拍
+- 扩展 `apple_music_now_view_state_test`：
+  - 真实点击“下一首”按钮触发播放状态变化
+  - 断言侧边栏 recent 立即改成 `Gamma -> Beta -> Alpha`
+  - 回读 `apple_music_state.tsv`，确认 `Gamma.recent_seq` 变为 `10`
+
+### 本轮验证命令
+
+```bash
+cmake --build build --target apple_music_playlist_popup_layout_test
+cmake --build build --target apple_music_now_view_state_test && ./bin/apple_music_now_view_state_test
+cmake --build build --target apple_music_playlist_scrollbar_behavior_test
+```
+
+### 本轮验证结果
+
+- `apple_music_playlist_popup_layout_test` 现已可成功链接构建，不再缺失 `am_state_collect_recent`
+- `apple_music_now_view_state_test` 通过，新增覆盖证明：
+  - 收藏点击会落盘
+  - recent 顺序正确
+  - 播放切换后 recent 会立刻刷新到 sidebar，而不是只更新持久化状态
+- `apple_music_playlist_scrollbar_behavior_test` 同样完成最小依赖补齐并可成功构建
+
+### 主线程最终复验
+
+执行命令：
+
+```bash
+cmake --build build --target apple_music_playlist_popup_layout_test apple_music_playlist_scrollbar_behavior_test apple_music_now_view_state_test
+./bin/apple_music_playlist_popup_layout_test
+./bin/apple_music_playlist_scrollbar_behavior_test
+./bin/apple_music_now_view_state_test
+cmake --build build --target apple_music_parent_size_test apple_music_data_test
+./bin/apple_music_parent_size_test
+./bin/apple_music_data_test
+```
+
+结果：
+
+- 上述目标均构建成功
+- 五个可执行测试均退出码 `0`
+- 输出仅包含 LVGL 断言/完整性检查已开启的告警，无失败
