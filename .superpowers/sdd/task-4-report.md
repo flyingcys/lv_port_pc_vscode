@@ -215,3 +215,74 @@ Test #19: apple_music_single_file_player_test .....   Passed
 - 单跑与组合回归都稳定通过
 - 测试执行后，`apple_music_state.tsv` 不再被这个测试留成工作树删除状态
 - 本次 fresh-verification 修复没有扩大到生产代码，问题已确认是测试夹具隔离不足，而不是 Task 4 宿主逻辑再次回归
+
+## Task 5 Build Fix
+
+### 现象
+
+- `cmake --build build --target main` 链接失败：
+
+```text
+apple_music.c:(.text+0xcd9): undefined reference to `am_desktop_file_dialog_pick_audio'
+```
+
+- `cmake --build build --target apple_music_now_view_state_test` 链接失败：
+
+```text
+undefined reference to `am_player_is_single_file_mode'
+undefined reference to `am_desktop_file_dialog_pick_audio'
+undefined reference to `am_player_play_single_file'
+```
+
+### 根因
+
+- `main` 目标通过 `V9_APPLE_MUSIC_SOURCES` 组装 Apple Music 源文件，但 Task 4 新引入的 `am_desktop_file_dialog.c` 只被单独测试目标显式引用，没有进入 `main`
+- 旧的 `apple_music_now_view_state_test.c` stub 仍停留在 Task 4 之前，缺少 `apple_music.c` 新增依赖的最小符号实现
+
+### 修复
+
+- 在 `V9_APPLE_MUSIC_SOURCES` 中加入 `main/src/v9_apple_music/am_desktop_file_dialog.c`
+- 在 `main/tests/apple_music_now_view_state_test.c` 增加最小兼容 stub：
+  - `am_player_is_single_file_mode()` 返回 `false`
+  - `am_player_play_single_file(...)` 仅做空实现
+  - `am_player_clear_single_file_mode()` 仅做空实现
+  - `am_desktop_file_dialog_pick_audio(...)` 返回 `AM_FILE_PICK_CANCEL`
+- 这些 stub 只为满足旧测试的链接与既有语义，不把单文件模式逻辑扩进这套旧测试
+
+### 验证
+
+#### 命令 1
+
+```bash
+cmake --build build --target apple_music_now_view_state_test
+```
+
+#### 结果 1
+
+```text
+Built target apple_music_now_view_state_test
+```
+
+#### 命令 2
+
+```bash
+cmake --build build --target main
+```
+
+#### 结果 2
+
+```text
+Built target main
+```
+
+#### 命令 3
+
+```bash
+ctest --test-dir build -R '^apple_music_' --output-on-failure
+```
+
+#### 结果 3
+
+```text
+100% tests passed, 0 tests failed out of 9
+```

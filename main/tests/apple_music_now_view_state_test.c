@@ -10,6 +10,7 @@
 #include "lvgl.h"
 
 #include "../src/v9_apple_music/am_data.h"
+#include "../src/v9_apple_music/am_desktop_file_dialog.h"
 #include "../src/v9_apple_music/am_local_scan.h"
 #include "../src/v9_apple_music/am_metrics.h"
 #include "../src/v9_apple_music/am_player.h"
@@ -287,6 +288,11 @@ void am_player_set_sources(const am_local_item_t *locals, size_t local_count,
 }
 void am_player_play_local_index(size_t index) { g_current_local_index = index; }
 void am_player_play_radio_index(size_t index) { g_current_radio_index = index; }
+void am_player_play_single_file(const char *path, const char *title)
+{
+    LV_UNUSED(path);
+    LV_UNUSED(title);
+}
 void am_player_toggle_playback(void)
 {
     g_is_playing = !g_is_playing;
@@ -308,6 +314,7 @@ void am_player_set_playlist_open(bool open) { LV_UNUSED(open); }
 bool am_player_playlist_open(void) { return false; }
 void am_player_set_playlist_pick_cb(am_player_pick_cb_t cb) { LV_UNUSED(cb); }
 am_source_kind_t am_player_source_kind(void) { return g_source_kind; }
+bool am_player_is_single_file_mode(void) { return false; }
 uint32_t am_player_track_duration_ms(size_t index)
 {
     LV_UNUSED(index);
@@ -317,11 +324,19 @@ size_t am_player_current_local_index(void) { return g_current_local_index; }
 size_t am_player_current_radio_index(void) { return g_current_radio_index; }
 bool am_player_is_playing(void) { return g_is_playing; }
 uint8_t am_player_volume_percent(void) { return 65U; }
+void am_player_clear_single_file_mode(void) {}
 void am_player_refresh_ui(void) {}
 void am_player_on_play_pause(lv_event_t *e) { LV_UNUSED(e); }
 void am_player_on_prev(lv_event_t *e) { LV_UNUSED(e); }
 void am_player_on_next(lv_event_t *e) { LV_UNUSED(e); }
 void am_player_on_mode(lv_event_t *e) { LV_UNUSED(e); }
+
+am_file_pick_result_t am_desktop_file_dialog_pick_audio(char *path_buf, size_t path_buf_size)
+{
+    LV_UNUSED(path_buf);
+    LV_UNUSED(path_buf_size);
+    return AM_FILE_PICK_CANCEL;
+}
 
 static void test_recent_sidebar_and_local_favorite_button(void)
 {

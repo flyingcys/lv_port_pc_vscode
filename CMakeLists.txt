@@ -68,6 +68,7 @@ file(GLOB V9_APPLE_MUSIC_ASSET_SOURCES CONFIGURE_DEPENDS
 )
 set(V9_APPLE_MUSIC_SOURCES
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_data.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_desktop_file_dialog.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_local_scan.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_metrics.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_page_list.c
