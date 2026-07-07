@@ -71,6 +71,19 @@ add_compile_definitions($<$<BOOL:${LV_USE_FFMPEG}>:LV_USE_FFMPEG=1>)
 add_subdirectory(lvgl)
 target_include_directories(lvgl PUBLIC ${PROJECT_SOURCE_DIR} ${SDL2_INCLUDE_DIRS})
 
+file(GLOB_RECURSE DESIGN_SOURCES
+    "${PROJECT_SOURCE_DIR}/main/design/*.c"
+)
+
+set(DESIGN_INCLUDE_DIRS
+    "${PROJECT_SOURCE_DIR}/main/design"
+    "${PROJECT_SOURCE_DIR}/main/design/components"
+    "${PROJECT_SOURCE_DIR}/main/design/fonts"
+    "${PROJECT_SOURCE_DIR}/main/design/images"
+    "${PROJECT_SOURCE_DIR}/main/design/screens"
+)
+target_include_directories(lvgl PUBLIC ${DESIGN_INCLUDE_DIRS})
+
 # Create the main executable, depending on the FreeRTOS option
 if(USE_FREERTOS)
     add_executable(main
@@ -86,6 +99,7 @@ else()
     add_executable(main
         ${PROJECT_SOURCE_DIR}/main/src/main.c
         ${PROJECT_SOURCE_DIR}/main/src/mouse_cursor_icon.c
+        ${DESIGN_SOURCES}
     )
 endif()
 

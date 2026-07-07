@@ -34,7 +34,7 @@ static lv_display_t * hal_init(int32_t w, int32_t h);
  *  STATIC VARIABLES
  **********************/
 
-/********************** 
+/**********************
  *      MACROS
  **********************/
 
@@ -73,11 +73,12 @@ int main(int argc, char **argv)
   lv_init();
 
   /*Initialize the HAL (display, input devices, tick) for LVGL*/
-  hal_init(320, 480);
+  hal_init(1024, 600);
 
   #if LV_USE_OS == LV_OS_NONE
- 
-  lv_demo_widgets();
+
+  // lv_demo_widgets();
+  ui_init();
 
   while(1) {
     /* Periodically call the lv_task handler.
@@ -89,7 +90,7 @@ int main(int argc, char **argv)
   #elif LV_USE_OS == LV_OS_FREERTOS
 
   /* Run FreeRTOS and create lvgl task */
-  freertos_main();  
+  freertos_main();
 
   #endif
 
