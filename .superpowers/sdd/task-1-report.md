@@ -6,9 +6,9 @@ Task 1 已完成，已验证通过，已提交。
 
 ## 修复说明
 
-- 将 `AM_FILE_DIALOG_HELPER` 的执行方式从 `popen()`/shell 字符串改为 `fork + execvp`。
-- 桌面对话框候选命令也改为 argv 直接执行，避免包含空格的参数被 shell 拆词。
-- 保留并通过了带空格 helper 路径的测试用例。
+- 当前 diff 中可见的变更是：`AM_FILE_DIALOG_HELPER` 相关路径改为按 argv 方式执行。
+- 桌面对话框候选命令同样按 argv 传递，避免包含空格的参数被 shell 拆词。
+- 带空格 helper 路径的测试用例仍然通过。
 
 ## 本次验证
 
