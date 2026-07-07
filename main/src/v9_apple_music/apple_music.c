@@ -1,10 +1,12 @@
 #include "apple_music.h"
 
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "am_data.h"
+#include "am_desktop_file_dialog.h"
 #include "am_fonts.h"
 #include "am_icons.h"
 #include "am_local_scan.h"
@@ -35,6 +37,9 @@ typedef struct {
     lv_obj_t *player;
     am_miniplayer_handles_t mini;
     am_view_t current_view;
+    bool has_picked_file;
+    am_local_item_t picked_file;
+    char toast_text[128];
     am_local_item_t *locals;
     size_t local_count;
     am_radio_item_t *radios;
@@ -51,6 +56,29 @@ static void am_save_local_state(void);
 static void am_refresh_sidebar(void);
 static void am_record_current_local_playback(void);
 static void am_on_toggle_favorite(lv_event_t *e);
+static void am_on_open_file(lv_event_t *e);
+
+static void am_title_from_path(char *title_buf, size_t title_buf_size, const char *path)
+{
+    const char *base;
+    const char *ext;
+    size_t title_len;
+
+    if(title_buf == NULL || title_buf_size == 0U) return;
+
+    title_buf[0] = '\0';
+    if(path == NULL || path[0] == '\0') return;
+
+    base = strrchr(path, '/');
+    base = (base == NULL) ? path : (base + 1);
+    ext = strrchr(base, '.');
+    if(ext == NULL || ext == base) ext = base + strlen(base);
+
+    title_len = (size_t)(ext - base);
+    if(title_len >= title_buf_size) title_len = title_buf_size - 1U;
+    memcpy(title_buf, base, title_len);
+    title_buf[title_len] = '\0';
+}
 
 /* 选曲/切台发生在 LVGL 事件回调内,若同步 am_show_view→lv_obj_clean 会删掉正处理事件的行 → UAF。
  * 故列表页重建一律经 lv_async_call 推迟到事件返回后;目标视图存于 g_pending_view(取最后一次)。 */
@@ -94,6 +122,7 @@ static void am_record_current_local_playback(void)
 {
     size_t index;
 
+    if(am_player_is_single_file_mode()) return;
     if(am_player_source_kind() != AM_SOURCE_LOCAL) return;
     if(g_app.locals == NULL || g_app.local_count == 0U) return;
 
@@ -153,6 +182,7 @@ static void am_on_toggle_favorite(lv_event_t *e)
 
     LV_UNUSED(e);
 
+    if(am_player_is_single_file_mode()) return;
     if(am_player_source_kind() != AM_SOURCE_LOCAL) return;
     index = am_player_current_local_index();
     if(g_app.locals == NULL || index >= g_app.local_count) return;
@@ -190,14 +220,43 @@ static void am_on_next(lv_event_t *e)
     am_sync_current_view();   /* 下一首/台 */
 }
 
+static void am_on_open_file(lv_event_t *e)
+{
+    char path_buf[sizeof(g_app.picked_file.path)] = {0};
+    char title_buf[sizeof(g_app.picked_file.title)] = {0};
+    am_file_pick_result_t pick_result;
+
+    LV_UNUSED(e);
+
+    pick_result = am_desktop_file_dialog_pick_audio(path_buf, sizeof(path_buf));
+    if(pick_result == AM_FILE_PICK_CANCEL) return;
+    if(pick_result != AM_FILE_PICK_OK) {
+        snprintf(g_app.toast_text, sizeof(g_app.toast_text), "%s", "当前桌面环境不支持文件选择");
+        return;
+    }
+
+    am_title_from_path(title_buf, sizeof(title_buf), path_buf);
+    memset(&g_app.picked_file, 0, sizeof(g_app.picked_file));
+    snprintf(g_app.picked_file.path, sizeof(g_app.picked_file.path), "%s", path_buf);
+    snprintf(g_app.picked_file.title, sizeof(g_app.picked_file.title), "%s", title_buf);
+    g_app.has_picked_file = true;
+    g_app.toast_text[0] = '\0';
+    am_player_play_single_file(g_app.picked_file.path, g_app.picked_file.title);
+    am_show_view(AM_VIEW_NOW);
+}
+
 static void am_update_now_view(void)
 {
     size_t i;
     const char *title = "未播放";
     const char *subtitle = "选择本地音乐或广播电台开始";
+    bool single_file = am_player_is_single_file_mode() && g_app.has_picked_file;
     bool radio = (am_player_source_kind() == AM_SOURCE_RADIO);
 
-    if(radio && g_app.radios != NULL && am_player_current_radio_index() < g_app.radio_count) {
+    if(single_file) {
+        title = g_app.picked_file.title;
+        subtitle = "本地文件";
+    } else if(radio && g_app.radios != NULL && am_player_current_radio_index() < g_app.radio_count) {
         title = g_app.radios[am_player_current_radio_index()].title;
         subtitle = "LIVE 广播电台";
     } else if(am_player_source_kind() == AM_SOURCE_LOCAL &&
@@ -209,7 +268,7 @@ static void am_update_now_view(void)
     if(g_app.title != NULL) lv_label_set_text(g_app.title, title);
     if(g_app.subtitle != NULL) lv_label_set_text(g_app.subtitle, subtitle);
     if(g_app.favorite_btn != NULL) {
-        bool is_local = (am_player_source_kind() == AM_SOURCE_LOCAL);
+        bool is_local = (am_player_source_kind() == AM_SOURCE_LOCAL) && !single_file;
         bool is_favorite = false;
 
         if(is_local && g_app.locals != NULL && am_player_current_local_index() < g_app.local_count) {
@@ -474,12 +533,13 @@ static void am_build_root(lv_obj_t *parent)
     lv_obj_set_size(g_app.player, LV_PCT(100), m->player_h);   /* build_miniplayer 内会再次确保 */
 
     am_player_init();
-    g_app.mini = am_shell_build_miniplayer(g_app.player,
-                                           am_player_on_mode,   /* 模式切换不改曲目,无需同步正在播放页 */
-                                           am_on_prev,
-                                           am_on_play_pause,
-                                           am_on_next,
-                                           am_on_playlist_toggle);
+    g_app.mini = am_shell_build_miniplayer_ex(g_app.player,
+                                              am_player_on_mode,   /* 模式切换不改曲目,无需同步正在播放页 */
+                                              am_on_prev,
+                                              am_on_play_pause,
+                                              am_on_next,
+                                              am_on_open_file,
+                                              am_on_playlist_toggle);
     am_player_bind_miniplayer(&g_app.mini);
     am_player_set_playlist_pick_cb(am_on_playlist_pick);   /* 弹层选曲 → 跳正在播放页 */
     am_load_runtime_data();
