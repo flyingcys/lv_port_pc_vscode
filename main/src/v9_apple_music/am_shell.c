@@ -157,13 +157,6 @@ void am_shell_build_sidebar(lv_obj_t *sidebar,
         lv_obj_set_style_pad_left(recent_label, 8, 0);
         lv_obj_set_style_pad_top(recent_label, 5, 0);
     }
-    for(; i < 4U; i++) {
-        lv_obj_t *recent_label = am_text(sidebar, "", m->f_body, AM_MUTED);
-        lv_label_set_long_mode(recent_label, LV_LABEL_LONG_DOT);
-        lv_obj_set_width(recent_label, LV_PCT(100));
-        lv_obj_set_style_pad_left(recent_label, 8, 0);
-        lv_obj_set_style_pad_top(recent_label, 5, 0);
-    }
 }
 
 void am_shell_set_header_title(lv_obj_t *header_label, const char *title)

@@ -141,3 +141,65 @@ cmake --build build --target apple_music_parent_size_test apple_music_data_test
 - 上述目标均构建成功
 - 五个可执行测试均退出码 `0`
 - 输出仅包含 LVGL 断言/完整性检查已开启的告警，无失败
+
+## 追加修复（最终总评）
+
+### 修复内容
+
+- 去掉 `apple_music.c` 中把 `am_show_view(am_view_t)` 强转为 `am_nav_cb_t(am_view_t, void *)` 的做法
+  - `am_refresh_sidebar()` 和 `am_show_view()` 现在统一经 `am_on_nav()` 走签名匹配的回调路径
+- 收紧 `am_state_save()` 的错误处理
+  - `fprintf()` 失败立即记错并返回非 `0`
+  - `fclose()` 失败同样返回非 `0`
+- 收紧 `am_on_play_pause()` 语义
+  - 仅在 `am_player_is_playing()` 为真时记录 recent，暂停不再打点
+- 删除 `am_shell.c` 在无 recent 时补 4 个空 label 的占位逻辑
+  - 现在没有历史时只显示“最近播放”标题，不渲染空占位
+
+### 本轮 RED
+
+先补测试：
+
+- `apple_music_state_test`
+  - 新增 `test_state_save_reports_write_failure()`，用 `/dev/full` 锁定写入失败返回非 `0`
+- `apple_music_now_view_state_test`
+  - 新增“无 recent 不渲染空占位”断言
+  - 新增“暂停不刷新 recent/sidebar”断言
+
+RED 验证命令：
+
+```bash
+cmake --build build --target apple_music_state_test apple_music_now_view_state_test
+./bin/apple_music_state_test
+./bin/apple_music_now_view_state_test
+```
+
+RED 结果：
+
+- `apple_music_state_test` 失败：`am_state_save("/dev/full", items, 1U) != 0`
+- `apple_music_now_view_state_test` 失败：`count_empty_labels(sidebar) == 0U`
+
+### 本轮 GREEN / 回归
+
+执行命令：
+
+```bash
+cmake --build build --target apple_music_state_test apple_music_now_view_state_test
+./bin/apple_music_state_test
+./bin/apple_music_now_view_state_test
+cmake --build build --target apple_music_parent_size_test apple_music_playlist_popup_layout_test apple_music_playlist_scrollbar_behavior_test apple_music_data_test
+./bin/apple_music_parent_size_test
+./bin/apple_music_playlist_popup_layout_test
+./bin/apple_music_playlist_scrollbar_behavior_test
+./bin/apple_music_data_test
+```
+
+结果：
+
+- `apple_music_state_test` 通过，覆盖 `am_state_save()` 写失败返回值
+- `apple_music_now_view_state_test` 通过，新增覆盖：
+  - 无 recent 时 sidebar 不渲染空占位
+  - 暂停不会刷新 recent
+  - 既有收藏落盘、recent 顺序、切歌即时刷新仍保持通过
+- `apple_music_parent_size_test`、`apple_music_playlist_popup_layout_test`、`apple_music_playlist_scrollbar_behavior_test`、`apple_music_data_test` 全部通过
+- 输出仅包含 LVGL 断言/完整性检查告警，无失败

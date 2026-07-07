@@ -45,6 +45,7 @@ static am_app_t g_app;
 static uint64_t g_recent_seq_next = 0U;
 static void am_update_now_view(void);
 static void am_show_view(am_view_t view);
+static void am_on_nav(am_view_t view, void *user);
 static void am_sync_current_view(void);
 static void am_save_local_state(void);
 static void am_refresh_sidebar(void);
@@ -86,7 +87,7 @@ static void am_refresh_sidebar(void)
 
     lv_obj_clean(g_app.sidebar);
     am_shell_build_sidebar(g_app.sidebar, g_app.current_view, g_app.locals, g_app.local_count,
-                           (am_nav_cb_t)am_show_view, NULL);
+                           am_on_nav, NULL);
 }
 
 static void am_record_current_local_playback(void)
@@ -169,7 +170,7 @@ static void am_on_play_pause(lv_event_t *e)
 {
     LV_UNUSED(e);
     am_player_toggle_playback();
-    am_record_current_local_playback();
+    if(am_player_is_playing()) am_record_current_local_playback();
     if(g_app.current_view == AM_VIEW_NOW) am_update_now_view();
 }
 
@@ -333,7 +334,7 @@ static void am_show_view(am_view_t view)
 {
     lv_obj_clean(g_app.sidebar);
     am_shell_build_sidebar(g_app.sidebar, view, g_app.locals, g_app.local_count,
-                           (am_nav_cb_t)am_show_view, NULL);
+                           am_on_nav, NULL);
     am_shell_set_header_title(g_app.crumb, am_view_label(view));
     lv_obj_clean(g_app.content);
 

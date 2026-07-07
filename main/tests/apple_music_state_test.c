@@ -142,6 +142,14 @@ static void test_load_skips_malformed_lines(void)
     unlink(state_path);
 }
 
+static void test_state_save_reports_write_failure(void)
+{
+    am_local_item_t items[1];
+
+    fill_item(&items[0], "/music/a.mp3", "A", true, 7U);
+    CHECK(am_state_save("/dev/full", items, 1U) != 0);
+}
+
 int main(void)
 {
     test_state_roundtrip();
@@ -149,5 +157,6 @@ int main(void)
     test_state_save_skips_plain_local_items();
     test_collect_recent_top4();
     test_load_skips_malformed_lines();
+    test_state_save_reports_write_failure();
     return 0;
 }

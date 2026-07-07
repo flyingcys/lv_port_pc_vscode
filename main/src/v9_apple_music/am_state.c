@@ -50,6 +50,7 @@ int am_state_save(const char *path, const am_local_item_t *items, size_t count)
 {
     FILE *fp;
     size_t i;
+    int rc = 0;
 
     fp = fopen(path, "w");
     if(fp == NULL) return -1;
@@ -58,14 +59,17 @@ int am_state_save(const char *path, const am_local_item_t *items, size_t count)
         if(items[i].path[0] == '\0') continue;
         if(!items[i].favorite && items[i].recent_seq == 0U) continue;
 
-        fprintf(fp, "%s\t%u\t%llu\n",
-                items[i].path,
-                items[i].favorite ? 1U : 0U,
-                (unsigned long long)items[i].recent_seq);
+        if(fprintf(fp, "%s\t%u\t%llu\n",
+                   items[i].path,
+                   items[i].favorite ? 1U : 0U,
+                   (unsigned long long)items[i].recent_seq) < 0) {
+            rc = -1;
+            break;
+        }
     }
 
-    fclose(fp);
-    return 0;
+    if(fclose(fp) != 0) rc = -1;
+    return rc;
 }
 
 size_t am_state_collect_recent(const am_local_item_t *items, size_t count, size_t *out_indices, size_t out_cap)

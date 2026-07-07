@@ -25,6 +25,7 @@ static uint32_t g_draw_buf[800 * 480];
 static am_source_kind_t g_source_kind = AM_SOURCE_LOCAL;
 static size_t g_current_local_index = 2U;
 static size_t g_current_radio_index = 0U;
+static bool g_is_playing = false;
 
 static void check_true(bool cond, const char *expr, const char *file, int line)
 {
@@ -92,6 +93,26 @@ static uint32_t count_labels_with_text(lv_obj_t *root, const char *text)
     child_count = lv_obj_get_child_count(root);
     for(i = 0U; i < child_count; i++) {
         count += count_labels_with_text(lv_obj_get_child(root, (int32_t)i), text);
+    }
+    return count;
+}
+
+static uint32_t count_empty_labels(lv_obj_t *root)
+{
+    uint32_t count = 0U;
+    uint32_t child_count;
+    uint32_t i;
+
+    if(root == NULL || lv_obj_has_flag(root, LV_OBJ_FLAG_HIDDEN)) return 0U;
+
+    if(lv_obj_check_type(root, &lv_label_class)) {
+        const char *value = lv_label_get_text(root);
+        if(value != NULL && value[0] == '\0') count++;
+    }
+
+    child_count = lv_obj_get_child_count(root);
+    for(i = 0U; i < child_count; i++) {
+        count += count_empty_labels(lv_obj_get_child(root, (int32_t)i));
     }
     return count;
 }
@@ -250,7 +271,10 @@ void am_player_set_sources(const am_local_item_t *locals, size_t local_count,
 }
 void am_player_play_local_index(size_t index) { g_current_local_index = index; }
 void am_player_play_radio_index(size_t index) { g_current_radio_index = index; }
-void am_player_toggle_playback(void) {}
+void am_player_toggle_playback(void)
+{
+    g_is_playing = !g_is_playing;
+}
 void am_player_prev(void)
 {
     if(g_current_local_index == 0U) g_current_local_index = 2U;
@@ -275,7 +299,7 @@ uint32_t am_player_track_duration_ms(size_t index)
 }
 size_t am_player_current_local_index(void) { return g_current_local_index; }
 size_t am_player_current_radio_index(void) { return g_current_radio_index; }
-bool am_player_is_playing(void) { return false; }
+bool am_player_is_playing(void) { return g_is_playing; }
 uint8_t am_player_volume_percent(void) { return 65U; }
 void am_player_refresh_ui(void) {}
 void am_player_on_play_pause(lv_event_t *e) { LV_UNUSED(e); }
@@ -311,6 +335,31 @@ static void test_recent_sidebar_and_local_favorite_button(void)
     CHECK(beta_order < alpha_order);
     CHECK(favorite_btn != NULL);
     CHECK(!lv_obj_has_flag(favorite_btn, LV_OBJ_FLAG_HIDDEN));
+
+    apple_music_destroy();
+    unlink(AM_STATE_PATH);
+}
+
+static void test_sidebar_without_recent_has_no_placeholder_labels(void)
+{
+    lv_obj_t *parent;
+    lv_obj_t *sidebar;
+
+    g_source_kind = AM_SOURCE_LOCAL;
+    g_current_local_index = 0U;
+    g_is_playing = false;
+    unlink(AM_STATE_PATH);
+
+    parent = create_parent();
+    apple_music_create_in(parent);
+    lv_obj_update_layout(parent);
+    sidebar = get_sidebar(parent);
+
+    CHECK(sidebar != NULL);
+    CHECK(count_labels_with_text(sidebar, "Alpha") == 0U);
+    CHECK(count_labels_with_text(sidebar, "Beta") == 0U);
+    CHECK(count_labels_with_text(sidebar, "Gamma") == 0U);
+    CHECK(count_empty_labels(sidebar) == 0U);
 
     apple_music_destroy();
     unlink(AM_STATE_PATH);
@@ -392,6 +441,44 @@ static void test_next_track_refreshes_recent_sidebar_immediately(void)
     unlink(AM_STATE_PATH);
 }
 
+static void test_pause_does_not_refresh_recent_sidebar(void)
+{
+    lv_obj_t *parent;
+    lv_obj_t *sidebar;
+    lv_obj_t *play_btn;
+    am_local_item_t loaded[3];
+    uint64_t max_recent_seq = 0U;
+
+    g_source_kind = AM_SOURCE_LOCAL;
+    g_current_local_index = 2U;
+    g_is_playing = true;
+    write_state_file();
+
+    parent = create_parent();
+    apple_music_create_in(parent);
+    lv_obj_update_layout(parent);
+    sidebar = get_sidebar(parent);
+    play_btn = find_miniplayer_button(parent, AM_ICON_PLAY);
+
+    CHECK(sidebar != NULL);
+    CHECK(play_btn != NULL);
+    lv_obj_send_event(play_btn, LV_EVENT_CLICKED, NULL);
+    lv_obj_update_layout(parent);
+
+    CHECK(count_labels_with_text(sidebar, "Gamma") == 0U);
+    CHECK(find_label_order(sidebar, "Beta") >= 0);
+    CHECK(find_label_order(sidebar, "Alpha") >= 0);
+    CHECK(find_label_order(sidebar, "Beta") < find_label_order(sidebar, "Alpha"));
+
+    load_state_items(loaded, &max_recent_seq);
+    CHECK(loaded[2].recent_seq == 0U);
+    CHECK(max_recent_seq == 9U);
+    CHECK(g_is_playing == false);
+
+    apple_music_destroy();
+    unlink(AM_STATE_PATH);
+}
+
 static void test_radio_hides_now_view_favorite_button(void)
 {
     lv_obj_t *parent;
@@ -426,8 +513,10 @@ int main(void)
     am_metrics_init(800, 480);
 
     test_recent_sidebar_and_local_favorite_button();
+    test_sidebar_without_recent_has_no_placeholder_labels();
     test_local_favorite_button_click_persists_state();
     test_next_track_refreshes_recent_sidebar_immediately();
+    test_pause_does_not_refresh_recent_sidebar();
     test_radio_hides_now_view_favorite_button();
 
     lv_display_delete(disp);
