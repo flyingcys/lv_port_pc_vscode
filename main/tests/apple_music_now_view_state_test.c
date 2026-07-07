@@ -612,6 +612,29 @@ static void test_now_view_content_is_top_aligned(void)
     apple_music_destroy();
 }
 
+static void test_now_view_favorite_button_size_matches_layout(void)
+{
+    lv_obj_t *parent;
+    lv_obj_t *favorite_btn;
+
+    g_source_kind = AM_SOURCE_LOCAL;
+    g_current_local_index = 0U;
+    g_is_playing = false;
+    unlink(AM_STATE_PATH);
+
+    parent = create_parent();
+    apple_music_create_in(parent);
+    lv_obj_update_layout(parent);
+
+    favorite_btn = find_now_view_favorite_button(parent);
+
+    CHECK(favorite_btn != NULL);
+    CHECK(lv_obj_get_width(favorite_btn) == 34);
+    CHECK(lv_obj_get_height(favorite_btn) == 34);
+
+    apple_music_destroy();
+}
+
 int main(void)
 {
     lv_display_t *disp;
@@ -634,6 +657,7 @@ int main(void)
     test_pause_does_not_refresh_recent_sidebar();
     test_radio_hides_now_view_favorite_button();
     test_now_view_content_is_top_aligned();
+    test_now_view_favorite_button_size_matches_layout();
 
     lv_display_delete(disp);
     teardown_test_workspace();

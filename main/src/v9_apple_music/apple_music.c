@@ -314,6 +314,7 @@ static void am_build_now_view(lv_obj_t *parent)
     lv_obj_t *info;
     bool stack = m->stack_content;             /* 最小档单列堆叠(封面在上,信息在下) */
     int cover_sz = stack ? 100 : 188;
+    int favorite_btn_sz = stack ? 30 : 34;
 
     lv_obj_remove_style_all(view);
     lv_obj_set_size(view, LV_PCT(100), LV_PCT(100));
@@ -372,11 +373,11 @@ static void am_build_now_view(lv_obj_t *parent)
 
         g_app.favorite_btn = lv_obj_create(actions);
         lv_obj_remove_style_all(g_app.favorite_btn);
-        lv_obj_set_size(g_app.favorite_btn, 28, 28);
+        lv_obj_set_size(g_app.favorite_btn, favorite_btn_sz, favorite_btn_sz);
         lv_obj_add_flag(g_app.favorite_btn, LV_OBJ_FLAG_CLICKABLE);
         lv_obj_clear_flag(g_app.favorite_btn, LV_OBJ_FLAG_SCROLLABLE);
         lv_obj_add_event_cb(g_app.favorite_btn, am_on_toggle_favorite, LV_EVENT_CLICKED, NULL);
-        g_app.favorite_icon = am_text(g_app.favorite_btn, AM_ICON_HEART, m->f_icon, AM_MUTED);
+        g_app.favorite_icon = am_text(g_app.favorite_btn, AM_ICON_HEART, m->f_metric, AM_MUTED);
         lv_obj_center(g_app.favorite_icon);
     }
 
