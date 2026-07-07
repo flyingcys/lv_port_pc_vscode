@@ -11,6 +11,7 @@
 #include "am_page_list.h"
 #include "am_player.h"
 #include "am_shell.h"
+#include "am_state.h"
 #include "am_sources_csv.h"
 #include "am_theme.h"
 #include "am_widgets.h"
@@ -38,9 +39,12 @@ typedef struct {
 } am_app_t;
 
 static am_app_t g_app;
+static uint64_t g_recent_seq_next = 0U;
 static void am_update_now_view(void);
 static void am_show_view(am_view_t view);
 static void am_sync_current_view(void);
+static void am_save_local_state(void);
+static void am_record_current_local_playback(void);
 
 /* 选曲/切台发生在 LVGL 事件回调内,若同步 am_show_view→lv_obj_clean 会删掉正处理事件的行 → UAF。
  * 故列表页重建一律经 lv_async_call 推迟到事件返回后;目标视图存于 g_pending_view(取最后一次)。 */
@@ -62,9 +66,32 @@ static void am_sync_current_view(void)
     if(g_app.current_view == AM_VIEW_NOW) am_update_now_view();
     else am_request_view(g_app.current_view);
 }
+
+static void am_save_local_state(void)
+{
+    if(g_app.locals == NULL || g_app.local_count == 0U) return;
+    if(am_state_save(AM_STATE_PATH, g_app.locals, g_app.local_count) != 0) {
+        LV_LOG_WARN("apple music state save failed: %s", AM_STATE_PATH);
+    }
+}
+
+static void am_record_current_local_playback(void)
+{
+    size_t index;
+
+    if(am_player_source_kind() != AM_SOURCE_LOCAL) return;
+    if(g_app.locals == NULL || g_app.local_count == 0U) return;
+
+    index = am_player_current_local_index();
+    if(index >= g_app.local_count) return;
+
+    am_state_mark_recent(g_app.locals, g_app.local_count, index, &g_recent_seq_next);
+    am_save_local_state();
+}
 /* 弹层选曲后跳到正在播放页(在 lv_async 回调内被调用,已脱离行点击事件,直接切视图安全)。 */
 static void am_on_playlist_pick(void)
 {
+    am_record_current_local_playback();
     am_show_view(AM_VIEW_NOW);
 }
 
@@ -94,6 +121,7 @@ static void am_on_local_selected(size_t index, void *user)
 {
     LV_UNUSED(user);
     am_player_play_local_index(index);
+    am_record_current_local_playback();
     am_sync_current_view();   /* 收藏列表页:重建以移动高亮 */
 }
 
@@ -109,6 +137,7 @@ static void am_on_play_pause(lv_event_t *e)
 {
     LV_UNUSED(e);
     am_player_toggle_playback();
+    am_record_current_local_playback();
     if(g_app.current_view == AM_VIEW_NOW) am_update_now_view();
 }
 
@@ -116,6 +145,7 @@ static void am_on_prev(lv_event_t *e)
 {
     LV_UNUSED(e);
     am_player_prev();
+    am_record_current_local_playback();
     am_sync_current_view();   /* 上一首/台:同步当前页(列表页移动高亮,正在播放页更新) */
 }
 
@@ -123,6 +153,7 @@ static void am_on_next(lv_event_t *e)
 {
     LV_UNUSED(e);
     am_player_next();
+    am_record_current_local_playback();
     am_sync_current_view();   /* 下一首/台 */
 }
 
@@ -286,6 +317,10 @@ static void am_load_runtime_data(void)
     }
     if(g_app.locals == NULL) {
         am_local_scan_dir("third-party/hls_player_demo/test_file", &g_app.locals, &g_app.local_count);
+        g_recent_seq_next = 0U;
+        if(g_app.locals != NULL && g_app.local_count > 0U) {
+            am_state_load(AM_STATE_PATH, g_app.locals, g_app.local_count, &g_recent_seq_next);
+        }
     }
     am_player_set_sources(g_app.locals, g_app.local_count, g_app.radios, g_app.radio_count);
 }

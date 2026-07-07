@@ -92,7 +92,8 @@ int am_local_scan_dir(const char *dir, am_local_item_t **items, size_t *count)
         memset(&buffer[used], 0, sizeof(buffer[used]));
         am_copy_text(buffer[used].path, sizeof(buffer[used].path), full_path);
         am_title_from_name(buffer[used].title, sizeof(buffer[used].title), entry->d_name);
-        buffer[used].favorite = (used < 4U);
+        buffer[used].favorite = false;
+        buffer[used].recent_seq = 0U;
         used++;
     }
 

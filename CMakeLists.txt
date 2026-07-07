@@ -74,6 +74,7 @@ set(V9_APPLE_MUSIC_SOURCES
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_player.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_screenshot.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_shell.c
+    ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_state.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_sources_csv.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_theme.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_widgets.c

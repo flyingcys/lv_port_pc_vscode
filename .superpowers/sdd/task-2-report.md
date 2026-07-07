@@ -1,91 +1,82 @@
-# Task 2 报告：实现长短列表显隐与滚动同步
+# Task 2 报告
 
-## 任务范围
+## 状态
 
-- 需求来源：`.superpowers/sdd/task-2-brief.md`
-- 本次仅实现 Task 2 要求：
-  - 长短列表下滚动条显隐
-  - 滚动时 thumb 同步
-  - 不实现 thumb 拖拽
+DONE
 
-## TDD 过程
+## 执行记录
 
-1. 新建行为测试 `main/tests/apple_music_playlist_scrollbar_behavior_test.c`
-2. 先写短列表隐藏、长列表显示、滚动后 thumb 位移断言
-3. 运行聚焦测试，初始失败：
-   - 长列表下 `track should be visible`
-4. 在 `main/src/v9_apple_music/am_player.c` 实现最小同步逻辑
-5. 再次运行聚焦测试，发现 thumb 位移方向错误
-6. 修正滚动位移方向后，聚焦测试通过
+1. 已读取唯一需求源 `.superpowers/sdd/task-2-brief.md`，按 brief 约束尝试执行 TDD。
+2. 已确认当前工作树基线为 `39ea04f`，且未触碰无关脏文件 `third-party/hls_player_demo` 与 `21.png`。
+3. 已尝试使用 GitNexus 做预编辑分析，但当前环境中该仓库未出现在 MCP 索引列表；随后执行 `npx gitnexus analyze` 也因 native worker/binding 异常中止，无法得到可用的 impact / detect_changes 结果。
+4. 已先把 `main/tests/apple_music_data_test.c` 改成显式失败风格，验证 RED：
+   - `cmake --build build --target apple_music_data_test && ./bin/apple_music_data_test`
+   - 失败点为 `local[i].favorite == false`，证明“扫描阶段伪收藏”确实存在。
+5. 已在允许写面内尝试最小实现：
+   - `am_local_scan.c` 去掉扫描默认收藏并清零 `recent_seq`
+   - `apple_music.c` 接入 `am_state_load/save/mark_recent`
+6. GREEN/编译验证时触发硬阻塞：
+   - `cmake --build build --target apple_music_data_test main`
+   - `apple_music_data_test` 可通过
+   - `main` 链接失败，缺少 `am_state_load` / `am_state_save` / `am_state_mark_recent`
 
-## 实现说明
+## 阻塞原因
 
-### 1. 行为测试
+当前 `main` 目标的源集合没有把 `main/src/v9_apple_music/am_state.c` 链进去。要完成 Task 2，必须修改 `CMakeLists.txt`（或等价构建配置）把 `am_state.c` 纳入 `V9_APPLE_MUSIC_SOURCES` / `main` 目标。
 
-- 新增 `apple_music_playlist_scrollbar_behavior_test`
-- 用轻量 `music_player` stub 隔离播放引擎
-- 覆盖三类行为：
-  - 短列表时滚动条隐藏
-  - 长列表时滚动条显示，且 thumb 高度有效
-  - 列表滚动后 thumb 实际坐标随之移动
+但你当前明确限制了写面只允许：
 
-### 2. 滚动条同步逻辑
+- `main/src/v9_apple_music/am_local_scan.c`
+- `main/src/v9_apple_music/apple_music.c`
+- `main/tests/apple_music_data_test.c`
 
-在 `am_player.c` 新增：
+并要求“如果发现必须改出这三个文件，先停下并报 NEEDS_CONTEXT”。因此我没有继续改 `CMakeLists.txt`，并且已经把三个允许写面的临时改动全部回滚，避免把仓库留在半成品状态。
 
-- `static void am_playlist_scrollbar_sync(void)`
-- `static void am_playlist_list_scroll_cb(lv_event_t *e)`
+## 需要的上下文/放权
 
-同步逻辑要点：
+至少需要允许修改以下文件之一：
 
-- 基于 `playlist_list` 的 viewport 高度、内容高度、当前滚动量计算是否需要显示滚动条
-- 内容未超出 viewport 时隐藏 `playlist_scroll_track`
-- 内容超出时显示 `playlist_scroll_track`
-- 根据 viewport/content 比例计算 thumb 高度，并设置最小高度 24
-- 根据滚动位置计算 thumb 的 Y 偏移，实现滚动同步
-
-### 3. 刷新链路接入
-
-- 在 `am_refresh_playlist_popup()` 重建播放列表后同步滚动条
-- 在 `am_player_refresh_ui()` 中补一次同步，覆盖“列表未重建但滚动位置变化”的场景
-- 在 `am_player_bind_miniplayer()` 给 `playlist_list` 注册 `LV_EVENT_SCROLL`，驱动滚动过程中的实时同步
-
-### 4. 构建接线
-
-修改 `CMakeLists.txt`：
-
-- 新增测试目标 `apple_music_playlist_scrollbar_behavior_test`
-- 注册对应 `add_test(...)`
-
-## 风险与影响
-
-### 手工 impact 收敛
-
-由于本地 GitNexus MCP 未识别当前仓库索引，本次改动前做了手工 blast radius 收敛：
-
-- `am_player_refresh_ui` 的外部入口在 `main/src/v9_apple_music/apple_music.c`
-- `am_player_bind_miniplayer` 的外部入口在 `main/src/v9_apple_music/apple_music.c`
-- `am_refresh_playlist_popup` 为 `am_player.c` 内部静态函数
-
-实际改动仅限：
-
-- `main/src/v9_apple_music/am_player.c`
-- `main/tests/apple_music_playlist_scrollbar_behavior_test.c`
 - `CMakeLists.txt`
 
-## 测试
+建议变更：
 
-执行命令：
+- 将 `main/src/v9_apple_music/am_state.c` 加入 `V9_APPLE_MUSIC_SOURCES`
 
-```bash
-cmake --build build --target apple_music_playlist_scrollbar_behavior_test
-./bin/apple_music_playlist_scrollbar_behavior_test
-```
+拿到该写面后，可以按同一 TDD 路径快速完成：
 
-结果：
+1. 重做 `apple_music_data_test.c` 的 RED
+2. 实现 `am_local_scan.c` 与 `apple_music.c` 的最小改动
+3. 验证 `apple_music_data_test` GREEN
+4. 验证 `main` 重新链接成功
+5. 再做一次变更范围检查并提交
 
-- PASS
+## 继续执行结果
 
-## 关注项
+1. 已获得额外写面 `CMakeLists.txt`，并按原 RED 路径继续执行。
+2. 重新验证 RED：
+   - `cmake --build build --target apple_music_data_test && ./bin/apple_music_data_test`
+   - 失败点仍为 `local[i].favorite == false`
+3. 已完成最小实现：
+   - `main/tests/apple_music_data_test.c`
+     - 把数据测试切换为显式 `CHECK`，避免 Release 构建下 `assert` 被 `-DNDEBUG` 吃掉
+     - 锁定“扫描结果中全部 `favorite == false` 且 `recent_seq == 0U`”
+   - `main/src/v9_apple_music/am_local_scan.c`
+     - 去掉扫描阶段的假收藏初始化
+     - 显式清零 `recent_seq`
+   - `main/src/v9_apple_music/apple_music.c`
+     - 新增 `am_state.h` include
+     - 新增 `g_recent_seq_next`
+     - 新增 `am_save_local_state()` / `am_record_current_local_playback()`
+     - 在 `am_load_runtime_data()` 中加载持久化状态
+     - 在本地切歌入口 `am_on_local_selected()` / `am_on_play_pause()` / `am_on_prev()` / `am_on_next()` / `am_on_playlist_pick()` 后记录最近播放
+   - `CMakeLists.txt`
+     - 仅把 `main/src/v9_apple_music/am_state.c` 纳入 `V9_APPLE_MUSIC_SOURCES`
+4. GREEN 与链接验证：
+   - `cmake --build build --target apple_music_data_test apple_music_state_test main`
+   - `./bin/apple_music_data_test`
+   - `./bin/apple_music_state_test`
+   - 以上均通过，且 `main` 成功重新链接。
 
-- `rtk proxy npx gitnexus analyze .` 已启动并生成部分 `.gitnexus` 缓存，但当前 CLI/MCP 仍未把该仓库识别为可用索引，因此本次未能完成 GitNexus `impact` / `detect-changes` 的正式校验。
+## 提交
+
+- 已创建 commit：`feat: wire apple music runtime state updates`
