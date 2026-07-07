@@ -17,6 +17,7 @@
 #include "../src/v9_apple_music/am_sources_csv.h"
 #include "../src/v9_apple_music/am_state.h"
 #include "../src/v9_apple_music/apple_music.h"
+#include "../../main/inc/music_player.h"
 
 #define CHECK(cond) check_true((cond), #cond, __FILE__, __LINE__)
 
@@ -25,6 +26,7 @@ static size_t g_current_local_index = 1U;
 static size_t g_current_radio_index = 0U;
 static bool g_is_playing = false;
 static bool g_is_single_file_mode = false;
+static music_play_mode_t g_play_mode = MP_MODE_SEQ;
 static char g_single_file_path[1024];
 static char g_single_file_title[256];
 static am_file_pick_result_t g_pick_result = AM_FILE_PICK_CANCEL;
@@ -212,9 +214,34 @@ void am_player_toggle_playback(void)
 {
     g_is_playing = !g_is_playing;
 }
-void am_player_prev(void) {}
-void am_player_next(void) {}
-void am_player_cycle_mode(void) {}
+void am_player_prev(void)
+{
+    if(g_is_single_file_mode) return;
+    g_current_local_index = (g_current_local_index == 0U) ? 2U : (g_current_local_index - 1U);
+}
+void am_player_next(void)
+{
+    if(g_is_single_file_mode) return;
+    g_current_local_index = (g_current_local_index + 1U) % 3U;
+}
+void am_player_cycle_mode(void)
+{
+    switch(g_play_mode) {
+        case MP_MODE_SEQ:
+            g_play_mode = MP_MODE_REPEAT_ONE;
+            break;
+        case MP_MODE_REPEAT_ONE:
+            g_play_mode = MP_MODE_REPEAT_ALL;
+            break;
+        case MP_MODE_REPEAT_ALL:
+            g_play_mode = MP_MODE_SHUFFLE;
+            break;
+        case MP_MODE_SHUFFLE:
+        default:
+            g_play_mode = MP_MODE_SEQ;
+            break;
+    }
+}
 void am_player_set_volume_percent(uint8_t percent) { LV_UNUSED(percent); }
 void am_player_seek_percent(uint8_t percent) { LV_UNUSED(percent); }
 void am_player_toggle_mute(void) {}
@@ -240,9 +267,21 @@ void am_player_clear_single_file_mode(void)
 }
 void am_player_refresh_ui(void) {}
 void am_player_on_play_pause(lv_event_t *e) { LV_UNUSED(e); }
-void am_player_on_prev(lv_event_t *e) { LV_UNUSED(e); }
-void am_player_on_next(lv_event_t *e) { LV_UNUSED(e); }
-void am_player_on_mode(lv_event_t *e) { LV_UNUSED(e); }
+void am_player_on_prev(lv_event_t *e)
+{
+    LV_UNUSED(e);
+    am_player_prev();
+}
+void am_player_on_next(lv_event_t *e)
+{
+    LV_UNUSED(e);
+    am_player_next();
+}
+void am_player_on_mode(lv_event_t *e)
+{
+    LV_UNUSED(e);
+    am_player_cycle_mode();
+}
 
 am_file_pick_result_t am_desktop_file_dialog_pick_audio(char *path_buf, size_t path_buf_size)
 {
@@ -266,6 +305,7 @@ static void test_open_file_click_updates_now_view_without_polluting_state(void)
     g_current_radio_index = 0U;
     g_is_playing = false;
     g_is_single_file_mode = false;
+    g_play_mode = MP_MODE_SEQ;
     snprintf(g_pick_path, sizeof(g_pick_path), "%s", "/tmp/My Song.mp3");
     g_pick_result = AM_FILE_PICK_OK;
     g_single_file_path[0] = '\0';
@@ -305,6 +345,104 @@ static void test_open_file_click_updates_now_view_without_polluting_state(void)
     unlink(AM_STATE_PATH);
 }
 
+static void check_single_file_now_view_state(lv_obj_t *parent)
+{
+    lv_obj_t *favorite_btn;
+
+    CHECK(g_is_single_file_mode);
+    CHECK(strcmp(g_single_file_path, "/tmp/My Song.mp3") == 0);
+    CHECK(strcmp(g_single_file_title, "My Song") == 0);
+    CHECK(find_label_object(parent, "My Song", true) != NULL);
+    CHECK(find_label_object(parent, "本地文件", true) != NULL);
+
+    favorite_btn = find_now_view_favorite_button(parent);
+    CHECK(lv_obj_has_flag(favorite_btn, LV_OBJ_FLAG_HIDDEN));
+}
+
+static void check_state_file_unchanged(void)
+{
+    am_local_item_t loaded[3];
+    uint64_t max_recent_seq = 0U;
+
+    load_state_items(loaded, &max_recent_seq);
+    CHECK(loaded[0].recent_seq == 4U);
+    CHECK(loaded[1].recent_seq == 9U);
+    CHECK(loaded[2].recent_seq == 0U);
+    CHECK(loaded[2].favorite == true);
+    CHECK(max_recent_seq == 9U);
+}
+
+static void open_single_file_session(lv_obj_t *parent)
+{
+    lv_obj_t *open_file_btn;
+
+    open_file_btn = find_miniplayer_button(parent, AM_ICON_OPEN_FILE);
+    lv_obj_send_event(open_file_btn, LV_EVENT_CLICKED, NULL);
+    lv_timer_handler();
+    lv_obj_update_layout(parent);
+    check_single_file_now_view_state(parent);
+}
+
+static void click_mode_until(lv_obj_t *mode_btn, music_play_mode_t target_mode)
+{
+    int guard = 0;
+
+    while(g_play_mode != target_mode && guard < 8) {
+        lv_obj_send_event(mode_btn, LV_EVENT_CLICKED, NULL);
+        lv_timer_handler();
+        guard++;
+    }
+
+    CHECK(g_play_mode == target_mode);
+}
+
+static void test_single_file_mode_survives_transport_across_modes(void)
+{
+    lv_obj_t *parent;
+    lv_obj_t *mode_btn;
+    lv_obj_t *prev_btn;
+    lv_obj_t *next_btn;
+    const music_play_mode_t modes[] = {MP_MODE_SEQ, MP_MODE_REPEAT_ALL, MP_MODE_SHUFFLE};
+    size_t i;
+
+    g_current_local_index = 1U;
+    g_current_radio_index = 0U;
+    g_is_playing = false;
+    g_is_single_file_mode = false;
+    g_play_mode = MP_MODE_SEQ;
+    snprintf(g_pick_path, sizeof(g_pick_path), "%s", "/tmp/My Song.mp3");
+    g_pick_result = AM_FILE_PICK_OK;
+    g_single_file_path[0] = '\0';
+    g_single_file_title[0] = '\0';
+
+    write_state_file();
+    parent = create_parent();
+    apple_music_create_in(parent);
+    lv_obj_update_layout(parent);
+    open_single_file_session(parent);
+
+    mode_btn = find_miniplayer_button(parent, "SEQ");
+    prev_btn = find_miniplayer_button(parent, LV_SYMBOL_PREV);
+    next_btn = find_miniplayer_button(parent, LV_SYMBOL_NEXT);
+
+    for(i = 0U; i < sizeof(modes) / sizeof(modes[0]); i++) {
+        click_mode_until(mode_btn, modes[i]);
+        lv_obj_send_event(prev_btn, LV_EVENT_CLICKED, NULL);
+        lv_timer_handler();
+        lv_obj_send_event(next_btn, LV_EVENT_CLICKED, NULL);
+        lv_timer_handler();
+        lv_obj_update_layout(parent);
+
+        CHECK(g_play_mode == modes[i]);
+        CHECK(g_current_local_index == 1U);
+        check_single_file_now_view_state(parent);
+        check_state_file_unchanged();
+    }
+
+    apple_music_destroy();
+    unlink(AM_STATE_PATH);
+}
+
 int main(void)
 {
     lv_display_t *disp;
@@ -317,6 +455,7 @@ int main(void)
     am_metrics_init(800, 480);
 
     test_open_file_click_updates_now_view_without_polluting_state();
+    test_single_file_mode_survives_transport_across_modes();
 
     lv_display_delete(disp);
     return 0;
