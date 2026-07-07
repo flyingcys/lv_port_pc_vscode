@@ -45,6 +45,12 @@ static lv_obj_t *am_icon_button(lv_obj_t *parent, const char *glyph, const lv_fo
     return btn;
 }
 
+static lv_obj_t *am_text_button(lv_obj_t *parent, const char *text, const lv_font_t *font,
+                                int box, lv_color_t color)
+{
+    return am_icon_button(parent, text, font, box, color);
+}
+
 static lv_obj_t *am_transport_button_base(lv_obj_t *parent, int box)
 {
     lv_obj_t *btn = lv_obj_create(parent);
@@ -213,12 +219,14 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
                                                   am_simple_event_cb_t on_prev,
                                                   am_simple_event_cb_t on_play,
                                                   am_simple_event_cb_t on_next,
+                                                  am_simple_event_cb_t on_open_file,
                                                   am_simple_event_cb_t on_playlist)
 {
     am_miniplayer_handles_t h;
     const am_metrics_t *m = am_metrics();
 
     memset(&h, 0, sizeof(h));
+    LV_UNUSED(on_open_file);
 
     lv_obj_remove_style_all(player);
     /* remove_style_all 清掉调用方设的尺寸;重设为满宽固定高(否则塌成默认 130 落到顶部) */
@@ -314,12 +322,13 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
 
             lv_color_t ctrl_col = lv_color_hex(0x2a2a2e);
             lv_color_t accent_col = lv_color_hex(0xfa2d48);
-            h.btn_mode = am_icon_button(ctrls, AM_ICON_REPLAY, m->f_metric, 30, accent_col);
+            h.btn_mode = am_text_button(ctrls, "SEQ", m->f_label, 30, accent_col);
             h.btn_prev = am_transport_symbol_button(ctrls, LV_SYMBOL_PREV, &lv_font_montserrat_20,
                                                     32, ctrl_col, NULL);
             h.btn_play = am_transport_play_button(ctrls, ctrl_col, &h.play_icon, &h.pause_icon);
             h.btn_next = am_transport_symbol_button(ctrls, LV_SYMBOL_NEXT, &lv_font_montserrat_20,
                                                     32, ctrl_col, NULL);
+            h.btn_open_file = am_text_button(ctrls, AM_ICON_OPEN_FILE, m->f_label, 30, ctrl_col);
             h.btn_playlist = am_icon_button(ctrls, AM_ICON_LIST, m->f_metric, 30, ctrl_col);
             lv_obj_set_style_margin_left(h.btn_prev, 2, 0);
             lv_obj_set_style_margin_right(h.btn_next, 2, 0);
@@ -328,6 +337,9 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
             if(on_prev != NULL) lv_obj_add_event_cb(h.btn_prev, on_prev, LV_EVENT_CLICKED, NULL);
             if(on_play != NULL) lv_obj_add_event_cb(h.btn_play, on_play, LV_EVENT_CLICKED, NULL);
             if(on_next != NULL) lv_obj_add_event_cb(h.btn_next, on_next, LV_EVENT_CLICKED, NULL);
+            if(on_open_file != NULL) {
+                lv_obj_add_event_cb(h.btn_open_file, on_open_file, LV_EVENT_CLICKED, NULL);
+            }
             if(on_playlist != NULL) lv_obj_add_event_cb(h.btn_playlist, on_playlist, LV_EVENT_CLICKED, NULL);
         }
 

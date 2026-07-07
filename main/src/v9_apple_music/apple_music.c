@@ -479,6 +479,7 @@ static void am_build_root(lv_obj_t *parent)
                                            am_on_prev,
                                            am_on_play_pause,
                                            am_on_next,
+                                           NULL,
                                            am_on_playlist_toggle);
     am_player_bind_miniplayer(&g_app.mini);
     am_player_set_playlist_pick_cb(am_on_playlist_pick);   /* 弹层选曲 → 跳正在播放页 */

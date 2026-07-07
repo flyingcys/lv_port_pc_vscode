@@ -6,6 +6,7 @@
 
 #include "lvgl.h"
 
+#include "../src/v9_apple_music/am_icons.h"
 #include "../src/v9_apple_music/am_metrics.h"
 #include "../src/v9_apple_music/am_player.h"
 #include "../src/v9_apple_music/am_shell.h"
@@ -211,7 +212,7 @@ static void setup_display(lv_display_t **disp_out, lv_obj_t **root_out, am_minip
     lv_obj_set_size(player, 604, am_metrics()->player_h);
     lv_obj_align(player, LV_ALIGN_BOTTOM_MID, 0, 0);
 
-    *handles_out = am_shell_build_miniplayer(player, NULL, NULL, NULL, NULL, NULL);
+    *handles_out = am_shell_build_miniplayer(player, NULL, NULL, NULL, NULL, NULL, NULL);
     info = lv_obj_create(root);
     lv_obj_remove_style_all(info);
     lv_obj_set_size(info, LV_PCT(100), LV_SIZE_CONTENT);
@@ -240,6 +241,59 @@ static void check_single_file_session_invariant(const am_miniplayer_handles_t *h
     CHECK(strcmp(lv_label_get_text(handles->title_label), "picked") == 0);
     CHECK(strcmp(lv_label_get_text(handles->subtitle_label), "单个文件") == 0);
     CHECK(lv_obj_get_child_count(handles->playlist_list) == 1U);
+}
+
+static const char *button_text(lv_obj_t *btn)
+{
+    lv_obj_t *label;
+
+    CHECK(btn != NULL);
+    label = lv_obj_get_child(btn, 0);
+    CHECK(label != NULL);
+    return lv_label_get_text(label);
+}
+
+static void check_mode_button_text(am_miniplayer_handles_t *handles, music_play_mode_t mode,
+                                   const char *expected)
+{
+    CHECK(handles != NULL);
+    music_player_set_play_mode(mode);
+    am_player_refresh_ui();
+    CHECK(strcmp(button_text(handles->btn_mode), expected) == 0);
+}
+
+static void test_miniplayer_exposes_open_file_button(void)
+{
+    lv_display_t *disp;
+    lv_obj_t *root;
+    am_miniplayer_handles_t handles;
+
+    setup_display(&disp, &root, &handles);
+    CHECK(root != NULL);
+    CHECK(handles.btn_open_file != NULL);
+    CHECK(strcmp(button_text(handles.btn_open_file), AM_ICON_OPEN_FILE) == 0);
+
+    teardown_display(disp);
+}
+
+static void test_mode_button_text_follows_play_mode(void)
+{
+    lv_display_t *disp;
+    lv_obj_t *root;
+    am_miniplayer_handles_t handles;
+
+    setup_display(&disp, &root, &handles);
+    am_player_init();
+    am_player_bind_miniplayer(&handles);
+
+    CHECK(root != NULL);
+    check_mode_button_text(&handles, MP_MODE_SEQ, "SEQ");
+    check_mode_button_text(&handles, MP_MODE_REPEAT_ONE, "ONE");
+    check_mode_button_text(&handles, MP_MODE_REPEAT_ALL, "LOOP");
+    check_mode_button_text(&handles, MP_MODE_SHUFFLE, "SHUF");
+
+    am_player_deinit();
+    teardown_display(disp);
 }
 
 static void test_single_file_playlist_renders_one_row(void)
@@ -392,6 +446,8 @@ static void test_clear_single_file_mode_resets_flag(void)
 
 int main(void)
 {
+    test_miniplayer_exposes_open_file_button();
+    test_mode_button_text_follows_play_mode();
     test_single_file_playlist_renders_one_row();
     test_single_file_playlist_rebuilds_after_local_playlist();
     test_single_file_next_prev_do_not_leave_current_file();

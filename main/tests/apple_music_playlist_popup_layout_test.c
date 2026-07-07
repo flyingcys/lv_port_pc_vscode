@@ -50,7 +50,7 @@ int main(void)
     lv_obj_set_size(player, 604, am_metrics()->player_h);
     lv_obj_align(player, LV_ALIGN_BOTTOM_MID, 0, 0);
 
-    handles = am_shell_build_miniplayer(player, NULL, NULL, NULL, NULL, NULL);
+    handles = am_shell_build_miniplayer(player, NULL, NULL, NULL, NULL, NULL, NULL);
     lv_obj_update_layout(root);
 
     if(handles.playlist_popup == NULL) return failf("playlist popup missing", 0);

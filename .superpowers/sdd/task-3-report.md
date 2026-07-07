@@ -1,205 +1,112 @@
-# Task 3 报告
+# Task 3 报告：迷你播放器“打开文件”按钮与模式按钮视觉
 
-## 结果摘要
+## 需求范围
 
-- 侧边栏“最近播放”改为读取 `am_state_collect_recent()` 的真实状态，不再消费假数据 `am_recent_titles`
-- “正在播放”页新增收藏按钮
-- 本地音源下按钮显示并可切换收藏、落盘到 `apple_music_state.tsv`
-- 广播音源下按钮隐藏
-- 新增 UI 回归测试 `apple_music_now_view_state_test`
-- 补强 UI 回归测试：断言 `Beta` 排在 `Alpha` 前，实际点击收藏按钮并回读 `apple_music_state.tsv` 验证落盘，广播场景按按钮对象隐藏态断言
+- 新增迷你播放器 `btn_open_file` 句柄与 `on_open_file` 接线能力。
+- 模式按钮提供四态文本反馈：`SEQ / ONE / LOOP / SHUF`。
+- 保持按钮单行布局，顺序为：模式 / 上一首 / 播放 / 下一首 / 打开文件 / 播放列表。
+- 不实现 Task 4 的文件选择行为逻辑。
 
-## TDD 过程
+## 影响面说明
+
+- 计划要求先做 GitNexus impact，但当前 GitNexus MCP 没有索引这个仓库；尝试对 `/home/share/samba/lvgl/lv_port_pc_vscode_flyingcys` 执行 `impact` 返回 `Repository not found`。
+- 因此退化为本地调用面扫描，结果与 brief 一致：
+  - `am_shell_build_miniplayer()` 调用点只在 `main/src/v9_apple_music/apple_music.c`
+  - `main/tests/apple_music_playlist_popup_layout_test.c`
+  - `main/tests/apple_music_playlist_scrollbar_behavior_test.c`
+  - `main/tests/apple_music_single_file_player_test.c`
+- 本次改动风险评估：
+  - `am_shell_build_miniplayer`：低到中，原因是签名变化但调用点有限且已全部补 `NULL`
+  - `am_player_refresh_ui`：低，原因是只新增模式按钮标签刷新
+
+## TDD 记录
 
 ### RED
 
-先新增 `main/tests/apple_music_now_view_state_test.c` 与 CMake 目标，测试通过 stub 运行态数据：
-
-- `am_local_scan_dir()` 返回 `Alpha/Beta/Gamma`
-- 预写状态文件：`Beta recent_seq=9`、`Alpha recent_seq=4`、`Gamma favorite=1`
-- 本地音源当前索引为 `2`
-
-首次 RED 验证命令：
+命令：
 
 ```bash
-cmake --build build --target apple_music_now_view_state_test && ./bin/apple_music_now_view_state_test
+cmake --build build --target apple_music_single_file_player_test && ctest --test-dir build -R '^apple_music_single_file_player_test$' --output-on-failure
 ```
 
-首次有效失败结果：
+关键输出：
 
-- `CHECK failed: count_labels_with_text(sidebar, "Beta") >= 1U`
+```text
+CHECK failed: handles.btn_open_file != NULL (line 273)
+0% tests passed, 1 tests failed out of 1
+```
 
-说明侧边栏仍在渲染假最近播放，符合预期。
+为什么这个 RED 合理：
+
+- 测试已经声明了新需求：迷你播放器必须暴露 `btn_open_file`。
+- 此时仅补了编译所需的机械接口，`am_shell_build_miniplayer()` 还没有真正创建该按钮。
+- 因此失败原因正是“功能未实现”，不是拼写错误、环境错误或测试本身无效。
 
 ### GREEN
 
-按 brief 做最小实现：
+最小实现：
 
-- 扩展 `am_shell_build_sidebar()` 签名，传入 `locals/local_count`
-- 侧边栏改用 `am_state_collect_recent()` 渲染最近播放
-- 删除 `am_recent_titles` 定义与声明
-- “正在播放”页增加 `favorite_btn/favorite_icon`
-- 新增 `am_on_toggle_favorite()`，切换收藏后保存状态并刷新当前页与侧边栏
-- 所有侧边栏重建入口切换到新签名
-- `apple_music_parent_size_test` 链接 `am_state.c`，覆盖新增状态依赖
+- 在 `am_miniplayer_handles_t` 中新增 `btn_open_file`
+- `am_shell_build_miniplayer()` 新增 `on_open_file` 参数，并创建 `btn_open_file`
+- 模式按钮从固定图标改为文本按钮，初始文本为 `SEQ`
+- `am_player_refresh_ui()` 根据 `music_player_get_play_mode()` 刷新模式按钮文案
 
-补测试覆盖时，继续收紧 `apple_music_now_view_state_test`：
-
-- 不再用全页心形数量间接判断显隐，改为在主面板内定位“正在播放”收藏按钮对象并检查 `LV_OBJ_FLAG_HIDDEN`
-- 侧边栏 recent 断言从“都出现”升级为“`Beta` 先于 `Alpha` 出现”
-- 新增真实交互用例：发送 `LV_EVENT_CLICKED` 到收藏按钮，随后用 `am_state_load()` 重新读取 `apple_music_state.tsv`，验证 `Gamma.favorite` 从 `true` 翻到 `false`
-
-## 验证
-
-执行命令：
+命令：
 
 ```bash
-cmake --build build --target apple_music_now_view_state_test apple_music_parent_size_test apple_music_data_test
-./bin/apple_music_now_view_state_test
-./bin/apple_music_parent_size_test
-./bin/apple_music_data_test
+cmake --build build --target apple_music_single_file_player_test && ctest --test-dir build -R '^apple_music_single_file_player_test$' --output-on-failure
 ```
 
-结果：
+关键输出：
 
-- 三个测试均通过
-- `apple_music_now_view_state_test` 额外覆盖最近播放顺序、收藏按钮显隐、真实点击后的收藏落盘
+```text
+1/1 Test #18: apple_music_single_file_player_test ...   Passed
+100% tests passed, 0 tests failed out of 1
+```
 
-## GitNexus 说明
+## 回归验证
 
-本任务尝试按仓库要求执行 GitNexus impact：
+命令：
 
-- `mcp__gitnexus.impact` 无法命中当前仓库，因为 MCP registry 中缺少该仓库条目
-- 本地执行 `npx gitnexus analyze` 时，GitNexus 原生 worker 在 Node `v22.21.1` 环境下崩溃，未能完成索引注册
-- 收尾阶段再次尝试 `mcp__gitnexus.detect_changes`，MCP 仍要求已注册 repo 名称，当前仓库无法被解析到对应索引
+```bash
+cmake --build build --target apple_music_single_file_player_test apple_music_playlist_popup_layout_test apple_music_playlist_scrollbar_behavior_test && ctest --test-dir build -R '^(apple_music_single_file_player_test|apple_music_playlist_popup_layout_test|apple_music_playlist_scrollbar_behavior_test)$' --output-on-failure
+```
 
-因此本轮只能做保守手工 blast radius：
+关键输出：
 
-- `am_shell_build_sidebar()` 直接调用点仅 `apple_music.c` 两处
-- `am_update_now_view()` / `am_build_now_view()` 仅在 `apple_music.c` 内部使用
-- `am_recent_titles` 消费点仅 `am_shell.c`
+```text
+1/3 Test #16: apple_music_playlist_popup_layout_test .........   Passed
+2/3 Test #17: apple_music_playlist_scrollbar_behavior_test ...   Passed
+3/3 Test #18: apple_music_single_file_player_test ............   Passed
+100% tests passed, 0 tests failed out of 3
+```
 
-保守风险评估：`MEDIUM`
+## 实际改动
 
-## 改动文件
-
-- `main/src/v9_apple_music/am_data.c`
-- `main/src/v9_apple_music/am_data.h`
+- `main/src/v9_apple_music/am_icons.h`
+  - 新增 `AM_ICON_OPEN_FILE`
+- `main/src/v9_apple_music/am_player.h`
+  - 为 `am_miniplayer_handles_t` 新增 `btn_open_file`
 - `main/src/v9_apple_music/am_shell.h`
+  - `am_shell_build_miniplayer()` 新增 `on_open_file` 参数
 - `main/src/v9_apple_music/am_shell.c`
+  - 在迷你播放器控制条中插入“打开文件”按钮
+  - 保持模式按钮和控制按钮在同一行
+  - 为 `on_open_file` 预留事件接线
+- `main/src/v9_apple_music/am_player.c`
+  - 新增播放模式到按钮文案的映射
+  - 在 `am_player_refresh_ui()` 中刷新模式按钮文本
 - `main/src/v9_apple_music/apple_music.c`
-- `main/tests/apple_music_now_view_state_test.c`
-- `CMakeLists.txt`
+  - 补 `NULL` 占位，适配新签名
+- `main/tests/apple_music_single_file_player_test.c`
+  - 新增打开文件按钮句柄测试
+  - 新增模式按钮四态文案测试
+- `main/tests/apple_music_playlist_popup_layout_test.c`
+  - 适配新签名
+- `main/tests/apple_music_playlist_scrollbar_behavior_test.c`
+  - 适配新签名
 
-## 追加修复（评审后）
+## 备注
 
-### 修复内容
-
-- 为所有直接链接 `am_shell.c` 但缺失 `am_state.c` 的相关测试目标补齐最小依赖：
-  - `apple_music_playlist_popup_layout_test`
-  - `apple_music_playlist_scrollbar_behavior_test`
-- 在 `apple_music.c` 收敛出 `am_refresh_sidebar()`，统一侧边栏重建逻辑
-- `am_record_current_local_playback()` 在 recent 序号更新并落盘后，立即刷新侧边栏，避免 UI 比状态晚一拍
-- 扩展 `apple_music_now_view_state_test`：
-  - 真实点击“下一首”按钮触发播放状态变化
-  - 断言侧边栏 recent 立即改成 `Gamma -> Beta -> Alpha`
-  - 回读 `apple_music_state.tsv`，确认 `Gamma.recent_seq` 变为 `10`
-
-### 本轮验证命令
-
-```bash
-cmake --build build --target apple_music_playlist_popup_layout_test
-cmake --build build --target apple_music_now_view_state_test && ./bin/apple_music_now_view_state_test
-cmake --build build --target apple_music_playlist_scrollbar_behavior_test
-```
-
-### 本轮验证结果
-
-- `apple_music_playlist_popup_layout_test` 现已可成功链接构建，不再缺失 `am_state_collect_recent`
-- `apple_music_now_view_state_test` 通过，新增覆盖证明：
-  - 收藏点击会落盘
-  - recent 顺序正确
-  - 播放切换后 recent 会立刻刷新到 sidebar，而不是只更新持久化状态
-- `apple_music_playlist_scrollbar_behavior_test` 同样完成最小依赖补齐并可成功构建
-
-### 主线程最终复验
-
-执行命令：
-
-```bash
-cmake --build build --target apple_music_playlist_popup_layout_test apple_music_playlist_scrollbar_behavior_test apple_music_now_view_state_test
-./bin/apple_music_playlist_popup_layout_test
-./bin/apple_music_playlist_scrollbar_behavior_test
-./bin/apple_music_now_view_state_test
-cmake --build build --target apple_music_parent_size_test apple_music_data_test
-./bin/apple_music_parent_size_test
-./bin/apple_music_data_test
-```
-
-结果：
-
-- 上述目标均构建成功
-- 五个可执行测试均退出码 `0`
-- 输出仅包含 LVGL 断言/完整性检查已开启的告警，无失败
-
-## 追加修复（最终总评）
-
-### 修复内容
-
-- 去掉 `apple_music.c` 中把 `am_show_view(am_view_t)` 强转为 `am_nav_cb_t(am_view_t, void *)` 的做法
-  - `am_refresh_sidebar()` 和 `am_show_view()` 现在统一经 `am_on_nav()` 走签名匹配的回调路径
-- 收紧 `am_state_save()` 的错误处理
-  - `fprintf()` 失败立即记错并返回非 `0`
-  - `fclose()` 失败同样返回非 `0`
-- 收紧 `am_on_play_pause()` 语义
-  - 仅在 `am_player_is_playing()` 为真时记录 recent，暂停不再打点
-- 删除 `am_shell.c` 在无 recent 时补 4 个空 label 的占位逻辑
-  - 现在没有历史时只显示“最近播放”标题，不渲染空占位
-
-### 本轮 RED
-
-先补测试：
-
-- `apple_music_state_test`
-  - 新增 `test_state_save_reports_write_failure()`，用 `/dev/full` 锁定写入失败返回非 `0`
-- `apple_music_now_view_state_test`
-  - 新增“无 recent 不渲染空占位”断言
-  - 新增“暂停不刷新 recent/sidebar”断言
-
-RED 验证命令：
-
-```bash
-cmake --build build --target apple_music_state_test apple_music_now_view_state_test
-./bin/apple_music_state_test
-./bin/apple_music_now_view_state_test
-```
-
-RED 结果：
-
-- `apple_music_state_test` 失败：`am_state_save("/dev/full", items, 1U) != 0`
-- `apple_music_now_view_state_test` 失败：`count_empty_labels(sidebar) == 0U`
-
-### 本轮 GREEN / 回归
-
-执行命令：
-
-```bash
-cmake --build build --target apple_music_state_test apple_music_now_view_state_test
-./bin/apple_music_state_test
-./bin/apple_music_now_view_state_test
-cmake --build build --target apple_music_parent_size_test apple_music_playlist_popup_layout_test apple_music_playlist_scrollbar_behavior_test apple_music_data_test
-./bin/apple_music_parent_size_test
-./bin/apple_music_playlist_popup_layout_test
-./bin/apple_music_playlist_scrollbar_behavior_test
-./bin/apple_music_data_test
-```
-
-结果：
-
-- `apple_music_state_test` 通过，覆盖 `am_state_save()` 写失败返回值
-- `apple_music_now_view_state_test` 通过，新增覆盖：
-  - 无 recent 时 sidebar 不渲染空占位
-  - 暂停不会刷新 recent
-  - 既有收藏落盘、recent 顺序、切歌即时刷新仍保持通过
-- `apple_music_parent_size_test`、`apple_music_playlist_popup_layout_test`、`apple_music_playlist_scrollbar_behavior_test`、`apple_music_data_test` 全部通过
-- 输出仅包含 LVGL 断言/完整性检查告警，无失败
+- 本任务没有实现文件选择回调逻辑，也没有改动宿主页同步逻辑；这些仍留给 Task 4。
+- 独立 subagent 代码评审尝试执行，但当前会话的 agent thread limit 已满，工具拒绝新建评审 agent，因此本次未能拿到额外的 subagent review 结果。

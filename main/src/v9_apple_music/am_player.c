@@ -53,6 +53,7 @@ static void am_playlist_thumb_event_cb(lv_event_t *e);
 static int32_t am_playlist_content_range(const lv_obj_t *list);
 static void am_playlist_track_sync_geometry(lv_obj_t *track, lv_obj_t *list);
 static void am_copy_text(char *dst, size_t dst_size, const char *src);
+static const char *am_mode_button_text(music_play_mode_t mode);
 
 static bool g_playlist_thumb_dragging = false;
 static int32_t g_playlist_thumb_press_ofs_y = 0;
@@ -68,6 +69,22 @@ static void am_copy_text(char *dst, size_t dst_size, const char *src)
     if(len >= dst_size) len = dst_size - 1U;
     memcpy(dst, src, len);
     dst[len] = '\0';
+}
+
+static const char *am_mode_button_text(music_play_mode_t mode)
+{
+    switch(mode) {
+        case MP_MODE_SEQ:
+            return "SEQ";
+        case MP_MODE_REPEAT_ONE:
+            return "ONE";
+        case MP_MODE_REPEAT_ALL:
+            return "LOOP";
+        case MP_MODE_SHUFFLE:
+            return "SHUF";
+        default:
+            return "SEQ";
+    }
 }
 
 void am_player_set_playlist_pick_cb(am_player_pick_cb_t cb)
@@ -402,6 +419,10 @@ void am_player_refresh_ui(void)
             am_format_time(dur, total_buf, sizeof(total_buf));
             lv_label_set_text(g_h.time_total, total_buf);
         }
+    }
+    if(g_h.btn_mode != NULL) {
+        lv_obj_t *label = lv_obj_get_child(g_h.btn_mode, 0);
+        if(label != NULL) lv_label_set_text(label, am_mode_button_text(music_player_get_play_mode()));
     }
     {
         int pct = 0;

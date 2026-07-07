@@ -26,6 +26,7 @@ typedef struct {
     lv_obj_t *btn_prev;
     lv_obj_t *btn_play;
     lv_obj_t *btn_next;
+    lv_obj_t *btn_open_file;
     lv_obj_t *btn_playlist;
 } am_miniplayer_handles_t;
 
