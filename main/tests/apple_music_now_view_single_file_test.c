@@ -2,9 +2,11 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 #include "lvgl.h"
@@ -31,6 +33,8 @@ static char g_single_file_path[1024];
 static char g_single_file_title[256];
 static am_file_pick_result_t g_pick_result = AM_FILE_PICK_CANCEL;
 static char g_pick_path[1024];
+static char g_prev_cwd[PATH_MAX];
+static char g_test_cwd[PATH_MAX];
 
 static void check_true(bool cond, const char *expr, const char *file, int line)
 {
@@ -52,6 +56,31 @@ static void fill_local_item(am_local_item_t *item, const char *path, const char 
     memset(item, 0, sizeof(*item));
     snprintf(item->path, sizeof(item->path), "%s", path);
     snprintf(item->title, sizeof(item->title), "%s", title);
+}
+
+static void setup_test_workspace(void)
+{
+    char template_path[] = "/tmp/apple_music_now_view_single_file_test_XXXXXX";
+    char *dir;
+
+    CHECK(getcwd(g_prev_cwd, sizeof(g_prev_cwd)) != NULL);
+    dir = mkdtemp(template_path);
+    CHECK(dir != NULL);
+    snprintf(g_test_cwd, sizeof(g_test_cwd), "%s", dir);
+    CHECK(chdir(g_test_cwd) == 0);
+}
+
+static void teardown_test_workspace(void)
+{
+    if(g_test_cwd[0] != '\0') {
+        CHECK(chdir(g_test_cwd) == 0);
+        unlink(AM_STATE_PATH);
+    }
+    if(g_prev_cwd[0] != '\0') CHECK(chdir(g_prev_cwd) == 0);
+    if(g_test_cwd[0] != '\0') {
+        CHECK(rmdir(g_test_cwd) == 0);
+        g_test_cwd[0] = '\0';
+    }
 }
 
 static void write_state_file(void)
@@ -447,6 +476,10 @@ int main(void)
 {
     lv_display_t *disp;
 
+    g_prev_cwd[0] = '\0';
+    g_test_cwd[0] = '\0';
+    setup_test_workspace();
+
     lv_init();
     disp = lv_display_create(800, 480);
     lv_display_set_flush_cb(disp, flush_cb);
@@ -458,5 +491,6 @@ int main(void)
     test_single_file_mode_survives_transport_across_modes();
 
     lv_display_delete(disp);
+    teardown_test_workspace();
     return 0;
 }

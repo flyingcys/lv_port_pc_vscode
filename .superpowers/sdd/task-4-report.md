@@ -148,3 +148,70 @@ Test #19: apple_music_single_file_player_test .....   Passed
   - `g_is_single_file_mode` 仍为真
   - 固定资料库索引仍停在原值
 - 因此，“不会因模式切换或传输键隐式跳回固定资料库”已经从口头推断变成了可执行、可回归的任务级证据
+
+## Fresh Verification Fix
+
+### 现象
+
+- 单独跑 `apple_music_now_view_single_file_test` 可以通过
+- 组合跑
+  `ctest --test-dir build -R '^(apple_music_now_view_single_file_test|apple_music_single_file_player_test|apple_music_desktop_file_dialog_test)$' --output-on-failure`
+  时，曾出现：
+
+```text
+Test #16: apple_music_now_view_single_file_test ...Subprocess aborted
+CHECK failed: loaded[0].recent_seq == 4U (main/tests/apple_music_now_view_single_file_test.c:368)
+```
+
+- 失败后仓库根目录的受控文件 `apple_music_state.tsv` 会落成工作树删除状态
+
+### 根因
+
+- `apple_music_now_view_single_file_test` 之前直接在仓库根目录运行
+- 该测试使用 `AM_STATE_PATH`，也就是相对路径 `apple_music_state.tsv`
+- 因此测试实际是在直接改写并删除仓库受控文件，而不是在隔离夹具中操作临时状态文件
+- 一旦前一次运行中断或失败，工作树就会留下删除/脏内容；后续组合回归再进入同一测试时，就可能读到遗留状态，从而表现出“不单独跑、组合跑才炸”的不稳定性
+
+### 修复
+
+- 给 `apple_music_now_view_single_file_test` 增加独立临时工作目录夹具
+- 测试启动时 `mkdtemp(...)` 并 `chdir(...)` 到临时目录
+- 测试结束时仅删除临时目录里的 `apple_music_state.tsv`，再回到原工作目录
+- 这样 `AM_STATE_PATH` 仍保持不变，但它指向的是隔离的临时测试文件，而不是仓库根下的受控文件
+
+### 验证
+
+#### 命令 1
+
+```bash
+ctest --test-dir build -R '^apple_music_now_view_single_file_test$' --output-on-failure
+```
+
+#### 关键输出 1
+
+```text
+Test #16: apple_music_now_view_single_file_test ...   Passed
+100% tests passed, 0 tests failed out of 1
+```
+
+#### 命令 2
+
+```bash
+ctest --test-dir build -R '^(apple_music_now_view_single_file_test|apple_music_single_file_player_test|apple_music_desktop_file_dialog_test)$' --output-on-failure
+```
+
+#### 关键输出 2
+
+```text
+Test #10: apple_music_desktop_file_dialog_test ....   Passed
+Test #16: apple_music_now_view_single_file_test ...   Passed
+Test #19: apple_music_single_file_player_test .....   Passed
+100% tests passed, 0 tests failed out of 3
+```
+
+### 最终稳定性说明
+
+- `apple_music_now_view_single_file_test` 现在不再依赖仓库根目录的 `apple_music_state.tsv`
+- 单跑与组合回归都稳定通过
+- 测试执行后，`apple_music_state.tsv` 不再被这个测试留成工作树删除状态
+- 本次 fresh-verification 修复没有扩大到生产代码，问题已确认是测试夹具隔离不足，而不是 Task 4 宿主逻辑再次回归
