@@ -18,6 +18,7 @@ static uint32_t g_duration_ms = 180000U;
 static uint8_t g_volume = 65U;
 static size_t g_track_count = 0U;
 static size_t g_current_index = 0U;
+static music_play_mode_t g_play_mode = MP_MODE_SEQ;
 
 static void flush_cb(lv_display_t *disp, const lv_area_t *area, uint8_t *px_map)
 {
@@ -44,6 +45,7 @@ void music_player_init(const char **urls, size_t count)
     g_current_index = 0U;
     g_is_playing = true;
     g_position_ms = 0U;
+    g_play_mode = MP_MODE_SEQ;
 }
 
 void music_player_deinit(void)
@@ -52,6 +54,7 @@ void music_player_deinit(void)
     g_position_ms = 0U;
     g_track_count = 0U;
     g_current_index = 0U;
+    g_play_mode = MP_MODE_SEQ;
 }
 
 void music_player_play(void)
@@ -127,17 +130,32 @@ uint32_t music_player_get_track_duration_ms(size_t index)
 
 void music_player_set_play_mode(music_play_mode_t mode)
 {
-    LV_UNUSED(mode);
+    g_play_mode = mode;
 }
 
 music_play_mode_t music_player_get_play_mode(void)
 {
-    return MP_MODE_SEQ;
+    return g_play_mode;
 }
 
 music_play_mode_t music_player_cycle_play_mode(void)
 {
-    return MP_MODE_SEQ;
+    switch(g_play_mode) {
+        case MP_MODE_SEQ:
+            g_play_mode = MP_MODE_REPEAT_ONE;
+            break;
+        case MP_MODE_REPEAT_ONE:
+            g_play_mode = MP_MODE_REPEAT_ALL;
+            break;
+        case MP_MODE_REPEAT_ALL:
+            g_play_mode = MP_MODE_SHUFFLE;
+            break;
+        case MP_MODE_SHUFFLE:
+        default:
+            g_play_mode = MP_MODE_SEQ;
+            break;
+    }
+    return g_play_mode;
 }
 
 void music_player_set_volume(uint8_t percent)
@@ -213,6 +231,17 @@ static void teardown_display(lv_display_t *disp)
     lv_display_delete(disp);
 }
 
+static void check_single_file_session_invariant(const am_miniplayer_handles_t *handles)
+{
+    CHECK(handles != NULL);
+    CHECK(am_player_is_single_file_mode());
+    CHECK(am_player_source_kind() == AM_SOURCE_LOCAL);
+    CHECK(music_player_get_count() == 1U);
+    CHECK(strcmp(lv_label_get_text(handles->title_label), "picked") == 0);
+    CHECK(strcmp(lv_label_get_text(handles->subtitle_label), "单个文件") == 0);
+    CHECK(lv_obj_get_child_count(handles->playlist_list) == 1U);
+}
+
 static void test_single_file_playlist_renders_one_row(void)
 {
     lv_display_t *disp;
@@ -284,6 +313,51 @@ static void test_single_file_next_prev_do_not_leave_current_file(void)
     am_player_deinit();
 }
 
+static void test_single_file_modes_do_not_restore_fixed_library(void)
+{
+    lv_display_t *disp;
+    lv_obj_t *root;
+    am_miniplayer_handles_t handles;
+    am_local_item_t locals[2];
+
+    fill_local_item(&locals[0], "/tmp/a.mp3", "Alpha");
+    fill_local_item(&locals[1], "/tmp/b.mp3", "Beta");
+
+    setup_display(&disp, &root, &handles);
+    am_player_init();
+    am_player_bind_miniplayer(&handles);
+    am_player_set_sources(locals, 2U, NULL, 0U);
+    am_player_play_single_file("/tmp/picked.mp3", "picked");
+    am_player_set_playlist_open(true);
+    am_player_refresh_ui();
+
+    CHECK(root != NULL);
+    CHECK(music_player_get_play_mode() == MP_MODE_SEQ);
+    am_player_next();
+    am_player_prev();
+    check_single_file_session_invariant(&handles);
+
+    am_player_cycle_mode();
+    CHECK(music_player_get_play_mode() == MP_MODE_REPEAT_ONE);
+
+    am_player_cycle_mode();
+    CHECK(music_player_get_play_mode() == MP_MODE_REPEAT_ALL);
+    am_player_next();
+    am_player_prev();
+    am_player_refresh_ui();
+    check_single_file_session_invariant(&handles);
+
+    am_player_cycle_mode();
+    CHECK(music_player_get_play_mode() == MP_MODE_SHUFFLE);
+    am_player_next();
+    am_player_prev();
+    am_player_refresh_ui();
+    check_single_file_session_invariant(&handles);
+
+    am_player_deinit();
+    teardown_display(disp);
+}
+
 static void test_clear_single_file_mode_resets_flag(void)
 {
     lv_display_t *disp;
@@ -321,6 +395,7 @@ int main(void)
     test_single_file_playlist_renders_one_row();
     test_single_file_playlist_rebuilds_after_local_playlist();
     test_single_file_next_prev_do_not_leave_current_file();
+    test_single_file_modes_do_not_restore_fixed_library();
     test_clear_single_file_mode_resets_flag();
     return 0;
 }

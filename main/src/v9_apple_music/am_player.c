@@ -626,6 +626,7 @@ void am_player_prev(void)
 {
     if(am_player_ensure_started()) return;   /* 未选歌时按上一首:先起播本地库 */
     if(g_single_file_mode) {
+        /* 单文件会话固定驱动 1 条目引擎列表;无论顺序/循环/随机模式如何变化,都不应切回固定资料库。 */
         am_player_refresh_ui();
         return;
     }
@@ -645,6 +646,7 @@ void am_player_next(void)
 {
     if(am_player_ensure_started()) return;   /* 未选歌时按下一首:先起播本地库 */
     if(g_single_file_mode) {
+        /* 单文件会话固定驱动 1 条目引擎列表;无论顺序/循环/随机模式如何变化,都不应切回固定资料库。 */
         am_player_refresh_ui();
         return;
     }

@@ -161,6 +161,80 @@ cmake --build build --target apple_music_single_file_player_test apple_music_pla
 100% tests passed, 0 tests failed out of 3
 ```
 
+## Reviewer Fix 记录 2
+
+### 问题
+
+- reviewer 这轮不再质疑 `clear` 语义，而是要求补齐全局约束的证据闭环：
+  - 顺序播放
+  - 列表循环
+  - 随机播放
+- 需要证明单文件会话下，这些模式变化不会隐式切回固定资料库。
+- 旧测试桩里 `music_player_get_play_mode()` / `music_player_cycle_play_mode()` 固定返回 `MP_MODE_SEQ`，即使生产代码正确，也无法把 `REPEAT_ALL / SHUFFLE` 的约束变成可执行证据。
+
+### 本次修复
+
+- 把 `apple_music_single_file_player_test.c` 中的播放模式桩改成真实持有状态并按顺序切换：
+  - `SEQ -> REPEAT_ONE -> REPEAT_ALL -> SHUFFLE -> SEQ`
+- 新增单测覆盖：
+  - 先注入一个固定本地库上下文
+  - 再进入单文件会话
+  - 在 `SEQ / REPEAT_ALL / SHUFFLE` 下分别执行 `next / prev`
+  - 每一步都验证单文件会话不变量
+- 在 `am_player_prev()` / `am_player_next()` 的单文件短路分支补注释，明确该路径与播放模式无关，不能切回固定资料库。
+
+### 本次 TDD
+
+#### RED
+
+这一轮的 RED 落在“证据能力不足”本身：
+
+- 旧桩始终返回 `MP_MODE_SEQ`，无法表达 `REPEAT_ALL / SHUFFLE` 的真实模式迁移。
+- 也就是说，在补桩之前，reviewer 要求的断言不可验证，证据链天然是红的。
+
+#### GREEN
+
+命令：
+
+```bash
+cmake --build build --target apple_music_single_file_player_test && ctest --test-dir build -R '^apple_music_single_file_player_test$' --output-on-failure
+```
+
+关键输出：
+
+```text
+1/1 Test #18: apple_music_single_file_player_test ...   Passed
+100% tests passed, 0 tests failed out of 1
+```
+
+### 为什么这个新测试足以证明三种模式不会跳回固定资料库
+
+- 测试先显式注入了一个 2 条目的固定本地库，这样“跳回资料库”有真实目标，不是空场景自证。
+- 单文件会话建立后，测试在 `SEQ / REPEAT_ALL / SHUFFLE` 下都执行了 `next / prev`。
+- 每个模式后都验证以下不变量：
+  - `am_player_is_single_file_mode()` 仍为 `true`
+  - 播放引擎 `music_player_get_count()` 仍为 `1`
+  - UI 标题/副标题仍显示单文件内容，而不是固定资料库条目
+  - 播放列表弹层仍只有 `1` 行
+- 这组断言合起来证明：模式变化只改变 play mode，不会把来源、队列或 UI 恢复成固定资料库。
+
+### 本次覆盖验证
+
+命令：
+
+```bash
+cmake --build build --target apple_music_single_file_player_test apple_music_playlist_popup_layout_test apple_music_playlist_scrollbar_behavior_test && ctest --test-dir build -R '^(apple_music_single_file_player_test|apple_music_playlist_popup_layout_test|apple_music_playlist_scrollbar_behavior_test)$' --output-on-failure
+```
+
+关键输出：
+
+```text
+1/3 Test #16: apple_music_playlist_popup_layout_test .........   Passed
+2/3 Test #17: apple_music_playlist_scrollbar_behavior_test ...   Passed
+3/3 Test #18: apple_music_single_file_player_test ............   Passed
+100% tests passed, 0 tests failed out of 3
+```
+
 ## Reviewer Fix 记录
 
 ### 问题
