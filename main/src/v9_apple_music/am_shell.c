@@ -214,19 +214,18 @@ void am_shell_set_header_title(lv_obj_t *header_label, const char *title)
     lv_label_set_text(header_label, title != NULL ? title : "");
 }
 
-am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
-                                                  am_simple_event_cb_t on_mode,
-                                                  am_simple_event_cb_t on_prev,
-                                                  am_simple_event_cb_t on_play,
-                                                  am_simple_event_cb_t on_next,
-                                                  am_simple_event_cb_t on_open_file,
-                                                  am_simple_event_cb_t on_playlist)
+am_miniplayer_handles_t am_shell_build_miniplayer_ex(lv_obj_t *player,
+                                                     am_simple_event_cb_t on_mode,
+                                                     am_simple_event_cb_t on_prev,
+                                                     am_simple_event_cb_t on_play,
+                                                     am_simple_event_cb_t on_next,
+                                                     am_simple_event_cb_t on_open_file,
+                                                     am_simple_event_cb_t on_playlist)
 {
     am_miniplayer_handles_t h;
     const am_metrics_t *m = am_metrics();
 
     memset(&h, 0, sizeof(h));
-    LV_UNUSED(on_open_file);
 
     lv_obj_remove_style_all(player);
     /* remove_style_all 清掉调用方设的尺寸;重设为满宽固定高(否则塌成默认 130 落到顶部) */
@@ -299,6 +298,8 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
         }
 
         h.time_total = am_text(scrub, "--:--", m->f_label, AM_MUTED);
+        h.btn_mode = am_text_button(scrub, "SEQ", m->f_label, 30, lv_color_hex(0xfa2d48));
+        if(on_mode != NULL) lv_obj_add_event_cb(h.btn_mode, on_mode, LV_EVENT_CLICKED, NULL);
     }
 
     {
@@ -321,8 +322,6 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
             lv_obj_clear_flag(ctrls, LV_OBJ_FLAG_SCROLLABLE);
 
             lv_color_t ctrl_col = lv_color_hex(0x2a2a2e);
-            lv_color_t accent_col = lv_color_hex(0xfa2d48);
-            h.btn_mode = am_text_button(ctrls, "SEQ", m->f_label, 30, accent_col);
             h.btn_prev = am_transport_symbol_button(ctrls, LV_SYMBOL_PREV, &lv_font_montserrat_20,
                                                     32, ctrl_col, NULL);
             h.btn_play = am_transport_play_button(ctrls, ctrl_col, &h.play_icon, &h.pause_icon);
@@ -333,7 +332,6 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
             lv_obj_set_style_margin_left(h.btn_prev, 2, 0);
             lv_obj_set_style_margin_right(h.btn_next, 2, 0);
 
-            if(on_mode != NULL) lv_obj_add_event_cb(h.btn_mode, on_mode, LV_EVENT_CLICKED, NULL);
             if(on_prev != NULL) lv_obj_add_event_cb(h.btn_prev, on_prev, LV_EVENT_CLICKED, NULL);
             if(on_play != NULL) lv_obj_add_event_cb(h.btn_play, on_play, LV_EVENT_CLICKED, NULL);
             if(on_next != NULL) lv_obj_add_event_cb(h.btn_next, on_next, LV_EVENT_CLICKED, NULL);
@@ -467,4 +465,15 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
     lv_obj_move_foreground(h.playlist_scroll_track);
 
     return h;
+}
+
+am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
+                                                  am_simple_event_cb_t on_mode,
+                                                  am_simple_event_cb_t on_prev,
+                                                  am_simple_event_cb_t on_play,
+                                                  am_simple_event_cb_t on_next,
+                                                  am_simple_event_cb_t on_playlist)
+{
+    return am_shell_build_miniplayer_ex(player, on_mode, on_prev, on_play, on_next, NULL,
+                                        on_playlist);
 }

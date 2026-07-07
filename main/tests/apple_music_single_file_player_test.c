@@ -212,7 +212,7 @@ static void setup_display(lv_display_t **disp_out, lv_obj_t **root_out, am_minip
     lv_obj_set_size(player, 604, am_metrics()->player_h);
     lv_obj_align(player, LV_ALIGN_BOTTOM_MID, 0, 0);
 
-    *handles_out = am_shell_build_miniplayer(player, NULL, NULL, NULL, NULL, NULL, NULL);
+    *handles_out = am_shell_build_miniplayer_ex(player, NULL, NULL, NULL, NULL, NULL, NULL);
     info = lv_obj_create(root);
     lv_obj_remove_style_all(info);
     lv_obj_set_size(info, LV_PCT(100), LV_SIZE_CONTENT);
@@ -287,6 +287,8 @@ static void test_mode_button_text_follows_play_mode(void)
     am_player_bind_miniplayer(&handles);
 
     CHECK(root != NULL);
+    CHECK(lv_obj_get_parent(handles.btn_mode) != lv_obj_get_parent(handles.btn_prev));
+    CHECK(lv_obj_get_child_count(lv_obj_get_parent(handles.btn_prev)) == 5U);
     check_mode_button_text(&handles, MP_MODE_SEQ, "SEQ");
     check_mode_button_text(&handles, MP_MODE_REPEAT_ONE, "ONE");
     check_mode_button_text(&handles, MP_MODE_REPEAT_ALL, "LOOP");

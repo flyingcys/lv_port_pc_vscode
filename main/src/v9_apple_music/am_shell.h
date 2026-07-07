@@ -30,7 +30,13 @@ am_miniplayer_handles_t am_shell_build_miniplayer(lv_obj_t *player,
                                                   am_simple_event_cb_t on_prev,
                                                   am_simple_event_cb_t on_play,
                                                   am_simple_event_cb_t on_next,
-                                                  am_simple_event_cb_t on_open_file,
                                                   am_simple_event_cb_t on_playlist);
+am_miniplayer_handles_t am_shell_build_miniplayer_ex(lv_obj_t *player,
+                                                     am_simple_event_cb_t on_mode,
+                                                     am_simple_event_cb_t on_prev,
+                                                     am_simple_event_cb_t on_play,
+                                                     am_simple_event_cb_t on_next,
+                                                     am_simple_event_cb_t on_open_file,
+                                                     am_simple_event_cb_t on_playlist);
 
 #endif /* AM_SHELL_H */
