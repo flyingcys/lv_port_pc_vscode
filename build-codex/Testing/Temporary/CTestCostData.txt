@@ -2,4 +2,6 @@ apple_music_single_file_player_test 2 0.0369153
 apple_music_playlist_popup_layout_test 1 0.00834197
 apple_music_now_view_single_file_test 1 0.285282
 apple_music_now_view_state_test 1 4.38769
+desktop_runtime_page_count_test 2 0.0237088
+desktop_vertical_swipe_lock_test 1 0.0499851
 ---

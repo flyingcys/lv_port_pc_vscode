@@ -1,21 +1,39 @@
-Start testing: Jul 07 20:37 CST
+Start testing: Jul 08 18:09 CST
 ----------------------------------------------------------
-15/19 Testing: apple_music_now_view_state_test
-15/19 Test: apple_music_now_view_state_test
-Command: "/home/share/samba/lvgl/lv_port_pc_vscode_flyingcys/bin/apple_music_now_view_state_test"
+13/20 Testing: desktop_runtime_page_count_test
+13/20 Test: desktop_runtime_page_count_test
+Command: "/home/share/samba/lvgl/lv_port_pc_vscode_flyingcys/bin/desktop_runtime_page_count_test"
 Directory: /home/share/samba/lvgl/lv_port_pc_vscode_flyingcys
-"apple_music_now_view_state_test" start time: Jul 07 20:37 CST
+"desktop_runtime_page_count_test" start time: Jul 08 18:09 CST
 Output:
 ----------------------------------------------------------
 [Warn]	(0.000, +0)	 lv_init: Memory integrity checks are enabled via LV_USE_ASSERT_MEM_INTEGRITY which makes LVGL much slower lv_init.c:326
 [Warn]	(0.000, +0)	 lv_init: Object sanity checks are enabled via LV_USE_ASSERT_OBJ which makes LVGL much slower lv_init.c:330
 [Warn]	(0.000, +0)	 lv_init: Style sanity checks are enabled that uses more RAM lv_init.c:334
 <end of output>
-Test time =   4.39 sec
+Test time =   0.05 sec
 ----------------------------------------------------------
 Test Passed.
-"apple_music_now_view_state_test" end time: Jul 07 20:37 CST
-"apple_music_now_view_state_test" time elapsed: 00:00:04
+"desktop_runtime_page_count_test" end time: Jul 08 18:09 CST
+"desktop_runtime_page_count_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Jul 07 20:37 CST
+14/20 Testing: desktop_vertical_swipe_lock_test
+14/20 Test: desktop_vertical_swipe_lock_test
+Command: "/home/share/samba/lvgl/lv_port_pc_vscode_flyingcys/bin/desktop_vertical_swipe_lock_test"
+Directory: /home/share/samba/lvgl/lv_port_pc_vscode_flyingcys
+"desktop_vertical_swipe_lock_test" start time: Jul 08 18:09 CST
+Output:
+----------------------------------------------------------
+[Warn]	(0.000, +0)	 lv_init: Memory integrity checks are enabled via LV_USE_ASSERT_MEM_INTEGRITY which makes LVGL much slower lv_init.c:326
+[Warn]	(0.000, +0)	 lv_init: Object sanity checks are enabled via LV_USE_ASSERT_OBJ which makes LVGL much slower lv_init.c:330
+[Warn]	(0.000, +0)	 lv_init: Style sanity checks are enabled that uses more RAM lv_init.c:334
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"desktop_vertical_swipe_lock_test" end time: Jul 08 18:09 CST
+"desktop_vertical_swipe_lock_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Jul 08 18:09 CST

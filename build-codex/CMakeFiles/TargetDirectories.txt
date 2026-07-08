@@ -13,6 +13,7 @@
 /home/share/samba/lvgl/lv_port_pc_vscode_flyingcys/build-codex/CMakeFiles/apple_music_desktop_file_dialog_test.dir
 /home/share/samba/lvgl/lv_port_pc_vscode_flyingcys/build-codex/CMakeFiles/apple_music_state_test.dir
 /home/share/samba/lvgl/lv_port_pc_vscode_flyingcys/build-codex/CMakeFiles/desktop_runtime_page_count_test.dir
+/home/share/samba/lvgl/lv_port_pc_vscode_flyingcys/build-codex/CMakeFiles/desktop_vertical_swipe_lock_test.dir
 /home/share/samba/lvgl/lv_port_pc_vscode_flyingcys/build-codex/CMakeFiles/apple_music_parent_size_test.dir
 /home/share/samba/lvgl/lv_port_pc_vscode_flyingcys/build-codex/CMakeFiles/apple_music_now_view_state_test.dir
 /home/share/samba/lvgl/lv_port_pc_vscode_flyingcys/build-codex/CMakeFiles/apple_music_now_view_single_file_test.dir

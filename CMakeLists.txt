@@ -394,6 +394,37 @@ target_link_libraries(desktop_runtime_page_count_test lvgl ${PNG_LIBRARIES}
     ${HLS_AUDIO_LIBRARIES}
 )
 
+add_executable(desktop_vertical_swipe_lock_test
+    ${PROJECT_SOURCE_DIR}/main/tests/desktop_vertical_swipe_lock_test.c
+    ${DESKTOP_SOURCES}
+    ${LOCAL_MUSIC_DEMO_SOURCES}
+    ${FRUIT_NINJA_SOURCES}
+    ${DESIGN_FRUIT_SOURCES}
+    ${V9_APPLE_MUSIC_SOURCES}
+    ${V9_TETRIS_SOURCES}
+    ${V9_2048_SOURCES}
+)
+target_include_directories(desktop_vertical_swipe_lock_test PRIVATE
+    ${PROJECT_SOURCE_DIR}
+    ${PROJECT_SOURCE_DIR}/main/desktop
+    ${PROJECT_SOURCE_DIR}/main/src
+    ${HLS_PROJECT_ROOT_DIR}/src
+    ${HLS_PROJECT_ROOT_DIR}/src/stream_player/include
+    ${HLS_PROJECT_ROOT_DIR}/src/player_controller
+    ${HLS_PROJECT_ROOT_DIR}/src/http_client
+    ${HLS_AUDIO_INCLUDE_DIRS}
+)
+target_compile_definitions(desktop_vertical_swipe_lock_test PRIVATE
+    ${HLS_AUDIO_COMPILE_DEFINITIONS}
+)
+target_link_libraries(desktop_vertical_swipe_lock_test lvgl ${PNG_LIBRARIES}
+    ${HLS_PLATFORM_LIBRARIES}
+    Threads::Threads
+    player_controller
+    ${HLS_STREAM_PLAYER_TARGET}
+    ${HLS_AUDIO_LIBRARIES}
+)
+
 add_executable(apple_music_parent_size_test
     ${PROJECT_SOURCE_DIR}/main/tests/apple_music_parent_size_test.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_data.c
@@ -580,6 +611,12 @@ add_test(
     COMMAND $<TARGET_FILE:desktop_runtime_page_count_test>
 )
 set_tests_properties(desktop_runtime_page_count_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+
+add_test(
+    NAME desktop_vertical_swipe_lock_test
+    COMMAND $<TARGET_FILE:desktop_vertical_swipe_lock_test>
+)
+set_tests_properties(desktop_vertical_swipe_lock_test PROPERTIES WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 add_test(
     NAME apple_music_parent_size_test

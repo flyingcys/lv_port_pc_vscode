@@ -14,14 +14,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* -----------------------------------------------------------------------
- * 边缘手势感应带
- * 顶部条：按下后跟手下滑 → 实时拉出控制中心，松手按位置/甩动吸附
- * 底部条：按下后跟手上滑 → 实时拉出通知中心，松手按位置/甩动吸附
- * （吸附阈值在 panels 模块的 desktop_panel_snap_open 内处理）
- * ----------------------------------------------------------------------- */
-#define EDGE_SENSOR_H   28      /* 感应带高度（px）；勿超过最小 top_bar_h（480x272=28） */
-
 LV_IMAGE_DECLARE(img_wallpaper_800x480);
 LV_IMAGE_DECLARE(img_wallpaper_640x480);
 LV_IMAGE_DECLARE(img_wallpaper_480x272);
@@ -63,16 +55,6 @@ static lv_obj_t * pager_dots;
 static int drag_page;
 static desktop_panels_t * panels;
 
-/* 边缘感应条：挂在 screen_active，跟随 lv_obj_clean 自动回收，无残留风险 */
-static lv_obj_t * edge_top;     /* 顶部感应条 */
-static lv_obj_t * edge_bot;     /* 底部感应条 */
-/* 按下时记录起始 Y（屏幕坐标），用于判断位移方向与幅度 */
-static int32_t    edge_top_press_y;
-static int32_t    edge_bot_press_y;
-/* 边缘条跟手拖拽进行中标志（避免无 begin 的 pressing/released 误触发） */
-static int        edge_top_dragging;
-static int        edge_bot_dragging;
-
 static int clamp_index(int index);
 static void clear_runtime_object_refs(void);
 static void desktop_page_changed_cb(uint32_t page_index, void * user_data);
@@ -89,13 +71,6 @@ static void released_cb(lv_event_t * e);
 static void set_x_cb(void * var, int32_t v);
 static void set_y_cb(void * var, int32_t v);
 static void icon_shake_cb(void * var, int32_t v);
-/* 边缘感应条事件 */
-static void edge_top_pressed_cb(lv_event_t * e);
-static void edge_top_pressing_cb(lv_event_t * e);
-static void edge_bot_pressed_cb(lv_event_t * e);
-static void edge_bot_pressing_cb(lv_event_t * e);
-static void edge_top_released_cb(lv_event_t * e);
-static void edge_bot_released_cb(lv_event_t * e);
 
 void desktop_run(void)
 {
@@ -143,6 +118,10 @@ void desktop_run(void)
 
     clear_runtime_object_refs();
     lv_obj_clean(lv_screen_active());
+    lv_obj_clear_flag(lv_screen_active(),
+                      LV_OBJ_FLAG_SCROLLABLE |
+                      LV_OBJ_FLAG_SCROLL_ELASTIC |
+                      LV_OBJ_FLAG_SCROLL_MOMENTUM);
 
     desktop = desktop_home_create(lv_screen_active(), desktop_page_changed_cb, NULL);
     if(desktop == NULL) {
@@ -253,45 +232,7 @@ void desktop_run(void)
         const char * am_panel = getenv("AM_PANEL");
         if(am_panel != NULL) desktop_panels_apply_initial(panels, am_panel);
     }
-
-    /* ---------------------------------------------------------------
-     * 边缘感应条：在 panels 之后创建，位于 screen_active 子列表最末
-     * （最后创建 = 最高渲染层级），仅覆盖屏幕上/下各 EDGE_SENSOR_H px，
-     * 不遮挡桌面图标区域（图标位于 top_bar_h 以下，远离边缘）。
-     * 透明无背景、CLICKABLE，GESTURE_BUBBLE 关闭（自己处理，不向上传播）。
-     * --------------------------------------------------------------- */
-    {
-        const desktop_metrics_t * em = desktop_metrics();
-
-        /* 顶部感应条 */
-        edge_top = lv_obj_create(lv_screen_active());
-        lv_obj_remove_style_all(edge_top);
-        lv_obj_set_size(edge_top, em->screen_w, EDGE_SENSOR_H);
-        lv_obj_set_pos(edge_top, 0, 0);
-        lv_obj_set_style_bg_opa(edge_top, LV_OPA_TRANSP, 0);
-        lv_obj_add_flag(edge_top, LV_OBJ_FLAG_CLICKABLE);
-        lv_obj_remove_flag(edge_top, LV_OBJ_FLAG_SCROLLABLE);
-        lv_obj_remove_flag(edge_top, LV_OBJ_FLAG_GESTURE_BUBBLE);
-        lv_obj_add_event_cb(edge_top, edge_top_pressed_cb,  LV_EVENT_PRESSED,  NULL);
-        lv_obj_add_event_cb(edge_top, edge_top_pressing_cb, LV_EVENT_PRESSING, NULL);
-        lv_obj_add_event_cb(edge_top, edge_top_released_cb, LV_EVENT_RELEASED, NULL);
-
-        /* 底部感应条 */
-        edge_bot = lv_obj_create(lv_screen_active());
-        lv_obj_remove_style_all(edge_bot);
-        lv_obj_set_size(edge_bot, em->screen_w, EDGE_SENSOR_H);
-        lv_obj_set_pos(edge_bot, 0, em->screen_h - EDGE_SENSOR_H);
-        lv_obj_set_style_bg_opa(edge_bot, LV_OPA_TRANSP, 0);
-        lv_obj_add_flag(edge_bot, LV_OBJ_FLAG_CLICKABLE);
-        lv_obj_remove_flag(edge_bot, LV_OBJ_FLAG_SCROLLABLE);
-        lv_obj_remove_flag(edge_bot, LV_OBJ_FLAG_GESTURE_BUBBLE);
-        lv_obj_add_event_cb(edge_bot, edge_bot_pressed_cb,  LV_EVENT_PRESSED,  NULL);
-        lv_obj_add_event_cb(edge_bot, edge_bot_pressing_cb, LV_EVENT_PRESSING, NULL);
-        lv_obj_add_event_cb(edge_bot, edge_bot_released_cb, LV_EVENT_RELEASED, NULL);
-
-        /* 面板置于感应带之上：全屏展开时把手才点得到（关闭时面板在屏外不挡感应带） */
-        desktop_panels_bring_to_front(panels);
-    }
+    desktop_panels_bring_to_front(panels);
 }
 
 static void clear_runtime_object_refs(void)
@@ -301,13 +242,6 @@ static void clear_runtime_object_refs(void)
     screen = NULL;
     pager_dots = NULL;
     panels = NULL;
-    /* 边缘条随 lv_obj_clean(lv_screen_active()) 一起被删除，清空指针即可 */
-    edge_top = NULL;
-    edge_bot = NULL;
-    edge_top_press_y = 0;
-    edge_bot_press_y = 0;
-    edge_top_dragging = 0;
-    edge_bot_dragging = 0;
     icon_press_x = 0;
     icon_press_y = 0;
     icon_press_active = 0;
@@ -736,60 +670,4 @@ static void icon_shake_cb(void * var, int32_t v)
 {
     /* 瓷砖是 lv_obj 容器，不是 lv_image；用 style transform 旋转 */
     lv_obj_set_style_transform_rotation((lv_obj_t *)var, v, 0);
-}
-
-/* -----------------------------------------------------------------------
- * 边缘感应条回调
- * ----------------------------------------------------------------------- */
-
-static void edge_top_pressed_cb(lv_event_t * e)
-{
-    LV_UNUSED(e);
-    if(desktop_panels_active(panels) != 0) { edge_top_dragging = 0; return; }
-    lv_point_t pt; lv_indev_get_point(lv_indev_get_act(), &pt);
-    edge_top_press_y = pt.y;
-    edge_top_dragging = 1;
-}
-
-static void edge_top_pressing_cb(lv_event_t * e)
-{
-    LV_UNUSED(e);
-    if(!edge_top_dragging) return;
-    lv_point_t pt; lv_indev_get_point(lv_indev_get_act(), &pt);
-    if(pt.y - edge_top_press_y > 50) {
-        desktop_panels_show_control(panels, true);
-        edge_top_dragging = 0;
-    }
-}
-
-static void edge_top_released_cb(lv_event_t * e)
-{
-    LV_UNUSED(e);
-    edge_top_dragging = 0;
-}
-
-static void edge_bot_pressed_cb(lv_event_t * e)
-{
-    LV_UNUSED(e);
-    if(desktop_panels_active(panels) != 0) { edge_bot_dragging = 0; return; }
-    lv_point_t pt; lv_indev_get_point(lv_indev_get_act(), &pt);
-    edge_bot_press_y = pt.y;
-    edge_bot_dragging = 1;
-}
-
-static void edge_bot_pressing_cb(lv_event_t * e)
-{
-    LV_UNUSED(e);
-    if(!edge_bot_dragging) return;
-    lv_point_t pt; lv_indev_get_point(lv_indev_get_act(), &pt);
-    if(edge_bot_press_y - pt.y > 50) {
-        desktop_panels_show_notify(panels, true);
-        edge_bot_dragging = 0;
-    }
-}
-
-static void edge_bot_released_cb(lv_event_t * e)
-{
-    LV_UNUSED(e);
-    edge_bot_dragging = 0;
 }

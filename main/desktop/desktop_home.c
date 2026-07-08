@@ -44,6 +44,7 @@ desktop_home_t * desktop_home_create(lv_obj_t * parent,
         lv_obj_set_size(desktop->host, desktop_w, desktop_h);
     }
     lv_obj_clear_flag(desktop->host, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_remove_flag(desktop->host, LV_OBJ_FLAG_SCROLL_CHAIN_VER);
     lv_obj_set_style_radius(desktop->host, 0, 0);
     lv_obj_set_style_border_width(desktop->host, 0, 0);
     lv_obj_set_style_pad_all(desktop->host, 0, 0);
@@ -61,13 +62,14 @@ desktop_home_t * desktop_home_create(lv_obj_t * parent,
         int32_t desktop_h = m->screen_h - m->top_bar_h;
 
         lv_obj_set_size(desktop->tileview, desktop_w, desktop_h);
+        lv_obj_remove_flag(desktop->tileview, LV_OBJ_FLAG_SCROLL_CHAIN_VER);
         lv_obj_set_style_bg_color(desktop->tileview, lv_color_hex(0x000000), LV_PART_MAIN);
         lv_obj_set_style_radius(desktop->tileview, 0, 0);
         lv_obj_set_style_border_width(desktop->tileview, 0, 0);
         lv_obj_add_event_cb(desktop->tileview, desktop_tileview_value_changed_cb, LV_EVENT_VALUE_CHANGED, desktop);
 
         for(page_index = 0; page_index < DESKTOP_PAGE_COUNT; page_index++) {
-            desktop->pages[page_index] = lv_tileview_add_tile(desktop->tileview, page_index, 0, LV_DIR_ALL);
+            desktop->pages[page_index] = lv_tileview_add_tile(desktop->tileview, page_index, 0, LV_DIR_HOR);
             if(desktop->pages[page_index] == NULL) {
                 lv_obj_delete(desktop->host);
                 return NULL;

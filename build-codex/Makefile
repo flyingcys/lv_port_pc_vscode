@@ -368,6 +368,19 @@ desktop_runtime_page_count_test/fast:
 .PHONY : desktop_runtime_page_count_test/fast
 
 #=============================================================================
+# Target rules for targets named desktop_vertical_swipe_lock_test
+
+# Build rule for target.
+desktop_vertical_swipe_lock_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 desktop_vertical_swipe_lock_test
+.PHONY : desktop_vertical_swipe_lock_test
+
+# fast build rule for target.
+desktop_vertical_swipe_lock_test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/build
+.PHONY : desktop_vertical_swipe_lock_test/fast
+
+#=============================================================================
 # Target rules for targets named apple_music_parent_size_test
 
 # Build rule for target.
@@ -570,6 +583,7 @@ main/desktop/apple_music_app.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/apple_music_app.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_launcher_test.dir/build.make CMakeFiles/desktop_apple_music_launcher_test.dir/main/desktop/apple_music_app.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/apple_music_app.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/apple_music_app.c.o
 .PHONY : main/desktop/apple_music_app.c.o
 
 main/desktop/apple_music_app.i: main/desktop/apple_music_app.c.i
@@ -580,6 +594,7 @@ main/desktop/apple_music_app.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/apple_music_app.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_launcher_test.dir/build.make CMakeFiles/desktop_apple_music_launcher_test.dir/main/desktop/apple_music_app.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/apple_music_app.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/apple_music_app.c.i
 .PHONY : main/desktop/apple_music_app.c.i
 
 main/desktop/apple_music_app.s: main/desktop/apple_music_app.c.s
@@ -590,6 +605,7 @@ main/desktop/apple_music_app.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/apple_music_app.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_launcher_test.dir/build.make CMakeFiles/desktop_apple_music_launcher_test.dir/main/desktop/apple_music_app.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/apple_music_app.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/apple_music_app.c.s
 .PHONY : main/desktop/apple_music_app.c.s
 
 main/desktop/assets/fonts/desktop_font_calc_16.o: main/desktop/assets/fonts/desktop_font_calc_16.c.o
@@ -599,6 +615,7 @@ main/desktop/assets/fonts/desktop_font_calc_16.o: main/desktop/assets/fonts/desk
 main/desktop/assets/fonts/desktop_font_calc_16.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_calc_16.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_calc_16.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_calc_16.c.o
 .PHONY : main/desktop/assets/fonts/desktop_font_calc_16.c.o
 
 main/desktop/assets/fonts/desktop_font_calc_16.i: main/desktop/assets/fonts/desktop_font_calc_16.c.i
@@ -608,6 +625,7 @@ main/desktop/assets/fonts/desktop_font_calc_16.i: main/desktop/assets/fonts/desk
 main/desktop/assets/fonts/desktop_font_calc_16.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_calc_16.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_calc_16.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_calc_16.c.i
 .PHONY : main/desktop/assets/fonts/desktop_font_calc_16.c.i
 
 main/desktop/assets/fonts/desktop_font_calc_16.s: main/desktop/assets/fonts/desktop_font_calc_16.c.s
@@ -617,6 +635,7 @@ main/desktop/assets/fonts/desktop_font_calc_16.s: main/desktop/assets/fonts/desk
 main/desktop/assets/fonts/desktop_font_calc_16.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_calc_16.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_calc_16.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_calc_16.c.s
 .PHONY : main/desktop/assets/fonts/desktop_font_calc_16.c.s
 
 main/desktop/assets/fonts/desktop_font_calc_18.o: main/desktop/assets/fonts/desktop_font_calc_18.c.o
@@ -626,6 +645,7 @@ main/desktop/assets/fonts/desktop_font_calc_18.o: main/desktop/assets/fonts/desk
 main/desktop/assets/fonts/desktop_font_calc_18.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_calc_18.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_calc_18.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_calc_18.c.o
 .PHONY : main/desktop/assets/fonts/desktop_font_calc_18.c.o
 
 main/desktop/assets/fonts/desktop_font_calc_18.i: main/desktop/assets/fonts/desktop_font_calc_18.c.i
@@ -635,6 +655,7 @@ main/desktop/assets/fonts/desktop_font_calc_18.i: main/desktop/assets/fonts/desk
 main/desktop/assets/fonts/desktop_font_calc_18.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_calc_18.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_calc_18.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_calc_18.c.i
 .PHONY : main/desktop/assets/fonts/desktop_font_calc_18.c.i
 
 main/desktop/assets/fonts/desktop_font_calc_18.s: main/desktop/assets/fonts/desktop_font_calc_18.c.s
@@ -644,6 +665,7 @@ main/desktop/assets/fonts/desktop_font_calc_18.s: main/desktop/assets/fonts/desk
 main/desktop/assets/fonts/desktop_font_calc_18.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_calc_18.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_calc_18.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_calc_18.c.s
 .PHONY : main/desktop/assets/fonts/desktop_font_calc_18.c.s
 
 main/desktop/assets/fonts/desktop_font_calc_20.o: main/desktop/assets/fonts/desktop_font_calc_20.c.o
@@ -653,6 +675,7 @@ main/desktop/assets/fonts/desktop_font_calc_20.o: main/desktop/assets/fonts/desk
 main/desktop/assets/fonts/desktop_font_calc_20.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_calc_20.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_calc_20.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_calc_20.c.o
 .PHONY : main/desktop/assets/fonts/desktop_font_calc_20.c.o
 
 main/desktop/assets/fonts/desktop_font_calc_20.i: main/desktop/assets/fonts/desktop_font_calc_20.c.i
@@ -662,6 +685,7 @@ main/desktop/assets/fonts/desktop_font_calc_20.i: main/desktop/assets/fonts/desk
 main/desktop/assets/fonts/desktop_font_calc_20.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_calc_20.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_calc_20.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_calc_20.c.i
 .PHONY : main/desktop/assets/fonts/desktop_font_calc_20.c.i
 
 main/desktop/assets/fonts/desktop_font_calc_20.s: main/desktop/assets/fonts/desktop_font_calc_20.c.s
@@ -671,6 +695,7 @@ main/desktop/assets/fonts/desktop_font_calc_20.s: main/desktop/assets/fonts/desk
 main/desktop/assets/fonts/desktop_font_calc_20.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_calc_20.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_calc_20.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_calc_20.c.s
 .PHONY : main/desktop/assets/fonts/desktop_font_calc_20.c.s
 
 main/desktop/assets/fonts/desktop_font_calc_40.o: main/desktop/assets/fonts/desktop_font_calc_40.c.o
@@ -680,6 +705,7 @@ main/desktop/assets/fonts/desktop_font_calc_40.o: main/desktop/assets/fonts/desk
 main/desktop/assets/fonts/desktop_font_calc_40.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_calc_40.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_calc_40.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_calc_40.c.o
 .PHONY : main/desktop/assets/fonts/desktop_font_calc_40.c.o
 
 main/desktop/assets/fonts/desktop_font_calc_40.i: main/desktop/assets/fonts/desktop_font_calc_40.c.i
@@ -689,6 +715,7 @@ main/desktop/assets/fonts/desktop_font_calc_40.i: main/desktop/assets/fonts/desk
 main/desktop/assets/fonts/desktop_font_calc_40.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_calc_40.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_calc_40.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_calc_40.c.i
 .PHONY : main/desktop/assets/fonts/desktop_font_calc_40.c.i
 
 main/desktop/assets/fonts/desktop_font_calc_40.s: main/desktop/assets/fonts/desktop_font_calc_40.c.s
@@ -698,6 +725,7 @@ main/desktop/assets/fonts/desktop_font_calc_40.s: main/desktop/assets/fonts/desk
 main/desktop/assets/fonts/desktop_font_calc_40.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_calc_40.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_calc_40.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_calc_40.c.s
 .PHONY : main/desktop/assets/fonts/desktop_font_calc_40.c.s
 
 main/desktop/assets/fonts/desktop_font_calc_48.o: main/desktop/assets/fonts/desktop_font_calc_48.c.o
@@ -707,6 +735,7 @@ main/desktop/assets/fonts/desktop_font_calc_48.o: main/desktop/assets/fonts/desk
 main/desktop/assets/fonts/desktop_font_calc_48.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_calc_48.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_calc_48.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_calc_48.c.o
 .PHONY : main/desktop/assets/fonts/desktop_font_calc_48.c.o
 
 main/desktop/assets/fonts/desktop_font_calc_48.i: main/desktop/assets/fonts/desktop_font_calc_48.c.i
@@ -716,6 +745,7 @@ main/desktop/assets/fonts/desktop_font_calc_48.i: main/desktop/assets/fonts/desk
 main/desktop/assets/fonts/desktop_font_calc_48.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_calc_48.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_calc_48.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_calc_48.c.i
 .PHONY : main/desktop/assets/fonts/desktop_font_calc_48.c.i
 
 main/desktop/assets/fonts/desktop_font_calc_48.s: main/desktop/assets/fonts/desktop_font_calc_48.c.s
@@ -725,6 +755,7 @@ main/desktop/assets/fonts/desktop_font_calc_48.s: main/desktop/assets/fonts/desk
 main/desktop/assets/fonts/desktop_font_calc_48.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_calc_48.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_calc_48.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_calc_48.c.s
 .PHONY : main/desktop/assets/fonts/desktop_font_calc_48.c.s
 
 main/desktop/assets/fonts/desktop_font_calc_52.o: main/desktop/assets/fonts/desktop_font_calc_52.c.o
@@ -734,6 +765,7 @@ main/desktop/assets/fonts/desktop_font_calc_52.o: main/desktop/assets/fonts/desk
 main/desktop/assets/fonts/desktop_font_calc_52.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_calc_52.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_calc_52.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_calc_52.c.o
 .PHONY : main/desktop/assets/fonts/desktop_font_calc_52.c.o
 
 main/desktop/assets/fonts/desktop_font_calc_52.i: main/desktop/assets/fonts/desktop_font_calc_52.c.i
@@ -743,6 +775,7 @@ main/desktop/assets/fonts/desktop_font_calc_52.i: main/desktop/assets/fonts/desk
 main/desktop/assets/fonts/desktop_font_calc_52.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_calc_52.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_calc_52.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_calc_52.c.i
 .PHONY : main/desktop/assets/fonts/desktop_font_calc_52.c.i
 
 main/desktop/assets/fonts/desktop_font_calc_52.s: main/desktop/assets/fonts/desktop_font_calc_52.c.s
@@ -752,6 +785,7 @@ main/desktop/assets/fonts/desktop_font_calc_52.s: main/desktop/assets/fonts/desk
 main/desktop/assets/fonts/desktop_font_calc_52.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_calc_52.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_calc_52.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_calc_52.c.s
 .PHONY : main/desktop/assets/fonts/desktop_font_calc_52.c.s
 
 main/desktop/assets/fonts/desktop_font_calc_64.o: main/desktop/assets/fonts/desktop_font_calc_64.c.o
@@ -761,6 +795,7 @@ main/desktop/assets/fonts/desktop_font_calc_64.o: main/desktop/assets/fonts/desk
 main/desktop/assets/fonts/desktop_font_calc_64.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_calc_64.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_calc_64.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_calc_64.c.o
 .PHONY : main/desktop/assets/fonts/desktop_font_calc_64.c.o
 
 main/desktop/assets/fonts/desktop_font_calc_64.i: main/desktop/assets/fonts/desktop_font_calc_64.c.i
@@ -770,6 +805,7 @@ main/desktop/assets/fonts/desktop_font_calc_64.i: main/desktop/assets/fonts/desk
 main/desktop/assets/fonts/desktop_font_calc_64.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_calc_64.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_calc_64.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_calc_64.c.i
 .PHONY : main/desktop/assets/fonts/desktop_font_calc_64.c.i
 
 main/desktop/assets/fonts/desktop_font_calc_64.s: main/desktop/assets/fonts/desktop_font_calc_64.c.s
@@ -779,6 +815,7 @@ main/desktop/assets/fonts/desktop_font_calc_64.s: main/desktop/assets/fonts/desk
 main/desktop/assets/fonts/desktop_font_calc_64.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_calc_64.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_calc_64.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_calc_64.c.s
 .PHONY : main/desktop/assets/fonts/desktop_font_calc_64.c.s
 
 main/desktop/assets/fonts/desktop_font_phosphor_14.o: main/desktop/assets/fonts/desktop_font_phosphor_14.c.o
@@ -789,6 +826,7 @@ main/desktop/assets/fonts/desktop_font_phosphor_14.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_phosphor_14.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_launcher_test.dir/build.make CMakeFiles/desktop_apple_music_launcher_test.dir/main/desktop/assets/fonts/desktop_font_phosphor_14.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_phosphor_14.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_phosphor_14.c.o
 .PHONY : main/desktop/assets/fonts/desktop_font_phosphor_14.c.o
 
 main/desktop/assets/fonts/desktop_font_phosphor_14.i: main/desktop/assets/fonts/desktop_font_phosphor_14.c.i
@@ -799,6 +837,7 @@ main/desktop/assets/fonts/desktop_font_phosphor_14.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_phosphor_14.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_launcher_test.dir/build.make CMakeFiles/desktop_apple_music_launcher_test.dir/main/desktop/assets/fonts/desktop_font_phosphor_14.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_phosphor_14.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_phosphor_14.c.i
 .PHONY : main/desktop/assets/fonts/desktop_font_phosphor_14.c.i
 
 main/desktop/assets/fonts/desktop_font_phosphor_14.s: main/desktop/assets/fonts/desktop_font_phosphor_14.c.s
@@ -809,6 +848,7 @@ main/desktop/assets/fonts/desktop_font_phosphor_14.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_phosphor_14.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_launcher_test.dir/build.make CMakeFiles/desktop_apple_music_launcher_test.dir/main/desktop/assets/fonts/desktop_font_phosphor_14.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_phosphor_14.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_phosphor_14.c.s
 .PHONY : main/desktop/assets/fonts/desktop_font_phosphor_14.c.s
 
 main/desktop/assets/fonts/desktop_font_phosphor_20.o: main/desktop/assets/fonts/desktop_font_phosphor_20.c.o
@@ -819,6 +859,7 @@ main/desktop/assets/fonts/desktop_font_phosphor_20.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_phosphor_20.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_launcher_test.dir/build.make CMakeFiles/desktop_apple_music_launcher_test.dir/main/desktop/assets/fonts/desktop_font_phosphor_20.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_phosphor_20.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_phosphor_20.c.o
 .PHONY : main/desktop/assets/fonts/desktop_font_phosphor_20.c.o
 
 main/desktop/assets/fonts/desktop_font_phosphor_20.i: main/desktop/assets/fonts/desktop_font_phosphor_20.c.i
@@ -829,6 +870,7 @@ main/desktop/assets/fonts/desktop_font_phosphor_20.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_phosphor_20.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_launcher_test.dir/build.make CMakeFiles/desktop_apple_music_launcher_test.dir/main/desktop/assets/fonts/desktop_font_phosphor_20.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_phosphor_20.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_phosphor_20.c.i
 .PHONY : main/desktop/assets/fonts/desktop_font_phosphor_20.c.i
 
 main/desktop/assets/fonts/desktop_font_phosphor_20.s: main/desktop/assets/fonts/desktop_font_phosphor_20.c.s
@@ -839,6 +881,7 @@ main/desktop/assets/fonts/desktop_font_phosphor_20.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_phosphor_20.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_launcher_test.dir/build.make CMakeFiles/desktop_apple_music_launcher_test.dir/main/desktop/assets/fonts/desktop_font_phosphor_20.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_phosphor_20.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_phosphor_20.c.s
 .PHONY : main/desktop/assets/fonts/desktop_font_phosphor_20.c.s
 
 main/desktop/assets/fonts/desktop_font_simsun_12.o: main/desktop/assets/fonts/desktop_font_simsun_12.c.o
@@ -849,6 +892,7 @@ main/desktop/assets/fonts/desktop_font_simsun_12.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_simsun_12.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_launcher_test.dir/build.make CMakeFiles/desktop_apple_music_launcher_test.dir/main/desktop/assets/fonts/desktop_font_simsun_12.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_simsun_12.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_simsun_12.c.o
 .PHONY : main/desktop/assets/fonts/desktop_font_simsun_12.c.o
 
 main/desktop/assets/fonts/desktop_font_simsun_12.i: main/desktop/assets/fonts/desktop_font_simsun_12.c.i
@@ -859,6 +903,7 @@ main/desktop/assets/fonts/desktop_font_simsun_12.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_simsun_12.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_launcher_test.dir/build.make CMakeFiles/desktop_apple_music_launcher_test.dir/main/desktop/assets/fonts/desktop_font_simsun_12.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_simsun_12.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_simsun_12.c.i
 .PHONY : main/desktop/assets/fonts/desktop_font_simsun_12.c.i
 
 main/desktop/assets/fonts/desktop_font_simsun_12.s: main/desktop/assets/fonts/desktop_font_simsun_12.c.s
@@ -869,6 +914,7 @@ main/desktop/assets/fonts/desktop_font_simsun_12.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_simsun_12.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_launcher_test.dir/build.make CMakeFiles/desktop_apple_music_launcher_test.dir/main/desktop/assets/fonts/desktop_font_simsun_12.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_simsun_12.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_simsun_12.c.s
 .PHONY : main/desktop/assets/fonts/desktop_font_simsun_12.c.s
 
 main/desktop/assets/fonts/desktop_font_simsun_16.o: main/desktop/assets/fonts/desktop_font_simsun_16.c.o
@@ -879,6 +925,7 @@ main/desktop/assets/fonts/desktop_font_simsun_16.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_simsun_16.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_launcher_test.dir/build.make CMakeFiles/desktop_apple_music_launcher_test.dir/main/desktop/assets/fonts/desktop_font_simsun_16.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_simsun_16.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_simsun_16.c.o
 .PHONY : main/desktop/assets/fonts/desktop_font_simsun_16.c.o
 
 main/desktop/assets/fonts/desktop_font_simsun_16.i: main/desktop/assets/fonts/desktop_font_simsun_16.c.i
@@ -889,6 +936,7 @@ main/desktop/assets/fonts/desktop_font_simsun_16.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_simsun_16.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_launcher_test.dir/build.make CMakeFiles/desktop_apple_music_launcher_test.dir/main/desktop/assets/fonts/desktop_font_simsun_16.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_simsun_16.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_simsun_16.c.i
 .PHONY : main/desktop/assets/fonts/desktop_font_simsun_16.c.i
 
 main/desktop/assets/fonts/desktop_font_simsun_16.s: main/desktop/assets/fonts/desktop_font_simsun_16.c.s
@@ -899,6 +947,7 @@ main/desktop/assets/fonts/desktop_font_simsun_16.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/fonts/desktop_font_simsun_16.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_launcher_test.dir/build.make CMakeFiles/desktop_apple_music_launcher_test.dir/main/desktop/assets/fonts/desktop_font_simsun_16.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/fonts/desktop_font_simsun_16.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/fonts/desktop_font_simsun_16.c.s
 .PHONY : main/desktop/assets/fonts/desktop_font_simsun_16.c.s
 
 main/desktop/assets/img_app_2048.o: main/desktop/assets/img_app_2048.c.o
@@ -909,6 +958,7 @@ main/desktop/assets/img_app_2048.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_2048.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_2048.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_2048.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_2048.c.o
 .PHONY : main/desktop/assets/img_app_2048.c.o
 
 main/desktop/assets/img_app_2048.i: main/desktop/assets/img_app_2048.c.i
@@ -919,6 +969,7 @@ main/desktop/assets/img_app_2048.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_2048.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_2048.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_2048.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_2048.c.i
 .PHONY : main/desktop/assets/img_app_2048.c.i
 
 main/desktop/assets/img_app_2048.s: main/desktop/assets/img_app_2048.c.s
@@ -929,6 +980,7 @@ main/desktop/assets/img_app_2048.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_2048.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_2048.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_2048.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_2048.c.s
 .PHONY : main/desktop/assets/img_app_2048.c.s
 
 main/desktop/assets/img_app_applemusic.o: main/desktop/assets/img_app_applemusic.c.o
@@ -939,6 +991,7 @@ main/desktop/assets/img_app_applemusic.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_applemusic.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_applemusic.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_applemusic.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_applemusic.c.o
 .PHONY : main/desktop/assets/img_app_applemusic.c.o
 
 main/desktop/assets/img_app_applemusic.i: main/desktop/assets/img_app_applemusic.c.i
@@ -949,6 +1002,7 @@ main/desktop/assets/img_app_applemusic.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_applemusic.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_applemusic.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_applemusic.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_applemusic.c.i
 .PHONY : main/desktop/assets/img_app_applemusic.c.i
 
 main/desktop/assets/img_app_applemusic.s: main/desktop/assets/img_app_applemusic.c.s
@@ -959,6 +1013,7 @@ main/desktop/assets/img_app_applemusic.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_applemusic.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_applemusic.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_applemusic.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_applemusic.c.s
 .PHONY : main/desktop/assets/img_app_applemusic.c.s
 
 main/desktop/assets/img_app_blockblast.o: main/desktop/assets/img_app_blockblast.c.o
@@ -969,6 +1024,7 @@ main/desktop/assets/img_app_blockblast.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_blockblast.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_blockblast.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_blockblast.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_blockblast.c.o
 .PHONY : main/desktop/assets/img_app_blockblast.c.o
 
 main/desktop/assets/img_app_blockblast.i: main/desktop/assets/img_app_blockblast.c.i
@@ -979,6 +1035,7 @@ main/desktop/assets/img_app_blockblast.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_blockblast.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_blockblast.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_blockblast.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_blockblast.c.i
 .PHONY : main/desktop/assets/img_app_blockblast.c.i
 
 main/desktop/assets/img_app_blockblast.s: main/desktop/assets/img_app_blockblast.c.s
@@ -989,6 +1046,7 @@ main/desktop/assets/img_app_blockblast.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_blockblast.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_blockblast.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_blockblast.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_blockblast.c.s
 .PHONY : main/desktop/assets/img_app_blockblast.c.s
 
 main/desktop/assets/img_app_blockpuzzle.o: main/desktop/assets/img_app_blockpuzzle.c.o
@@ -999,6 +1057,7 @@ main/desktop/assets/img_app_blockpuzzle.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_blockpuzzle.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_blockpuzzle.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_blockpuzzle.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_blockpuzzle.c.o
 .PHONY : main/desktop/assets/img_app_blockpuzzle.c.o
 
 main/desktop/assets/img_app_blockpuzzle.i: main/desktop/assets/img_app_blockpuzzle.c.i
@@ -1009,6 +1068,7 @@ main/desktop/assets/img_app_blockpuzzle.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_blockpuzzle.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_blockpuzzle.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_blockpuzzle.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_blockpuzzle.c.i
 .PHONY : main/desktop/assets/img_app_blockpuzzle.c.i
 
 main/desktop/assets/img_app_blockpuzzle.s: main/desktop/assets/img_app_blockpuzzle.c.s
@@ -1019,6 +1079,7 @@ main/desktop/assets/img_app_blockpuzzle.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_blockpuzzle.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_blockpuzzle.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_blockpuzzle.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_blockpuzzle.c.s
 .PHONY : main/desktop/assets/img_app_blockpuzzle.c.s
 
 main/desktop/assets/img_app_calc.o: main/desktop/assets/img_app_calc.c.o
@@ -1029,6 +1090,7 @@ main/desktop/assets/img_app_calc.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_calc.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_calc.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_calc.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_calc.c.o
 .PHONY : main/desktop/assets/img_app_calc.c.o
 
 main/desktop/assets/img_app_calc.i: main/desktop/assets/img_app_calc.c.i
@@ -1039,6 +1101,7 @@ main/desktop/assets/img_app_calc.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_calc.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_calc.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_calc.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_calc.c.i
 .PHONY : main/desktop/assets/img_app_calc.c.i
 
 main/desktop/assets/img_app_calc.s: main/desktop/assets/img_app_calc.c.s
@@ -1049,6 +1112,7 @@ main/desktop/assets/img_app_calc.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_calc.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_calc.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_calc.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_calc.c.s
 .PHONY : main/desktop/assets/img_app_calc.c.s
 
 main/desktop/assets/img_app_calc_plus.o: main/desktop/assets/img_app_calc_plus.c.o
@@ -1059,6 +1123,7 @@ main/desktop/assets/img_app_calc_plus.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_calc_plus.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_calc_plus.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_calc_plus.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_calc_plus.c.o
 .PHONY : main/desktop/assets/img_app_calc_plus.c.o
 
 main/desktop/assets/img_app_calc_plus.i: main/desktop/assets/img_app_calc_plus.c.i
@@ -1069,6 +1134,7 @@ main/desktop/assets/img_app_calc_plus.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_calc_plus.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_calc_plus.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_calc_plus.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_calc_plus.c.i
 .PHONY : main/desktop/assets/img_app_calc_plus.c.i
 
 main/desktop/assets/img_app_calc_plus.s: main/desktop/assets/img_app_calc_plus.c.s
@@ -1079,6 +1145,7 @@ main/desktop/assets/img_app_calc_plus.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_calc_plus.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_calc_plus.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_calc_plus.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_calc_plus.c.s
 .PHONY : main/desktop/assets/img_app_calc_plus.c.s
 
 main/desktop/assets/img_app_clock.o: main/desktop/assets/img_app_clock.c.o
@@ -1089,6 +1156,7 @@ main/desktop/assets/img_app_clock.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_clock.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_clock.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_clock.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_clock.c.o
 .PHONY : main/desktop/assets/img_app_clock.c.o
 
 main/desktop/assets/img_app_clock.i: main/desktop/assets/img_app_clock.c.i
@@ -1099,6 +1167,7 @@ main/desktop/assets/img_app_clock.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_clock.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_clock.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_clock.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_clock.c.i
 .PHONY : main/desktop/assets/img_app_clock.c.i
 
 main/desktop/assets/img_app_clock.s: main/desktop/assets/img_app_clock.c.s
@@ -1109,6 +1178,7 @@ main/desktop/assets/img_app_clock.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_clock.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_clock.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_clock.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_clock.c.s
 .PHONY : main/desktop/assets/img_app_clock.c.s
 
 main/desktop/assets/img_app_files.o: main/desktop/assets/img_app_files.c.o
@@ -1119,6 +1189,7 @@ main/desktop/assets/img_app_files.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_files.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_files.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_files.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_files.c.o
 .PHONY : main/desktop/assets/img_app_files.c.o
 
 main/desktop/assets/img_app_files.i: main/desktop/assets/img_app_files.c.i
@@ -1129,6 +1200,7 @@ main/desktop/assets/img_app_files.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_files.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_files.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_files.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_files.c.i
 .PHONY : main/desktop/assets/img_app_files.c.i
 
 main/desktop/assets/img_app_files.s: main/desktop/assets/img_app_files.c.s
@@ -1139,6 +1211,7 @@ main/desktop/assets/img_app_files.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_files.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_files.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_files.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_files.c.s
 .PHONY : main/desktop/assets/img_app_files.c.s
 
 main/desktop/assets/img_app_fruitninja.o: main/desktop/assets/img_app_fruitninja.c.o
@@ -1149,6 +1222,7 @@ main/desktop/assets/img_app_fruitninja.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_fruitninja.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_fruitninja.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_fruitninja.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_fruitninja.c.o
 .PHONY : main/desktop/assets/img_app_fruitninja.c.o
 
 main/desktop/assets/img_app_fruitninja.i: main/desktop/assets/img_app_fruitninja.c.i
@@ -1159,6 +1233,7 @@ main/desktop/assets/img_app_fruitninja.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_fruitninja.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_fruitninja.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_fruitninja.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_fruitninja.c.i
 .PHONY : main/desktop/assets/img_app_fruitninja.c.i
 
 main/desktop/assets/img_app_fruitninja.s: main/desktop/assets/img_app_fruitninja.c.s
@@ -1169,6 +1244,7 @@ main/desktop/assets/img_app_fruitninja.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_fruitninja.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_fruitninja.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_fruitninja.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_fruitninja.c.s
 .PHONY : main/desktop/assets/img_app_fruitninja.c.s
 
 main/desktop/assets/img_app_netease.o: main/desktop/assets/img_app_netease.c.o
@@ -1179,6 +1255,7 @@ main/desktop/assets/img_app_netease.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_netease.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_netease.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_netease.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_netease.c.o
 .PHONY : main/desktop/assets/img_app_netease.c.o
 
 main/desktop/assets/img_app_netease.i: main/desktop/assets/img_app_netease.c.i
@@ -1189,6 +1266,7 @@ main/desktop/assets/img_app_netease.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_netease.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_netease.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_netease.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_netease.c.i
 .PHONY : main/desktop/assets/img_app_netease.c.i
 
 main/desktop/assets/img_app_netease.s: main/desktop/assets/img_app_netease.c.s
@@ -1199,6 +1277,7 @@ main/desktop/assets/img_app_netease.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_netease.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_netease.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_netease.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_netease.c.s
 .PHONY : main/desktop/assets/img_app_netease.c.s
 
 main/desktop/assets/img_app_photos.o: main/desktop/assets/img_app_photos.c.o
@@ -1209,6 +1288,7 @@ main/desktop/assets/img_app_photos.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_photos.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_photos.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_photos.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_photos.c.o
 .PHONY : main/desktop/assets/img_app_photos.c.o
 
 main/desktop/assets/img_app_photos.i: main/desktop/assets/img_app_photos.c.i
@@ -1219,6 +1299,7 @@ main/desktop/assets/img_app_photos.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_photos.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_photos.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_photos.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_photos.c.i
 .PHONY : main/desktop/assets/img_app_photos.c.i
 
 main/desktop/assets/img_app_photos.s: main/desktop/assets/img_app_photos.c.s
@@ -1229,6 +1310,7 @@ main/desktop/assets/img_app_photos.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_photos.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_photos.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_photos.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_photos.c.s
 .PHONY : main/desktop/assets/img_app_photos.c.s
 
 main/desktop/assets/img_app_qqmusic.o: main/desktop/assets/img_app_qqmusic.c.o
@@ -1239,6 +1321,7 @@ main/desktop/assets/img_app_qqmusic.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_qqmusic.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_qqmusic.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_qqmusic.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_qqmusic.c.o
 .PHONY : main/desktop/assets/img_app_qqmusic.c.o
 
 main/desktop/assets/img_app_qqmusic.i: main/desktop/assets/img_app_qqmusic.c.i
@@ -1249,6 +1332,7 @@ main/desktop/assets/img_app_qqmusic.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_qqmusic.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_qqmusic.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_qqmusic.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_qqmusic.c.i
 .PHONY : main/desktop/assets/img_app_qqmusic.c.i
 
 main/desktop/assets/img_app_qqmusic.s: main/desktop/assets/img_app_qqmusic.c.s
@@ -1259,6 +1343,7 @@ main/desktop/assets/img_app_qqmusic.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_app_qqmusic.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/assets/img_app_qqmusic.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_app_qqmusic.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_app_qqmusic.c.s
 .PHONY : main/desktop/assets/img_app_qqmusic.c.s
 
 main/desktop/assets/img_wallpaper_480x272.o: main/desktop/assets/img_wallpaper_480x272.c.o
@@ -1268,6 +1353,7 @@ main/desktop/assets/img_wallpaper_480x272.o: main/desktop/assets/img_wallpaper_4
 main/desktop/assets/img_wallpaper_480x272.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_wallpaper_480x272.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_wallpaper_480x272.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_wallpaper_480x272.c.o
 .PHONY : main/desktop/assets/img_wallpaper_480x272.c.o
 
 main/desktop/assets/img_wallpaper_480x272.i: main/desktop/assets/img_wallpaper_480x272.c.i
@@ -1277,6 +1363,7 @@ main/desktop/assets/img_wallpaper_480x272.i: main/desktop/assets/img_wallpaper_4
 main/desktop/assets/img_wallpaper_480x272.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_wallpaper_480x272.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_wallpaper_480x272.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_wallpaper_480x272.c.i
 .PHONY : main/desktop/assets/img_wallpaper_480x272.c.i
 
 main/desktop/assets/img_wallpaper_480x272.s: main/desktop/assets/img_wallpaper_480x272.c.s
@@ -1286,6 +1373,7 @@ main/desktop/assets/img_wallpaper_480x272.s: main/desktop/assets/img_wallpaper_4
 main/desktop/assets/img_wallpaper_480x272.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_wallpaper_480x272.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_wallpaper_480x272.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_wallpaper_480x272.c.s
 .PHONY : main/desktop/assets/img_wallpaper_480x272.c.s
 
 main/desktop/assets/img_wallpaper_640x480.o: main/desktop/assets/img_wallpaper_640x480.c.o
@@ -1295,6 +1383,7 @@ main/desktop/assets/img_wallpaper_640x480.o: main/desktop/assets/img_wallpaper_6
 main/desktop/assets/img_wallpaper_640x480.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_wallpaper_640x480.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_wallpaper_640x480.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_wallpaper_640x480.c.o
 .PHONY : main/desktop/assets/img_wallpaper_640x480.c.o
 
 main/desktop/assets/img_wallpaper_640x480.i: main/desktop/assets/img_wallpaper_640x480.c.i
@@ -1304,6 +1393,7 @@ main/desktop/assets/img_wallpaper_640x480.i: main/desktop/assets/img_wallpaper_6
 main/desktop/assets/img_wallpaper_640x480.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_wallpaper_640x480.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_wallpaper_640x480.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_wallpaper_640x480.c.i
 .PHONY : main/desktop/assets/img_wallpaper_640x480.c.i
 
 main/desktop/assets/img_wallpaper_640x480.s: main/desktop/assets/img_wallpaper_640x480.c.s
@@ -1313,6 +1403,7 @@ main/desktop/assets/img_wallpaper_640x480.s: main/desktop/assets/img_wallpaper_6
 main/desktop/assets/img_wallpaper_640x480.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_wallpaper_640x480.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_wallpaper_640x480.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_wallpaper_640x480.c.s
 .PHONY : main/desktop/assets/img_wallpaper_640x480.c.s
 
 main/desktop/assets/img_wallpaper_800x480.o: main/desktop/assets/img_wallpaper_800x480.c.o
@@ -1322,6 +1413,7 @@ main/desktop/assets/img_wallpaper_800x480.o: main/desktop/assets/img_wallpaper_8
 main/desktop/assets/img_wallpaper_800x480.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_wallpaper_800x480.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_wallpaper_800x480.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_wallpaper_800x480.c.o
 .PHONY : main/desktop/assets/img_wallpaper_800x480.c.o
 
 main/desktop/assets/img_wallpaper_800x480.i: main/desktop/assets/img_wallpaper_800x480.c.i
@@ -1331,6 +1423,7 @@ main/desktop/assets/img_wallpaper_800x480.i: main/desktop/assets/img_wallpaper_8
 main/desktop/assets/img_wallpaper_800x480.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_wallpaper_800x480.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_wallpaper_800x480.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_wallpaper_800x480.c.i
 .PHONY : main/desktop/assets/img_wallpaper_800x480.c.i
 
 main/desktop/assets/img_wallpaper_800x480.s: main/desktop/assets/img_wallpaper_800x480.c.s
@@ -1340,6 +1433,7 @@ main/desktop/assets/img_wallpaper_800x480.s: main/desktop/assets/img_wallpaper_8
 main/desktop/assets/img_wallpaper_800x480.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/assets/img_wallpaper_800x480.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/assets/img_wallpaper_800x480.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/assets/img_wallpaper_800x480.c.s
 .PHONY : main/desktop/assets/img_wallpaper_800x480.c.s
 
 main/desktop/calc/calc.o: main/desktop/calc/calc.c.o
@@ -1349,6 +1443,7 @@ main/desktop/calc/calc.o: main/desktop/calc/calc.c.o
 main/desktop/calc/calc.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/calc/calc.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/calc/calc.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/calc/calc.c.o
 .PHONY : main/desktop/calc/calc.c.o
 
 main/desktop/calc/calc.i: main/desktop/calc/calc.c.i
@@ -1358,6 +1453,7 @@ main/desktop/calc/calc.i: main/desktop/calc/calc.c.i
 main/desktop/calc/calc.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/calc/calc.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/calc/calc.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/calc/calc.c.i
 .PHONY : main/desktop/calc/calc.c.i
 
 main/desktop/calc/calc.s: main/desktop/calc/calc.c.s
@@ -1367,6 +1463,7 @@ main/desktop/calc/calc.s: main/desktop/calc/calc.c.s
 main/desktop/calc/calc.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/calc/calc.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/calc/calc.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/calc/calc.c.s
 .PHONY : main/desktop/calc/calc.c.s
 
 main/desktop/calc/calc_app.o: main/desktop/calc/calc_app.c.o
@@ -1376,6 +1473,7 @@ main/desktop/calc/calc_app.o: main/desktop/calc/calc_app.c.o
 main/desktop/calc/calc_app.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/calc/calc_app.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/calc/calc_app.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/calc/calc_app.c.o
 .PHONY : main/desktop/calc/calc_app.c.o
 
 main/desktop/calc/calc_app.i: main/desktop/calc/calc_app.c.i
@@ -1385,6 +1483,7 @@ main/desktop/calc/calc_app.i: main/desktop/calc/calc_app.c.i
 main/desktop/calc/calc_app.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/calc/calc_app.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/calc/calc_app.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/calc/calc_app.c.i
 .PHONY : main/desktop/calc/calc_app.c.i
 
 main/desktop/calc/calc_app.s: main/desktop/calc/calc_app.c.s
@@ -1394,6 +1493,7 @@ main/desktop/calc/calc_app.s: main/desktop/calc/calc_app.c.s
 main/desktop/calc/calc_app.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/calc/calc_app.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/calc/calc_app.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/calc/calc_app.c.s
 .PHONY : main/desktop/calc/calc_app.c.s
 
 main/desktop/calc/calc_engine.o: main/desktop/calc/calc_engine.c.o
@@ -1403,6 +1503,7 @@ main/desktop/calc/calc_engine.o: main/desktop/calc/calc_engine.c.o
 main/desktop/calc/calc_engine.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/calc/calc_engine.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/calc/calc_engine.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/calc/calc_engine.c.o
 .PHONY : main/desktop/calc/calc_engine.c.o
 
 main/desktop/calc/calc_engine.i: main/desktop/calc/calc_engine.c.i
@@ -1412,6 +1513,7 @@ main/desktop/calc/calc_engine.i: main/desktop/calc/calc_engine.c.i
 main/desktop/calc/calc_engine.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/calc/calc_engine.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/calc/calc_engine.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/calc/calc_engine.c.i
 .PHONY : main/desktop/calc/calc_engine.c.i
 
 main/desktop/calc/calc_engine.s: main/desktop/calc/calc_engine.c.s
@@ -1421,6 +1523,7 @@ main/desktop/calc/calc_engine.s: main/desktop/calc/calc_engine.c.s
 main/desktop/calc/calc_engine.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/calc/calc_engine.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/calc/calc_engine.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/calc/calc_engine.c.s
 .PHONY : main/desktop/calc/calc_engine.c.s
 
 main/desktop/design_fruit_app.o: main/desktop/design_fruit_app.c.o
@@ -1430,6 +1533,7 @@ main/desktop/design_fruit_app.o: main/desktop/design_fruit_app.c.o
 main/desktop/design_fruit_app.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/design_fruit_app.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/design_fruit_app.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/design_fruit_app.c.o
 .PHONY : main/desktop/design_fruit_app.c.o
 
 main/desktop/design_fruit_app.i: main/desktop/design_fruit_app.c.i
@@ -1439,6 +1543,7 @@ main/desktop/design_fruit_app.i: main/desktop/design_fruit_app.c.i
 main/desktop/design_fruit_app.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/design_fruit_app.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/design_fruit_app.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/design_fruit_app.c.i
 .PHONY : main/desktop/design_fruit_app.c.i
 
 main/desktop/design_fruit_app.s: main/desktop/design_fruit_app.c.s
@@ -1448,6 +1553,7 @@ main/desktop/design_fruit_app.s: main/desktop/design_fruit_app.c.s
 main/desktop/design_fruit_app.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/design_fruit_app.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/design_fruit_app.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/design_fruit_app.c.s
 .PHONY : main/desktop/design_fruit_app.c.s
 
 main/desktop/desktop.o: main/desktop/desktop.c.o
@@ -1457,6 +1563,7 @@ main/desktop/desktop.o: main/desktop/desktop.c.o
 main/desktop/desktop.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop.c.o
 .PHONY : main/desktop/desktop.c.o
 
 main/desktop/desktop.i: main/desktop/desktop.c.i
@@ -1466,6 +1573,7 @@ main/desktop/desktop.i: main/desktop/desktop.c.i
 main/desktop/desktop.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop.c.i
 .PHONY : main/desktop/desktop.c.i
 
 main/desktop/desktop.s: main/desktop/desktop.c.s
@@ -1475,6 +1583,7 @@ main/desktop/desktop.s: main/desktop/desktop.c.s
 main/desktop/desktop.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop.c.s
 .PHONY : main/desktop/desktop.c.s
 
 main/desktop/desktop_app_launcher.o: main/desktop/desktop_app_launcher.c.o
@@ -1485,6 +1594,7 @@ main/desktop/desktop_app_launcher.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_app_launcher.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_launcher_test.dir/build.make CMakeFiles/desktop_apple_music_launcher_test.dir/main/desktop/desktop_app_launcher.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_app_launcher.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_app_launcher.c.o
 .PHONY : main/desktop/desktop_app_launcher.c.o
 
 main/desktop/desktop_app_launcher.i: main/desktop/desktop_app_launcher.c.i
@@ -1495,6 +1605,7 @@ main/desktop/desktop_app_launcher.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_app_launcher.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_launcher_test.dir/build.make CMakeFiles/desktop_apple_music_launcher_test.dir/main/desktop/desktop_app_launcher.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_app_launcher.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_app_launcher.c.i
 .PHONY : main/desktop/desktop_app_launcher.c.i
 
 main/desktop/desktop_app_launcher.s: main/desktop/desktop_app_launcher.c.s
@@ -1505,6 +1616,7 @@ main/desktop/desktop_app_launcher.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_app_launcher.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_launcher_test.dir/build.make CMakeFiles/desktop_apple_music_launcher_test.dir/main/desktop/desktop_app_launcher.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_app_launcher.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_app_launcher.c.s
 .PHONY : main/desktop/desktop_app_launcher.c.s
 
 main/desktop/desktop_assets_bundle.o: main/desktop/desktop_assets_bundle.c.o
@@ -1514,6 +1626,7 @@ main/desktop/desktop_assets_bundle.o: main/desktop/desktop_assets_bundle.c.o
 main/desktop/desktop_assets_bundle.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_assets_bundle.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_assets_bundle.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_assets_bundle.c.o
 .PHONY : main/desktop/desktop_assets_bundle.c.o
 
 main/desktop/desktop_assets_bundle.i: main/desktop/desktop_assets_bundle.c.i
@@ -1523,6 +1636,7 @@ main/desktop/desktop_assets_bundle.i: main/desktop/desktop_assets_bundle.c.i
 main/desktop/desktop_assets_bundle.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_assets_bundle.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_assets_bundle.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_assets_bundle.c.i
 .PHONY : main/desktop/desktop_assets_bundle.c.i
 
 main/desktop/desktop_assets_bundle.s: main/desktop/desktop_assets_bundle.c.s
@@ -1532,6 +1646,7 @@ main/desktop/desktop_assets_bundle.s: main/desktop/desktop_assets_bundle.c.s
 main/desktop/desktop_assets_bundle.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_assets_bundle.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_assets_bundle.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_assets_bundle.c.s
 .PHONY : main/desktop/desktop_assets_bundle.c.s
 
 main/desktop/desktop_data.o: main/desktop/desktop_data.c.o
@@ -1542,6 +1657,7 @@ main/desktop/desktop_data.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_data.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/desktop_data.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_data.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_data.c.o
 .PHONY : main/desktop/desktop_data.c.o
 
 main/desktop/desktop_data.i: main/desktop/desktop_data.c.i
@@ -1552,6 +1668,7 @@ main/desktop/desktop_data.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_data.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/desktop_data.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_data.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_data.c.i
 .PHONY : main/desktop/desktop_data.c.i
 
 main/desktop/desktop_data.s: main/desktop/desktop_data.c.s
@@ -1562,6 +1679,7 @@ main/desktop/desktop_data.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_data.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_test.dir/build.make CMakeFiles/desktop_apple_music_test.dir/main/desktop/desktop_data.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_data.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_data.c.s
 .PHONY : main/desktop/desktop_data.c.s
 
 main/desktop/desktop_gesture.o: main/desktop/desktop_gesture.c.o
@@ -1571,6 +1689,7 @@ main/desktop/desktop_gesture.o: main/desktop/desktop_gesture.c.o
 main/desktop/desktop_gesture.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_gesture.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_gesture.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_gesture.c.o
 .PHONY : main/desktop/desktop_gesture.c.o
 
 main/desktop/desktop_gesture.i: main/desktop/desktop_gesture.c.i
@@ -1580,6 +1699,7 @@ main/desktop/desktop_gesture.i: main/desktop/desktop_gesture.c.i
 main/desktop/desktop_gesture.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_gesture.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_gesture.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_gesture.c.i
 .PHONY : main/desktop/desktop_gesture.c.i
 
 main/desktop/desktop_gesture.s: main/desktop/desktop_gesture.c.s
@@ -1589,6 +1709,7 @@ main/desktop/desktop_gesture.s: main/desktop/desktop_gesture.c.s
 main/desktop/desktop_gesture.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_gesture.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_gesture.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_gesture.c.s
 .PHONY : main/desktop/desktop_gesture.c.s
 
 main/desktop/desktop_home.o: main/desktop/desktop_home.c.o
@@ -1598,6 +1719,7 @@ main/desktop/desktop_home.o: main/desktop/desktop_home.c.o
 main/desktop/desktop_home.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_home.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_home.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_home.c.o
 .PHONY : main/desktop/desktop_home.c.o
 
 main/desktop/desktop_home.i: main/desktop/desktop_home.c.i
@@ -1607,6 +1729,7 @@ main/desktop/desktop_home.i: main/desktop/desktop_home.c.i
 main/desktop/desktop_home.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_home.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_home.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_home.c.i
 .PHONY : main/desktop/desktop_home.c.i
 
 main/desktop/desktop_home.s: main/desktop/desktop_home.c.s
@@ -1616,6 +1739,7 @@ main/desktop/desktop_home.s: main/desktop/desktop_home.c.s
 main/desktop/desktop_home.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_home.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_home.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_home.c.s
 .PHONY : main/desktop/desktop_home.c.s
 
 main/desktop/desktop_metrics.o: main/desktop/desktop_metrics.c.o
@@ -1626,6 +1750,7 @@ main/desktop/desktop_metrics.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_metrics.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_launcher_test.dir/build.make CMakeFiles/desktop_apple_music_launcher_test.dir/main/desktop/desktop_metrics.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_metrics.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_metrics.c.o
 .PHONY : main/desktop/desktop_metrics.c.o
 
 main/desktop/desktop_metrics.i: main/desktop/desktop_metrics.c.i
@@ -1636,6 +1761,7 @@ main/desktop/desktop_metrics.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_metrics.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_launcher_test.dir/build.make CMakeFiles/desktop_apple_music_launcher_test.dir/main/desktop/desktop_metrics.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_metrics.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_metrics.c.i
 .PHONY : main/desktop/desktop_metrics.c.i
 
 main/desktop/desktop_metrics.s: main/desktop/desktop_metrics.c.s
@@ -1646,6 +1772,7 @@ main/desktop/desktop_metrics.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_metrics.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_apple_music_launcher_test.dir/build.make CMakeFiles/desktop_apple_music_launcher_test.dir/main/desktop/desktop_metrics.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_metrics.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_metrics.c.s
 .PHONY : main/desktop/desktop_metrics.c.s
 
 main/desktop/desktop_page_config.o: main/desktop/desktop_page_config.c.o
@@ -1655,6 +1782,7 @@ main/desktop/desktop_page_config.o: main/desktop/desktop_page_config.c.o
 main/desktop/desktop_page_config.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_page_config.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_page_config.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_page_config.c.o
 .PHONY : main/desktop/desktop_page_config.c.o
 
 main/desktop/desktop_page_config.i: main/desktop/desktop_page_config.c.i
@@ -1664,6 +1792,7 @@ main/desktop/desktop_page_config.i: main/desktop/desktop_page_config.c.i
 main/desktop/desktop_page_config.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_page_config.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_page_config.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_page_config.c.i
 .PHONY : main/desktop/desktop_page_config.c.i
 
 main/desktop/desktop_page_config.s: main/desktop/desktop_page_config.c.s
@@ -1673,6 +1802,7 @@ main/desktop/desktop_page_config.s: main/desktop/desktop_page_config.c.s
 main/desktop/desktop_page_config.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_page_config.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_page_config.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_page_config.c.s
 .PHONY : main/desktop/desktop_page_config.c.s
 
 main/desktop/desktop_panels.o: main/desktop/desktop_panels.c.o
@@ -1682,6 +1812,7 @@ main/desktop/desktop_panels.o: main/desktop/desktop_panels.c.o
 main/desktop/desktop_panels.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_panels.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_panels.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_panels.c.o
 .PHONY : main/desktop/desktop_panels.c.o
 
 main/desktop/desktop_panels.i: main/desktop/desktop_panels.c.i
@@ -1691,6 +1822,7 @@ main/desktop/desktop_panels.i: main/desktop/desktop_panels.c.i
 main/desktop/desktop_panels.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_panels.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_panels.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_panels.c.i
 .PHONY : main/desktop/desktop_panels.c.i
 
 main/desktop/desktop_panels.s: main/desktop/desktop_panels.c.s
@@ -1700,6 +1832,7 @@ main/desktop/desktop_panels.s: main/desktop/desktop_panels.c.s
 main/desktop/desktop_panels.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_panels.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_panels.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_panels.c.s
 .PHONY : main/desktop/desktop_panels.c.s
 
 main/desktop/desktop_panels_geom.o: main/desktop/desktop_panels_geom.c.o
@@ -1709,6 +1842,7 @@ main/desktop/desktop_panels_geom.o: main/desktop/desktop_panels_geom.c.o
 main/desktop/desktop_panels_geom.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_panels_geom.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_panels_geom.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_panels_geom.c.o
 .PHONY : main/desktop/desktop_panels_geom.c.o
 
 main/desktop/desktop_panels_geom.i: main/desktop/desktop_panels_geom.c.i
@@ -1718,6 +1852,7 @@ main/desktop/desktop_panels_geom.i: main/desktop/desktop_panels_geom.c.i
 main/desktop/desktop_panels_geom.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_panels_geom.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_panels_geom.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_panels_geom.c.i
 .PHONY : main/desktop/desktop_panels_geom.c.i
 
 main/desktop/desktop_panels_geom.s: main/desktop/desktop_panels_geom.c.s
@@ -1727,6 +1862,7 @@ main/desktop/desktop_panels_geom.s: main/desktop/desktop_panels_geom.c.s
 main/desktop/desktop_panels_geom.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_panels_geom.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_panels_geom.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_panels_geom.c.s
 .PHONY : main/desktop/desktop_panels_geom.c.s
 
 main/desktop/desktop_theme.o: main/desktop/desktop_theme.c.o
@@ -1736,6 +1872,7 @@ main/desktop/desktop_theme.o: main/desktop/desktop_theme.c.o
 main/desktop/desktop_theme.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_theme.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_theme.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_theme.c.o
 .PHONY : main/desktop/desktop_theme.c.o
 
 main/desktop/desktop_theme.i: main/desktop/desktop_theme.c.i
@@ -1745,6 +1882,7 @@ main/desktop/desktop_theme.i: main/desktop/desktop_theme.c.i
 main/desktop/desktop_theme.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_theme.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_theme.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_theme.c.i
 .PHONY : main/desktop/desktop_theme.c.i
 
 main/desktop/desktop_theme.s: main/desktop/desktop_theme.c.s
@@ -1754,6 +1892,7 @@ main/desktop/desktop_theme.s: main/desktop/desktop_theme.c.s
 main/desktop/desktop_theme.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_theme.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_theme.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_theme.c.s
 .PHONY : main/desktop/desktop_theme.c.s
 
 main/desktop/desktop_top_bar.o: main/desktop/desktop_top_bar.c.o
@@ -1763,6 +1902,7 @@ main/desktop/desktop_top_bar.o: main/desktop/desktop_top_bar.c.o
 main/desktop/desktop_top_bar.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_top_bar.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_top_bar.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_top_bar.c.o
 .PHONY : main/desktop/desktop_top_bar.c.o
 
 main/desktop/desktop_top_bar.i: main/desktop/desktop_top_bar.c.i
@@ -1772,6 +1912,7 @@ main/desktop/desktop_top_bar.i: main/desktop/desktop_top_bar.c.i
 main/desktop/desktop_top_bar.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_top_bar.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_top_bar.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_top_bar.c.i
 .PHONY : main/desktop/desktop_top_bar.c.i
 
 main/desktop/desktop_top_bar.s: main/desktop/desktop_top_bar.c.s
@@ -1781,6 +1922,7 @@ main/desktop/desktop_top_bar.s: main/desktop/desktop_top_bar.c.s
 main/desktop/desktop_top_bar.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_top_bar.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_top_bar.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_top_bar.c.s
 .PHONY : main/desktop/desktop_top_bar.c.s
 
 main/desktop/desktop_widgets.o: main/desktop/desktop_widgets.c.o
@@ -1790,6 +1932,7 @@ main/desktop/desktop_widgets.o: main/desktop/desktop_widgets.c.o
 main/desktop/desktop_widgets.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_widgets.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_widgets.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_widgets.c.o
 .PHONY : main/desktop/desktop_widgets.c.o
 
 main/desktop/desktop_widgets.i: main/desktop/desktop_widgets.c.i
@@ -1799,6 +1942,7 @@ main/desktop/desktop_widgets.i: main/desktop/desktop_widgets.c.i
 main/desktop/desktop_widgets.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_widgets.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_widgets.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_widgets.c.i
 .PHONY : main/desktop/desktop_widgets.c.i
 
 main/desktop/desktop_widgets.s: main/desktop/desktop_widgets.c.s
@@ -1808,6 +1952,7 @@ main/desktop/desktop_widgets.s: main/desktop/desktop_widgets.c.s
 main/desktop/desktop_widgets.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/desktop_widgets.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/desktop_widgets.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/desktop_widgets.c.s
 .PHONY : main/desktop/desktop_widgets.c.s
 
 main/desktop/fruit_ninja_app.o: main/desktop/fruit_ninja_app.c.o
@@ -1817,6 +1962,7 @@ main/desktop/fruit_ninja_app.o: main/desktop/fruit_ninja_app.c.o
 main/desktop/fruit_ninja_app.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/fruit_ninja_app.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/fruit_ninja_app.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/fruit_ninja_app.c.o
 .PHONY : main/desktop/fruit_ninja_app.c.o
 
 main/desktop/fruit_ninja_app.i: main/desktop/fruit_ninja_app.c.i
@@ -1826,6 +1972,7 @@ main/desktop/fruit_ninja_app.i: main/desktop/fruit_ninja_app.c.i
 main/desktop/fruit_ninja_app.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/fruit_ninja_app.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/fruit_ninja_app.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/fruit_ninja_app.c.i
 .PHONY : main/desktop/fruit_ninja_app.c.i
 
 main/desktop/fruit_ninja_app.s: main/desktop/fruit_ninja_app.c.s
@@ -1835,6 +1982,7 @@ main/desktop/fruit_ninja_app.s: main/desktop/fruit_ninja_app.c.s
 main/desktop/fruit_ninja_app.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/fruit_ninja_app.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/fruit_ninja_app.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/fruit_ninja_app.c.s
 .PHONY : main/desktop/fruit_ninja_app.c.s
 
 main/desktop/game_2048_app.o: main/desktop/game_2048_app.c.o
@@ -1844,6 +1992,7 @@ main/desktop/game_2048_app.o: main/desktop/game_2048_app.c.o
 main/desktop/game_2048_app.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/game_2048_app.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/game_2048_app.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/game_2048_app.c.o
 .PHONY : main/desktop/game_2048_app.c.o
 
 main/desktop/game_2048_app.i: main/desktop/game_2048_app.c.i
@@ -1853,6 +2002,7 @@ main/desktop/game_2048_app.i: main/desktop/game_2048_app.c.i
 main/desktop/game_2048_app.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/game_2048_app.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/game_2048_app.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/game_2048_app.c.i
 .PHONY : main/desktop/game_2048_app.c.i
 
 main/desktop/game_2048_app.s: main/desktop/game_2048_app.c.s
@@ -1862,6 +2012,7 @@ main/desktop/game_2048_app.s: main/desktop/game_2048_app.c.s
 main/desktop/game_2048_app.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/game_2048_app.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/game_2048_app.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/game_2048_app.c.s
 .PHONY : main/desktop/game_2048_app.c.s
 
 main/desktop/tetris_app.o: main/desktop/tetris_app.c.o
@@ -1871,6 +2022,7 @@ main/desktop/tetris_app.o: main/desktop/tetris_app.c.o
 main/desktop/tetris_app.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/tetris_app.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/tetris_app.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/tetris_app.c.o
 .PHONY : main/desktop/tetris_app.c.o
 
 main/desktop/tetris_app.i: main/desktop/tetris_app.c.i
@@ -1880,6 +2032,7 @@ main/desktop/tetris_app.i: main/desktop/tetris_app.c.i
 main/desktop/tetris_app.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/tetris_app.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/tetris_app.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/tetris_app.c.i
 .PHONY : main/desktop/tetris_app.c.i
 
 main/desktop/tetris_app.s: main/desktop/tetris_app.c.s
@@ -1889,6 +2042,7 @@ main/desktop/tetris_app.s: main/desktop/tetris_app.c.s
 main/desktop/tetris_app.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/desktop/tetris_app.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/desktop/tetris_app.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/desktop/tetris_app.c.s
 .PHONY : main/desktop/tetris_app.c.s
 
 main/src/design_fruit/design_fruit.o: main/src/design_fruit/design_fruit.c.o
@@ -1898,6 +2052,7 @@ main/src/design_fruit/design_fruit.o: main/src/design_fruit/design_fruit.c.o
 main/src/design_fruit/design_fruit.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/design_fruit/design_fruit.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/design_fruit/design_fruit.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/design_fruit/design_fruit.c.o
 .PHONY : main/src/design_fruit/design_fruit.c.o
 
 main/src/design_fruit/design_fruit.i: main/src/design_fruit/design_fruit.c.i
@@ -1907,6 +2062,7 @@ main/src/design_fruit/design_fruit.i: main/src/design_fruit/design_fruit.c.i
 main/src/design_fruit/design_fruit.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/design_fruit/design_fruit.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/design_fruit/design_fruit.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/design_fruit/design_fruit.c.i
 .PHONY : main/src/design_fruit/design_fruit.c.i
 
 main/src/design_fruit/design_fruit.s: main/src/design_fruit/design_fruit.c.s
@@ -1916,6 +2072,7 @@ main/src/design_fruit/design_fruit.s: main/src/design_fruit/design_fruit.c.s
 main/src/design_fruit/design_fruit.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/design_fruit/design_fruit.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/design_fruit/design_fruit.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/design_fruit/design_fruit.c.s
 .PHONY : main/src/design_fruit/design_fruit.c.s
 
 main/src/design_fruit/design_fruit_assets.o: main/src/design_fruit/design_fruit_assets.c.o
@@ -1925,6 +2082,7 @@ main/src/design_fruit/design_fruit_assets.o: main/src/design_fruit/design_fruit_
 main/src/design_fruit/design_fruit_assets.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/design_fruit/design_fruit_assets.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/design_fruit/design_fruit_assets.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/design_fruit/design_fruit_assets.c.o
 .PHONY : main/src/design_fruit/design_fruit_assets.c.o
 
 main/src/design_fruit/design_fruit_assets.i: main/src/design_fruit/design_fruit_assets.c.i
@@ -1934,6 +2092,7 @@ main/src/design_fruit/design_fruit_assets.i: main/src/design_fruit/design_fruit_
 main/src/design_fruit/design_fruit_assets.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/design_fruit/design_fruit_assets.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/design_fruit/design_fruit_assets.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/design_fruit/design_fruit_assets.c.i
 .PHONY : main/src/design_fruit/design_fruit_assets.c.i
 
 main/src/design_fruit/design_fruit_assets.s: main/src/design_fruit/design_fruit_assets.c.s
@@ -1943,6 +2102,7 @@ main/src/design_fruit/design_fruit_assets.s: main/src/design_fruit/design_fruit_
 main/src/design_fruit/design_fruit_assets.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/design_fruit/design_fruit_assets.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/design_fruit/design_fruit_assets.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/design_fruit/design_fruit_assets.c.s
 .PHONY : main/src/design_fruit/design_fruit_assets.c.s
 
 main/src/design_fruit/design_fruit_audio.o: main/src/design_fruit/design_fruit_audio.c.o
@@ -1952,6 +2112,7 @@ main/src/design_fruit/design_fruit_audio.o: main/src/design_fruit/design_fruit_a
 main/src/design_fruit/design_fruit_audio.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/design_fruit/design_fruit_audio.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/design_fruit/design_fruit_audio.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/design_fruit/design_fruit_audio.c.o
 .PHONY : main/src/design_fruit/design_fruit_audio.c.o
 
 main/src/design_fruit/design_fruit_audio.i: main/src/design_fruit/design_fruit_audio.c.i
@@ -1961,6 +2122,7 @@ main/src/design_fruit/design_fruit_audio.i: main/src/design_fruit/design_fruit_a
 main/src/design_fruit/design_fruit_audio.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/design_fruit/design_fruit_audio.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/design_fruit/design_fruit_audio.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/design_fruit/design_fruit_audio.c.i
 .PHONY : main/src/design_fruit/design_fruit_audio.c.i
 
 main/src/design_fruit/design_fruit_audio.s: main/src/design_fruit/design_fruit_audio.c.s
@@ -1970,6 +2132,7 @@ main/src/design_fruit/design_fruit_audio.s: main/src/design_fruit/design_fruit_a
 main/src/design_fruit/design_fruit_audio.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/design_fruit/design_fruit_audio.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/design_fruit/design_fruit_audio.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/design_fruit/design_fruit_audio.c.s
 .PHONY : main/src/design_fruit/design_fruit_audio.c.s
 
 main/src/design_fruit/design_fruit_model.o: main/src/design_fruit/design_fruit_model.c.o
@@ -1980,6 +2143,7 @@ main/src/design_fruit/design_fruit_model.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/design_fruit/design_fruit_model.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/design_fruit_model_test.dir/build.make CMakeFiles/design_fruit_model_test.dir/main/src/design_fruit/design_fruit_model.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/design_fruit/design_fruit_model.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/design_fruit/design_fruit_model.c.o
 .PHONY : main/src/design_fruit/design_fruit_model.c.o
 
 main/src/design_fruit/design_fruit_model.i: main/src/design_fruit/design_fruit_model.c.i
@@ -1990,6 +2154,7 @@ main/src/design_fruit/design_fruit_model.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/design_fruit/design_fruit_model.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/design_fruit_model_test.dir/build.make CMakeFiles/design_fruit_model_test.dir/main/src/design_fruit/design_fruit_model.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/design_fruit/design_fruit_model.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/design_fruit/design_fruit_model.c.i
 .PHONY : main/src/design_fruit/design_fruit_model.c.i
 
 main/src/design_fruit/design_fruit_model.s: main/src/design_fruit/design_fruit_model.c.s
@@ -2000,6 +2165,7 @@ main/src/design_fruit/design_fruit_model.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/design_fruit/design_fruit_model.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/design_fruit_model_test.dir/build.make CMakeFiles/design_fruit_model_test.dir/main/src/design_fruit/design_fruit_model.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/design_fruit/design_fruit_model.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/design_fruit/design_fruit_model.c.s
 .PHONY : main/src/design_fruit/design_fruit_model.c.s
 
 main/src/design_fruit/fonts/design_fruit_font_12.o: main/src/design_fruit/fonts/design_fruit_font_12.c.o
@@ -2009,6 +2175,7 @@ main/src/design_fruit/fonts/design_fruit_font_12.o: main/src/design_fruit/fonts/
 main/src/design_fruit/fonts/design_fruit_font_12.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/design_fruit/fonts/design_fruit_font_12.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/design_fruit/fonts/design_fruit_font_12.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/design_fruit/fonts/design_fruit_font_12.c.o
 .PHONY : main/src/design_fruit/fonts/design_fruit_font_12.c.o
 
 main/src/design_fruit/fonts/design_fruit_font_12.i: main/src/design_fruit/fonts/design_fruit_font_12.c.i
@@ -2018,6 +2185,7 @@ main/src/design_fruit/fonts/design_fruit_font_12.i: main/src/design_fruit/fonts/
 main/src/design_fruit/fonts/design_fruit_font_12.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/design_fruit/fonts/design_fruit_font_12.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/design_fruit/fonts/design_fruit_font_12.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/design_fruit/fonts/design_fruit_font_12.c.i
 .PHONY : main/src/design_fruit/fonts/design_fruit_font_12.c.i
 
 main/src/design_fruit/fonts/design_fruit_font_12.s: main/src/design_fruit/fonts/design_fruit_font_12.c.s
@@ -2027,6 +2195,7 @@ main/src/design_fruit/fonts/design_fruit_font_12.s: main/src/design_fruit/fonts/
 main/src/design_fruit/fonts/design_fruit_font_12.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/design_fruit/fonts/design_fruit_font_12.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/design_fruit/fonts/design_fruit_font_12.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/design_fruit/fonts/design_fruit_font_12.c.s
 .PHONY : main/src/design_fruit/fonts/design_fruit_font_12.c.s
 
 main/src/design_fruit/fonts/design_fruit_font_16.o: main/src/design_fruit/fonts/design_fruit_font_16.c.o
@@ -2036,6 +2205,7 @@ main/src/design_fruit/fonts/design_fruit_font_16.o: main/src/design_fruit/fonts/
 main/src/design_fruit/fonts/design_fruit_font_16.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/design_fruit/fonts/design_fruit_font_16.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/design_fruit/fonts/design_fruit_font_16.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/design_fruit/fonts/design_fruit_font_16.c.o
 .PHONY : main/src/design_fruit/fonts/design_fruit_font_16.c.o
 
 main/src/design_fruit/fonts/design_fruit_font_16.i: main/src/design_fruit/fonts/design_fruit_font_16.c.i
@@ -2045,6 +2215,7 @@ main/src/design_fruit/fonts/design_fruit_font_16.i: main/src/design_fruit/fonts/
 main/src/design_fruit/fonts/design_fruit_font_16.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/design_fruit/fonts/design_fruit_font_16.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/design_fruit/fonts/design_fruit_font_16.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/design_fruit/fonts/design_fruit_font_16.c.i
 .PHONY : main/src/design_fruit/fonts/design_fruit_font_16.c.i
 
 main/src/design_fruit/fonts/design_fruit_font_16.s: main/src/design_fruit/fonts/design_fruit_font_16.c.s
@@ -2054,6 +2225,7 @@ main/src/design_fruit/fonts/design_fruit_font_16.s: main/src/design_fruit/fonts/
 main/src/design_fruit/fonts/design_fruit_font_16.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/design_fruit/fonts/design_fruit_font_16.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/design_fruit/fonts/design_fruit_font_16.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/design_fruit/fonts/design_fruit_font_16.c.s
 .PHONY : main/src/design_fruit/fonts/design_fruit_font_16.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_corner_large.o: main/src/local_music_demo/assets/img_lv_demo_music_btn_corner_large.c.o
@@ -2063,6 +2235,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_corner_large.o: main/src/
 main/src/local_music_demo/assets/img_lv_demo_music_btn_corner_large.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_corner_large.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_corner_large.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_corner_large.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_corner_large.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_corner_large.i: main/src/local_music_demo/assets/img_lv_demo_music_btn_corner_large.c.i
@@ -2072,6 +2245,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_corner_large.i: main/src/
 main/src/local_music_demo/assets/img_lv_demo_music_btn_corner_large.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_corner_large.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_corner_large.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_corner_large.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_corner_large.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_corner_large.s: main/src/local_music_demo/assets/img_lv_demo_music_btn_corner_large.c.s
@@ -2081,6 +2255,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_corner_large.s: main/src/
 main/src/local_music_demo/assets/img_lv_demo_music_btn_corner_large.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_corner_large.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_corner_large.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_corner_large.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_corner_large.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause.o: main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause.c.o
@@ -2090,6 +2265,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause.o: main/src/lo
 main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause.i: main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause.c.i
@@ -2099,6 +2275,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause.i: main/src/lo
 main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause.s: main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause.c.s
@@ -2108,6 +2285,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause.s: main/src/lo
 main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause_large.o: main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause_large.c.o
@@ -2117,6 +2295,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause_large.o: main/
 main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause_large.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause_large.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause_large.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause_large.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause_large.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause_large.i: main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause_large.c.i
@@ -2126,6 +2305,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause_large.i: main/
 main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause_large.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause_large.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause_large.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause_large.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause_large.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause_large.s: main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause_large.c.s
@@ -2135,6 +2315,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause_large.s: main/
 main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause_large.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause_large.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause_large.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause_large.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_list_pause_large.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play.o: main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play.c.o
@@ -2144,6 +2325,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play.o: main/src/loc
 main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play.i: main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play.c.i
@@ -2153,6 +2335,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play.i: main/src/loc
 main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play.s: main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play.c.s
@@ -2162,6 +2345,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play.s: main/src/loc
 main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play_large.o: main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play_large.c.o
@@ -2171,6 +2355,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play_large.o: main/s
 main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play_large.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play_large.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play_large.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play_large.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play_large.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play_large.i: main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play_large.c.i
@@ -2180,6 +2365,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play_large.i: main/s
 main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play_large.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play_large.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play_large.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play_large.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play_large.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play_large.s: main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play_large.c.s
@@ -2189,6 +2375,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play_large.s: main/s
 main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play_large.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play_large.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play_large.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play_large.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_list_play_large.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_loop.o: main/src/local_music_demo/assets/img_lv_demo_music_btn_loop.c.o
@@ -2198,6 +2385,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_loop.o: main/src/local_mu
 main/src/local_music_demo/assets/img_lv_demo_music_btn_loop.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_loop.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_loop.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_loop.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_loop.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_loop.i: main/src/local_music_demo/assets/img_lv_demo_music_btn_loop.c.i
@@ -2207,6 +2395,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_loop.i: main/src/local_mu
 main/src/local_music_demo/assets/img_lv_demo_music_btn_loop.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_loop.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_loop.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_loop.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_loop.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_loop.s: main/src/local_music_demo/assets/img_lv_demo_music_btn_loop.c.s
@@ -2216,6 +2405,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_loop.s: main/src/local_mu
 main/src/local_music_demo/assets/img_lv_demo_music_btn_loop.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_loop.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_loop.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_loop.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_loop.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_loop_large.o: main/src/local_music_demo/assets/img_lv_demo_music_btn_loop_large.c.o
@@ -2225,6 +2415,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_loop_large.o: main/src/lo
 main/src/local_music_demo/assets/img_lv_demo_music_btn_loop_large.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_loop_large.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_loop_large.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_loop_large.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_loop_large.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_loop_large.i: main/src/local_music_demo/assets/img_lv_demo_music_btn_loop_large.c.i
@@ -2234,6 +2425,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_loop_large.i: main/src/lo
 main/src/local_music_demo/assets/img_lv_demo_music_btn_loop_large.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_loop_large.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_loop_large.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_loop_large.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_loop_large.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_loop_large.s: main/src/local_music_demo/assets/img_lv_demo_music_btn_loop_large.c.s
@@ -2243,6 +2435,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_loop_large.s: main/src/lo
 main/src/local_music_demo/assets/img_lv_demo_music_btn_loop_large.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_loop_large.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_loop_large.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_loop_large.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_loop_large.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_next.o: main/src/local_music_demo/assets/img_lv_demo_music_btn_next.c.o
@@ -2252,6 +2445,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_next.o: main/src/local_mu
 main/src/local_music_demo/assets/img_lv_demo_music_btn_next.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_next.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_next.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_next.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_next.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_next.i: main/src/local_music_demo/assets/img_lv_demo_music_btn_next.c.i
@@ -2261,6 +2455,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_next.i: main/src/local_mu
 main/src/local_music_demo/assets/img_lv_demo_music_btn_next.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_next.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_next.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_next.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_next.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_next.s: main/src/local_music_demo/assets/img_lv_demo_music_btn_next.c.s
@@ -2270,6 +2465,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_next.s: main/src/local_mu
 main/src/local_music_demo/assets/img_lv_demo_music_btn_next.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_next.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_next.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_next.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_next.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_next_large.o: main/src/local_music_demo/assets/img_lv_demo_music_btn_next_large.c.o
@@ -2279,6 +2475,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_next_large.o: main/src/lo
 main/src/local_music_demo/assets/img_lv_demo_music_btn_next_large.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_next_large.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_next_large.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_next_large.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_next_large.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_next_large.i: main/src/local_music_demo/assets/img_lv_demo_music_btn_next_large.c.i
@@ -2288,6 +2485,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_next_large.i: main/src/lo
 main/src/local_music_demo/assets/img_lv_demo_music_btn_next_large.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_next_large.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_next_large.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_next_large.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_next_large.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_next_large.s: main/src/local_music_demo/assets/img_lv_demo_music_btn_next_large.c.s
@@ -2297,6 +2495,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_next_large.s: main/src/lo
 main/src/local_music_demo/assets/img_lv_demo_music_btn_next_large.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_next_large.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_next_large.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_next_large.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_next_large.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_pause.o: main/src/local_music_demo/assets/img_lv_demo_music_btn_pause.c.o
@@ -2306,6 +2505,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_pause.o: main/src/local_m
 main/src/local_music_demo/assets/img_lv_demo_music_btn_pause.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_pause.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_pause.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_pause.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_pause.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_pause.i: main/src/local_music_demo/assets/img_lv_demo_music_btn_pause.c.i
@@ -2315,6 +2515,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_pause.i: main/src/local_m
 main/src/local_music_demo/assets/img_lv_demo_music_btn_pause.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_pause.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_pause.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_pause.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_pause.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_pause.s: main/src/local_music_demo/assets/img_lv_demo_music_btn_pause.c.s
@@ -2324,6 +2525,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_pause.s: main/src/local_m
 main/src/local_music_demo/assets/img_lv_demo_music_btn_pause.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_pause.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_pause.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_pause.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_pause.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_pause_large.o: main/src/local_music_demo/assets/img_lv_demo_music_btn_pause_large.c.o
@@ -2333,6 +2535,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_pause_large.o: main/src/l
 main/src/local_music_demo/assets/img_lv_demo_music_btn_pause_large.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_pause_large.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_pause_large.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_pause_large.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_pause_large.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_pause_large.i: main/src/local_music_demo/assets/img_lv_demo_music_btn_pause_large.c.i
@@ -2342,6 +2545,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_pause_large.i: main/src/l
 main/src/local_music_demo/assets/img_lv_demo_music_btn_pause_large.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_pause_large.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_pause_large.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_pause_large.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_pause_large.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_pause_large.s: main/src/local_music_demo/assets/img_lv_demo_music_btn_pause_large.c.s
@@ -2351,6 +2555,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_pause_large.s: main/src/l
 main/src/local_music_demo/assets/img_lv_demo_music_btn_pause_large.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_pause_large.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_pause_large.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_pause_large.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_pause_large.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_play.o: main/src/local_music_demo/assets/img_lv_demo_music_btn_play.c.o
@@ -2360,6 +2565,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_play.o: main/src/local_mu
 main/src/local_music_demo/assets/img_lv_demo_music_btn_play.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_play.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_play.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_play.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_play.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_play.i: main/src/local_music_demo/assets/img_lv_demo_music_btn_play.c.i
@@ -2369,6 +2575,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_play.i: main/src/local_mu
 main/src/local_music_demo/assets/img_lv_demo_music_btn_play.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_play.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_play.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_play.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_play.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_play.s: main/src/local_music_demo/assets/img_lv_demo_music_btn_play.c.s
@@ -2378,6 +2585,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_play.s: main/src/local_mu
 main/src/local_music_demo/assets/img_lv_demo_music_btn_play.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_play.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_play.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_play.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_play.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_play_large.o: main/src/local_music_demo/assets/img_lv_demo_music_btn_play_large.c.o
@@ -2387,6 +2595,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_play_large.o: main/src/lo
 main/src/local_music_demo/assets/img_lv_demo_music_btn_play_large.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_play_large.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_play_large.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_play_large.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_play_large.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_play_large.i: main/src/local_music_demo/assets/img_lv_demo_music_btn_play_large.c.i
@@ -2396,6 +2605,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_play_large.i: main/src/lo
 main/src/local_music_demo/assets/img_lv_demo_music_btn_play_large.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_play_large.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_play_large.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_play_large.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_play_large.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_play_large.s: main/src/local_music_demo/assets/img_lv_demo_music_btn_play_large.c.s
@@ -2405,6 +2615,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_play_large.s: main/src/lo
 main/src/local_music_demo/assets/img_lv_demo_music_btn_play_large.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_play_large.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_play_large.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_play_large.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_play_large.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_prev.o: main/src/local_music_demo/assets/img_lv_demo_music_btn_prev.c.o
@@ -2414,6 +2625,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_prev.o: main/src/local_mu
 main/src/local_music_demo/assets/img_lv_demo_music_btn_prev.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_prev.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_prev.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_prev.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_prev.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_prev.i: main/src/local_music_demo/assets/img_lv_demo_music_btn_prev.c.i
@@ -2423,6 +2635,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_prev.i: main/src/local_mu
 main/src/local_music_demo/assets/img_lv_demo_music_btn_prev.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_prev.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_prev.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_prev.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_prev.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_prev.s: main/src/local_music_demo/assets/img_lv_demo_music_btn_prev.c.s
@@ -2432,6 +2645,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_prev.s: main/src/local_mu
 main/src/local_music_demo/assets/img_lv_demo_music_btn_prev.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_prev.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_prev.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_prev.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_prev.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_prev_large.o: main/src/local_music_demo/assets/img_lv_demo_music_btn_prev_large.c.o
@@ -2441,6 +2655,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_prev_large.o: main/src/lo
 main/src/local_music_demo/assets/img_lv_demo_music_btn_prev_large.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_prev_large.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_prev_large.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_prev_large.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_prev_large.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_prev_large.i: main/src/local_music_demo/assets/img_lv_demo_music_btn_prev_large.c.i
@@ -2450,6 +2665,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_prev_large.i: main/src/lo
 main/src/local_music_demo/assets/img_lv_demo_music_btn_prev_large.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_prev_large.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_prev_large.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_prev_large.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_prev_large.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_prev_large.s: main/src/local_music_demo/assets/img_lv_demo_music_btn_prev_large.c.s
@@ -2459,6 +2675,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_prev_large.s: main/src/lo
 main/src/local_music_demo/assets/img_lv_demo_music_btn_prev_large.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_prev_large.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_prev_large.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_prev_large.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_prev_large.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd.o: main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd.c.o
@@ -2468,6 +2685,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd.o: main/src/local_mus
 main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd.i: main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd.c.i
@@ -2477,6 +2695,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd.i: main/src/local_mus
 main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd.s: main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd.c.s
@@ -2486,6 +2705,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd.s: main/src/local_mus
 main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd_large.o: main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd_large.c.o
@@ -2495,6 +2715,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd_large.o: main/src/loc
 main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd_large.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd_large.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd_large.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd_large.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd_large.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd_large.i: main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd_large.c.i
@@ -2504,6 +2725,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd_large.i: main/src/loc
 main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd_large.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd_large.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd_large.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd_large.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd_large.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd_large.s: main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd_large.c.s
@@ -2513,6 +2735,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd_large.s: main/src/loc
 main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd_large.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd_large.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd_large.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd_large.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_btn_rnd_large.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_corner_left.o: main/src/local_music_demo/assets/img_lv_demo_music_corner_left.c.o
@@ -2522,6 +2745,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_corner_left.o: main/src/local
 main/src/local_music_demo/assets/img_lv_demo_music_corner_left.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_left.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_left.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_left.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_corner_left.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_corner_left.i: main/src/local_music_demo/assets/img_lv_demo_music_corner_left.c.i
@@ -2531,6 +2755,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_corner_left.i: main/src/local
 main/src/local_music_demo/assets/img_lv_demo_music_corner_left.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_left.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_left.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_left.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_corner_left.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_corner_left.s: main/src/local_music_demo/assets/img_lv_demo_music_corner_left.c.s
@@ -2540,6 +2765,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_corner_left.s: main/src/local
 main/src/local_music_demo/assets/img_lv_demo_music_corner_left.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_left.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_left.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_left.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_corner_left.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_corner_left_large.o: main/src/local_music_demo/assets/img_lv_demo_music_corner_left_large.c.o
@@ -2549,6 +2775,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_corner_left_large.o: main/src
 main/src/local_music_demo/assets/img_lv_demo_music_corner_left_large.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_left_large.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_left_large.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_left_large.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_corner_left_large.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_corner_left_large.i: main/src/local_music_demo/assets/img_lv_demo_music_corner_left_large.c.i
@@ -2558,6 +2785,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_corner_left_large.i: main/src
 main/src/local_music_demo/assets/img_lv_demo_music_corner_left_large.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_left_large.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_left_large.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_left_large.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_corner_left_large.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_corner_left_large.s: main/src/local_music_demo/assets/img_lv_demo_music_corner_left_large.c.s
@@ -2567,6 +2795,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_corner_left_large.s: main/src
 main/src/local_music_demo/assets/img_lv_demo_music_corner_left_large.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_left_large.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_left_large.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_left_large.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_corner_left_large.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_corner_right.o: main/src/local_music_demo/assets/img_lv_demo_music_corner_right.c.o
@@ -2576,6 +2805,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_corner_right.o: main/src/loca
 main/src/local_music_demo/assets/img_lv_demo_music_corner_right.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_right.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_right.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_right.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_corner_right.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_corner_right.i: main/src/local_music_demo/assets/img_lv_demo_music_corner_right.c.i
@@ -2585,6 +2815,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_corner_right.i: main/src/loca
 main/src/local_music_demo/assets/img_lv_demo_music_corner_right.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_right.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_right.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_right.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_corner_right.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_corner_right.s: main/src/local_music_demo/assets/img_lv_demo_music_corner_right.c.s
@@ -2594,6 +2825,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_corner_right.s: main/src/loca
 main/src/local_music_demo/assets/img_lv_demo_music_corner_right.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_right.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_right.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_right.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_corner_right.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_corner_right_large.o: main/src/local_music_demo/assets/img_lv_demo_music_corner_right_large.c.o
@@ -2603,6 +2835,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_corner_right_large.o: main/sr
 main/src/local_music_demo/assets/img_lv_demo_music_corner_right_large.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_right_large.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_right_large.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_right_large.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_corner_right_large.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_corner_right_large.i: main/src/local_music_demo/assets/img_lv_demo_music_corner_right_large.c.i
@@ -2612,6 +2845,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_corner_right_large.i: main/sr
 main/src/local_music_demo/assets/img_lv_demo_music_corner_right_large.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_right_large.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_right_large.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_right_large.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_corner_right_large.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_corner_right_large.s: main/src/local_music_demo/assets/img_lv_demo_music_corner_right_large.c.s
@@ -2621,6 +2855,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_corner_right_large.s: main/sr
 main/src/local_music_demo/assets/img_lv_demo_music_corner_right_large.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_right_large.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_right_large.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_corner_right_large.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_corner_right_large.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_cover_1.o: main/src/local_music_demo/assets/img_lv_demo_music_cover_1.c.o
@@ -2630,6 +2865,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_cover_1.o: main/src/local_mus
 main/src/local_music_demo/assets/img_lv_demo_music_cover_1.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_1.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_1.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_1.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_cover_1.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_cover_1.i: main/src/local_music_demo/assets/img_lv_demo_music_cover_1.c.i
@@ -2639,6 +2875,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_cover_1.i: main/src/local_mus
 main/src/local_music_demo/assets/img_lv_demo_music_cover_1.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_1.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_1.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_1.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_cover_1.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_cover_1.s: main/src/local_music_demo/assets/img_lv_demo_music_cover_1.c.s
@@ -2648,6 +2885,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_cover_1.s: main/src/local_mus
 main/src/local_music_demo/assets/img_lv_demo_music_cover_1.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_1.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_1.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_1.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_cover_1.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_cover_1_large.o: main/src/local_music_demo/assets/img_lv_demo_music_cover_1_large.c.o
@@ -2657,6 +2895,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_cover_1_large.o: main/src/loc
 main/src/local_music_demo/assets/img_lv_demo_music_cover_1_large.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_1_large.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_1_large.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_1_large.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_cover_1_large.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_cover_1_large.i: main/src/local_music_demo/assets/img_lv_demo_music_cover_1_large.c.i
@@ -2666,6 +2905,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_cover_1_large.i: main/src/loc
 main/src/local_music_demo/assets/img_lv_demo_music_cover_1_large.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_1_large.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_1_large.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_1_large.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_cover_1_large.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_cover_1_large.s: main/src/local_music_demo/assets/img_lv_demo_music_cover_1_large.c.s
@@ -2675,6 +2915,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_cover_1_large.s: main/src/loc
 main/src/local_music_demo/assets/img_lv_demo_music_cover_1_large.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_1_large.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_1_large.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_1_large.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_cover_1_large.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_cover_2.o: main/src/local_music_demo/assets/img_lv_demo_music_cover_2.c.o
@@ -2684,6 +2925,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_cover_2.o: main/src/local_mus
 main/src/local_music_demo/assets/img_lv_demo_music_cover_2.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_2.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_2.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_2.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_cover_2.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_cover_2.i: main/src/local_music_demo/assets/img_lv_demo_music_cover_2.c.i
@@ -2693,6 +2935,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_cover_2.i: main/src/local_mus
 main/src/local_music_demo/assets/img_lv_demo_music_cover_2.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_2.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_2.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_2.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_cover_2.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_cover_2.s: main/src/local_music_demo/assets/img_lv_demo_music_cover_2.c.s
@@ -2702,6 +2945,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_cover_2.s: main/src/local_mus
 main/src/local_music_demo/assets/img_lv_demo_music_cover_2.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_2.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_2.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_2.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_cover_2.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_cover_2_large.o: main/src/local_music_demo/assets/img_lv_demo_music_cover_2_large.c.o
@@ -2711,6 +2955,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_cover_2_large.o: main/src/loc
 main/src/local_music_demo/assets/img_lv_demo_music_cover_2_large.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_2_large.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_2_large.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_2_large.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_cover_2_large.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_cover_2_large.i: main/src/local_music_demo/assets/img_lv_demo_music_cover_2_large.c.i
@@ -2720,6 +2965,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_cover_2_large.i: main/src/loc
 main/src/local_music_demo/assets/img_lv_demo_music_cover_2_large.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_2_large.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_2_large.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_2_large.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_cover_2_large.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_cover_2_large.s: main/src/local_music_demo/assets/img_lv_demo_music_cover_2_large.c.s
@@ -2729,6 +2975,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_cover_2_large.s: main/src/loc
 main/src/local_music_demo/assets/img_lv_demo_music_cover_2_large.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_2_large.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_2_large.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_2_large.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_cover_2_large.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_cover_3.o: main/src/local_music_demo/assets/img_lv_demo_music_cover_3.c.o
@@ -2738,6 +2985,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_cover_3.o: main/src/local_mus
 main/src/local_music_demo/assets/img_lv_demo_music_cover_3.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_3.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_3.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_3.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_cover_3.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_cover_3.i: main/src/local_music_demo/assets/img_lv_demo_music_cover_3.c.i
@@ -2747,6 +2995,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_cover_3.i: main/src/local_mus
 main/src/local_music_demo/assets/img_lv_demo_music_cover_3.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_3.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_3.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_3.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_cover_3.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_cover_3.s: main/src/local_music_demo/assets/img_lv_demo_music_cover_3.c.s
@@ -2756,6 +3005,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_cover_3.s: main/src/local_mus
 main/src/local_music_demo/assets/img_lv_demo_music_cover_3.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_3.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_3.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_3.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_cover_3.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_cover_3_large.o: main/src/local_music_demo/assets/img_lv_demo_music_cover_3_large.c.o
@@ -2765,6 +3015,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_cover_3_large.o: main/src/loc
 main/src/local_music_demo/assets/img_lv_demo_music_cover_3_large.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_3_large.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_3_large.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_3_large.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_cover_3_large.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_cover_3_large.i: main/src/local_music_demo/assets/img_lv_demo_music_cover_3_large.c.i
@@ -2774,6 +3025,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_cover_3_large.i: main/src/loc
 main/src/local_music_demo/assets/img_lv_demo_music_cover_3_large.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_3_large.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_3_large.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_3_large.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_cover_3_large.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_cover_3_large.s: main/src/local_music_demo/assets/img_lv_demo_music_cover_3_large.c.s
@@ -2783,6 +3035,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_cover_3_large.s: main/src/loc
 main/src/local_music_demo/assets/img_lv_demo_music_cover_3_large.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_3_large.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_3_large.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_cover_3_large.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_cover_3_large.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_icon_1.o: main/src/local_music_demo/assets/img_lv_demo_music_icon_1.c.o
@@ -2792,6 +3045,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_icon_1.o: main/src/local_musi
 main/src/local_music_demo/assets/img_lv_demo_music_icon_1.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_1.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_1.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_1.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_icon_1.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_icon_1.i: main/src/local_music_demo/assets/img_lv_demo_music_icon_1.c.i
@@ -2801,6 +3055,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_icon_1.i: main/src/local_musi
 main/src/local_music_demo/assets/img_lv_demo_music_icon_1.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_1.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_1.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_1.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_icon_1.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_icon_1.s: main/src/local_music_demo/assets/img_lv_demo_music_icon_1.c.s
@@ -2810,6 +3065,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_icon_1.s: main/src/local_musi
 main/src/local_music_demo/assets/img_lv_demo_music_icon_1.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_1.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_1.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_1.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_icon_1.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_icon_1_large.o: main/src/local_music_demo/assets/img_lv_demo_music_icon_1_large.c.o
@@ -2819,6 +3075,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_icon_1_large.o: main/src/loca
 main/src/local_music_demo/assets/img_lv_demo_music_icon_1_large.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_1_large.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_1_large.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_1_large.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_icon_1_large.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_icon_1_large.i: main/src/local_music_demo/assets/img_lv_demo_music_icon_1_large.c.i
@@ -2828,6 +3085,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_icon_1_large.i: main/src/loca
 main/src/local_music_demo/assets/img_lv_demo_music_icon_1_large.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_1_large.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_1_large.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_1_large.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_icon_1_large.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_icon_1_large.s: main/src/local_music_demo/assets/img_lv_demo_music_icon_1_large.c.s
@@ -2837,6 +3095,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_icon_1_large.s: main/src/loca
 main/src/local_music_demo/assets/img_lv_demo_music_icon_1_large.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_1_large.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_1_large.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_1_large.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_icon_1_large.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_icon_2.o: main/src/local_music_demo/assets/img_lv_demo_music_icon_2.c.o
@@ -2846,6 +3105,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_icon_2.o: main/src/local_musi
 main/src/local_music_demo/assets/img_lv_demo_music_icon_2.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_2.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_2.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_2.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_icon_2.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_icon_2.i: main/src/local_music_demo/assets/img_lv_demo_music_icon_2.c.i
@@ -2855,6 +3115,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_icon_2.i: main/src/local_musi
 main/src/local_music_demo/assets/img_lv_demo_music_icon_2.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_2.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_2.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_2.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_icon_2.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_icon_2.s: main/src/local_music_demo/assets/img_lv_demo_music_icon_2.c.s
@@ -2864,6 +3125,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_icon_2.s: main/src/local_musi
 main/src/local_music_demo/assets/img_lv_demo_music_icon_2.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_2.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_2.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_2.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_icon_2.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_icon_2_large.o: main/src/local_music_demo/assets/img_lv_demo_music_icon_2_large.c.o
@@ -2873,6 +3135,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_icon_2_large.o: main/src/loca
 main/src/local_music_demo/assets/img_lv_demo_music_icon_2_large.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_2_large.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_2_large.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_2_large.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_icon_2_large.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_icon_2_large.i: main/src/local_music_demo/assets/img_lv_demo_music_icon_2_large.c.i
@@ -2882,6 +3145,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_icon_2_large.i: main/src/loca
 main/src/local_music_demo/assets/img_lv_demo_music_icon_2_large.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_2_large.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_2_large.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_2_large.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_icon_2_large.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_icon_2_large.s: main/src/local_music_demo/assets/img_lv_demo_music_icon_2_large.c.s
@@ -2891,6 +3155,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_icon_2_large.s: main/src/loca
 main/src/local_music_demo/assets/img_lv_demo_music_icon_2_large.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_2_large.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_2_large.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_2_large.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_icon_2_large.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_icon_3.o: main/src/local_music_demo/assets/img_lv_demo_music_icon_3.c.o
@@ -2900,6 +3165,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_icon_3.o: main/src/local_musi
 main/src/local_music_demo/assets/img_lv_demo_music_icon_3.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_3.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_3.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_3.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_icon_3.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_icon_3.i: main/src/local_music_demo/assets/img_lv_demo_music_icon_3.c.i
@@ -2909,6 +3175,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_icon_3.i: main/src/local_musi
 main/src/local_music_demo/assets/img_lv_demo_music_icon_3.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_3.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_3.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_3.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_icon_3.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_icon_3.s: main/src/local_music_demo/assets/img_lv_demo_music_icon_3.c.s
@@ -2918,6 +3185,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_icon_3.s: main/src/local_musi
 main/src/local_music_demo/assets/img_lv_demo_music_icon_3.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_3.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_3.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_3.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_icon_3.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_icon_3_large.o: main/src/local_music_demo/assets/img_lv_demo_music_icon_3_large.c.o
@@ -2927,6 +3195,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_icon_3_large.o: main/src/loca
 main/src/local_music_demo/assets/img_lv_demo_music_icon_3_large.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_3_large.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_3_large.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_3_large.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_icon_3_large.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_icon_3_large.i: main/src/local_music_demo/assets/img_lv_demo_music_icon_3_large.c.i
@@ -2936,6 +3205,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_icon_3_large.i: main/src/loca
 main/src/local_music_demo/assets/img_lv_demo_music_icon_3_large.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_3_large.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_3_large.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_3_large.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_icon_3_large.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_icon_3_large.s: main/src/local_music_demo/assets/img_lv_demo_music_icon_3_large.c.s
@@ -2945,6 +3215,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_icon_3_large.s: main/src/loca
 main/src/local_music_demo/assets/img_lv_demo_music_icon_3_large.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_3_large.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_3_large.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_3_large.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_icon_3_large.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_icon_4.o: main/src/local_music_demo/assets/img_lv_demo_music_icon_4.c.o
@@ -2954,6 +3225,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_icon_4.o: main/src/local_musi
 main/src/local_music_demo/assets/img_lv_demo_music_icon_4.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_4.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_4.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_4.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_icon_4.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_icon_4.i: main/src/local_music_demo/assets/img_lv_demo_music_icon_4.c.i
@@ -2963,6 +3235,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_icon_4.i: main/src/local_musi
 main/src/local_music_demo/assets/img_lv_demo_music_icon_4.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_4.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_4.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_4.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_icon_4.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_icon_4.s: main/src/local_music_demo/assets/img_lv_demo_music_icon_4.c.s
@@ -2972,6 +3245,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_icon_4.s: main/src/local_musi
 main/src/local_music_demo/assets/img_lv_demo_music_icon_4.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_4.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_4.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_4.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_icon_4.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_icon_4_large.o: main/src/local_music_demo/assets/img_lv_demo_music_icon_4_large.c.o
@@ -2981,6 +3255,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_icon_4_large.o: main/src/loca
 main/src/local_music_demo/assets/img_lv_demo_music_icon_4_large.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_4_large.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_4_large.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_4_large.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_icon_4_large.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_icon_4_large.i: main/src/local_music_demo/assets/img_lv_demo_music_icon_4_large.c.i
@@ -2990,6 +3265,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_icon_4_large.i: main/src/loca
 main/src/local_music_demo/assets/img_lv_demo_music_icon_4_large.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_4_large.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_4_large.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_4_large.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_icon_4_large.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_icon_4_large.s: main/src/local_music_demo/assets/img_lv_demo_music_icon_4_large.c.s
@@ -2999,6 +3275,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_icon_4_large.s: main/src/loca
 main/src/local_music_demo/assets/img_lv_demo_music_icon_4_large.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_4_large.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_4_large.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_icon_4_large.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_icon_4_large.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_list_border.o: main/src/local_music_demo/assets/img_lv_demo_music_list_border.c.o
@@ -3008,6 +3285,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_list_border.o: main/src/local
 main/src/local_music_demo/assets/img_lv_demo_music_list_border.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_list_border.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_list_border.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_list_border.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_list_border.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_list_border.i: main/src/local_music_demo/assets/img_lv_demo_music_list_border.c.i
@@ -3017,6 +3295,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_list_border.i: main/src/local
 main/src/local_music_demo/assets/img_lv_demo_music_list_border.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_list_border.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_list_border.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_list_border.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_list_border.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_list_border.s: main/src/local_music_demo/assets/img_lv_demo_music_list_border.c.s
@@ -3026,6 +3305,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_list_border.s: main/src/local
 main/src/local_music_demo/assets/img_lv_demo_music_list_border.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_list_border.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_list_border.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_list_border.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_list_border.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_list_border_large.o: main/src/local_music_demo/assets/img_lv_demo_music_list_border_large.c.o
@@ -3035,6 +3315,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_list_border_large.o: main/src
 main/src/local_music_demo/assets/img_lv_demo_music_list_border_large.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_list_border_large.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_list_border_large.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_list_border_large.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_list_border_large.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_list_border_large.i: main/src/local_music_demo/assets/img_lv_demo_music_list_border_large.c.i
@@ -3044,6 +3325,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_list_border_large.i: main/src
 main/src/local_music_demo/assets/img_lv_demo_music_list_border_large.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_list_border_large.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_list_border_large.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_list_border_large.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_list_border_large.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_list_border_large.s: main/src/local_music_demo/assets/img_lv_demo_music_list_border_large.c.s
@@ -3053,6 +3335,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_list_border_large.s: main/src
 main/src/local_music_demo/assets/img_lv_demo_music_list_border_large.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_list_border_large.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_list_border_large.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_list_border_large.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_list_border_large.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_logo.o: main/src/local_music_demo/assets/img_lv_demo_music_logo.c.o
@@ -3062,6 +3345,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_logo.o: main/src/local_music_
 main/src/local_music_demo/assets/img_lv_demo_music_logo.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_logo.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_logo.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_logo.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_logo.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_logo.i: main/src/local_music_demo/assets/img_lv_demo_music_logo.c.i
@@ -3071,6 +3355,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_logo.i: main/src/local_music_
 main/src/local_music_demo/assets/img_lv_demo_music_logo.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_logo.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_logo.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_logo.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_logo.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_logo.s: main/src/local_music_demo/assets/img_lv_demo_music_logo.c.s
@@ -3080,6 +3365,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_logo.s: main/src/local_music_
 main/src/local_music_demo/assets/img_lv_demo_music_logo.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_logo.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_logo.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_logo.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_logo.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_slider_knob.o: main/src/local_music_demo/assets/img_lv_demo_music_slider_knob.c.o
@@ -3089,6 +3375,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_slider_knob.o: main/src/local
 main/src/local_music_demo/assets/img_lv_demo_music_slider_knob.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_slider_knob.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_slider_knob.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_slider_knob.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_slider_knob.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_slider_knob.i: main/src/local_music_demo/assets/img_lv_demo_music_slider_knob.c.i
@@ -3098,6 +3385,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_slider_knob.i: main/src/local
 main/src/local_music_demo/assets/img_lv_demo_music_slider_knob.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_slider_knob.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_slider_knob.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_slider_knob.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_slider_knob.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_slider_knob.s: main/src/local_music_demo/assets/img_lv_demo_music_slider_knob.c.s
@@ -3107,6 +3395,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_slider_knob.s: main/src/local
 main/src/local_music_demo/assets/img_lv_demo_music_slider_knob.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_slider_knob.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_slider_knob.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_slider_knob.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_slider_knob.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_slider_knob_large.o: main/src/local_music_demo/assets/img_lv_demo_music_slider_knob_large.c.o
@@ -3116,6 +3405,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_slider_knob_large.o: main/src
 main/src/local_music_demo/assets/img_lv_demo_music_slider_knob_large.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_slider_knob_large.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_slider_knob_large.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_slider_knob_large.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_slider_knob_large.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_slider_knob_large.i: main/src/local_music_demo/assets/img_lv_demo_music_slider_knob_large.c.i
@@ -3125,6 +3415,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_slider_knob_large.i: main/src
 main/src/local_music_demo/assets/img_lv_demo_music_slider_knob_large.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_slider_knob_large.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_slider_knob_large.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_slider_knob_large.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_slider_knob_large.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_slider_knob_large.s: main/src/local_music_demo/assets/img_lv_demo_music_slider_knob_large.c.s
@@ -3134,6 +3425,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_slider_knob_large.s: main/src
 main/src/local_music_demo/assets/img_lv_demo_music_slider_knob_large.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_slider_knob_large.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_slider_knob_large.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_slider_knob_large.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_slider_knob_large.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom.o: main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom.c.o
@@ -3143,6 +3435,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom.o: main/src/local
 main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom.i: main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom.c.i
@@ -3152,6 +3445,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom.i: main/src/local
 main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom.s: main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom.c.s
@@ -3161,6 +3455,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom.s: main/src/local
 main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom_large.o: main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom_large.c.o
@@ -3170,6 +3465,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom_large.o: main/src
 main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom_large.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom_large.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom_large.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom_large.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom_large.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom_large.i: main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom_large.c.i
@@ -3179,6 +3475,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom_large.i: main/src
 main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom_large.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom_large.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom_large.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom_large.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom_large.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom_large.s: main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom_large.c.s
@@ -3188,6 +3485,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom_large.s: main/src
 main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom_large.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom_large.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom_large.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom_large.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_wave_bottom_large.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_wave_top.o: main/src/local_music_demo/assets/img_lv_demo_music_wave_top.c.o
@@ -3197,6 +3495,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_wave_top.o: main/src/local_mu
 main/src/local_music_demo/assets/img_lv_demo_music_wave_top.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_top.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_top.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_top.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_wave_top.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_wave_top.i: main/src/local_music_demo/assets/img_lv_demo_music_wave_top.c.i
@@ -3206,6 +3505,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_wave_top.i: main/src/local_mu
 main/src/local_music_demo/assets/img_lv_demo_music_wave_top.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_top.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_top.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_top.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_wave_top.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_wave_top.s: main/src/local_music_demo/assets/img_lv_demo_music_wave_top.c.s
@@ -3215,6 +3515,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_wave_top.s: main/src/local_mu
 main/src/local_music_demo/assets/img_lv_demo_music_wave_top.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_top.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_top.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_top.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_wave_top.c.s
 
 main/src/local_music_demo/assets/img_lv_demo_music_wave_top_large.o: main/src/local_music_demo/assets/img_lv_demo_music_wave_top_large.c.o
@@ -3224,6 +3525,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_wave_top_large.o: main/src/lo
 main/src/local_music_demo/assets/img_lv_demo_music_wave_top_large.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_top_large.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_top_large.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_top_large.c.o
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_wave_top_large.c.o
 
 main/src/local_music_demo/assets/img_lv_demo_music_wave_top_large.i: main/src/local_music_demo/assets/img_lv_demo_music_wave_top_large.c.i
@@ -3233,6 +3535,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_wave_top_large.i: main/src/lo
 main/src/local_music_demo/assets/img_lv_demo_music_wave_top_large.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_top_large.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_top_large.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_top_large.c.i
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_wave_top_large.c.i
 
 main/src/local_music_demo/assets/img_lv_demo_music_wave_top_large.s: main/src/local_music_demo/assets/img_lv_demo_music_wave_top_large.c.s
@@ -3242,6 +3545,7 @@ main/src/local_music_demo/assets/img_lv_demo_music_wave_top_large.s: main/src/lo
 main/src/local_music_demo/assets/img_lv_demo_music_wave_top_large.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_top_large.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_top_large.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/assets/img_lv_demo_music_wave_top_large.c.s
 .PHONY : main/src/local_music_demo/assets/img_lv_demo_music_wave_top_large.c.s
 
 main/src/local_music_demo/lv_demo_music.o: main/src/local_music_demo/lv_demo_music.c.o
@@ -3251,6 +3555,7 @@ main/src/local_music_demo/lv_demo_music.o: main/src/local_music_demo/lv_demo_mus
 main/src/local_music_demo/lv_demo_music.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/lv_demo_music.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/lv_demo_music.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/lv_demo_music.c.o
 .PHONY : main/src/local_music_demo/lv_demo_music.c.o
 
 main/src/local_music_demo/lv_demo_music.i: main/src/local_music_demo/lv_demo_music.c.i
@@ -3260,6 +3565,7 @@ main/src/local_music_demo/lv_demo_music.i: main/src/local_music_demo/lv_demo_mus
 main/src/local_music_demo/lv_demo_music.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/lv_demo_music.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/lv_demo_music.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/lv_demo_music.c.i
 .PHONY : main/src/local_music_demo/lv_demo_music.c.i
 
 main/src/local_music_demo/lv_demo_music.s: main/src/local_music_demo/lv_demo_music.c.s
@@ -3269,6 +3575,7 @@ main/src/local_music_demo/lv_demo_music.s: main/src/local_music_demo/lv_demo_mus
 main/src/local_music_demo/lv_demo_music.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/lv_demo_music.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/lv_demo_music.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/lv_demo_music.c.s
 .PHONY : main/src/local_music_demo/lv_demo_music.c.s
 
 main/src/local_music_demo/lv_demo_music_list.o: main/src/local_music_demo/lv_demo_music_list.c.o
@@ -3278,6 +3585,7 @@ main/src/local_music_demo/lv_demo_music_list.o: main/src/local_music_demo/lv_dem
 main/src/local_music_demo/lv_demo_music_list.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/lv_demo_music_list.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/lv_demo_music_list.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/lv_demo_music_list.c.o
 .PHONY : main/src/local_music_demo/lv_demo_music_list.c.o
 
 main/src/local_music_demo/lv_demo_music_list.i: main/src/local_music_demo/lv_demo_music_list.c.i
@@ -3287,6 +3595,7 @@ main/src/local_music_demo/lv_demo_music_list.i: main/src/local_music_demo/lv_dem
 main/src/local_music_demo/lv_demo_music_list.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/lv_demo_music_list.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/lv_demo_music_list.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/lv_demo_music_list.c.i
 .PHONY : main/src/local_music_demo/lv_demo_music_list.c.i
 
 main/src/local_music_demo/lv_demo_music_list.s: main/src/local_music_demo/lv_demo_music_list.c.s
@@ -3296,6 +3605,7 @@ main/src/local_music_demo/lv_demo_music_list.s: main/src/local_music_demo/lv_dem
 main/src/local_music_demo/lv_demo_music_list.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/lv_demo_music_list.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/lv_demo_music_list.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/lv_demo_music_list.c.s
 .PHONY : main/src/local_music_demo/lv_demo_music_list.c.s
 
 main/src/local_music_demo/lv_demo_music_main.o: main/src/local_music_demo/lv_demo_music_main.c.o
@@ -3305,6 +3615,7 @@ main/src/local_music_demo/lv_demo_music_main.o: main/src/local_music_demo/lv_dem
 main/src/local_music_demo/lv_demo_music_main.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/lv_demo_music_main.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/lv_demo_music_main.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/lv_demo_music_main.c.o
 .PHONY : main/src/local_music_demo/lv_demo_music_main.c.o
 
 main/src/local_music_demo/lv_demo_music_main.i: main/src/local_music_demo/lv_demo_music_main.c.i
@@ -3314,6 +3625,7 @@ main/src/local_music_demo/lv_demo_music_main.i: main/src/local_music_demo/lv_dem
 main/src/local_music_demo/lv_demo_music_main.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/lv_demo_music_main.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/lv_demo_music_main.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/lv_demo_music_main.c.i
 .PHONY : main/src/local_music_demo/lv_demo_music_main.c.i
 
 main/src/local_music_demo/lv_demo_music_main.s: main/src/local_music_demo/lv_demo_music_main.c.s
@@ -3323,6 +3635,7 @@ main/src/local_music_demo/lv_demo_music_main.s: main/src/local_music_demo/lv_dem
 main/src/local_music_demo/lv_demo_music_main.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/lv_demo_music_main.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/lv_demo_music_main.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/lv_demo_music_main.c.s
 .PHONY : main/src/local_music_demo/lv_demo_music_main.c.s
 
 main/src/local_music_demo/music_player.o: main/src/local_music_demo/music_player.c.o
@@ -3332,6 +3645,7 @@ main/src/local_music_demo/music_player.o: main/src/local_music_demo/music_player
 main/src/local_music_demo/music_player.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/music_player.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/music_player.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/music_player.c.o
 .PHONY : main/src/local_music_demo/music_player.c.o
 
 main/src/local_music_demo/music_player.i: main/src/local_music_demo/music_player.c.i
@@ -3341,6 +3655,7 @@ main/src/local_music_demo/music_player.i: main/src/local_music_demo/music_player
 main/src/local_music_demo/music_player.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/music_player.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/music_player.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/music_player.c.i
 .PHONY : main/src/local_music_demo/music_player.c.i
 
 main/src/local_music_demo/music_player.s: main/src/local_music_demo/music_player.c.s
@@ -3350,6 +3665,7 @@ main/src/local_music_demo/music_player.s: main/src/local_music_demo/music_player
 main/src/local_music_demo/music_player.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/local_music_demo/music_player.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/local_music_demo/music_player.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/local_music_demo/music_player.c.s
 .PHONY : main/src/local_music_demo/music_player.c.s
 
 main/src/main.o: main/src/main.c.o
@@ -3408,6 +3724,7 @@ main/src/v9-fruit_ninja/fruit_ninja_assets.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_assets.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fruit_ninja_assets_test.dir/build.make CMakeFiles/fruit_ninja_assets_test.dir/main/src/v9-fruit_ninja/fruit_ninja_assets.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_assets.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_assets.c.o
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_assets.c.o
 
 main/src/v9-fruit_ninja/fruit_ninja_assets.i: main/src/v9-fruit_ninja/fruit_ninja_assets.c.i
@@ -3418,6 +3735,7 @@ main/src/v9-fruit_ninja/fruit_ninja_assets.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_assets.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fruit_ninja_assets_test.dir/build.make CMakeFiles/fruit_ninja_assets_test.dir/main/src/v9-fruit_ninja/fruit_ninja_assets.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_assets.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_assets.c.i
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_assets.c.i
 
 main/src/v9-fruit_ninja/fruit_ninja_assets.s: main/src/v9-fruit_ninja/fruit_ninja_assets.c.s
@@ -3428,6 +3746,7 @@ main/src/v9-fruit_ninja/fruit_ninja_assets.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_assets.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fruit_ninja_assets_test.dir/build.make CMakeFiles/fruit_ninja_assets_test.dir/main/src/v9-fruit_ninja/fruit_ninja_assets.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_assets.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_assets.c.s
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_assets.c.s
 
 main/src/v9-fruit_ninja/fruit_ninja_audio.o: main/src/v9-fruit_ninja/fruit_ninja_audio.c.o
@@ -3437,6 +3756,7 @@ main/src/v9-fruit_ninja/fruit_ninja_audio.o: main/src/v9-fruit_ninja/fruit_ninja
 main/src/v9-fruit_ninja/fruit_ninja_audio.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_audio.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_audio.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_audio.c.o
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_audio.c.o
 
 main/src/v9-fruit_ninja/fruit_ninja_audio.i: main/src/v9-fruit_ninja/fruit_ninja_audio.c.i
@@ -3446,6 +3766,7 @@ main/src/v9-fruit_ninja/fruit_ninja_audio.i: main/src/v9-fruit_ninja/fruit_ninja
 main/src/v9-fruit_ninja/fruit_ninja_audio.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_audio.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_audio.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_audio.c.i
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_audio.c.i
 
 main/src/v9-fruit_ninja/fruit_ninja_audio.s: main/src/v9-fruit_ninja/fruit_ninja_audio.c.s
@@ -3455,6 +3776,7 @@ main/src/v9-fruit_ninja/fruit_ninja_audio.s: main/src/v9-fruit_ninja/fruit_ninja
 main/src/v9-fruit_ninja/fruit_ninja_audio.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_audio.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_audio.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_audio.c.s
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_audio.c.s
 
 main/src/v9-fruit_ninja/fruit_ninja_collision.o: main/src/v9-fruit_ninja/fruit_ninja_collision.c.o
@@ -3465,6 +3787,7 @@ main/src/v9-fruit_ninja/fruit_ninja_collision.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_collision.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fruit_ninja_collision_test.dir/build.make CMakeFiles/fruit_ninja_collision_test.dir/main/src/v9-fruit_ninja/fruit_ninja_collision.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_collision.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_collision.c.o
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_collision.c.o
 
 main/src/v9-fruit_ninja/fruit_ninja_collision.i: main/src/v9-fruit_ninja/fruit_ninja_collision.c.i
@@ -3475,6 +3798,7 @@ main/src/v9-fruit_ninja/fruit_ninja_collision.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_collision.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fruit_ninja_collision_test.dir/build.make CMakeFiles/fruit_ninja_collision_test.dir/main/src/v9-fruit_ninja/fruit_ninja_collision.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_collision.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_collision.c.i
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_collision.c.i
 
 main/src/v9-fruit_ninja/fruit_ninja_collision.s: main/src/v9-fruit_ninja/fruit_ninja_collision.c.s
@@ -3485,6 +3809,7 @@ main/src/v9-fruit_ninja/fruit_ninja_collision.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_collision.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fruit_ninja_collision_test.dir/build.make CMakeFiles/fruit_ninja_collision_test.dir/main/src/v9-fruit_ninja/fruit_ninja_collision.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_collision.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_collision.c.s
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_collision.c.s
 
 main/src/v9-fruit_ninja/fruit_ninja_easing.o: main/src/v9-fruit_ninja/fruit_ninja_easing.c.o
@@ -3494,6 +3819,7 @@ main/src/v9-fruit_ninja/fruit_ninja_easing.o: main/src/v9-fruit_ninja/fruit_ninj
 main/src/v9-fruit_ninja/fruit_ninja_easing.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_easing.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_easing.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_easing.c.o
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_easing.c.o
 
 main/src/v9-fruit_ninja/fruit_ninja_easing.i: main/src/v9-fruit_ninja/fruit_ninja_easing.c.i
@@ -3503,6 +3829,7 @@ main/src/v9-fruit_ninja/fruit_ninja_easing.i: main/src/v9-fruit_ninja/fruit_ninj
 main/src/v9-fruit_ninja/fruit_ninja_easing.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_easing.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_easing.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_easing.c.i
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_easing.c.i
 
 main/src/v9-fruit_ninja/fruit_ninja_easing.s: main/src/v9-fruit_ninja/fruit_ninja_easing.c.s
@@ -3512,6 +3839,7 @@ main/src/v9-fruit_ninja/fruit_ninja_easing.s: main/src/v9-fruit_ninja/fruit_ninj
 main/src/v9-fruit_ninja/fruit_ninja_easing.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_easing.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_easing.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_easing.c.s
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_easing.c.s
 
 main/src/v9-fruit_ninja/fruit_ninja_effects.o: main/src/v9-fruit_ninja/fruit_ninja_effects.c.o
@@ -3521,6 +3849,7 @@ main/src/v9-fruit_ninja/fruit_ninja_effects.o: main/src/v9-fruit_ninja/fruit_nin
 main/src/v9-fruit_ninja/fruit_ninja_effects.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_effects.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_effects.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_effects.c.o
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_effects.c.o
 
 main/src/v9-fruit_ninja/fruit_ninja_effects.i: main/src/v9-fruit_ninja/fruit_ninja_effects.c.i
@@ -3530,6 +3859,7 @@ main/src/v9-fruit_ninja/fruit_ninja_effects.i: main/src/v9-fruit_ninja/fruit_nin
 main/src/v9-fruit_ninja/fruit_ninja_effects.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_effects.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_effects.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_effects.c.i
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_effects.c.i
 
 main/src/v9-fruit_ninja/fruit_ninja_effects.s: main/src/v9-fruit_ninja/fruit_ninja_effects.c.s
@@ -3539,6 +3869,7 @@ main/src/v9-fruit_ninja/fruit_ninja_effects.s: main/src/v9-fruit_ninja/fruit_nin
 main/src/v9-fruit_ninja/fruit_ninja_effects.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_effects.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_effects.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_effects.c.s
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_effects.c.s
 
 main/src/v9-fruit_ninja/fruit_ninja_input.o: main/src/v9-fruit_ninja/fruit_ninja_input.c.o
@@ -3548,6 +3879,7 @@ main/src/v9-fruit_ninja/fruit_ninja_input.o: main/src/v9-fruit_ninja/fruit_ninja
 main/src/v9-fruit_ninja/fruit_ninja_input.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_input.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_input.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_input.c.o
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_input.c.o
 
 main/src/v9-fruit_ninja/fruit_ninja_input.i: main/src/v9-fruit_ninja/fruit_ninja_input.c.i
@@ -3557,6 +3889,7 @@ main/src/v9-fruit_ninja/fruit_ninja_input.i: main/src/v9-fruit_ninja/fruit_ninja
 main/src/v9-fruit_ninja/fruit_ninja_input.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_input.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_input.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_input.c.i
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_input.c.i
 
 main/src/v9-fruit_ninja/fruit_ninja_input.s: main/src/v9-fruit_ninja/fruit_ninja_input.c.s
@@ -3566,6 +3899,7 @@ main/src/v9-fruit_ninja/fruit_ninja_input.s: main/src/v9-fruit_ninja/fruit_ninja
 main/src/v9-fruit_ninja/fruit_ninja_input.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_input.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_input.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_input.c.s
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_input.c.s
 
 main/src/v9-fruit_ninja/fruit_ninja_physics.o: main/src/v9-fruit_ninja/fruit_ninja_physics.c.o
@@ -3575,6 +3909,7 @@ main/src/v9-fruit_ninja/fruit_ninja_physics.o: main/src/v9-fruit_ninja/fruit_nin
 main/src/v9-fruit_ninja/fruit_ninja_physics.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_physics.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_physics.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_physics.c.o
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_physics.c.o
 
 main/src/v9-fruit_ninja/fruit_ninja_physics.i: main/src/v9-fruit_ninja/fruit_ninja_physics.c.i
@@ -3584,6 +3919,7 @@ main/src/v9-fruit_ninja/fruit_ninja_physics.i: main/src/v9-fruit_ninja/fruit_nin
 main/src/v9-fruit_ninja/fruit_ninja_physics.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_physics.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_physics.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_physics.c.i
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_physics.c.i
 
 main/src/v9-fruit_ninja/fruit_ninja_physics.s: main/src/v9-fruit_ninja/fruit_ninja_physics.c.s
@@ -3593,6 +3929,7 @@ main/src/v9-fruit_ninja/fruit_ninja_physics.s: main/src/v9-fruit_ninja/fruit_nin
 main/src/v9-fruit_ninja/fruit_ninja_physics.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_physics.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_physics.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_physics.c.s
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_physics.c.s
 
 main/src/v9-fruit_ninja/fruit_ninja_scene.o: main/src/v9-fruit_ninja/fruit_ninja_scene.c.o
@@ -3602,6 +3939,7 @@ main/src/v9-fruit_ninja/fruit_ninja_scene.o: main/src/v9-fruit_ninja/fruit_ninja
 main/src/v9-fruit_ninja/fruit_ninja_scene.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_scene.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_scene.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_scene.c.o
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_scene.c.o
 
 main/src/v9-fruit_ninja/fruit_ninja_scene.i: main/src/v9-fruit_ninja/fruit_ninja_scene.c.i
@@ -3611,6 +3949,7 @@ main/src/v9-fruit_ninja/fruit_ninja_scene.i: main/src/v9-fruit_ninja/fruit_ninja
 main/src/v9-fruit_ninja/fruit_ninja_scene.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_scene.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_scene.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_scene.c.i
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_scene.c.i
 
 main/src/v9-fruit_ninja/fruit_ninja_scene.s: main/src/v9-fruit_ninja/fruit_ninja_scene.c.s
@@ -3620,6 +3959,7 @@ main/src/v9-fruit_ninja/fruit_ninja_scene.s: main/src/v9-fruit_ninja/fruit_ninja
 main/src/v9-fruit_ninja/fruit_ninja_scene.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_scene.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_scene.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_scene.c.s
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_scene.c.s
 
 main/src/v9-fruit_ninja/fruit_ninja_state.o: main/src/v9-fruit_ninja/fruit_ninja_state.c.o
@@ -3629,6 +3969,7 @@ main/src/v9-fruit_ninja/fruit_ninja_state.o: main/src/v9-fruit_ninja/fruit_ninja
 main/src/v9-fruit_ninja/fruit_ninja_state.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_state.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_state.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_state.c.o
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_state.c.o
 
 main/src/v9-fruit_ninja/fruit_ninja_state.i: main/src/v9-fruit_ninja/fruit_ninja_state.c.i
@@ -3638,6 +3979,7 @@ main/src/v9-fruit_ninja/fruit_ninja_state.i: main/src/v9-fruit_ninja/fruit_ninja
 main/src/v9-fruit_ninja/fruit_ninja_state.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_state.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_state.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_state.c.i
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_state.c.i
 
 main/src/v9-fruit_ninja/fruit_ninja_state.s: main/src/v9-fruit_ninja/fruit_ninja_state.c.s
@@ -3647,6 +3989,7 @@ main/src/v9-fruit_ninja/fruit_ninja_state.s: main/src/v9-fruit_ninja/fruit_ninja
 main/src/v9-fruit_ninja/fruit_ninja_state.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_state.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_state.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_state.c.s
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_state.c.s
 
 main/src/v9-fruit_ninja/fruit_ninja_viewport.o: main/src/v9-fruit_ninja/fruit_ninja_viewport.c.o
@@ -3656,6 +3999,7 @@ main/src/v9-fruit_ninja/fruit_ninja_viewport.o: main/src/v9-fruit_ninja/fruit_ni
 main/src/v9-fruit_ninja/fruit_ninja_viewport.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_viewport.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_viewport.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_viewport.c.o
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_viewport.c.o
 
 main/src/v9-fruit_ninja/fruit_ninja_viewport.i: main/src/v9-fruit_ninja/fruit_ninja_viewport.c.i
@@ -3665,6 +4009,7 @@ main/src/v9-fruit_ninja/fruit_ninja_viewport.i: main/src/v9-fruit_ninja/fruit_ni
 main/src/v9-fruit_ninja/fruit_ninja_viewport.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_viewport.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_viewport.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_viewport.c.i
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_viewport.c.i
 
 main/src/v9-fruit_ninja/fruit_ninja_viewport.s: main/src/v9-fruit_ninja/fruit_ninja_viewport.c.s
@@ -3674,6 +4019,7 @@ main/src/v9-fruit_ninja/fruit_ninja_viewport.s: main/src/v9-fruit_ninja/fruit_ni
 main/src/v9-fruit_ninja/fruit_ninja_viewport.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-fruit_ninja/fruit_ninja_viewport.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-fruit_ninja/fruit_ninja_viewport.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-fruit_ninja/fruit_ninja_viewport.c.s
 .PHONY : main/src/v9-fruit_ninja/fruit_ninja_viewport.c.s
 
 main/src/v9-tetris/tetris.o: main/src/v9-tetris/tetris.c.o
@@ -3684,6 +4030,7 @@ main/src/v9-tetris/tetris.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-tetris/tetris.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/tetris_public_api_test.dir/build.make CMakeFiles/tetris_public_api_test.dir/main/src/v9-tetris/tetris.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-tetris/tetris.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-tetris/tetris.c.o
 .PHONY : main/src/v9-tetris/tetris.c.o
 
 main/src/v9-tetris/tetris.i: main/src/v9-tetris/tetris.c.i
@@ -3694,6 +4041,7 @@ main/src/v9-tetris/tetris.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-tetris/tetris.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/tetris_public_api_test.dir/build.make CMakeFiles/tetris_public_api_test.dir/main/src/v9-tetris/tetris.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-tetris/tetris.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-tetris/tetris.c.i
 .PHONY : main/src/v9-tetris/tetris.c.i
 
 main/src/v9-tetris/tetris.s: main/src/v9-tetris/tetris.c.s
@@ -3704,6 +4052,7 @@ main/src/v9-tetris/tetris.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-tetris/tetris.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/tetris_public_api_test.dir/build.make CMakeFiles/tetris_public_api_test.dir/main/src/v9-tetris/tetris.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-tetris/tetris.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-tetris/tetris.c.s
 .PHONY : main/src/v9-tetris/tetris.c.s
 
 main/src/v9-tetris/tetris_game.o: main/src/v9-tetris/tetris_game.c.o
@@ -3714,6 +4063,7 @@ main/src/v9-tetris/tetris_game.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-tetris/tetris_game.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/tetris_public_api_test.dir/build.make CMakeFiles/tetris_public_api_test.dir/main/src/v9-tetris/tetris_game.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-tetris/tetris_game.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-tetris/tetris_game.c.o
 .PHONY : main/src/v9-tetris/tetris_game.c.o
 
 main/src/v9-tetris/tetris_game.i: main/src/v9-tetris/tetris_game.c.i
@@ -3724,6 +4074,7 @@ main/src/v9-tetris/tetris_game.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-tetris/tetris_game.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/tetris_public_api_test.dir/build.make CMakeFiles/tetris_public_api_test.dir/main/src/v9-tetris/tetris_game.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-tetris/tetris_game.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-tetris/tetris_game.c.i
 .PHONY : main/src/v9-tetris/tetris_game.c.i
 
 main/src/v9-tetris/tetris_game.s: main/src/v9-tetris/tetris_game.c.s
@@ -3734,6 +4085,7 @@ main/src/v9-tetris/tetris_game.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-tetris/tetris_game.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/tetris_public_api_test.dir/build.make CMakeFiles/tetris_public_api_test.dir/main/src/v9-tetris/tetris_game.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-tetris/tetris_game.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-tetris/tetris_game.c.s
 .PHONY : main/src/v9-tetris/tetris_game.c.s
 
 main/src/v9-tetris/tetris_input.o: main/src/v9-tetris/tetris_input.c.o
@@ -3744,6 +4096,7 @@ main/src/v9-tetris/tetris_input.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-tetris/tetris_input.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/tetris_public_api_test.dir/build.make CMakeFiles/tetris_public_api_test.dir/main/src/v9-tetris/tetris_input.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-tetris/tetris_input.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-tetris/tetris_input.c.o
 .PHONY : main/src/v9-tetris/tetris_input.c.o
 
 main/src/v9-tetris/tetris_input.i: main/src/v9-tetris/tetris_input.c.i
@@ -3754,6 +4107,7 @@ main/src/v9-tetris/tetris_input.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-tetris/tetris_input.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/tetris_public_api_test.dir/build.make CMakeFiles/tetris_public_api_test.dir/main/src/v9-tetris/tetris_input.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-tetris/tetris_input.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-tetris/tetris_input.c.i
 .PHONY : main/src/v9-tetris/tetris_input.c.i
 
 main/src/v9-tetris/tetris_input.s: main/src/v9-tetris/tetris_input.c.s
@@ -3764,6 +4118,7 @@ main/src/v9-tetris/tetris_input.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-tetris/tetris_input.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/tetris_public_api_test.dir/build.make CMakeFiles/tetris_public_api_test.dir/main/src/v9-tetris/tetris_input.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-tetris/tetris_input.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-tetris/tetris_input.c.s
 .PHONY : main/src/v9-tetris/tetris_input.c.s
 
 main/src/v9-tetris/tetris_ui.o: main/src/v9-tetris/tetris_ui.c.o
@@ -3774,6 +4129,7 @@ main/src/v9-tetris/tetris_ui.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-tetris/tetris_ui.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/tetris_public_api_test.dir/build.make CMakeFiles/tetris_public_api_test.dir/main/src/v9-tetris/tetris_ui.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-tetris/tetris_ui.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-tetris/tetris_ui.c.o
 .PHONY : main/src/v9-tetris/tetris_ui.c.o
 
 main/src/v9-tetris/tetris_ui.i: main/src/v9-tetris/tetris_ui.c.i
@@ -3784,6 +4140,7 @@ main/src/v9-tetris/tetris_ui.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-tetris/tetris_ui.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/tetris_public_api_test.dir/build.make CMakeFiles/tetris_public_api_test.dir/main/src/v9-tetris/tetris_ui.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-tetris/tetris_ui.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-tetris/tetris_ui.c.i
 .PHONY : main/src/v9-tetris/tetris_ui.c.i
 
 main/src/v9-tetris/tetris_ui.s: main/src/v9-tetris/tetris_ui.c.s
@@ -3794,6 +4151,7 @@ main/src/v9-tetris/tetris_ui.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9-tetris/tetris_ui.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/tetris_public_api_test.dir/build.make CMakeFiles/tetris_public_api_test.dir/main/src/v9-tetris/tetris_ui.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9-tetris/tetris_ui.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9-tetris/tetris_ui.c.s
 .PHONY : main/src/v9-tetris/tetris_ui.c.s
 
 main/src/v9_2048/game_2048.o: main/src/v9_2048/game_2048.c.o
@@ -3804,6 +4162,7 @@ main/src/v9_2048/game_2048.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_2048/game_2048.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/v9_2048_public_api_test.dir/build.make CMakeFiles/v9_2048_public_api_test.dir/main/src/v9_2048/game_2048.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_2048/game_2048.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_2048/game_2048.c.o
 .PHONY : main/src/v9_2048/game_2048.c.o
 
 main/src/v9_2048/game_2048.i: main/src/v9_2048/game_2048.c.i
@@ -3814,6 +4173,7 @@ main/src/v9_2048/game_2048.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_2048/game_2048.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/v9_2048_public_api_test.dir/build.make CMakeFiles/v9_2048_public_api_test.dir/main/src/v9_2048/game_2048.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_2048/game_2048.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_2048/game_2048.c.i
 .PHONY : main/src/v9_2048/game_2048.c.i
 
 main/src/v9_2048/game_2048.s: main/src/v9_2048/game_2048.c.s
@@ -3824,6 +4184,7 @@ main/src/v9_2048/game_2048.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_2048/game_2048.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/v9_2048_public_api_test.dir/build.make CMakeFiles/v9_2048_public_api_test.dir/main/src/v9_2048/game_2048.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_2048/game_2048.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_2048/game_2048.c.s
 .PHONY : main/src/v9_2048/game_2048.c.s
 
 main/src/v9_2048/game_2048_core.o: main/src/v9_2048/game_2048_core.c.o
@@ -3835,6 +4196,7 @@ main/src/v9_2048/game_2048_core.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/v9_2048_core_test.dir/build.make CMakeFiles/v9_2048_core_test.dir/main/src/v9_2048/game_2048_core.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/v9_2048_public_api_test.dir/build.make CMakeFiles/v9_2048_public_api_test.dir/main/src/v9_2048/game_2048_core.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_2048/game_2048_core.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_2048/game_2048_core.c.o
 .PHONY : main/src/v9_2048/game_2048_core.c.o
 
 main/src/v9_2048/game_2048_core.i: main/src/v9_2048/game_2048_core.c.i
@@ -3846,6 +4208,7 @@ main/src/v9_2048/game_2048_core.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/v9_2048_core_test.dir/build.make CMakeFiles/v9_2048_core_test.dir/main/src/v9_2048/game_2048_core.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/v9_2048_public_api_test.dir/build.make CMakeFiles/v9_2048_public_api_test.dir/main/src/v9_2048/game_2048_core.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_2048/game_2048_core.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_2048/game_2048_core.c.i
 .PHONY : main/src/v9_2048/game_2048_core.c.i
 
 main/src/v9_2048/game_2048_core.s: main/src/v9_2048/game_2048_core.c.s
@@ -3857,6 +4220,7 @@ main/src/v9_2048/game_2048_core.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/v9_2048_core_test.dir/build.make CMakeFiles/v9_2048_core_test.dir/main/src/v9_2048/game_2048_core.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/v9_2048_public_api_test.dir/build.make CMakeFiles/v9_2048_public_api_test.dir/main/src/v9_2048/game_2048_core.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_2048/game_2048_core.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_2048/game_2048_core.c.s
 .PHONY : main/src/v9_2048/game_2048_core.c.s
 
 main/src/v9_apple_music/am_data.o: main/src/v9_apple_music/am_data.c.o
@@ -3867,6 +4231,7 @@ main/src/v9_apple_music/am_data.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_data.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_data_test.dir/build.make CMakeFiles/apple_music_data_test.dir/main/src/v9_apple_music/am_data.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_data.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_data.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/am_data.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/am_data.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/am_data.c.o
@@ -3883,6 +4248,7 @@ main/src/v9_apple_music/am_data.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_data.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_data_test.dir/build.make CMakeFiles/apple_music_data_test.dir/main/src/v9_apple_music/am_data.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_data.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_data.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/am_data.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/am_data.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/am_data.c.i
@@ -3899,6 +4265,7 @@ main/src/v9_apple_music/am_data.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_data.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_data_test.dir/build.make CMakeFiles/apple_music_data_test.dir/main/src/v9_apple_music/am_data.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_data.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_data.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/am_data.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/am_data.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/am_data.c.s
@@ -3915,6 +4282,7 @@ main/src/v9_apple_music/am_desktop_file_dialog.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_desktop_file_dialog.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_desktop_file_dialog_test.dir/build.make CMakeFiles/apple_music_desktop_file_dialog_test.dir/main/src/v9_apple_music/am_desktop_file_dialog.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_desktop_file_dialog.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_desktop_file_dialog.c.o
 .PHONY : main/src/v9_apple_music/am_desktop_file_dialog.c.o
 
 main/src/v9_apple_music/am_desktop_file_dialog.i: main/src/v9_apple_music/am_desktop_file_dialog.c.i
@@ -3925,6 +4293,7 @@ main/src/v9_apple_music/am_desktop_file_dialog.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_desktop_file_dialog.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_desktop_file_dialog_test.dir/build.make CMakeFiles/apple_music_desktop_file_dialog_test.dir/main/src/v9_apple_music/am_desktop_file_dialog.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_desktop_file_dialog.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_desktop_file_dialog.c.i
 .PHONY : main/src/v9_apple_music/am_desktop_file_dialog.c.i
 
 main/src/v9_apple_music/am_desktop_file_dialog.s: main/src/v9_apple_music/am_desktop_file_dialog.c.s
@@ -3935,6 +4304,7 @@ main/src/v9_apple_music/am_desktop_file_dialog.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_desktop_file_dialog.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_desktop_file_dialog_test.dir/build.make CMakeFiles/apple_music_desktop_file_dialog_test.dir/main/src/v9_apple_music/am_desktop_file_dialog.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_desktop_file_dialog.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_desktop_file_dialog.c.s
 .PHONY : main/src/v9_apple_music/am_desktop_file_dialog.c.s
 
 main/src/v9_apple_music/am_local_scan.o: main/src/v9_apple_music/am_local_scan.c.o
@@ -3945,6 +4315,7 @@ main/src/v9_apple_music/am_local_scan.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_local_scan.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_data_test.dir/build.make CMakeFiles/apple_music_data_test.dir/main/src/v9_apple_music/am_local_scan.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_local_scan.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_local_scan.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/am_local_scan.c.o
 .PHONY : main/src/v9_apple_music/am_local_scan.c.o
 
@@ -3956,6 +4327,7 @@ main/src/v9_apple_music/am_local_scan.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_local_scan.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_data_test.dir/build.make CMakeFiles/apple_music_data_test.dir/main/src/v9_apple_music/am_local_scan.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_local_scan.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_local_scan.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/am_local_scan.c.i
 .PHONY : main/src/v9_apple_music/am_local_scan.c.i
 
@@ -3967,6 +4339,7 @@ main/src/v9_apple_music/am_local_scan.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_local_scan.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_data_test.dir/build.make CMakeFiles/apple_music_data_test.dir/main/src/v9_apple_music/am_local_scan.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_local_scan.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_local_scan.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/am_local_scan.c.s
 .PHONY : main/src/v9_apple_music/am_local_scan.c.s
 
@@ -3977,6 +4350,7 @@ main/src/v9_apple_music/am_metrics.o: main/src/v9_apple_music/am_metrics.c.o
 main/src/v9_apple_music/am_metrics.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_metrics.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_metrics.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_metrics.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/am_metrics.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/am_metrics.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/am_metrics.c.o
@@ -3992,6 +4366,7 @@ main/src/v9_apple_music/am_metrics.i: main/src/v9_apple_music/am_metrics.c.i
 main/src/v9_apple_music/am_metrics.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_metrics.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_metrics.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_metrics.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/am_metrics.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/am_metrics.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/am_metrics.c.i
@@ -4007,6 +4382,7 @@ main/src/v9_apple_music/am_metrics.s: main/src/v9_apple_music/am_metrics.c.s
 main/src/v9_apple_music/am_metrics.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_metrics.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_metrics.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_metrics.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/am_metrics.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/am_metrics.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/am_metrics.c.s
@@ -4022,6 +4398,7 @@ main/src/v9_apple_music/am_page_list.o: main/src/v9_apple_music/am_page_list.c.o
 main/src/v9_apple_music/am_page_list.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_page_list.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_page_list.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_page_list.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/am_page_list.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/am_page_list.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/am_page_list.c.o
@@ -4034,6 +4411,7 @@ main/src/v9_apple_music/am_page_list.i: main/src/v9_apple_music/am_page_list.c.i
 main/src/v9_apple_music/am_page_list.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_page_list.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_page_list.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_page_list.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/am_page_list.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/am_page_list.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/am_page_list.c.i
@@ -4046,6 +4424,7 @@ main/src/v9_apple_music/am_page_list.s: main/src/v9_apple_music/am_page_list.c.s
 main/src/v9_apple_music/am_page_list.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_page_list.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_page_list.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_page_list.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/am_page_list.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/am_page_list.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/am_page_list.c.s
@@ -4058,6 +4437,7 @@ main/src/v9_apple_music/am_player.o: main/src/v9_apple_music/am_player.c.o
 main/src/v9_apple_music/am_player.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_player.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_player.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_player.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_playlist_scrollbar_behavior_test.dir/build.make CMakeFiles/apple_music_playlist_scrollbar_behavior_test.dir/main/src/v9_apple_music/am_player.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_single_file_player_test.dir/build.make CMakeFiles/apple_music_single_file_player_test.dir/main/src/v9_apple_music/am_player.c.o
 .PHONY : main/src/v9_apple_music/am_player.c.o
@@ -4069,6 +4449,7 @@ main/src/v9_apple_music/am_player.i: main/src/v9_apple_music/am_player.c.i
 main/src/v9_apple_music/am_player.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_player.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_player.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_player.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_playlist_scrollbar_behavior_test.dir/build.make CMakeFiles/apple_music_playlist_scrollbar_behavior_test.dir/main/src/v9_apple_music/am_player.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_single_file_player_test.dir/build.make CMakeFiles/apple_music_single_file_player_test.dir/main/src/v9_apple_music/am_player.c.i
 .PHONY : main/src/v9_apple_music/am_player.c.i
@@ -4080,6 +4461,7 @@ main/src/v9_apple_music/am_player.s: main/src/v9_apple_music/am_player.c.s
 main/src/v9_apple_music/am_player.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_player.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_player.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_player.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_playlist_scrollbar_behavior_test.dir/build.make CMakeFiles/apple_music_playlist_scrollbar_behavior_test.dir/main/src/v9_apple_music/am_player.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_single_file_player_test.dir/build.make CMakeFiles/apple_music_single_file_player_test.dir/main/src/v9_apple_music/am_player.c.s
 .PHONY : main/src/v9_apple_music/am_player.c.s
@@ -4091,6 +4473,7 @@ main/src/v9_apple_music/am_screenshot.o: main/src/v9_apple_music/am_screenshot.c
 main/src/v9_apple_music/am_screenshot.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_screenshot.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_screenshot.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_screenshot.c.o
 .PHONY : main/src/v9_apple_music/am_screenshot.c.o
 
 main/src/v9_apple_music/am_screenshot.i: main/src/v9_apple_music/am_screenshot.c.i
@@ -4100,6 +4483,7 @@ main/src/v9_apple_music/am_screenshot.i: main/src/v9_apple_music/am_screenshot.c
 main/src/v9_apple_music/am_screenshot.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_screenshot.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_screenshot.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_screenshot.c.i
 .PHONY : main/src/v9_apple_music/am_screenshot.c.i
 
 main/src/v9_apple_music/am_screenshot.s: main/src/v9_apple_music/am_screenshot.c.s
@@ -4109,6 +4493,7 @@ main/src/v9_apple_music/am_screenshot.s: main/src/v9_apple_music/am_screenshot.c
 main/src/v9_apple_music/am_screenshot.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_screenshot.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_screenshot.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_screenshot.c.s
 .PHONY : main/src/v9_apple_music/am_screenshot.c.s
 
 main/src/v9_apple_music/am_shell.o: main/src/v9_apple_music/am_shell.c.o
@@ -4118,6 +4503,7 @@ main/src/v9_apple_music/am_shell.o: main/src/v9_apple_music/am_shell.c.o
 main/src/v9_apple_music/am_shell.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_shell.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_shell.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_shell.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/am_shell.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/am_shell.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/am_shell.c.o
@@ -4133,6 +4519,7 @@ main/src/v9_apple_music/am_shell.i: main/src/v9_apple_music/am_shell.c.i
 main/src/v9_apple_music/am_shell.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_shell.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_shell.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_shell.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/am_shell.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/am_shell.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/am_shell.c.i
@@ -4148,6 +4535,7 @@ main/src/v9_apple_music/am_shell.s: main/src/v9_apple_music/am_shell.c.s
 main/src/v9_apple_music/am_shell.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_shell.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_shell.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_shell.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/am_shell.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/am_shell.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/am_shell.c.s
@@ -4164,6 +4552,7 @@ main/src/v9_apple_music/am_sources_csv.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_sources_csv.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_data_test.dir/build.make CMakeFiles/apple_music_data_test.dir/main/src/v9_apple_music/am_sources_csv.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_sources_csv.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_sources_csv.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/am_sources_csv.c.o
 .PHONY : main/src/v9_apple_music/am_sources_csv.c.o
 
@@ -4175,6 +4564,7 @@ main/src/v9_apple_music/am_sources_csv.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_sources_csv.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_data_test.dir/build.make CMakeFiles/apple_music_data_test.dir/main/src/v9_apple_music/am_sources_csv.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_sources_csv.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_sources_csv.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/am_sources_csv.c.i
 .PHONY : main/src/v9_apple_music/am_sources_csv.c.i
 
@@ -4186,6 +4576,7 @@ main/src/v9_apple_music/am_sources_csv.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_sources_csv.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_data_test.dir/build.make CMakeFiles/apple_music_data_test.dir/main/src/v9_apple_music/am_sources_csv.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_sources_csv.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_sources_csv.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/am_sources_csv.c.s
 .PHONY : main/src/v9_apple_music/am_sources_csv.c.s
 
@@ -4197,6 +4588,7 @@ main/src/v9_apple_music/am_state.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_state.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_state_test.dir/build.make CMakeFiles/apple_music_state_test.dir/main/src/v9_apple_music/am_state.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_state.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_state.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/am_state.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/am_state.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/am_state.c.o
@@ -4213,6 +4605,7 @@ main/src/v9_apple_music/am_state.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_state.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_state_test.dir/build.make CMakeFiles/apple_music_state_test.dir/main/src/v9_apple_music/am_state.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_state.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_state.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/am_state.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/am_state.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/am_state.c.i
@@ -4229,6 +4622,7 @@ main/src/v9_apple_music/am_state.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_state.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_state_test.dir/build.make CMakeFiles/apple_music_state_test.dir/main/src/v9_apple_music/am_state.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_state.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_state.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/am_state.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/am_state.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/am_state.c.s
@@ -4244,6 +4638,7 @@ main/src/v9_apple_music/am_theme.o: main/src/v9_apple_music/am_theme.c.o
 main/src/v9_apple_music/am_theme.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_theme.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_theme.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_theme.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/am_theme.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/am_theme.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/am_theme.c.o
@@ -4259,6 +4654,7 @@ main/src/v9_apple_music/am_theme.i: main/src/v9_apple_music/am_theme.c.i
 main/src/v9_apple_music/am_theme.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_theme.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_theme.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_theme.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/am_theme.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/am_theme.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/am_theme.c.i
@@ -4274,6 +4670,7 @@ main/src/v9_apple_music/am_theme.s: main/src/v9_apple_music/am_theme.c.s
 main/src/v9_apple_music/am_theme.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_theme.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_theme.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_theme.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/am_theme.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/am_theme.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/am_theme.c.s
@@ -4289,6 +4686,7 @@ main/src/v9_apple_music/am_widgets.o: main/src/v9_apple_music/am_widgets.c.o
 main/src/v9_apple_music/am_widgets.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_widgets.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_widgets.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_widgets.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/am_widgets.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/am_widgets.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/am_widgets.c.o
@@ -4304,6 +4702,7 @@ main/src/v9_apple_music/am_widgets.i: main/src/v9_apple_music/am_widgets.c.i
 main/src/v9_apple_music/am_widgets.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_widgets.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_widgets.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_widgets.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/am_widgets.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/am_widgets.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/am_widgets.c.i
@@ -4319,6 +4718,7 @@ main/src/v9_apple_music/am_widgets.s: main/src/v9_apple_music/am_widgets.c.s
 main/src/v9_apple_music/am_widgets.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/am_widgets.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/am_widgets.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/am_widgets.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/am_widgets.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/am_widgets.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/am_widgets.c.s
@@ -4334,6 +4734,7 @@ main/src/v9_apple_music/apple_music.o: main/src/v9_apple_music/apple_music.c.o
 main/src/v9_apple_music/apple_music.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/apple_music.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/apple_music.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/apple_music.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/apple_music.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/apple_music.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/apple_music.c.o
@@ -4346,6 +4747,7 @@ main/src/v9_apple_music/apple_music.i: main/src/v9_apple_music/apple_music.c.i
 main/src/v9_apple_music/apple_music.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/apple_music.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/apple_music.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/apple_music.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/apple_music.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/apple_music.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/apple_music.c.i
@@ -4358,6 +4760,7 @@ main/src/v9_apple_music/apple_music.s: main/src/v9_apple_music/apple_music.c.s
 main/src/v9_apple_music/apple_music.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/apple_music.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/apple_music.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/apple_music.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/apple_music.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/apple_music.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/apple_music.c.s
@@ -4370,6 +4773,7 @@ main/src/v9_apple_music/assets/am_cover_fire.o: main/src/v9_apple_music/assets/a
 main/src/v9_apple_music/assets/am_cover_fire.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/assets/am_cover_fire.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/assets/am_cover_fire.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/assets/am_cover_fire.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/assets/am_cover_fire.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/assets/am_cover_fire.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/assets/am_cover_fire.c.o
@@ -4382,6 +4786,7 @@ main/src/v9_apple_music/assets/am_cover_fire.i: main/src/v9_apple_music/assets/a
 main/src/v9_apple_music/assets/am_cover_fire.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/assets/am_cover_fire.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/assets/am_cover_fire.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/assets/am_cover_fire.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/assets/am_cover_fire.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/assets/am_cover_fire.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/assets/am_cover_fire.c.i
@@ -4394,6 +4799,7 @@ main/src/v9_apple_music/assets/am_cover_fire.s: main/src/v9_apple_music/assets/a
 main/src/v9_apple_music/assets/am_cover_fire.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/assets/am_cover_fire.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/assets/am_cover_fire.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/assets/am_cover_fire.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/assets/am_cover_fire.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/assets/am_cover_fire.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/assets/am_cover_fire.c.s
@@ -4406,6 +4812,7 @@ main/src/v9_apple_music/fonts/am_font_11.o: main/src/v9_apple_music/fonts/am_fon
 main/src/v9_apple_music/fonts/am_font_11.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_11.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_11.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_11.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_11.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_11.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_11.c.o
@@ -4421,6 +4828,7 @@ main/src/v9_apple_music/fonts/am_font_11.i: main/src/v9_apple_music/fonts/am_fon
 main/src/v9_apple_music/fonts/am_font_11.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_11.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_11.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_11.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_11.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_11.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_11.c.i
@@ -4436,6 +4844,7 @@ main/src/v9_apple_music/fonts/am_font_11.s: main/src/v9_apple_music/fonts/am_fon
 main/src/v9_apple_music/fonts/am_font_11.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_11.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_11.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_11.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_11.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_11.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_11.c.s
@@ -4451,6 +4860,7 @@ main/src/v9_apple_music/fonts/am_font_12.o: main/src/v9_apple_music/fonts/am_fon
 main/src/v9_apple_music/fonts/am_font_12.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_12.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_12.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_12.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_12.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_12.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_12.c.o
@@ -4466,6 +4876,7 @@ main/src/v9_apple_music/fonts/am_font_12.i: main/src/v9_apple_music/fonts/am_fon
 main/src/v9_apple_music/fonts/am_font_12.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_12.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_12.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_12.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_12.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_12.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_12.c.i
@@ -4481,6 +4892,7 @@ main/src/v9_apple_music/fonts/am_font_12.s: main/src/v9_apple_music/fonts/am_fon
 main/src/v9_apple_music/fonts/am_font_12.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_12.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_12.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_12.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_12.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_12.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_12.c.s
@@ -4496,6 +4908,7 @@ main/src/v9_apple_music/fonts/am_font_13.o: main/src/v9_apple_music/fonts/am_fon
 main/src/v9_apple_music/fonts/am_font_13.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_13.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_13.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_13.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_13.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_13.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_13.c.o
@@ -4511,6 +4924,7 @@ main/src/v9_apple_music/fonts/am_font_13.i: main/src/v9_apple_music/fonts/am_fon
 main/src/v9_apple_music/fonts/am_font_13.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_13.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_13.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_13.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_13.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_13.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_13.c.i
@@ -4526,6 +4940,7 @@ main/src/v9_apple_music/fonts/am_font_13.s: main/src/v9_apple_music/fonts/am_fon
 main/src/v9_apple_music/fonts/am_font_13.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_13.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_13.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_13.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_13.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_13.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_13.c.s
@@ -4541,6 +4956,7 @@ main/src/v9_apple_music/fonts/am_font_14.o: main/src/v9_apple_music/fonts/am_fon
 main/src/v9_apple_music/fonts/am_font_14.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_14.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_14.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_14.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_14.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_14.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_14.c.o
@@ -4556,6 +4972,7 @@ main/src/v9_apple_music/fonts/am_font_14.i: main/src/v9_apple_music/fonts/am_fon
 main/src/v9_apple_music/fonts/am_font_14.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_14.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_14.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_14.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_14.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_14.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_14.c.i
@@ -4571,6 +4988,7 @@ main/src/v9_apple_music/fonts/am_font_14.s: main/src/v9_apple_music/fonts/am_fon
 main/src/v9_apple_music/fonts/am_font_14.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_14.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_14.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_14.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_14.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_14.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_14.c.s
@@ -4586,6 +5004,7 @@ main/src/v9_apple_music/fonts/am_font_16.o: main/src/v9_apple_music/fonts/am_fon
 main/src/v9_apple_music/fonts/am_font_16.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_16.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_16.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_16.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_16.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_16.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_16.c.o
@@ -4601,6 +5020,7 @@ main/src/v9_apple_music/fonts/am_font_16.i: main/src/v9_apple_music/fonts/am_fon
 main/src/v9_apple_music/fonts/am_font_16.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_16.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_16.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_16.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_16.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_16.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_16.c.i
@@ -4616,6 +5036,7 @@ main/src/v9_apple_music/fonts/am_font_16.s: main/src/v9_apple_music/fonts/am_fon
 main/src/v9_apple_music/fonts/am_font_16.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_16.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_16.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_16.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_16.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_16.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_16.c.s
@@ -4631,6 +5052,7 @@ main/src/v9_apple_music/fonts/am_font_18.o: main/src/v9_apple_music/fonts/am_fon
 main/src/v9_apple_music/fonts/am_font_18.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_18.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_18.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_18.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_18.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_18.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_18.c.o
@@ -4646,6 +5068,7 @@ main/src/v9_apple_music/fonts/am_font_18.i: main/src/v9_apple_music/fonts/am_fon
 main/src/v9_apple_music/fonts/am_font_18.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_18.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_18.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_18.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_18.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_18.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_18.c.i
@@ -4661,6 +5084,7 @@ main/src/v9_apple_music/fonts/am_font_18.s: main/src/v9_apple_music/fonts/am_fon
 main/src/v9_apple_music/fonts/am_font_18.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_18.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_18.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_18.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_18.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_18.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_18.c.s
@@ -4676,6 +5100,7 @@ main/src/v9_apple_music/fonts/am_font_24.o: main/src/v9_apple_music/fonts/am_fon
 main/src/v9_apple_music/fonts/am_font_24.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_24.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_24.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_24.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_24.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_24.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_24.c.o
@@ -4691,6 +5116,7 @@ main/src/v9_apple_music/fonts/am_font_24.i: main/src/v9_apple_music/fonts/am_fon
 main/src/v9_apple_music/fonts/am_font_24.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_24.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_24.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_24.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_24.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_24.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_24.c.i
@@ -4706,6 +5132,7 @@ main/src/v9_apple_music/fonts/am_font_24.s: main/src/v9_apple_music/fonts/am_fon
 main/src/v9_apple_music/fonts/am_font_24.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_24.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_24.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_24.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_24.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_24.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_24.c.s
@@ -4721,6 +5148,7 @@ main/src/v9_apple_music/fonts/am_font_34.o: main/src/v9_apple_music/fonts/am_fon
 main/src/v9_apple_music/fonts/am_font_34.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_34.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_34.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_34.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_34.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_34.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_34.c.o
@@ -4736,6 +5164,7 @@ main/src/v9_apple_music/fonts/am_font_34.i: main/src/v9_apple_music/fonts/am_fon
 main/src/v9_apple_music/fonts/am_font_34.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_34.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_34.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_34.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_34.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_34.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_34.c.i
@@ -4751,6 +5180,7 @@ main/src/v9_apple_music/fonts/am_font_34.s: main/src/v9_apple_music/fonts/am_fon
 main/src/v9_apple_music/fonts/am_font_34.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_34.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_34.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_34.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_34.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_34.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_34.c.s
@@ -4766,6 +5196,7 @@ main/src/v9_apple_music/fonts/am_font_480_10.o: main/src/v9_apple_music/fonts/am
 main/src/v9_apple_music/fonts/am_font_480_10.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_480_10.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_480_10.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_480_10.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_480_10.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_480_10.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_480_10.c.o
@@ -4781,6 +5212,7 @@ main/src/v9_apple_music/fonts/am_font_480_10.i: main/src/v9_apple_music/fonts/am
 main/src/v9_apple_music/fonts/am_font_480_10.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_480_10.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_480_10.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_480_10.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_480_10.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_480_10.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_480_10.c.i
@@ -4796,6 +5228,7 @@ main/src/v9_apple_music/fonts/am_font_480_10.s: main/src/v9_apple_music/fonts/am
 main/src/v9_apple_music/fonts/am_font_480_10.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_480_10.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_480_10.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_480_10.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_480_10.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_480_10.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_480_10.c.s
@@ -4811,6 +5244,7 @@ main/src/v9_apple_music/fonts/am_font_480_12.o: main/src/v9_apple_music/fonts/am
 main/src/v9_apple_music/fonts/am_font_480_12.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_480_12.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_480_12.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_480_12.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_480_12.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_480_12.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_480_12.c.o
@@ -4826,6 +5260,7 @@ main/src/v9_apple_music/fonts/am_font_480_12.i: main/src/v9_apple_music/fonts/am
 main/src/v9_apple_music/fonts/am_font_480_12.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_480_12.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_480_12.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_480_12.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_480_12.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_480_12.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_480_12.c.i
@@ -4841,6 +5276,7 @@ main/src/v9_apple_music/fonts/am_font_480_12.s: main/src/v9_apple_music/fonts/am
 main/src/v9_apple_music/fonts/am_font_480_12.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_480_12.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_480_12.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_480_12.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_480_12.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_480_12.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_480_12.c.s
@@ -4856,6 +5292,7 @@ main/src/v9_apple_music/fonts/am_font_480_15.o: main/src/v9_apple_music/fonts/am
 main/src/v9_apple_music/fonts/am_font_480_15.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_480_15.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_480_15.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_480_15.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_480_15.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_480_15.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_480_15.c.o
@@ -4871,6 +5308,7 @@ main/src/v9_apple_music/fonts/am_font_480_15.i: main/src/v9_apple_music/fonts/am
 main/src/v9_apple_music/fonts/am_font_480_15.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_480_15.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_480_15.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_480_15.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_480_15.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_480_15.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_480_15.c.i
@@ -4886,6 +5324,7 @@ main/src/v9_apple_music/fonts/am_font_480_15.s: main/src/v9_apple_music/fonts/am
 main/src/v9_apple_music/fonts/am_font_480_15.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_480_15.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_480_15.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_480_15.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_480_15.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_480_15.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_480_15.c.s
@@ -4901,6 +5340,7 @@ main/src/v9_apple_music/fonts/am_font_480_18.o: main/src/v9_apple_music/fonts/am
 main/src/v9_apple_music/fonts/am_font_480_18.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_480_18.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_480_18.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_480_18.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_480_18.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_480_18.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_480_18.c.o
@@ -4916,6 +5356,7 @@ main/src/v9_apple_music/fonts/am_font_480_18.i: main/src/v9_apple_music/fonts/am
 main/src/v9_apple_music/fonts/am_font_480_18.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_480_18.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_480_18.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_480_18.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_480_18.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_480_18.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_480_18.c.i
@@ -4931,6 +5372,7 @@ main/src/v9_apple_music/fonts/am_font_480_18.s: main/src/v9_apple_music/fonts/am
 main/src/v9_apple_music/fonts/am_font_480_18.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_480_18.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_480_18.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_480_18.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_480_18.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_480_18.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_480_18.c.s
@@ -4946,6 +5388,7 @@ main/src/v9_apple_music/fonts/am_font_480_22.o: main/src/v9_apple_music/fonts/am
 main/src/v9_apple_music/fonts/am_font_480_22.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_480_22.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_480_22.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_480_22.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_480_22.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_480_22.c.o
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_480_22.c.o
@@ -4961,6 +5404,7 @@ main/src/v9_apple_music/fonts/am_font_480_22.i: main/src/v9_apple_music/fonts/am
 main/src/v9_apple_music/fonts/am_font_480_22.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_480_22.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_480_22.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_480_22.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_480_22.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_480_22.c.i
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_480_22.c.i
@@ -4976,6 +5420,7 @@ main/src/v9_apple_music/fonts/am_font_480_22.s: main/src/v9_apple_music/fonts/am
 main/src/v9_apple_music/fonts/am_font_480_22.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/main/src/v9_apple_music/fonts/am_font_480_22.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/src/v9_apple_music/fonts/am_font_480_22.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/src/v9_apple_music/fonts/am_font_480_22.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_parent_size_test.dir/build.make CMakeFiles/apple_music_parent_size_test.dir/main/src/v9_apple_music/fonts/am_font_480_22.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_state_test.dir/build.make CMakeFiles/apple_music_now_view_state_test.dir/main/src/v9_apple_music/fonts/am_font_480_22.c.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/apple_music_now_view_single_file_test.dir/build.make CMakeFiles/apple_music_now_view_single_file_test.dir/main/src/v9_apple_music/fonts/am_font_480_22.c.s
@@ -5296,6 +5741,30 @@ main/tests/desktop_runtime_page_count_test.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_runtime_page_count_test.dir/build.make CMakeFiles/desktop_runtime_page_count_test.dir/main/tests/desktop_runtime_page_count_test.c.s
 .PHONY : main/tests/desktop_runtime_page_count_test.c.s
 
+main/tests/desktop_vertical_swipe_lock_test.o: main/tests/desktop_vertical_swipe_lock_test.c.o
+.PHONY : main/tests/desktop_vertical_swipe_lock_test.o
+
+# target to build an object file
+main/tests/desktop_vertical_swipe_lock_test.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/tests/desktop_vertical_swipe_lock_test.c.o
+.PHONY : main/tests/desktop_vertical_swipe_lock_test.c.o
+
+main/tests/desktop_vertical_swipe_lock_test.i: main/tests/desktop_vertical_swipe_lock_test.c.i
+.PHONY : main/tests/desktop_vertical_swipe_lock_test.i
+
+# target to preprocess a source file
+main/tests/desktop_vertical_swipe_lock_test.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/tests/desktop_vertical_swipe_lock_test.c.i
+.PHONY : main/tests/desktop_vertical_swipe_lock_test.c.i
+
+main/tests/desktop_vertical_swipe_lock_test.s: main/tests/desktop_vertical_swipe_lock_test.c.s
+.PHONY : main/tests/desktop_vertical_swipe_lock_test.s
+
+# target to generate assembly for a file
+main/tests/desktop_vertical_swipe_lock_test.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/desktop_vertical_swipe_lock_test.dir/build.make CMakeFiles/desktop_vertical_swipe_lock_test.dir/main/tests/desktop_vertical_swipe_lock_test.c.s
+.PHONY : main/tests/desktop_vertical_swipe_lock_test.c.s
+
 main/tests/fruit_ninja_assets_test.o: main/tests/fruit_ninja_assets_test.c.o
 .PHONY : main/tests/fruit_ninja_assets_test.o
 
@@ -5469,6 +5938,7 @@ help:
 	@echo "... desktop_apple_music_launcher_test"
 	@echo "... desktop_apple_music_test"
 	@echo "... desktop_runtime_page_count_test"
+	@echo "... desktop_vertical_swipe_lock_test"
 	@echo "... fruit_ninja_assets_test"
 	@echo "... fruit_ninja_collision_test"
 	@echo "... fruit_ninja_model_test"
@@ -5960,6 +6430,9 @@ help:
 	@echo "... main/tests/desktop_runtime_page_count_test.o"
 	@echo "... main/tests/desktop_runtime_page_count_test.i"
 	@echo "... main/tests/desktop_runtime_page_count_test.s"
+	@echo "... main/tests/desktop_vertical_swipe_lock_test.o"
+	@echo "... main/tests/desktop_vertical_swipe_lock_test.i"
+	@echo "... main/tests/desktop_vertical_swipe_lock_test.s"
 	@echo "... main/tests/fruit_ninja_assets_test.o"
 	@echo "... main/tests/fruit_ninja_assets_test.i"
 	@echo "... main/tests/fruit_ninja_assets_test.s"
