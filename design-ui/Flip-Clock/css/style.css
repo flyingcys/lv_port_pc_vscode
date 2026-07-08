@@ -3,46 +3,195 @@
 	margin: 0;
 	padding: 0;
 }
+
+:root
+{
+	--clock-bg: #000000;
+	--clock-digit: #cdcdcd;
+	--clock-line: #0d0d0d;
+	--clock-date: #767676;
+	--digit-stack: "Arial Black", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
 body
 {
 	display: flex;
 	text-align:center;
 	justify-content: center;
 	align-items: center;
-	/*min-height: 100vh;*/
-	background: #222;
+	min-height: 100vh;
+	background: var(--clock-bg);
+	overflow: hidden;
 }
+
 .clock
 {
 	width: auto;
-	zoom: 4;
+	zoom: 2.1;
 }
+
+.flip-clock-wrapper
+{
+	margin: 0;
+	width: auto;
+}
+
+.flip-clock-wrapper ul
+{
+	margin: 0 -4px 0 0;
+	width: 84px;
+	height: 132px;
+	background: transparent;
+	border-radius: 0;
+	overflow: hidden;
+}
+
+.flip-clock-wrapper .flip
+{
+	box-shadow: none;
+}
+
+.flip-clock-wrapper ul li,
+.flip-clock-wrapper ul li a,
+.flip-clock-wrapper ul li a div
+{
+	background: transparent;
+}
+
+.flip-clock-wrapper ul li,
+.flip-clock-wrapper ul li a div
+{
+	line-height: 128px;
+}
+
+.flip-clock-wrapper ul li a
+{
+	overflow: hidden !important;
+}
+
+.flip-clock-wrapper ul li a div
+{
+	height: 50%;
+	font-size: 110px;
+}
+
+.flip-clock-wrapper ul li a div.up:after
+{
+	top: 64px;
+	height: 4px;
+	background-color: var(--clock-line);
+}
+
+.flip-clock-wrapper ul li a div div.inn
+{
+	height: 200%;
+	color: var(--clock-digit);
+	background: var(--clock-bg);
+	border-radius: 0;
+	text-shadow: none;
+	font-family: var(--digit-stack);
+	font-size: 110px;
+	font-weight: 900;
+	letter-spacing: -0.04em;
+}
+
+.flip-clock-wrapper .flip-clock-divider
+{
+	width: 32px;
+	height: 132px;
+	margin: 0 12px 0 16px;
+}
+
+.flip-clock-wrapper .flip-clock-divider:before
+{
+	content: "";
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 24px;
+	height: 4px;
+	border-radius: 999px;
+	background: var(--clock-line);
+	transform: translate(-50%, -50%);
+}
+
 .flip-clock-dot
 {
-	background: #ccc;
-	/*background: #ffffff;*/
+	display: none;
 }
+
 .flip-clock-meridium a
 {
-    color: #ccc;
-    /*color: #ffffff;*/
+	color: var(--clock-digit);
 }
+
 h1 {
-    font-family: "Microsoft YaHei";
-    /*font-family: "Helvetica Neue", Helvetica, sans-serif;*/
-    /*font-family: sans-serif, Times, TimesNR, 'New Century Schoolbook', Georgia, 'New York', serif;*/
-    color: #ccc;
+	font-family: "Microsoft YaHei";
+	color: var(--clock-date);
 	text-align:center;
-	zoom: 4;
+	zoom: 1.5;
+	font-weight: 400;
+	letter-spacing: 0.12em;
+	margin-top: 14px;
 }
+
 #box
 {
 	display: table;
 }
+
 #content 
 {
-	/*color: #fff;*/
 	text-align: center;
 	display: table-cell;
 	vertical-align: middle;
+}
+
+@media screen and (max-width: 900px)
+{
+	.clock
+	{
+		zoom: 1.35;
+	}
+
+	.flip-clock-wrapper ul
+	{
+		width: 68px;
+		height: 104px;
+		margin-right: -3px;
+	}
+
+	.flip-clock-wrapper ul li,
+	.flip-clock-wrapper ul li a div
+	{
+		line-height: 100px;
+	}
+
+	.flip-clock-wrapper ul li a div
+	{
+		font-size: 86px;
+	}
+
+	.flip-clock-wrapper ul li a div.up:after
+	{
+		top: 50px;
+	}
+
+	.flip-clock-wrapper ul li a div div.inn
+	{
+		font-size: 86px;
+	}
+
+	.flip-clock-wrapper .flip-clock-divider
+	{
+		width: 24px;
+		height: 104px;
+		margin: 0 8px 0 10px;
+	}
+
+	h1
+	{
+		zoom: 1.1;
+		margin-top: 10px;
+	}
 }
