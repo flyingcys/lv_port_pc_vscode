@@ -37,11 +37,10 @@ desktop_home_t * desktop_home_create(lv_obj_t * parent,
 
     lv_obj_add_event_cb(desktop->host, desktop_delete_cb, LV_EVENT_DELETE, desktop);
     {
+        /* 全屏 host:page_0 时钟需占满 800×480;系统 top_bar 叠在上层(page1/2 可见) */
         const desktop_metrics_t * m = desktop_metrics();
-        int32_t desktop_w = m->screen_w;
-        int32_t desktop_h = m->screen_h - m->top_bar_h;
-        lv_obj_set_pos(desktop->host, 0, m->top_bar_h);
-        lv_obj_set_size(desktop->host, desktop_w, desktop_h);
+        lv_obj_set_pos(desktop->host, 0, 0);
+        lv_obj_set_size(desktop->host, m->screen_w, m->screen_h);
     }
     lv_obj_clear_flag(desktop->host, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_remove_flag(desktop->host, LV_OBJ_FLAG_SCROLL_CHAIN_VER);
@@ -59,7 +58,7 @@ desktop_home_t * desktop_home_create(lv_obj_t * parent,
     {
         const desktop_metrics_t * m = desktop_metrics();
         int32_t desktop_w = m->screen_w;
-        int32_t desktop_h = m->screen_h - m->top_bar_h;
+        int32_t desktop_h = m->screen_h;
 
         lv_obj_set_size(desktop->tileview, desktop_w, desktop_h);
         lv_obj_remove_flag(desktop->tileview, LV_OBJ_FLAG_SCROLL_CHAIN_VER);

@@ -1,0 +1,51 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"/>
+<link rel="stylesheet" href="./styles.css"/>
+<style>html,body{margin:0;padding:0;overflow:hidden;background:#0c0e11}
+.screen{box-shadow:none!important;border-radius:0!important;opacity:1!important;transform:none!important;animation:none!important}</style>
+</head><body>
+<div class="screen" id="screen">
+  <header class="screen__header">
+    <span class="hdr hdr--year" id="year">2024</span>
+    <span class="hdr hdr--month" id="month">DECEMBER</span>
+    <span class="hdr hdr--day" id="day">30</span>
+  </header>
+  <main class="screen__main">
+    <div class="period" id="period">EVENING</div>
+    <svg class="alarm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="6.1" cy="5.3" r="1.9"/><circle cx="17.9" cy="5.3" r="1.9"/>
+      <path d="M7.4 3.9 4.7 6.6"/><path d="M16.6 3.9 19.3 6.6"/>
+      <circle cx="12" cy="13.2" r="7.2"/>
+      <path d="M9.3 20.1 7.7 22.3"/><path d="M14.7 20.1 16.3 22.3"/>
+      <path d="M12 9.2V13.2L14.6 14.9"/>
+    </svg>
+    <div class="clock" id="clock" aria-label="时间">
+      <div class="slot" data-pos="h1"></div><div class="slot" data-pos="h2"></div>
+      <div class="colon"><span></span><span></span></div>
+      <div class="slot" data-pos="m1"></div><div class="slot" data-pos="m2"></div>
+      <div class="colon"><span></span><span></span></div>
+      <div class="slot" data-pos="s1"></div><div class="slot" data-pos="s2"></div>
+    </div>
+  </main>
+  <footer class="screen__footer">
+    <div class="metric metric--temp">
+      <div class="metric__top"><span class="metric__label">TEMP</span><span class="metric__unit">°C</span></div>
+      <div class="metric__num">
+        <svg class="metric__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a3.6 3.6 0 1 0 4 0z"/><path d="M12 8.4v6.2"/></svg>
+        <span class="metric__value" id="temp">25.6</span>
+      </div>
+    </div>
+    <div class="weekday" id="weekday">MONDAY</div>
+    <div class="metric metric--humidity">
+      <div class="metric__top">
+        <span class="metric__label">HUMIDITY</span>
+        <svg class="metric__smiley" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.2a4.2 4.2 0 0 0 7 0"/><circle cx="9" cy="9.6" r="0.7" fill="currentColor" stroke="none"/><circle cx="15" cy="9.6" r="0.7" fill="currentColor" stroke="none"/></svg>
+      </div>
+      <div class="metric__num">
+        <svg class="metric__icon metric__icon--drop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 3.2C8.4 3.2 4 8.9 4 12.1a4.4 4.4 0 0 0 8.8 0C12.8 8.9 8.4 3.2 8.4 3.2z"/><path d="M15.6 9.1C15.6 9.1 12.9 12.4 12.9 14.3a2.7 2.7 0 0 0 5.4 0C18.3 12.4 15.6 9.1 15.6 9.1z"/></svg>
+        <span class="metric__value" id="humidity">65</span><span class="metric__unit">%</span>
+      </div>
+    </div>
+  </footer>
+</div>
+<script src="./app.js"></script>
+</body></html>

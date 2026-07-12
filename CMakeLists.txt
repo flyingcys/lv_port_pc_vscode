@@ -92,6 +92,7 @@ file(GLOB V9_2048_SOURCES CONFIGURE_DEPENDS
 file(GLOB DESKTOP_SOURCES CONFIGURE_DEPENDS
     "${PROJECT_SOURCE_DIR}/main/desktop/*.c"
     "${PROJECT_SOURCE_DIR}/main/desktop/calc/*.c"
+    "${PROJECT_SOURCE_DIR}/main/desktop/clock/*.c"
     "${PROJECT_SOURCE_DIR}/main/desktop/assets/*.c"
     "${PROJECT_SOURCE_DIR}/main/desktop/assets/fonts/*.c"
 )
@@ -283,6 +284,16 @@ add_executable(desktop_apple_music_test
 target_include_directories(desktop_apple_music_test PRIVATE ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/main/desktop)
 target_link_libraries(desktop_apple_music_test lvgl ${PNG_LIBRARIES})
 
+add_executable(clock_icons_smoke_test
+    ${PROJECT_SOURCE_DIR}/main/tests/clock_icons_smoke_test.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/img_clock_alarm.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/img_clock_thermometer.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/img_clock_drop.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/img_clock_smile.c
+)
+target_include_directories(clock_icons_smoke_test PRIVATE ${PROJECT_SOURCE_DIR})
+target_link_libraries(clock_icons_smoke_test lvgl ${PNG_LIBRARIES})
+
 add_executable(tetris_public_api_test
     ${PROJECT_SOURCE_DIR}/main/tests/tetris_public_api_test.c
     ${V9_TETRIS_SOURCES}
@@ -344,6 +355,25 @@ target_include_directories(apple_music_data_test PRIVATE
 )
 target_link_libraries(apple_music_data_test lvgl ${PNG_LIBRARIES})
 
+add_executable(clock_font_smoke_test
+    ${PROJECT_SOURCE_DIR}/main/tests/clock_font_smoke_test.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/fonts/desktop_font_calc_148.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/fonts/desktop_font_calc_34.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/fonts/clock_label_font_13.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/fonts/clock_label_font_14.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/fonts/clock_label_font_28.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/fonts/clock_label_font_30.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/fonts/clock_label_font_32.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/fonts/clock_label_font_33.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/fonts/clock_label_font_34.c
+    ${PROJECT_SOURCE_DIR}/main/desktop/assets/fonts/clock_label_font_35.c
+)
+target_include_directories(clock_font_smoke_test PRIVATE
+    ${PROJECT_SOURCE_DIR}
+    ${PROJECT_SOURCE_DIR}/main/desktop
+)
+target_link_libraries(clock_font_smoke_test lvgl ${PNG_LIBRARIES})
+
 add_executable(apple_music_desktop_file_dialog_test
     ${PROJECT_SOURCE_DIR}/main/tests/apple_music_desktop_file_dialog_test.c
     ${PROJECT_SOURCE_DIR}/main/src/v9_apple_music/am_desktop_file_dialog.c
@@ -362,6 +392,20 @@ target_include_directories(apple_music_state_test PRIVATE
     ${PROJECT_SOURCE_DIR}/main/src
 )
 target_link_libraries(apple_music_state_test lvgl ${PNG_LIBRARIES})
+
+add_executable(clock_model_test
+    ${PROJECT_SOURCE_DIR}/main/tests/clock_model_test.c
+)
+target_include_directories(clock_model_test PRIVATE
+    ${PROJECT_SOURCE_DIR}/main/inc
+    ${PROJECT_SOURCE_DIR}/main/desktop
+    ${PROJECT_SOURCE_DIR}/main/desktop/clock
+    ${PROJECT_SOURCE_DIR}
+)
+target_link_libraries(clock_model_test lvgl ${PNG_LIBRARIES})
+target_sources(clock_model_test PRIVATE
+    ${PROJECT_SOURCE_DIR}/main/desktop/clock/clock_model.c
+)
 
 add_executable(desktop_runtime_page_count_test
     ${PROJECT_SOURCE_DIR}/main/tests/desktop_runtime_page_count_test.c

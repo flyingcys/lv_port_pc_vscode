@@ -9,6 +9,8 @@
 #include "desktop_top_bar.h"
 #include "desktop_widgets.h"
 #include "desktop_panels.h"
+#include "clock/clock_view.h"
+#include "clock/clock_metrics.h"
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -186,16 +188,9 @@ void desktop_run(void)
         }
     }
 
-    /* page_0 锁屏：居中大时钟 */
-    {
-        const desktop_metrics_t * mm = desktop_metrics();
-        lv_obj_t * big = lv_label_create(page[0]);
-        lv_obj_set_style_text_font(big, mm->font_big_clock, 0);
-        lv_obj_set_style_text_color(big, desktop_theme()->text_primary, 0);
-        lv_label_set_text(big, "09:41");
-        lv_obj_center(big);
-        desktop_make_decorative(big);
-    }
+    /* page_0 首页时钟:全幅复刻 lvgl-clock-html mockup */
+    clock_metrics_init();
+    clock_view_create(page[0]);
 
     top_bar = desktop_top_bar_create(lv_screen_active());
     if(top_bar == NULL) {
@@ -206,6 +201,7 @@ void desktop_run(void)
     desktop_top_bar_apply(top_bar, desktop_get_page_config(0));
     desktop_top_bar_set_wifi_state(top_bar, WIFI_STATE_NORMAL);
     desktop_top_bar_start_minute_timer(top_bar);
+    lv_obj_add_flag(desktop_top_bar_get_root(top_bar), LV_OBJ_FLAG_HIDDEN); /* 初始 page_0 时钟,隐藏系统顶栏 */
 
     /* 底部分页圆点：仅代表 2 个 app 页（page_1/2），锁屏页隐藏 */
     pager_dots = desktop_widget_dots(lv_screen_active(), 2, 0);
@@ -256,6 +252,13 @@ static void desktop_page_changed_cb(uint32_t page_index, void * user_data)
     LV_UNUSED(user_data);
 
     if(top_bar != NULL) {
+        /* page_0 首页时钟自带顶栏,隐藏系统 top_bar;其它页恢复 */
+        if(page_index == 0) {
+            lv_obj_add_flag(desktop_top_bar_get_root(top_bar), LV_OBJ_FLAG_HIDDEN);
+        }
+        else {
+            lv_obj_remove_flag(desktop_top_bar_get_root(top_bar), LV_OBJ_FLAG_HIDDEN);
+        }
         desktop_top_bar_apply(top_bar, desktop_get_page_config(page_index));
     }
 
@@ -285,7 +288,8 @@ static int x_by_index(int index)
 
 static int y_by_index(int index)
 {
-    return (index / DESKTOP_GRID_COLS) * cell_h();
+    /* host 已全屏,app 网格从 top_bar 下方起排,避免被状态栏遮挡 */
+    return desktop_metrics()->top_bar_h + (index / DESKTOP_GRID_COLS) * cell_h();
 }
 
 static int clamp_index(int index)
