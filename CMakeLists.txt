@@ -44,6 +44,9 @@ option(LV_USE_LIBPNG "Use libpng to decode PNG" OFF)
 option(LV_USE_LIBJPEG_TURBO "Use libjpeg turbo to decode JPEG" OFF)
 option(LV_USE_FFMPEG "Use libffmpeg to display video using lv_ffmpeg" OFF)
 option(LV_USE_FREETYPE "Use freetype library" OFF)
+set(VENUS_CODEGEN_DIR "" CACHE PATH "Generated Venus LVGL Codegen directory")
+set(VENUS_LVGL_DIR "" CACHE PATH "LVGL source directory for Venus Codegen debug")
+set(VENUS_CODEGEN_OUTPUT_DIR "" CACHE PATH "Output directory for Venus Codegen debug")
 
 # Set C and C++ standards
 set(CMAKE_C_STANDARD 99)
@@ -51,7 +54,18 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Set the output path for the executable
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
+if(VENUS_CODEGEN_DIR)
+    set(VENUS_CODEGEN_CMAKE "${VENUS_CODEGEN_DIR}/CMakeLists.txt")
+    if(NOT EXISTS "${VENUS_CODEGEN_CMAKE}")
+        message(FATAL_ERROR "VENUS_CODEGEN_DIR must contain CMakeLists.txt")
+    endif()
+    if(NOT VENUS_CODEGEN_OUTPUT_DIR)
+        message(FATAL_ERROR "VENUS_CODEGEN_OUTPUT_DIR is required for Venus Codegen debug")
+    endif()
+    set(EXECUTABLE_OUTPUT_PATH "${VENUS_CODEGEN_OUTPUT_DIR}")
+else()
+    set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
+endif()
 set(WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 set(PLATFORM_LINK_LIBS m pthread)
@@ -84,7 +98,11 @@ add_compile_definitions($<$<BOOL:${LV_USE_LIBJPEG_TURBO}>:LV_USE_LIBJPEG_TURBO=1
 add_compile_definitions($<$<BOOL:${LV_USE_FFMPEG}>:LV_USE_FFMPEG=1>)
 
 # Add LVGL subdirectory
-add_subdirectory(lvgl)
+if(VENUS_LVGL_DIR)
+    add_subdirectory("${VENUS_LVGL_DIR}" "${CMAKE_BINARY_DIR}/venus-lvgl")
+else()
+    add_subdirectory(lvgl)
+endif()
 target_include_directories(lvgl PUBLIC ${PROJECT_SOURCE_DIR} ${PLATFORM_INCLUDE_DIRS})
 
 # Create the main executable, depending on the FreeRTOS option
@@ -99,10 +117,14 @@ if(USE_FREERTOS)
     # Link FreeRTOS libraries
     target_link_libraries(main freertos_config FreeRTOS)
 else()
-    add_executable(main
-        ${PROJECT_SOURCE_DIR}/main/src/main.c
-        ${PROJECT_SOURCE_DIR}/main/src/mouse_cursor_icon.c
-    )
+    if(VENUS_CODEGEN_DIR)
+        add_executable(main ${PROJECT_SOURCE_DIR}/main/src/main.c)
+    else()
+        add_executable(main
+            ${PROJECT_SOURCE_DIR}/main/src/main.c
+            ${PROJECT_SOURCE_DIR}/main/src/mouse_cursor_icon.c
+        )
+    endif()
 endif()
 
 if(EMSCRIPTEN)
@@ -114,7 +136,12 @@ endif()
 
 # Define LVGL configuration as a simple include
 target_compile_definitions(main PRIVATE LV_CONF_INCLUDE_SIMPLE)
-target_link_libraries(main lvgl lvgl::examples lvgl::demos lvgl::thorvg ${PLATFORM_LINK_LIBS})
+if(VENUS_CODEGEN_DIR)
+    target_link_libraries(main lvgl ${PLATFORM_LINK_LIBS})
+    include("${VENUS_CODEGEN_CMAKE}")
+else()
+    target_link_libraries(main lvgl lvgl::examples lvgl::demos lvgl::thorvg ${PLATFORM_LINK_LIBS})
+endif()
 
 # Only link freertos_config if the FreeRTOS directory exists
 if(USE_FREERTOS)
